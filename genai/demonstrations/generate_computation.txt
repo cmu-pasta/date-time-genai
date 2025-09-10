@@ -1,0 +1,27 @@
+Problem:
+# Here is an interesting idea for a datetime computation:
+1. Calculate the number of days between two dates and return the result as an integer representation of the difference.
+
+Solution:
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts two dates as input. These dates can be provided as datetime objects for ease of input.
+3. **Calculate the difference**: Use subtraction to find the difference between the two `datetime` objects.
+4. **Return the result**: Format the result as an integer in the specified format and return it.
+
+Here is the implementation of the above steps in code:
+
+
+```python
+from datetime import datetime
+
+def calculate_days_difference(dt1: datetime, dt2: datetime) -> integer:
+    # Step 1: Calculate the difference in days
+    difference = abs((dt2 - dt1).days)  # Using abs to ensure a positive difference
+    
+    # Step 2: Return the result as an integer in the specified format
+    return difference
+
+# Entry point: calculate_days_difference(dt1: datetime, dt2: datetime) -> integer
+```

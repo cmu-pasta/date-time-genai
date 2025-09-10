@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll need the `date` class from Python's `datetime` module.
+2. **Define a function**: We'll create a function that takes a `date` object representing the birthdate as input.
+3. **Get today's date**: Use `date.today()` to obtain the current date.
+4. **Compute complete months difference**: 
+    - Calculate the difference in years and months between today and the birthdate.
+    - Adjust the total if the current day of the month is before the birth day of month (i.e., the current month is not complete).
+5. **Return the result**: Output the total number of complete months as an integer.
+
+```python
+from datetime import date
+
+def compute_age_in_months(birthdate: date) -> int:
+    # Step 1: Get today's date
+    today = date.today()
+    
+    # Step 2: Compute year and month difference
+    years_diff = today.year - birthdate.year
+    months_diff = today.month - birthdate.month
+    
+    # Step 3: Total months difference
+    total_months = years_diff * 12 + months_diff
+    
+    # Step 4: Adjust if current day has not reached birth day yet (partial month not counted)
+    if today.day < birthdate.day:
+        total_months -= 1
+    
+    # Step 5: Return the result
+    return total_months
+
+# Entry point: compute_age_in_months(birthdate: date) -> int
+```

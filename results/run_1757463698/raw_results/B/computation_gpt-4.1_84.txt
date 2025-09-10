@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll need `datetime` for date and time handling, `timedelta` for flight duration, and `zoneinfo` for timezone operations.
+2. **Define the inputs**: We'll create a function that accepts the departure time as a `datetime` object (with timezone), the flight duration as a `timedelta`, and the arrival timezone as a `zoneinfo.ZoneInfo` object.
+3. **Convert departure time to UTC**: To make calculations reliable regardless of local time changes, we'll first convert the departure time to UTC.
+4. **Add the flight duration**: Add the duration to the UTC departure time to get the UTC arrival time.
+5. **Convert UTC arrival time to arrival local time**: Localize the UTC arrival time to the arrival timezone.
+6. **Return the local arrival time**: Return the computed local arrival time as a `datetime` object with the correct timezone.
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def calculate_flight_arrival_local_time(
+    departure_time: datetime, 
+    duration: timedelta, 
+    arrival_timezone: ZoneInfo
+) -> datetime:
+    # Step 1: Convert departure time to UTC
+    departure_time_utc = departure_time.astimezone(ZoneInfo("UTC"))
+    
+    # Step 2: Add the flight duration to get UTC arrival time
+    arrival_time_utc = departure_time_utc + duration
+    
+    # Step 3: Convert UTC arrival time to arrival local time
+    arrival_time_local = arrival_time_utc.astimezone(arrival_timezone)
+    
+    # Step 4: Return the computed local arrival time
+    return arrival_time_local
+
+# Entry point: calculate_flight_arrival_local_time(
+#     departure_time: datetime, 
+#     duration: timedelta, 
+#     arrival_timezone: ZoneInfo
+# ) -> datetime
+```

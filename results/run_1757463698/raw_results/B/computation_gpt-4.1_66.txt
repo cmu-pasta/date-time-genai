@@ -1,0 +1,46 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need `datetime` and `zoneinfo` from Python's standard library to work with dates and time zones.
+2. **Define the function**: We'll create a function that takes a time zone (as `zoneinfo.ZoneInfo`) and a year (as `integer` input).
+3. **Iterate through the year**: DST transitions are typically detected by examining the UTC offset differences within the year. We'll scan each day to detect when the UTC offset changes, which signals a DST transition.
+4. **Detect DST transitions**: Compare the UTC offset of each day to the previous day. The two dates where the offset changes in the year will be the DST start and end dates.
+5. **Return results**: Return the two dates (`datetime.date`) corresponding to the start and end of DST (in local time).
+6. **Format the output and entry point**: The function returns two `datetime.date` objects—`dst_start` and `dst_end`.
+
+```python
+from datetime import datetime, timedelta, date
+from zoneinfo import ZoneInfo
+
+def get_dst_start_end(tz: ZoneInfo, year: int) -> (date, date):
+    """
+    Returns the start and end dates for daylight saving time in a timezone for a year.
+    If the timezone does not observe DST, returns (None, None).
+    """
+    # Step 1: Define the year interval
+    start_date = date(year, 1, 1)
+    end_date = date(year, 12, 31)
+    current_date = start_date
+
+    last_offset = datetime(year, 1, 1, 0, 0, tzinfo=tz).utcoffset()
+    dst_start = None
+    dst_end = None
+
+    # Step 2: Iterate over each day, looking for offset changes (indicating DST transitions)
+    while current_date <= end_date:
+        dt = datetime.combine(current_date, datetime.min.time(), tzinfo=tz)
+        current_offset = dt.utcoffset()
+        if current_offset != last_offset:
+            if last_offset < current_offset:
+                # Transition into DST ("spring forward", dst starts)
+                dst_start = current_date
+            else:
+                # Transition out of DST ("fall back", dst ends)
+                dst_end = current_date
+            last_offset = current_offset
+        current_date += timedelta(days=1)
+
+    # Step 3: If no DST found, return None for both
+    return dst_start, dst_end
+
+# Entry point: get_dst_start_end(tz: zoneinfo.ZoneInfo, year: integer) -> (date, date)
+```

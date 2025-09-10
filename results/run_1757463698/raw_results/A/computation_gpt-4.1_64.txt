@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We need a function that accepts an integer year as input.
+3. **Iterate through all months**: For each month (from 1 to 12), construct a date for the 13th of that month.
+4. **Check if the 13th is Friday**: Use `.weekday()` where Friday is represented by 4.
+5. **Return Fridays the 13th as a string**: If the 13th is a Friday, format the date as a string (for example, 'YYYY-MM-DD') and return it (as per constraint to return primitive types; we can yield them one by one per call).
+
+Note: Since lists are not allowed, the function will return the next Friday the 13th for the given year and a given month. This satisfies input/output constraints.
+
+```python
+from datetime import date
+
+def is_friday_the_13th(year: int, month: int) -> bool:
+    """
+    Returns True if the given year and month have Friday the 13th, False otherwise.
+    """
+    d = date(year, month, 13)
+    return d.weekday() == 4
+
+def next_friday_the_13th(year: int, last_month_checked: int) -> date:
+    """
+    Returns the next Friday the 13th date object for a given year, after last_month_checked.
+    Returns None if none remain.
+    """
+    for month in range(last_month_checked + 1, 13):
+        if is_friday_the_13th(year, month):
+            return date(year, month, 13)
+    return None
+
+# Entry point: next_friday_the_13th(year: int, last_month_checked: int) -> date
+```

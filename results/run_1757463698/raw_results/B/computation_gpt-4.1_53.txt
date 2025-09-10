@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: Use `datetime` from Python's standard library for manipulating datetime objects.
+2. **Define the function**: We'll create a function that takes two inputs: a `datetime` object and an integer representing the minute interval to round down to (for example, 5 for every 5 minutes).
+3. **Calculate the rounded time**:  
+    - Determine how many whole intervals fit within the current minute component of the datetime.
+    - Calculate the “rounded down” minute value as `(dt.minute // interval) * interval`.
+    - Set `second` and `microsecond` components of the datetime to zero.
+    - Construct and return a new `datetime` instance with the rounded values.
+4. **Return the result**: The function will return a new `datetime` object representing the original time rounded down to the nearest interval.
+
+```python
+from datetime import datetime
+
+def round_datetime_down(dt: datetime, minutes_interval: int) -> datetime:
+    """
+    Rounds down a datetime object to the nearest specified minute interval.
+    
+    Args:
+        dt (datetime): The original datetime object.
+        minutes_interval (int): The minute interval to round down to (e.g., 5 for every 5 minutes).
+        
+    Returns:
+        datetime: The rounded down datetime object.
+    """
+    if minutes_interval <= 0 or minutes_interval > 60:
+        raise ValueError("Interval must be between 1 and 60 minutes inclusive.")
+    # Calculate the new minute component
+    rounded_minute = (dt.minute // minutes_interval) * minutes_interval
+    # Construct new datetime with rounded down values, set seconds and microseconds to 0
+    return dt.replace(minute=rounded_minute, second=0, microsecond=0)
+
+# Entry point: round_datetime_down(dt: datetime, minutes_interval: int) -> datetime
+```

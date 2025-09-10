@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the `datetime` module from Python's standard library to work with date and time objects.
+2. **Define a function**: We'll create a function that accepts a `date` or `datetime` object as an argument. Both types support the weekday formatting.
+3. **Get the weekday abbreviation**: Use the `strftime` method with the format code `"%a"` to get the three-letter abbreviation for the weekday (like "Mon", "Tue").
+4. **Return the result**: Output the abbreviation as a string.
+
+Here is the implementation:
+
+```python
+from datetime import date, datetime
+
+def get_weekday_abbreviation(dt: date) -> str:
+    # Step 1: Use strftime with '%a' to get the weekday abbreviation
+    weekday_abbr = dt.strftime("%a")
+    # Step 2: Return the abbreviation
+    return weekday_abbr
+
+# Entry point: get_weekday_abbreviation(dt: date) -> str
+```

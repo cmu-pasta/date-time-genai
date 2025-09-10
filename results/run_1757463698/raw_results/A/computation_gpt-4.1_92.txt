@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll use the `datetime` module from Python's standard library.
+2. **Understand the problem**: Given a date, we need to find the date in the **next year** that falls on the **same weekday** as the given date.
+3. **Increment the year**: Given a `date` object, increment the year by 1, preserving the month and day.
+4. **Check the weekday**: If the incremented date falls on the same weekday, return it. If not, move forward day by day from that date until the first occurrence of the same weekday, then return that date.
+5. **Edge cases**: If the date in the next year does not exist (e.g., Feb 29th), back off to a valid date (e.g., Mar 1st), and continue searching for the correct weekday.
+
+```python
+from datetime import date, timedelta
+
+def next_year_same_weekday(input_date: date) -> date:
+    # Step 1: Try to create a date in the next year with the same month and day.
+    try:
+        candidate = date(input_date.year + 1, input_date.month, input_date.day)
+    except ValueError:
+        # Handles cases like February 29th not existing in non-leap years.
+        # Move to March 1st (or the next valid date).
+        next_month = input_date.month + 1 if input_date.month < 12 else 1
+        next_year = input_date.year + 1 if input_date.month < 12 else input_date.year + 1
+        candidate = date(next_year, next_month, 1)
+
+    # Step 2: Find and return the earliest date >= candidate with the same weekday as input_date.
+    target_weekday = input_date.weekday()
+    while candidate.weekday() != target_weekday:
+        candidate += timedelta(days=1)
+    return candidate
+
+# Entry point: next_year_same_weekday(input_date: date) -> date
+```

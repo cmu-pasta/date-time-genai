@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll use the `datetime` and `zoneinfo` modules from the Python standard library (`zoneinfo` is available from Python 3.9 onwards and handles IANA time zones).
+2. **Define a function**: We'll create a function that accepts a `datetime` object, a source time zone (as a `zoneinfo.ZoneInfo` object), and a target time zone (as another `zoneinfo.ZoneInfo` object).
+3. **Set the source time zone**: If the input `datetime` object is naive (i.e., has no time zone information), we'll attach the source time zone.
+4. **Convert to the target time zone**: We'll use the `astimezone` method to convert the datetime to the target time zone, which handles daylight saving transitions correctly.
+5. **Return the result**: The function will return the converted `datetime` object.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_timezone(dt: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime:
+    # Step 1: If the input datetime is naive, assign the source timezone
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=source_tz)
+    else:
+        # If the datetime is aware but not in the source_tz, convert to source_tz before converting
+        dt = dt.astimezone(source_tz)
+    # Step 2: Convert the datetime to the target timezone (daylight saving transitions handled)
+    dt_converted = dt.astimezone(target_tz)
+    # Step 3: Return the result
+    return dt_converted
+
+# Entry point: convert_timezone(dt: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime
+```

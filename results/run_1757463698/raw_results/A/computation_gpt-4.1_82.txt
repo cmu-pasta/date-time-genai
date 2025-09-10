@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll use Python's built-in `datetime` module for our computations, especially the `datetime` and `timedelta` classes.
+2. **Define a function**: The function will accept a `datetime` object as input, representing the date for which we want to find the end-of-month timestamp.
+3. **Find the last day of the month**:  
+    - Move to the first day of the *next* month.
+    - Subtract one second to get the last second of the *current* month.
+    - Special consideration: For December, the next month is January of the next year.
+4. **Set the time to the last moment of the day**: We'll ensure the timestamp is at 23:59:59 for the last day.
+5. **Return the result**: The function will output a `datetime` object representing the last second of the last day of the given month.
+
+```python
+from datetime import datetime, timedelta
+
+def end_of_month_timestamp(dt: datetime) -> datetime:
+    # Step 1: Move to the first day of the *next* month
+    if dt.month == 12:
+        next_month = datetime(dt.year + 1, 1, 1)
+    else:
+        next_month = datetime(dt.year, dt.month + 1, 1)
+    # Step 2: Subtract one second to reach the last moment of the current month
+    last_moment = next_month - timedelta(seconds=1)
+    # Step 3: Return the last second of the last day of the current month
+    return last_moment
+
+# Entry point: end_of_month_timestamp(dt: datetime) -> datetime
+```

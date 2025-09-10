@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with date objects.
+2. **Define a function**: We'll write a function that accepts a `date` object as input.
+3. **Get the nth day of the year**: Use the `.timetuple()` method of the `date` object, which has a `tm_yday` attribute representing the day of the year (1 for January 1st, 365 or 366 for December 31st depending on leap years).
+4. **Return the result**: Return this integer value as the result.
+
+```python
+from datetime import date
+
+def get_nth_day_of_year(given_date: date) -> int:
+    """
+    Returns the day-of-year (1-based) for the given date.
+    """
+    # Step 1: Use the timetuple() to get tm_yday field
+    nth_day = given_date.timetuple().tm_yday
+
+    # Step 2: Return the nth day as integer
+    return nth_day
+
+# Entry point: get_nth_day_of_year(given_date: date) -> int
+```

@@ -1,0 +1,48 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We will use `datetime.date` from Python's standard library.
+2. **Understand the computation**: To determine the moon phase for a given date, we'll use a simple algorithm based on the number of days since a known new moon. There are well-established approximations that use the date to compute the moon phase as an integer (0=new moon, 1=waning crescent, ..., 7=waning crescent). 
+3. **Define a function**: The function will accept a single `date` object.
+4. **Calculate the days since a reference new moon**: Pick a known new moon date (e.g., January 6, 2000). Compute the days between the input date and this reference date.
+5. **Compute the phase index**: The synodic month (new moon to new moon) is about 29.530588853 days. We'll compute where in the cycle the given date falls and map it to an integer phase value.
+6. **Return the moon phase**: Return the integer representing the phase.
+
+```python
+from datetime import date
+
+def determine_moon_phase(dt: date) -> int:
+    """
+    Determines the moon phase for a given date.
+    
+    Returns:
+        An integer in 0-7, where:
+        0 - New Moon
+        1 - Waxing Crescent
+        2 - First Quarter
+        3 - Waxing Gibbous
+        4 - Full Moon
+        5 - Waning Gibbous
+        6 - Last Quarter
+        7 - Waning Crescent
+    """
+    # Reference new moon: January 6, 2000 (known new moon date)
+    known_new_moon = date(2000, 1, 6)
+    synodic_month = 29.530588853  # Average length of a lunar month, in days
+
+    # Step 1: Calculate number of days since known new moon
+    days_since_known_new = (dt - known_new_moon).days
+
+    # Step 2: Find the position in the lunar month
+    new_moons = days_since_known_new / synodic_month
+    position = new_moons - int(new_moons)
+    if position < 0:
+        position += 1.0  # Ensure it's always positive
+
+    # Step 3: Map position [0.0, 1.0) to phase index 0-7
+    phase_index = int((position * 8) + 0.5) % 8
+
+    # Step 4: Return the moon phase as integer
+    return phase_index
+
+# Entry point: determine_moon_phase(dt: date) -> int
+```

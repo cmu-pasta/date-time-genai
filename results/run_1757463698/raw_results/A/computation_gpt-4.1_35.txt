@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: To work with time zones and Daylight Saving Time (DST), we need `datetime` and `zoneinfo` from Python's standard library (as of Python 3.9+).
+2. **Define a function**: We'll create a function that accepts a `datetime` object and a `ZoneInfo` object (representing the timezone).
+3. **Attach timezone info**: If the passed datetime is naive (without timezone), attach the timezone using `.replace(tzinfo=...)`.
+4. **Check DST status**: Use the `.dst()` method on the timezone-aware datetime. If `.dst()` returns a nonzero `timedelta`, the datetime is in the DST period.
+5. **Return the result**: Return `True` if in DST, otherwise `False`.
+
+Here is the implementation of the above steps in code:
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def is_date_in_dst(dt: datetime, tz: ZoneInfo) -> bool:
+    # Step 1: Ensure datetime is timezone-aware
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=tz)
+    else:
+        dt = dt.astimezone(tz)
+    
+    # Step 2: Check if DST offset is nonzero
+    dst_offset: timedelta = dt.dst()
+    return bool(dst_offset and dst_offset != timedelta(0))
+
+# Entry point: is_date_in_dst(dt: datetime, tz: ZoneInfo) -> bool
+```

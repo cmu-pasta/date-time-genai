@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1. **Import necessary modules**: We'll use the `datetime` and `date` classes from Python's `datetime` module.
+2. **Define leap year logic**: A year is a leap year in the Gregorian calendar if it is divisible by 4, except for years divisible by 100, unless they're also divisible by 400.
+3. **Iteratively or directly find leap day**: 
+    - Check if the given date is after or on February 29 in a leap year. If so, then the last leap day is in the current year (if it's a leap year).
+    - If not, search for the previous year that was a leap year, and return February 29 of that year.
+4. **Edge case checks**: If the current year or an earlier year does not have February 29 (prior to 0004-03-01), raise an error or handle accordingly.
+5. **Implement the function**: The function will take a `date` as input and return a `date` as output.
+6. **Entry point**: The entry point is `find_last_leap_day(dt: date) -> date`.
+
+```python
+from datetime import date
+
+def is_leap_year(year: int) -> bool:
+    # Leap year logic according to Gregorian calendar
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+def find_last_leap_day(dt: date) -> date:
+    # Step 1: If current year is leap and date is on or after Feb 29, return Feb 29 of this year
+    if is_leap_year(dt.year):
+        leap_day = date(dt.year, 2, 29)
+        if dt >= leap_day:
+            return leap_day
+    
+    # Step 2: Search backward for the previous leap year
+    year = dt.year - 1 if dt.month > 2 or (dt.month == 2 and dt.day >= 29) else dt.year - 1
+    while year >= 4:
+        if is_leap_year(year):
+            return date(year, 2, 29)
+        year -= 1
+
+    # Step 3: No leap day possible prior to year 4
+    raise ValueError("No leap day exists before year 4 in the Gregorian calendar.")
+
+# Entry point: find_last_leap_day(dt: date) -> date
+```

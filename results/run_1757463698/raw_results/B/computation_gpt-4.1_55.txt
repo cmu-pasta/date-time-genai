@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We will import the `datetime` module from Python's standard library to work with dates.
+2. **Understand the inputs**: The function should accept: (a) a year as an integer, (b) a month as an integer, and (c) a weekday as an integer (with Monday=0, Sunday=6 as in the `datetime` module).
+3. **Find the last day of the month**: We can construct a date for the first day of the following month, subtract one day, and get the last day of the given month.
+4. **Iterate backwards to find the last occurrence of the specified weekday**: Start from the last day of the month and subtract days until the weekday matches the input.
+5. **Return the result**: Return the found date object.
+
+Here is the implementation of the above steps in code:
+
+```python
+from datetime import date, timedelta
+
+def last_weekday_of_month(year: int, month: int, weekday: int) -> date:
+    # Step 1: Find the first day of the next month
+    if month == 12:
+        next_month_first = date(year + 1, 1, 1)
+    else:
+        next_month_first = date(year, month + 1, 1)
+        
+    # Step 2: Get the last day of the given month
+    last_day_of_month = next_month_first - timedelta(days=1)
+    
+    # Step 3: Iterate backwards to find the last occurrence of the given weekday
+    days_backward = (last_day_of_month.weekday() - weekday) % 7
+    result_date = last_day_of_month - timedelta(days=days_backward)
+    
+    # Step 4: Return the result
+    return result_date
+
+# Entry point: last_weekday_of_month(year: int, month: int, weekday: int) -> date
+```

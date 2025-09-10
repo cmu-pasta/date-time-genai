@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to handle timestamps and weeks.
+2. **Define a function**: The function will accept two `datetime` objects as input.
+3. **Extract ISO week information**: Use the `.isocalendar()` method on each datetime object. This method returns a tuple `(ISO year, ISO week number, ISO weekday)`.
+4. **Compare week and year**: For two timestamps to be in the same calendar week, both their ISO year and ISO week number must match.
+5. **Return the result**: Return a boolean indicating whether the two timestamps fall in the same calendar week.
+
+```python
+from datetime import datetime
+
+def are_timestamps_in_same_week(dt1: datetime, dt2: datetime) -> bool:
+    # Step 1: Extract ISO calendar year and week number for both datetimes
+    year1, week1, _ = dt1.isocalendar()
+    year2, week2, _ = dt2.isocalendar()
+    
+    # Step 2: Compare the year and week number
+    return (year1 == year2) and (week1 == week2)
+
+# Entry point: are_timestamps_in_same_week(dt1: datetime, dt2: datetime) -> bool
+```

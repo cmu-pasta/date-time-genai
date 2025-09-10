@@ -1,0 +1,72 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the problem:**  
+   We are to calculate the number of months between two dates that contain five weekends.  
+   In the Gregorian calendar, a weekend is considered as Saturday and Sunday. A month with five weekends has five full Saturdays and five full Sundays, i.e., 5 Saturdays *and* 5 Sundays in the same month.  
+   Only months with 31 days can (but do not always) have 5 full weekends. Additionally, the first day of the month and the layout of the days in that month will affect if it contains 5 full weekends.
+
+2. **Iterate through each month between two dates:**  
+   We need to examine each month between `start_date` and `end_date`, inclusively or exclusively as desired.
+
+3. **Count Saturdays and Sundays in the month:**  
+   For each month, count how many times Saturday and Sunday occur.
+
+4. **Check for 5 weekend months:**  
+   If both Saturday and Sunday occur at least 5 times in the same month, the month qualifies.
+
+5. **Return an integer count:**  
+   Return the total number of qualified months as an integer.
+
+6. **Input and Output types:**  
+   The function should accept two inputs, both of type `datetime.date`, and output an `int`.
+
+Here is the code block as requested:
+
+```python
+from datetime import date, timedelta
+
+def _first_of_month(d: date) -> date:
+    return date(d.year, d.month, 1)
+
+def _add_one_month(d: date) -> date:
+    # Get to the first of the next month
+    if d.month == 12:
+        return date(d.year + 1, 1, 1)
+    else:
+        return date(d.year, d.month + 1, 1)
+
+def _count_weekends_in_month(year: int, month: int) -> (int, int):
+    from calendar import monthrange
+    days_in_month = monthrange(year, month)[1]
+    d = date(year, month, 1)
+    saturdays = 0
+    sundays = 0
+    for day in range(days_in_month):
+        weekday = (d.weekday() + day) % 7 # 0=Monday, 5=Saturday, 6=Sunday
+        if weekday == 5:
+            saturdays += 1
+        if weekday == 6:
+            sundays += 1
+    return saturdays, sundays
+
+def count_months_with_five_weekends(start_date: date, end_date: date) -> int:
+    # Ensure start_date <= end_date
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+
+    count = 0
+    current = date(start_date.year, start_date.month, 1)
+    # go up to and including the end month
+    last_month = date(end_date.year, end_date.month, 1)
+
+    while current <= last_month:
+        saturdays, sundays = _count_weekends_in_month(current.year, current.month)
+        # Only months with both 5 Saturdays and 5 Sundays count
+        if saturdays == 5 and sundays == 5:
+            count += 1
+        current = _add_one_month(current)
+
+    return count
+
+# Entry point: count_months_with_five_weekends(start_date: date, end_date: date) -> int
+```

@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need to use the `datetime` module from the Python standard library to work with date objects.
+2. **Understand the quarters**: A year has four quarters. The dates for the end of each quarter are:
+   - Q1: March 31
+   - Q2: June 30
+   - Q3: September 30
+   - Q4: December 31
+3. **Define a function**: The function will accept a `date` object as input.
+4. **Determine the last date of the quarter**: Depending on the month, select the correct end date for the quarter.
+5. **Calculate the days left in the quarter**: Subtract the given date from the quarter's end date to get the number of remaining days (including the given date if needed, otherwise, just the difference).
+6. **Return the result**: Return the integer number of days left in the quarter.
+
+```python
+from datetime import date
+
+def days_left_in_quarter(dt: date) -> int:
+    # Step 1: Identify the quarter
+    year = dt.year
+    if dt.month <= 3:  # Q1
+        quarter_end = date(year, 3, 31)
+    elif dt.month <= 6:  # Q2
+        quarter_end = date(year, 6, 30)
+    elif dt.month <= 9:  # Q3
+        quarter_end = date(year, 9, 30)
+    else:  # Q4
+        quarter_end = date(year, 12, 31)
+    
+    # Step 2: Calculate the number of days left (excluding the given day if desired)
+    days_left = (quarter_end - dt).days
+    
+    return days_left
+
+# Entry point: days_left_in_quarter(dt: date) -> int
+```

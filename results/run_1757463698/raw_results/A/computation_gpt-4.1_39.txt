@@ -1,0 +1,54 @@
+Let's think step by step to solve this problem.
+
+1. **Import necessary libraries**: We need the `datetime` module from Python's standard library to handle date and time operations.
+2. **Define business hours**: Typically, business hours are defined as 9 AM to 5 PM.
+3. **Define a function**: We'll create a function that takes two `datetime` objects as input.
+4. **Normalize datetimes**: Ensure dt1 is before dt2; if not, swap them.
+5. **Iterate through relevant days**: For each day from dt1’s date to dt2’s date, calculate the overlapping portion with business hours.
+6. **Handle start and end days specially**: On the first and last day, the effective start or end time may fall in/outside business hours—adjust accordingly.
+7. **Calculate total business hours**: For each relevant day, sum the overlapping hours within business intervals.
+8. **Return result as a float or integer**: The number of business hours (in hours as a float).
+
+```python
+from datetime import datetime, timedelta, time
+
+def elapsed_business_hours(dt1: datetime, dt2: datetime) -> float:
+    # Define business hours: 9 AM to 5 PM
+    BUSINESS_START = time(9, 0)
+    BUSINESS_END = time(17, 0)
+    BUSINESS_HOURS_PER_DAY = (datetime.combine(datetime.min, BUSINESS_END) - 
+                              datetime.combine(datetime.min, BUSINESS_START)).seconds / 3600.0
+
+    # Swap if dt1 after dt2
+    if dt1 > dt2:
+        dt1, dt2 = dt2, dt1
+
+    total_hours = 0.0
+    current_day = dt1.date()
+    last_day = dt2.date()
+
+    while current_day <= last_day:
+        # Default business interval on this day
+        b_start = datetime.combine(current_day, BUSINESS_START)
+        b_end = datetime.combine(current_day, BUSINESS_END)
+        
+        # If weekend, skip
+        if b_start.weekday() >= 5:  # 5=Saturday, 6=Sunday
+            current_day += timedelta(days=1)
+            continue
+        
+        # Effective interval for this day
+        interval_start = max(b_start, dt1) if current_day == dt1.date() else b_start
+        interval_end = min(b_end, dt2) if current_day == dt2.date() else b_end
+        
+        # Only accumulate if the interval is valid
+        if interval_end > interval_start:
+            hours = (interval_end - interval_start).total_seconds() / 3600.0
+            total_hours += hours
+        
+        current_day += timedelta(days=1)
+
+    return total_hours
+
+# Entry point: elapsed_business_hours(dt1: datetime, dt2: datetime) -> float
+```

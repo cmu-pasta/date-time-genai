@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` library from Python's standard library to work with date objects and timedelta for computing day differences.
+2. **Define a function**: Create a function that accepts a date object (`datetime.date`) as the starting date and an integer `n` indicating how many business days to go back.
+3. **Implement business day logic**: Loop backwards from the input date, only counting days that are business days. In this context, business days are typically Monday (0) to Friday (4).
+4. **Return the previous business day**: Once the nth previous business day is found, return it as a date object.
+
+Here is the implementation of the above steps in code:
+
+```python
+from datetime import date, timedelta
+
+def nth_previous_business_day(input_date: date, n: int) -> date:
+    # Step 1: Validate that n is a positive integer
+    if n < 1:
+        raise ValueError("n must be at least 1")
+    
+    # Step 2: Start at the day before input_date and look for business days
+    business_days_counted = 0
+    current_date = input_date
+    while business_days_counted < n:
+        current_date -= timedelta(days=1)
+        # Weekdays: Monday == 0 ... Sunday == 6
+        if current_date.weekday() < 5:  # 0 (Monday) to 4 (Friday)
+            business_days_counted += 1
+    return current_date
+
+# Entry point: nth_previous_business_day(input_date: date, n: int) -> date
+```

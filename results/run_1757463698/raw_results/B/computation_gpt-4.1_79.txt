@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the ISO week date system**: In the ISO week date system, each week starts on a Monday and is associated with a year and a week number. The first week of the year (ISO week 1) is the one that contains the first Thursday of the year (or, equivalently, Jan 4).
+2. **Import necessary libraries**: We'll need `date` from `datetime` to work with date objects.
+3. **Define a function**: Create a function that takes two integer arguments: the year and the ISO week number.
+4. **Calculate the first day of the ISO week**: The `date.fromisocalendar(year, week, 1)` method from the standard library returns the Monday (day=1) of the given ISO week and year.
+5. **Return the result**: Ensure the returned value is a `date` object representing the first day of the given ISO week.
+
+```python
+from datetime import date
+
+def first_day_of_iso_week(year: int, iso_week: int) -> date:
+    # Step 1: Calculate the Monday (first day) of the specific ISO week using fromisocalendar
+    first_day = date.fromisocalendar(year, iso_week, 1)
+    
+    # Step 2: Return the computed date
+    return first_day
+
+# Entry point: first_day_of_iso_week(year: int, iso_week: int) -> date
+```

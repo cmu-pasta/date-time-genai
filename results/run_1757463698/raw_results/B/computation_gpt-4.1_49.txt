@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We will use the `datetime` module from Python's standard library to work with time objects.
+2. **Define a function**: We'll create a function that takes a `datetime.time` object as input, which represents the specific time of the day whose total elapsed minutes we want to compute.
+3. **Extract hours and minutes**: We extract the `hour` and `minute` attributes from the input time object.
+4. **Compute the total elapsed minutes**: Multiply the number of hours by 60 and add the number of minutes to get the total elapsed minutes in the day as of the specific time.
+5. **Return the result**: Return the total elapsed minutes as an integer.
+
+```python
+from datetime import time
+
+def minutes_elapsed_today(current_time: time) -> int:
+    # Step 1: Extract hours and minutes from the input time
+    hours = current_time.hour
+    minutes = current_time.minute
+    
+    # Step 2: Compute total elapsed minutes since midnight
+    total_minutes = hours * 60 + minutes
+    
+    # Step 3: Return the total minutes as an integer
+    return total_minutes
+
+# Entry point: minutes_elapsed_today(current_time: time) -> int
+```

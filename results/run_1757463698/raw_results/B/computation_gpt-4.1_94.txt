@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll use the `datetime` and `zoneinfo` modules from Python's standard library. `zoneinfo` allows working with IANA time zones.
+2. **Define the function**: We'll create a function that accepts the reference `datetime`, and the names of the two cities' time zones as strings (e.g., "America/New_York", "Europe/London").
+3. **Assign time zones to the datetime**: Convert the input `datetime` to both target time zones using `astimezone()` and `zoneinfo.ZoneInfo`.
+4. **Calculate the time difference**: Extract the `utcoffset()` for both localized datetimes and compute the absolute difference as a `timedelta`.
+5. **Return the result**: Return the difference as a `timedelta` object, which clearly expresses the time between the two zones.
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def city_time_difference(ref_dt: datetime, tz1: ZoneInfo, tz2: ZoneInfo) -> timedelta:
+    # Step 1: Localize the reference datetime to both time zones
+    dt1 = ref_dt.astimezone(tz1)
+    dt2 = ref_dt.astimezone(tz2)
+    
+    # Step 2: Get their UTC offsets
+    offset1 = dt1.utcoffset()
+    offset2 = dt2.utcoffset()
+    
+    # Step 3: Return the absolute difference in UTC offsets as timedelta
+    diff = abs(offset1 - offset2)
+    return diff
+
+# Entry point: city_time_difference(ref_dt: datetime, tz1: ZoneInfo, tz2: ZoneInfo) -> timedelta
+```

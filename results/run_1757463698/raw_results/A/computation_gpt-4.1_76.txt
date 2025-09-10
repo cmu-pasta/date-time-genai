@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with times and compute timedeltas.
+2. **Define a function**: We will create a function that accepts a `datetime` object as input, representing the current time.
+3. **Determine the end of the day**: Create a new `datetime` object corresponding to the same date as the input, but with the time set to 23:59:59 (end of the day).
+4. **Calculate the difference**: Subtract the input time from the end-of-day time to get the remaining time as a timedelta.
+5. **Return the result**: Return the number of remaining seconds as an integer.
+
+```python
+from datetime import datetime, time, timedelta
+
+def seconds_until_end_of_day(dt: datetime) -> int:
+    # Step 1: Determine the end of the day for the given datetime
+    end_of_day = datetime.combine(dt.date(), time(23, 59, 59))
+    
+    # Step 2: Calculate the difference between end_of_day and the provided datetime
+    delta = end_of_day - dt
+    
+    # Step 3: Prevent negative values if dt is after end_of_day and return number of seconds
+    seconds_remaining = max(0, int(delta.total_seconds()))
+    
+    return seconds_remaining
+
+# Entry point: seconds_until_end_of_day(dt: datetime) -> int
+```

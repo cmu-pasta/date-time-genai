@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll need `datetime` and `zoneinfo` from the Python standard library to work with dates, times, and timezones.
+2. **Define business hours**: We'll decide on a conventional set of "business hours" (for example, 9:00 to 17:00).
+3. **Define function inputs**: The function will take a `datetime` object representing the time to check and a `zoneinfo.ZoneInfo` object representing the desired timezone.
+4. **Normalize the input**: Convert the input datetime to the specified timezone if it is not already in that timezone.
+5. **Check business hours**: Extract the time part and check if it falls within the defined business hours.
+6. **Return a boolean**: Return `True` if the time is within business hours in the given timezone, otherwise `False`.
+
+```python
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
+
+def is_within_business_hours(dt: datetime, tz: ZoneInfo) -> bool:
+    # Step 1: Ensure the datetime is timezone-aware and assign specified timezone
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=tz)
+    else:
+        dt = dt.astimezone(tz)
+    
+    # Step 2: Define business hour boundaries (inclusive start, exclusive end)
+    business_start = time(hour=9, minute=0)
+    business_end = time(hour=17, minute=0)
+    
+    # Step 3: Extract the time from the converted datetime
+    current_time = dt.time()
+    
+    # Step 4: Check if the current_time is within business hours
+    within_hours = business_start <= current_time < business_end
+    return within_hours
+
+# Entry point: is_within_business_hours(dt: datetime, tz: ZoneInfo) -> bool
+```

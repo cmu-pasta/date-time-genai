@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` class from the `datetime` module.
+2. **Define a function**: We'll create a function that takes a datetime string and a custom format string as inputs.
+3. **Parse the datetime string**: Use `datetime.strptime()` to convert the string to a `datetime` object using the given format.
+4. **Return the parsed datetime object**: The function will return a `datetime` object representing the parsed date and time.
+
+```python
+from datetime import datetime
+
+def parse_datetime_string(date_string: str, format_string: str) -> datetime:
+    # Step 1: Parse the datetime string using the provided custom format
+    parsed_datetime = datetime.strptime(date_string, format_string)
+    
+    # Step 2: Return the parsed datetime object
+    return parsed_datetime
+
+# Entry point: parse_datetime_string(date_string: str, format_string: str) -> datetime
+```

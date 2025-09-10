@@ -1,0 +1,124 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python’s standard library. Although Python's `datetime` library does not have a built-in function to compute sunrise and sunset, we can utilize standard astronomical formulas to approximate these times. We will stick to input and output types from the standard datetime library according to the given constraints.
+2. **Define a function**: The function will accept the needed inputs—specifically, the observation date (as a `date` object), latitude and longitude (as floating-point numbers representing decimal degrees, with latitude positive for north and longitude positive for east), and the time zone (as a `zoneinfo.ZoneInfo` object).
+3. **Compute the sunrise and sunset times (UTC)**: Use the date and geographic location with standard astronomical calculations to approximate sunrise and sunset times (ignoring atmospheric refraction and elevation for simplicity).
+4. **Convert to local times**: Convert the UTC times to local time using the provided time zone.
+5. **Compute duration**: Calculate the difference between sunset and sunrise times to obtain the daylight duration as a `timedelta` object.
+6. **Return result**: The function will return the daylight duration as a `timedelta` object.
+
+```python
+from datetime import date, datetime, timedelta, time
+from zoneinfo import ZoneInfo
+import math
+
+def calculate_daylight_duration(obs_date: date, latitude: float, longitude: float, tzinfo: ZoneInfo) -> timedelta:
+    """
+    Calculate the duration of daylight (time between sunrise and sunset) for the given date and location.
+    Uses simplified solar calculations.
+    
+    Parameters:
+        obs_date (date): The date for which to calculate daylight.
+        latitude (float): Latitude in decimal degrees (+N, -S).
+        longitude (float): Longitude in decimal degrees (+E, -W).
+        tzinfo (ZoneInfo): Time zone for local time output.
+    
+    Returns:
+        timedelta: Duration of daylight.
+    """
+    # Constants
+    zenith = 90.833  # Official zenith for sunrise/set
+    D2R = math.pi / 180.0
+    R2D = 180.0 / math.pi
+
+    # 1. Calculate the day of year
+    n = obs_date.timetuple().tm_yday
+
+    # 2. Convert longitude to hour value and calculate approximate time
+    lngHour = longitude / 15.0
+    
+    # Sunrise
+    t_rise = n + ((6 - lngHour) / 24)
+    # Sunset
+    t_set = n + ((18 - lngHour) / 24)
+
+    def calc_time(t, is_sunrise):
+        # Sun's mean anomaly
+        M = (0.9856 * t) - 3.289
+
+        # Sun's true longitude
+        L = (M + (1.916 * math.sin(D2R*M)) + (0.020 * math.sin(2*D2R*M)) + 282.634) % 360
+
+        # Sun's right ascension
+        RA = R2D * math.atan(0.91764 * math.tan(D2R*L))
+        RA = RA % 360
+
+        # Quadrant adjustment
+        Lquadrant  = (math.floor( L/90)) * 90
+        RAquadrant = (math.floor(RA/90)) * 90
+        RA = RA + (Lquadrant - RAquadrant)
+        RA = RA / 15  # convert to hours
+
+        # Sun's declination
+        sinDec = 0.39782 * math.sin(D2R*L)
+        cosDec = math.cos(math.asin(sinDec))
+
+        # Sun's local hour angle
+        cosH = (math.cos(D2R*zenith) - (sinDec * math.sin(D2R*latitude))) / (cosDec * math.cos(D2R*latitude))
+
+        # Sun never rises or sets
+        if cosH > 1:
+            # Sun never rises on this date at this location
+            if is_sunrise:
+                return None
+            else:
+                return None
+        if cosH < -1:
+            # Sun never sets on this date at this location
+            if is_sunrise:
+                return None
+            else:
+                return None
+
+        # Hour angle
+        if is_sunrise:
+            H = 360 - R2D * math.acos(cosH)
+        else:
+            H = R2D * math.acos(cosH)
+        H = H / 15
+
+        # Local mean time
+        T = H + RA - (0.06571 * t) - 6.622
+
+        # UTC time
+        UT = (T - lngHour) % 24
+
+        # Convert to local time with tzinfo
+        hour = int(UT)
+        minute = int((UT - hour) * 60)
+        second = int((((UT - hour) * 60) - minute) * 60)
+
+        naive_dt = datetime(obs_date.year, obs_date.month, obs_date.day, hour, minute, second)
+        dt_with_tz = naive_dt.replace(tzinfo=ZoneInfo("UTC")).astimezone(tzinfo)
+        return dt_with_tz
+
+    # 3. Calculate local sunrise and sunset (may be None for polar day/night)
+    sunrise_local = calc_time(t_rise, is_sunrise=True)
+    sunset_local = calc_time(t_set, is_sunrise=False)
+
+    # 4. Calculate daylight duration
+    # If daylight is 24 hours
+    if sunrise_local is None and sunset_local is None:
+        # Check if location is experiencing polar day
+        # Sun always above horizon
+        daylight_duration = timedelta(hours=24)
+    # If daylight is 0 hours (polar night)
+    elif sunrise_local is None or sunset_local is None:
+        daylight_duration = timedelta(hours=0)
+    else:
+        daylight_duration = sunset_local - sunrise_local
+
+    return daylight_duration
+
+# Entry point: calculate_daylight_duration(obs_date: date, latitude: float, longitude: float, tzinfo: ZoneInfo) -> timedelta
+```

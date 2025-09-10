@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the `datetime` module from Python's standard library.
+2. **Design the function signature**: The function should accept a single `date` object as input. The goal is to return a new `date` object that represents the next first-day-of-the-month after the input date.
+3. **Check if the input date is already the first of the month**: If it is, we still need to go to the next month's first day.
+4. **Handle rolling over to the next month**: 
+    - If the current month is December, the next month is January of the next year.
+    - Otherwise, increment the month by one.
+5. **Construct and return the new date object**: Always set the day to 1.
+
+```python
+from datetime import date
+
+def next_first_day_of_month(input_date: date) -> date:
+    # Step 1: Check if we are in December to handle year rollover
+    if input_date.month == 12:
+        next_month = 1
+        next_year = input_date.year + 1
+    else:
+        next_month = input_date.month + 1
+        next_year = input_date.year
+    # Step 2: Construct the date for the first day of the next month
+    result = date(next_year, next_month, 1)
+    # Step 3: Return the result
+    return result
+
+# Entry point: next_first_day_of_month(input_date: date) -> date
+```

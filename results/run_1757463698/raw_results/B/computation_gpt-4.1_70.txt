@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the Problem**: We need to compute the date of Orthodox Easter for a given year using only the Python standard library's `datetime` module and return a `date` object.
+2. **Orthodox Easter Algorithm**: Orthodox Easter is calculated based on the Julian calendar using the "Meeus Julian algorithm." We will apply this to get the correct date.
+3. **Adjust to Gregorian Calendar**: Since Python's `datetime.date` works with the Gregorian calendar (the civil calendar in use today), after calculating the Julian date for Easter, we must convert it to the Gregorian equivalent. The difference between the two calendars is 13 days for years 1900–2099, but we will compute it generically.
+4. **Implement the Function**: The function will take an integer year as input and return a `datetime.date` object for Orthodox Easter Sunday.
+5. **Return the Result**: The function will return the Gregorian date of Orthodox Easter for the specified year.
+
+```python
+from datetime import date, timedelta
+
+def orthodox_easter(year: int) -> date:
+    """
+    Calculate the date of Orthodox Easter (Pascha) for a given year.
+    The computation uses the Julian calendar and converts the result to the Gregorian calendar.
+    """
+
+    # Step 1: Compute the Julian Easter date using the Meeus Julian algorithm
+    a = year % 4
+    b = year % 7
+    c = year % 19
+    d = (19 * c + 15) % 30
+    e = (2 * a + 4 * b - d + 34) % 7
+    month = 3  # March
+    day = d + e + 114
+
+    # The Julian Easter is (day // 31) is the month (either March or April), day % 31 + 1 is the day
+    julian_month = day // 31
+    julian_day = (day % 31) + 1
+
+    # Julian date of Easter Sunday
+    julian_easter = date(year, julian_month, julian_day)
+
+    # Step 2: Calculate the difference between Julian and Gregorian calendars for the given year
+    # Formula for Gregorian difference (valid for years >= 1583)
+    gregorian_shift = year // 100 - year // 400 - 2
+
+    # Step 3: Convert Julian date to Gregorian date by adding the shift
+    gregorian_easter = julian_easter + timedelta(days=gregorian_shift)
+
+    # Step 4: Return the Gregorian date
+    return gregorian_easter
+
+# Entry point: orthodox_easter(year: int) -> date
+```

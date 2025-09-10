@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with times.
+2. **Define a function**: We will create a function that accepts a `datetime.time` or `datetime.datetime` object as input.
+3. **Determine today's end-of-day time**: The end of the day is 23:59:59.999999. If the input is a `time`, we'll use today's date with that time; if the input is a `datetime`, we'll use its date and time.
+4. **Calculate the difference in seconds**: Subtract the input time from the end-of-day, and convert the resulting `timedelta` to seconds (as an integer).
+5. **Return the result**: Return the number of seconds remaining until the end of the day as an `integer`.
+
+```python
+from datetime import datetime, time
+
+def seconds_until_end_of_day(input_time) -> int:
+    """
+    Calculates the number of seconds remaining until the end of the day
+    from the given time or datetime input.
+    
+    Args:
+        input_time (datetime or time): The current time or datetime.
+    
+    Returns:
+        int: The number of seconds remaining until 23:59:59 of the same day.
+    """
+    if isinstance(input_time, time):
+        # Use today's date for constructing a datetime
+        now = datetime.combine(datetime.today().date(), input_time)
+    elif isinstance(input_time, datetime):
+        now = input_time
+    else:
+        raise TypeError("Input must be a datetime.time or datetime.datetime instance.")
+    
+    # End of day: 23:59:59.999999 on the same date
+    end_of_day = datetime.combine(now.date(), time(23, 59, 59, 999999))
+    
+    # Compute remaining seconds (as integer)
+    # max(0, ...) to avoid negative in case input_time is already at the end of the day
+    remaining_seconds = max(0, int((end_of_day - now).total_seconds()))
+    return remaining_seconds
+
+# Entry point: seconds_until_end_of_day(input_time) -> int
+```

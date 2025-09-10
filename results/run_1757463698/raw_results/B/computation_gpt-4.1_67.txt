@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: Import the `datetime` module from Python's standard library to work with datetime objects.
+2. **Define a function**: Define a function that accepts a `datetime` object as input, representing the current date and time.
+3. **Compute the next midnight**: To find the time until midnight, create a new `datetime` object representing the next day's midnight (00:00:00), in the same timezone as the input datetime.
+4. **Calculate the difference**: Subtract the input `datetime` from the next midnight `datetime` to get a `timedelta` representing the time until midnight.
+5. **Return the result**: Return the computed `timedelta` object.
+
+```python
+from datetime import datetime, timedelta
+
+def time_until_midnight(dt: datetime) -> timedelta:
+    # Step 1: Get the date part of the input datetime and add one day to get the next day
+    next_day = dt.date() + timedelta(days=1)
+    # Step 2: Create a datetime object for midnight of the next day, preserving timezone if any
+    if dt.tzinfo is not None:
+        next_midnight = datetime.combine(next_day, datetime.min.time(), tzinfo=dt.tzinfo)
+    else:
+        next_midnight = datetime.combine(next_day, datetime.min.time())
+    # Step 3: Calculate the timedelta between the given datetime and the next midnight
+    time_left = next_midnight - dt
+    # Step 4: Return the result as a timedelta object
+    return time_left
+
+# Entry point: time_until_midnight(dt: datetime) -> timedelta
+```

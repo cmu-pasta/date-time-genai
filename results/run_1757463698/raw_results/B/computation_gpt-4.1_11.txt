@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `date`, `timedelta`, and `calendar` modules from Python's standard library.
+2. **Define a function**: We will create a function that accepts the year, month, weekday, and occurrence (nth) as input. All input types must be integers.
+   - `year`: 4-digit year e.g., 2024
+   - `month`: 1-12
+   - `weekday`: 0 (Monday), 1 (Tuesday), ..., 6 (Sunday)
+   - `n`: integer > 0, the nth occurrence of the weekday in the month
+3. **Find the first day of the month** as a `date` object.
+4. **Calculate the weekday offset** between the first of the month and the requested weekday and then determine the date of the first occurrence.
+5. **Compute the nth occurrence**: Add 7 * (n-1) days to the first occurrence to get the date of the nth occurrence.
+6. **Validate that the resulting date is in the correct month**. If not, no such occurrence exists; according to constraints, return `None` (since only allowed outputs are dates, returns a `date` or `None` as specified).
+7. **Return the date** of the nth occurrence (or `None`).
+
+```python
+from datetime import date, timedelta
+
+def nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date:
+    """
+    Returns the date of the nth occurrence of a weekday in a given month and year.
+    Weekday: 0 (Monday) .. 6 (Sunday).
+    If the nth occurrence does not exist, returns None.
+    """
+    # Step 1: Find the first day of the month
+    first_day = date(year, month, 1)
+    
+    # Step 2: Calculate the offset to the first desired weekday
+    first_day_weekday = first_day.weekday()  # 0=Monday, ..., 6=Sunday
+    days_until_weekday = (weekday - first_day_weekday + 7) % 7
+    first_occurrence = first_day + timedelta(days=days_until_weekday)
+    
+    # Step 3: Compute the nth occurrence date
+    nth_occurrence = first_occurrence + timedelta(days=7 * (n - 1))
+    
+    # Step 4: Validate that the nth occurrence is in the same month
+    if nth_occurrence.month == month:
+        return nth_occurrence
+    else:
+        return None
+
+# Entry point: nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date
+```

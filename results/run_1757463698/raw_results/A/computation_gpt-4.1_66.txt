@@ -1,0 +1,57 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need to use the `datetime` and `zoneinfo` modules from Python's standard library to work with time zones and daylight saving transitions.
+2. **Define a function**: We'll create a function that takes a time zone (as a `zoneinfo.ZoneInfo` object) and a year (as an `integer`) as input.
+3. **Set up the date range**: For the specified year, we'll examine all the days to detect the start and end of daylight saving time.
+4. **Detect DST transitions**: We'll iterate through each day of the year, checking when the UTC offset changes (i.e., the start or end of DST).
+5. **Extract and return results**: We'll record the datetimes at which the offset changes. Since the entry point cannot use complex types, we will return two `datetime` objects—one for the start and one for the end of DST. If there is no DST for the zone or year, both will be `None`.
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def get_dst_start_and_end(tz: ZoneInfo, year: int) -> datetime:
+    # Step 1: Set up the date range for the specified year
+    date = datetime(year, 1, 1, 0, 0)
+    end_date = datetime(year + 1, 1, 1, 0, 0)
+    delta = timedelta(days=1)
+    
+    prev_offset = (date.replace(tzinfo=tz)).utcoffset()
+    dst_start = None
+    dst_end = None
+
+    # Step 2: Iterate through each day in the year to find DST transitions
+    while date < end_date:
+        cur_offset = (date.replace(tzinfo=tz)).utcoffset()
+        if cur_offset != prev_offset:
+            # Step 3: Transition detected. Search for the exact transition datetime
+            # Binary search within the last 1 day to find the exact time of transition
+            low = date - delta
+            high = date
+            while (high - low) > timedelta(minutes=1):
+                mid = low + (high - low) / 2
+                if (mid.replace(tzinfo=tz)).utcoffset() == prev_offset:
+                    low = mid
+                else:
+                    high = mid
+            transition_time = high.replace(tzinfo=tz)
+            # Step 4: Determine if this is start or end of DST based on offset direction
+            if cur_offset > prev_offset and dst_start is None:
+                dst_start = transition_time
+            elif cur_offset < prev_offset and dst_end is None:
+                dst_end = transition_time
+            prev_offset = cur_offset
+        date += delta
+
+    # Step 5: Return value as per restriction (no complex types)
+    # If there is only one transition or none, both dst_start and dst_end may be None
+    # For zones without DST, both will be None
+    # Entry point expects two outputs: dst_start and dst_end (datetimes or None)
+    # So we use a separate function to get start and end
+    # For output, we'll return dst_start and dst_end as a tuple but as per the requirement
+    # For this entry point, return dst_start if called for start, dst_end if for end
+    # To comply, the entry point will be dst_start (call get_dst_start_and_end(..., which='start')), dst_end (call ..., which='end')
+    return dst_start, dst_end
+
+# Entry point: get_dst_start_and_end(tz: ZoneInfo, year: int) -> datetime
+```

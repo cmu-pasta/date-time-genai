@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "datetime-genai"
+version = "0.1.0"
+description = ""
+authors = ["Shrey Tiwari <shreymt@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "^1.0.0"
+openai = "^1.0.0"
+anthropic = "^0.34.0"
+google-generativeai = "^0.7.0"
+hypothesis = "^6.0.0"
+pytest = "^7.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

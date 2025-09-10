@@ -1,0 +1,55 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need `datetime` and `zoneinfo` from Python's standard library.
+2. **Define a function**: We will create a function that accepts a year (integer) and a timezone (zoneinfo.ZoneInfo) as inputs.
+3. **Determine the standard time zone offset**: For the given year, check dates within the first months to capture the standard time offset (before DST starts).
+4. **Iterate through the year to find DST start**: In most regions, DST starts at a specific local time (usually between March and June). For each day in this period:
+    - Localize a datetime (e.g., 2:00 AM) in the specified timezone.
+    - Compare the UTC offset of each date with the standard offset.
+    - The transition to a greater offset indicates the start of DST.
+5. **Return the start time of daylight saving**: Return the datetime value (with timezone) when the DST change is detected.
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def get_daylight_saving_start(year: int, tz: ZoneInfo) -> datetime:
+    # Step 1: Find the standard (non-DST) UTC offset by checking January 15th.
+    dt_standard = datetime(year, 1, 15, 2, 0, 0, tzinfo=tz)
+    std_offset = dt_standard.utcoffset()
+    
+    # Step 2: Search for DST start between February and June.
+    for month in range(2, 7):  # February (2) to June (6)
+        for day in range(1, 32):
+            try:
+                current = datetime(year, month, day, 2, 0, 0, tzinfo=tz)
+            except ValueError:
+                # Skip invalid dates (e.g., Feb 30)
+                continue
+            # Compare current offset to standard offset
+            if current.utcoffset() != std_offset:
+                # Check if the previous day was still standard time
+                previous = current - timedelta(days=1)
+                previous = previous.replace(tzinfo=tz)
+                if previous.utcoffset() == std_offset:
+                    # Found DST transition: do a finer search by hour
+                    for hour in range(0, 24):
+                        finer = datetime(year, month, day, hour, 0, 0, tzinfo=tz)
+                        if finer.utcoffset() != std_offset:
+                            # Check previous hour to get the exact transition time
+                            prev_finer = finer - timedelta(hours=1)
+                            prev_finer = prev_finer.replace(tzinfo=tz)
+                            if prev_finer.utcoffset() == std_offset:
+                                # Finer search by minute
+                                for minute in range(0, 60):
+                                    finest = datetime(year, month, day, hour, minute, 0, tzinfo=tz)
+                                    if finest.utcoffset() != std_offset:
+                                        # DST starts at this minute
+                                        return finest
+                    # If not found by minute, return the hour found
+                    return finer
+    # If no DST transition is found (some zones do not use DST), return None
+    return None
+
+# Entry point: get_daylight_saving_start(year: int, tz: ZoneInfo) -> datetime
+```

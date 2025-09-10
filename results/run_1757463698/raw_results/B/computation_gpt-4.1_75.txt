@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We will use Python’s `datetime` module.
+2. **Define a function**: The function should accept a `datetime` object as input, representing the source date and time.
+3. **Determine the current quarter and calculate the start month of the next quarter**:
+    - Quarters: Q1 -> Jan-Mar, Q2 -> Apr-Jun, Q3 -> Jul-Sep, Q4 -> Oct-Dec.
+    - Find the quarter for the input month.
+    - The next quarter starts at month 1, 4, 7, or 10, whichever is after the current quarter.
+4. **Handle year increment if moving from Q4 to Q1**: If the next quarter start month is January, increment the year by 1.
+5. **Construct the datetime representing the start of the next quarter (time at 00:00:00)**.
+6. **Return the resulting `datetime` object**.
+
+```python
+from datetime import datetime
+
+def start_of_next_quarter(dt: datetime) -> datetime:
+    # Step 1: Determine the start month of the next quarter
+    month = dt.month
+    year = dt.year
+
+    # Quarters: (start_months: 1, 4, 7, 10)
+    if month <= 3:
+        next_q_month = 4
+        next_q_year = year
+    elif month <= 6:
+        next_q_month = 7
+        next_q_year = year
+    elif month <= 9:
+        next_q_month = 10
+        next_q_year = year
+    else:  # month 10-12
+        next_q_month = 1
+        next_q_year = year + 1
+
+    # Step 2: Construct the datetime at the start of the next quarter (00:00:00)
+    next_quarter_start = datetime(next_q_year, next_q_month, 1, 0, 0, 0, tzinfo=dt.tzinfo)
+
+    return next_quarter_start
+
+# Entry point: start_of_next_quarter(dt: datetime) -> datetime
+```

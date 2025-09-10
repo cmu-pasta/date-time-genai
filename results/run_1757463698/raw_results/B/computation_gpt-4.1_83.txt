@@ -1,0 +1,58 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the problem**: We want a function to check if a given day is the longest (summer solstice) or shortest (winter solstice) day of the year for a specific location. 
+2. **Handling inputs**: The function should take a date and the location’s timezone. Time zone is important because the date of solstices may differ locally.
+3. **Solstice Calculation**: Finding the exact solstice for any arbitrary location is complex and requires astronomical computations or an external library such as `astral`. But since the prompt restricts us to standard libraries only, we can approximate:
+   - For the Northern Hemisphere:  
+     - Longest day (summer solstice): June 21  
+     - Shortest day (winter solstice): December 21  
+   - For the Southern Hemisphere, swap the dates.
+   - We'll infer the hemisphere from the location's zoneinfo (e.g., "America" is Northern, "Australia" is Southern) in a *rudimentary* way since we cannot use any external geo libraries.
+4. **Normalize date and time**: Convert all dates to the target location's local date using `zoneinfo` to ensure correctness.
+5. **Check against solstice dates**: Compare the input date to the calculated solstice date for the year and hemisphere.
+6. **Return**: Return a boolean `True` if the date matches the solstice (longest/shortest day), otherwise `False`.
+
+```python
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
+
+def is_longest_or_shortest_day(check_date: date, tz: ZoneInfo, is_longest: bool) -> bool:
+    # Step 1: Obtain the correct local date (as a date object) in the provided timezone.
+    # Assume check_date is in UTC and convert to local time. If check_date is naive, treat it as local date already.
+    # To be robust, let's handle both cases.
+    if isinstance(check_date, datetime):
+        # If datetime is timezone-aware, convert to wanted zone; else assume UTC then convert
+        if check_date.tzinfo is None:
+            local_dt = check_date.replace(tzinfo=ZoneInfo('UTC')).astimezone(tz)
+        else:
+            local_dt = check_date.astimezone(tz)
+        local_date = local_dt.date()
+    else:
+        # If just a date, assume the same in target tz
+        local_date = check_date
+
+    year = local_date.year
+
+    # Step 2: Guess Northern vs Southern Hemisphere based on the tz key 
+    # (Very coarse: look for placeholder continent)
+    tz_name = tz.key
+    northern_hemisphere_keywords = ['Europe', 'America', 'Asia', 'Arctic', 'Atlantic']
+    southern_hemisphere_keywords = ['Australia', 'Antarctica', 'Indian', 'Pacific', 'Africa']
+    # This is only an approximation!
+    if any(word in tz_name for word in northern_hemisphere_keywords):
+        # Northern hemisphere
+        longest_day = date(year, 6, 21)
+        shortest_day = date(year, 12, 21)
+    else:
+        # Southern hemisphere
+        longest_day = date(year, 12, 21)
+        shortest_day = date(year, 6, 21)
+
+    # Step 3: Compare and return
+    if is_longest:
+        return local_date == longest_day
+    else:
+        return local_date == shortest_day
+
+# Entry point: is_longest_or_shortest_day(check_date: date, tz: ZoneInfo, is_longest: bool) -> bool
+```

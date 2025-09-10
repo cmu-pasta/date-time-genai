@@ -1,0 +1,44 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll use the `datetime` class from Python's standard library to work with dates and times.
+2. **Define a function**: We'll write a function that accepts a `datetime` object as the input.
+3. **Compute the Julian date number**: The Julian date is a continuous count of days and fractions since noon Universal Time on January 1, 4713 BC (Julian calendar). We need to implement the standard astronomical formula for converting the calendar date and time into Julian Date number.
+4. **Return the result**: The output should be a `float`, as the Julian Date is typically fractional.
+
+Here is the implementation of the above steps in code:
+
+```python
+from datetime import datetime
+
+def compute_julian_date(dt: datetime) -> float:
+    """
+    Computes the Julian date number for the given datetime.
+    """
+    year = dt.year
+    month = dt.month
+    day = dt.day
+    # Convert hour, minute, second, microsecond to fractional day
+    frac_day = (
+        dt.hour +
+        dt.minute / 60 +
+        dt.second / 3600 +
+        dt.microsecond / 3600 / 1_000_000
+    ) / 24
+
+    if month <= 2:
+        year -= 1
+        month += 12
+
+    A = year // 100
+    B = 2 - A + A // 4
+
+    # Julian Day Number at 0h UTC
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + B - 1524.5
+
+    # Add the fractional day part
+    julian_date = jd + frac_day
+
+    return julian_date
+
+# Entry point: compute_julian_date(dt: datetime) -> float
+```

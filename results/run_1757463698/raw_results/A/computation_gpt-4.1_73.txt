@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the problem**: We need to return the date and time of the solstice (either summer or winter) for a given location and year. For this solution, we'll focus on calculating either the June Solstice (around June 20-21) or the December Solstice (around December 21-22), as the equinoxes are separate events.
+2. **Limitations due to standard library**: The standard Python datetime module (including zoneinfo for timezones) does not contain astronomical calculations for solstice timings—these require precise astronomical calculations or external libraries. However, we can estimate solstice dates and provide a time (e.g., noon UTC or use the local timezone if provided).
+3. **Inputs**:  
+   - `year` (integer): The year for which to find the solstice.
+   - `is_june_solstice` (boolean): `True` for June (summer) solstice, `False` for December (winter) solstice.
+   - `timezone` (zoneinfo.ZoneInfo): The timezone for the location (optional; default is UTC).
+4. **Estimate solstice date and time**: We'll use typical values for recent solstices and adjust to UTC noon on an approximate date for each solstice (as a simplified estimation).
+   - June Solstice: June 21
+   - December Solstice: December 21
+   - (These can be off by a few hours/days depending on the year; improvements require external ephemeris data.)
+5. **Adjust to timezone**: If a timezone is provided, we set the time to noon (12:00:00) in that timezone.
+6. **Return value**: A `datetime.datetime` object with the estimated solstice date and local time.
+
+```python
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
+
+def estimated_solstice_datetime(
+    year: int,
+    is_june_solstice: bool,
+    timezone: ZoneInfo = ZoneInfo('UTC')
+) -> datetime:
+    """
+    Returns an estimated date and time of the solstice for a given year and location.
+    
+    Parameters:
+    - year (integer): The year of interest.
+    - is_june_solstice (boolean): If True, returns the June solstice; if False, December solstice.
+    - timezone (zoneinfo.ZoneInfo): The timezone for the location (default UTC).
+    
+    Returns:
+    - datetime.datetime: Estimated local datetime of the solstice.
+    """
+    if is_june_solstice:
+        # June Solstice: Typically June 20 or 21. We'll use 21st as general approximation.
+        solstice_date = datetime(year, 6, 21, 12, 0, 0, tzinfo=timezone)
+    else:
+        # December Solstice: Typically December 21 or 22. We'll use 21st.
+        solstice_date = datetime(year, 12, 21, 12, 0, 0, tzinfo=timezone)
+    return solstice_date
+
+# Entry point: estimated_solstice_datetime(year: int, is_june_solstice: bool, timezone: zoneinfo.ZoneInfo) -> datetime
+```

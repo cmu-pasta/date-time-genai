@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the `datetime` module from Python's standard library to work with timestamps and date formatting.
+2. **Define a function**: We will create a function that accepts a `datetime` object as input.
+3. **Convert datetime to RFC 2822 format**: Use the `strftime` method to format the input datetime object according to the RFC 2822 specification, e.g., `"Wed, 02 Oct 2002 13:00:00 -0400"`.
+4. **Return the formatted string**: Output the formatted date string as specified.
+
+```python
+from datetime import datetime
+
+def timestamp_to_rfc2822(dt: datetime) -> str:
+    """
+    Convert a datetime object to RFC 2822 format.
+    Example output: 'Wed, 02 Oct 2002 13:00:00 -0400'
+    """
+    # Step 1: Check if tzinfo is present; if not, treat as local time with no offset
+    if dt.tzinfo is None:
+        offset_str = "-0000"
+    else:
+        # Get the UTC offset in seconds and compute hours and minutes
+        offset = dt.utcoffset()
+        if offset is None:
+            offset_str = "-0000"
+        else:
+            total_minutes = int(offset.total_seconds() // 60)
+            sign = "+" if total_minutes >= 0 else "-"
+            total_minutes = abs(total_minutes)
+            hours, minutes = divmod(total_minutes, 60)
+            offset_str = f"{sign}{hours:02d}{minutes:02d}"
+
+    # Step 2: Format datetime in RFC 2822 format
+    # Example: 'Wed, 02 Oct 2002 13:00:00 -0400'
+    rfc2822 = dt.strftime('%a, %d %b %Y %H:%M:%S ') + offset_str
+
+    # Step 3: Return the formatted string
+    return rfc2822
+
+# Entry point: timestamp_to_rfc2822(dt: datetime) -> str
+```

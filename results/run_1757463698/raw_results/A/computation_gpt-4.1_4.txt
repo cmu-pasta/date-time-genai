@@ -1,0 +1,57 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `date` class from Python's standard `datetime` library to work with dates.
+2. **Define a function**: We will create a function that accepts a birthdate as a `date` object and computes the difference to today's date (using `date.today()`).
+3. **Compute the year difference**: Subtract the birth year from the current year.
+4. **Adjust for months and days**: If today's month and day are before the birth month and day, subtract accordingly from the years and months.
+5. **Compute the months difference**: Calculate the month difference, and adjust if needed if the day of the month is less than the birth day.
+6. **Compute the days difference**: Calculate the day difference. If today’s day is before the birth day, borrow days from the previous month.
+7. **Return the result**: Output the computed years, months, and days as three integers as specified.
+
+```python
+from datetime import date
+
+def compute_age_ymd(birthdate: date) -> int:
+    today = date.today()
+    
+    # Initial difference
+    years = today.year - birthdate.year
+    months = today.month - birthdate.month
+    days = today.day - birthdate.day
+
+    # Adjust days and months if needed
+    if days < 0:
+        # Borrow days from previous month
+        # Calculate the number of days in the previous month
+        if today.month == 1:
+            prev_month = 12
+            prev_month_year = today.year - 1
+        else:
+            prev_month = today.month - 1
+            prev_month_year = today.year
+
+        # Days in previous month
+        if prev_month == 2:
+            # Leap year check for February
+            if (prev_month_year % 4 == 0 and prev_month_year % 100 != 0) or (prev_month_year % 400 == 0):
+                days_in_prev_month = 29
+            else:
+                days_in_prev_month = 28
+        elif prev_month in [1,3,5,7,8,10,12]:
+            days_in_prev_month = 31
+        else:
+            days_in_prev_month = 30
+
+        days += days_in_prev_month
+        months -= 1
+
+    if months < 0:
+        months += 12
+        years -= 1
+
+    # The function returns years first, then months, then days as separate ints
+    # Entry point expects a single output value, so we return years * 10000 + months * 100 + days as a combined integer
+    return years * 10000 + months * 100 + days
+
+# Entry point: compute_age_ymd(birthdate: date) -> int
+```

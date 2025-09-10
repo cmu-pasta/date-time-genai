@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the Concept of Full Moons**: A full moon is a specific lunar phase, and the time between consecutive full moons (a "synodic month") averages about 29.530588853 days.
+2. **Choose a Known Reference Full Moon Date**: We need a base date where a full moon is known to have occurred. For this calculation, we can use January 21, 2000, 00:40 UTC, which is a commonly cited full moon date.
+3. **Calculate the Difference in Days Between Dates**: Given two dates as `datetime` objects, find the difference in days between the earlier and later date.
+4. **Calculate Number of Full Moons**: Divide the difference in days by the length of one synodic month and get the integer part (using floor division or `int()`).
+5. **Return the Result**: Return the number of full moons as an integer.
+
+```python
+from datetime import datetime
+
+def count_full_moons_between(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Define a reference full moon datetime (Jan 21, 2000 at 00:40 UTC)
+    reference_full_moon = datetime(2000, 1, 21, 0, 40)
+    synodic_month = 29.530588853  # days between full moons
+    
+    # Step 2: Sort input datetimes so start <= end
+    start = min(dt1, dt2)
+    end = max(dt1, dt2)
+    
+    # Step 3: Calculate days from reference to start and end
+    days_from_reference_to_start = (start - reference_full_moon).total_seconds() / 86400
+    days_from_reference_to_end = (end - reference_full_moon).total_seconds() / 86400
+
+    # Step 4: Number of full moons passed up to start and end (using floor to count *full* moons)
+    moons_at_start = int(days_from_reference_to_start // synodic_month)
+    moons_at_end = int(days_from_reference_to_end // synodic_month)
+    
+    # Step 5: The count of full moons between start and end is the difference
+    full_moons_between = abs(moons_at_end - moons_at_start)
+    return full_moons_between
+
+# Entry point: count_full_moons_between(dt1: datetime, dt2: datetime) -> int
+```

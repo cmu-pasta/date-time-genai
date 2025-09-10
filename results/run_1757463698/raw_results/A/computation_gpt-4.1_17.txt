@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll need `datetime` from the standard library, as well as `random` for generating random integers within a range. The main classes we'll use are `datetime.date` or `datetime.datetime` to represent dates.
+2. **Define a function**: We'll create a function that accepts two `date` objects (the start and end of the range) and returns a single `date` object representing the random date selected within the given range (inclusive).
+3. **Calculate the range**: We'll find the number of days between the two dates.
+4. **Generate a random offset**: Use the `random.randint()` function to generate a random integer between 0 and the number of days difference, inclusive.
+5. **Compute the random date**: Add the random offset as a `datetime.timedelta` to the starting date.
+6. **Return the result**: Output the computed random `date`.
+
+```python
+from datetime import date, timedelta
+import random
+
+def generate_random_date_in_range(start_date: date, end_date: date) -> date:
+    # Step 1: Ensure start_date <= end_date
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+    
+    # Step 2: Calculate the difference in days between start and end
+    delta_days = (end_date - start_date).days
+    
+    # Step 3: Generate a random integer offset within [0, delta_days]
+    random_offset = random.randint(0, delta_days)
+    
+    # Step 4: Add the offset to the start_date to get the random date
+    random_date = start_date + timedelta(days=random_offset)
+    
+    # Step 5: Return the random date
+    return random_date
+
+# Entry point: generate_random_date_in_range(start_date: date, end_date: date) -> date
+```

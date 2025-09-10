@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module, specifically `datetime`, `time`, and `timedelta`.
+2. **Define a function**: We'll create a function that receives the current `datetime`, a "meeting time" as a `time` object, and a boolean flag indicating whether the meeting occurs today if the time is still remaining.
+3. **Calculate the next meeting datetime**:
+    - Construct a datetime for today at the meeting time.
+    - If that time is still in the future (relative to now), return the duration from now until that time.
+    - If it's already passed, the next meeting is tomorrow at the same time; construct that and compute the duration.
+4. **Return the result**: The duration will be returned as a `timedelta` object, which is the standard way to represent durations/time differences in Python.
+
+```python
+from datetime import datetime, time, timedelta
+
+def duration_until_next_meeting(current_dt: datetime, meeting_time: time, include_today: bool) -> timedelta:
+    """
+    Calculates the duration until the next scheduled meeting given the current datetime,
+    the meeting time as a time object, and a flag indicating whether to count today's
+    meeting if it hasn't occurred yet.
+    """
+    # Step 1: Construct today's meeting datetime
+    today_meeting_dt = datetime.combine(current_dt.date(), meeting_time, current_dt.tzinfo)
+    
+    # Step 2: Check if today's meeting is valid
+    if include_today and current_dt < today_meeting_dt:
+        # Next meeting is today
+        next_meeting_dt = today_meeting_dt
+    else:
+        # Next meeting is tomorrow
+        next_day = current_dt.date() + timedelta(days=1)
+        next_meeting_dt = datetime.combine(next_day, meeting_time, current_dt.tzinfo)
+    
+    # Step 3: Calculate duration
+    duration = next_meeting_dt - current_dt
+    return duration
+
+# Entry point: duration_until_next_meeting(current_dt: datetime, meeting_time: time, include_today: bool) -> timedelta
+```

@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We use the `datetime` module from Python's standard library.
+2. **Define a function**: We'll write a function that accepts a `datetime` object as input.
+3. **Determine the start of the next hour**: 
+   - Set the minutes, seconds, and microseconds to zero, which gives us the start of the current hour.
+   - Add one hour to this value to get the start of the next hour.
+4. **Return the result**: The function will return the calculated `datetime` object.
+
+```python
+from datetime import datetime, timedelta
+
+def get_start_of_next_hour(dt: datetime) -> datetime:
+    # Step 1: Replace minutes, seconds, and microseconds to zero for the start of current hour
+    current_hour_start = dt.replace(minute=0, second=0, microsecond=0)
+    
+    # Step 2: Add one hour to get the start time of the next hour
+    next_hour_start = current_hour_start + timedelta(hours=1)
+    
+    # Step 3: Return the result as a datetime object
+    return next_hour_start
+
+# Entry point: get_start_of_next_hour(dt: datetime) -> datetime
+```

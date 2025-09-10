@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll need the `datetime` module to work with dates.
+2. **Leap year definition**: A year is a leap year if it is divisible by 4, except for years that are both divisible by 100 but not divisible by 400.
+3. **Define a function**: We'll write a function that accepts two dates as input arguments. The interval is inclusive of both endpoints.
+4. **Iterate through years in the range**: For each year in the range from the start year to the end year (inclusive), check if the year is a leap year.
+5. **Count matching years**: Increment a counter for each leap year found.
+6. **Return result**: Return the count as an integer.
+
+```python
+from datetime import date
+
+def count_leap_years_in_range(start_date: date, end_date: date) -> int:
+    # Step 1: Identify the range of years to consider (inclusive)
+    start_year = start_date.year
+    end_year = end_date.year
+    
+    # Step 2: Initialize the leap year counter
+    leap_years_count = 0
+    
+    # Step 3: Iterate over each year in range and check leap year condition
+    for year in range(start_year, end_year + 1):
+        # Step 4: Check leap year rule
+        if (year % 4 == 0) and ((year % 100 != 0) or (year % 400 == 0)):
+            leap_years_count += 1
+    
+    # Step 5: Return the result as integer
+    return leap_years_count
+
+# Entry point: count_leap_years_in_range(start_date: date, end_date: date) -> int
+```

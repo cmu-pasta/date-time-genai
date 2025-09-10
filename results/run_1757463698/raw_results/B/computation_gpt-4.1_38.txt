@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need to use the `datetime` module from Python's standard library to work with date objects.
+2. **Define a function**: We'll create a function that accepts a `date` object as input.
+3. **Calculate the week's start date (Sunday) for the given date**:
+    - In Python's `datetime`, `date.weekday()` treats Monday as 0 and Sunday as 6.
+    - To find the previous Sunday (or the same day if it's Sunday): 
+        - If the input date is Sunday (`date.weekday() == 6`), subtract 0 days.
+        - Otherwise, subtract `(date.weekday() + 1) % 7` days from the date.
+4. **Return the result**: The function should return a `date` object representing the week’s start date (Sunday).
+5. **Entry Point**: The entry point will be the signature of our function.
+
+```python
+from datetime import date, timedelta
+
+def get_week_start_sunday(input_date: date) -> date:
+    # Step 1: Determine the weekday index (Monday=0, Sunday=6)
+    weekday_index = input_date.weekday()
+    # Step 2: Calculate the number of days to subtract to reach the previous Sunday
+    days_to_subtract = (weekday_index + 1) % 7
+    # Step 3: Compute and return the week's start date (Sunday)
+    week_start_date = input_date - timedelta(days=days_to_subtract)
+    return week_start_date
+
+# Entry point: get_week_start_sunday(input_date: date) -> date
+```

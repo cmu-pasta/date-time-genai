@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We will use the `datetime` class and `zoneinfo` module from Python's standard library. `zoneinfo` is available since Python 3.9 and is used to handle time zone information.
+2. **Define the function**: We will create a function that accepts two arguments: a naive `datetime` object (without timezone information) and a `zoneinfo.ZoneInfo` object (representing the target timezone).
+3. **Check if the datetime is naive**: We must ensure the input `datetime` is naive (i.e., its `tzinfo` attribute is `None`), since the task is to "convert a naive datetime".
+4. **Attach the timezone**: Use the `replace()` method to associate the naive `datetime` object with the specified timezone, making it timezone-aware.
+5. **Return the aware datetime**: The function will return the converted aware `datetime` object.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_naive_to_aware(dt: datetime, tz: ZoneInfo) -> datetime:
+    # Step 1: Check if the datetime is naive
+    if dt.tzinfo is not None:
+        raise ValueError("The input datetime must be naive (tzinfo=None)")
+    
+    # Step 2: Attach the provided timezone to the naive datetime
+    aware_dt = dt.replace(tzinfo=tz)
+    
+    # Step 3: Return the aware datetime
+    return aware_dt
+
+# Entry point: convert_naive_to_aware(dt: datetime, tz: ZoneInfo) -> datetime
+```

@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1. **Choose a reference full moon date**: We need a known full moon date as a starting point. Astronomers commonly use January 21, 2000, as a reference (a full moon occurred on this date).
+2. **Determine the synodic month duration**: The average lunar synodic month (new moon to new moon, or full moon to full moon) is about 29.530588853 days.
+3. **Compute the number of full moons since the reference date for both dates**: Find the number of full moon cycles that have occurred from the reference date to each input date.
+4. **Calculate the difference in full moons**: Subtract the number of cycles to find the integer number of full moons that occurred between the two dates.
+5. **Return the result**: Output will be the integer number of full moons (we count only *full* moons that have occurred, not partial cycles).
+
+```python
+from datetime import date, timedelta
+
+def full_moons_between(start_date: date, end_date: date) -> int:
+    # Step 1: Define a known full moon reference date.
+    reference_full_moon = date(2000, 1, 21)  # January 21, 2000 was a full moon
+    
+    # Step 2: Synodic month duration (average full moon cycle)
+    synodic_month = 29.530588853  # days (from astronomical data)
+    
+    # Step 3: Sort the input dates so start_date <= end_date
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+    
+    # Step 4: Calculate number of full moons since reference for both dates.
+    days_from_reference_start = (start_date - reference_full_moon).days
+    days_from_reference_end   = (end_date - reference_full_moon).days
+    
+    cycles_start = days_from_reference_start / synodic_month
+    cycles_end   = days_from_reference_end   / synodic_month
+    
+    # Step 5: Calculate the number of full moons between the two dates.
+    # Use floor for the starting position and for the ending position.
+    full_moons = int(cycles_end // 1) - int(cycles_start // 1)
+    
+    return full_moons
+
+# Entry point: full_moons_between(start_date: date, end_date: date) -> int
+```

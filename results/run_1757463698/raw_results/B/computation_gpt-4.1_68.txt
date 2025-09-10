@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll need the `datetime` module to work with dates.
+2. **Define the function signature**: The entry point function will accept:
+   - `start_date`: a `datetime.date` object (the starting date to search from).
+   - `month`: an `integer` (the target month, 1-12).
+   - `day`: an `integer` (the target day, 1-31, depending on month).
+   The function will **return** the next `datetime.date` with the specified MM-DD after `start_date`.
+3. **Compute the next matching date**:
+   - First, construct a date with the target `month` and `day` in the same year as `start_date`.
+   - If this target date is **after** `start_date`, return it.
+   - Otherwise, move to the next year and check if that month-day is valid (e.g., Feb 29 for leap years).
+   - If not a valid date in the next year, keep advancing years until a valid date is found.
+4. **Return the result** as a `datetime.date`.
+
+```python
+from datetime import date
+
+def find_next_matching_mmdd(start_date: date, month: int, day: int) -> date:
+    """
+    Given a start date, find the next occurrence (after start_date) of the date 
+    with the specified MM-DD (month and day pattern).
+
+    Args:
+        start_date (date): The date to start searching from (exclusive).
+        month (int): Month of the target pattern (1-12).
+        day (int): Day of the target pattern (1-31, must be valid for the month).
+
+    Returns:
+        date: The next date after start_date with the given MM-DD.
+    """
+    year = start_date.year
+
+    while True:
+        try:
+            candidate = date(year, month, day)
+            if candidate > start_date:
+                return candidate
+        except ValueError:
+            # The date is invalid for the current year (e.g., Feb 29 in a non-leap year)
+            pass
+        year += 1
+
+# Entry point: find_next_matching_mmdd(start_date: date, month: int, day: int) -> date
+```

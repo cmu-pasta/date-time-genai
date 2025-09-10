@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We'll need the `datetime` module from Python's standard library to handle datetime computations.
+2. **Define the function**: We'll create a function that takes a single `datetime` object as input (the time to compare) and compares it with the current time (using `datetime.now()`).
+3. **Compute the time difference**: We subtract the given datetime from now to get a `timedelta`.
+4. **Determine the time unit and value**: We check if the time difference is in seconds, minutes, hours, days, or weeks, and format the string accordingly.
+5. **Format the output string**: Build a human-readable string such as "just now", "2 hours ago", "3 days ago", etc.
+6. **Return the result**: Return the string.
+
+```python
+from datetime import datetime, timedelta
+
+def human_readable_relative_time(dt: datetime) -> str:
+    now = datetime.now(dt.tzinfo) if dt.tzinfo else datetime.now()
+    diff = now - dt
+    seconds = int(diff.total_seconds())
+    
+    if seconds < 0:
+        return "in the future"
+    elif seconds < 60:
+        return "just now"
+    elif seconds < 3600:
+        minutes = seconds // 60
+        return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+    elif seconds < 86400:
+        hours = seconds // 3600
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+    elif seconds < 604800:
+        days = seconds // 86400
+        return f"{days} day{'s' if days != 1 else ''} ago"
+    else:
+        weeks = seconds // 604800
+        return f"{weeks} week{'s' if weeks != 1 else ''} ago"
+
+# Entry point: human_readable_relative_time(dt: datetime) -> str
+```

@@ -1,0 +1,99 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We use the `datetime` module from the standard library. Since standard datetime does not have astronomical calculations, we'll compute the average sunrise time for a given month and location (latitude, longitude) using a very simple estimation formula. (For a precise calculation, one would need non-standard libraries or APIs, but that's not permitted here.)
+2. **Define function inputs**: The function will accept:
+    - `year` (integer): the year to use.
+    - `month` (integer): the month to use (1-12).
+    - `latitude` (float): the latitude of the location.
+    - `longitude` (float): the longitude of the location.
+    - `zone` (`zoneinfo.ZoneInfo`): the IANA timezone for the location.
+3. **Estimate sunrise times**: We'll estimate sunrise for each day of the month using a naive formula:
+    - Assume the sunrise at equator and equinox is at 6:00 AM.
+    - Adjust sunrise by a crude factor based on latitude and day of year.
+    - Adjust for longitude (each 15 degrees of longitude shifts solar time by ~1 hour).
+    - Apply the timezone offset.
+4. **For each day in the month**: Estimate the sunrise datetime for that date.
+5. **Compute the average sunrise time**: Average the number of seconds after midnight for all sunrises, then express this as a `datetime.time`.
+6. **Return the average sunrise time as a `datetime.time` (with `zoneinfo` offset).**
+
+```python
+from datetime import date, datetime, timedelta, time
+from zoneinfo import ZoneInfo
+
+def estimate_sunrise_time(day_of_year: int, latitude: float, longitude: float) -> float:
+    """
+    Returns the estimated sunrise time (hour, as float) since midnight UTC.
+    This is a crude astronomical estimate.
+    """
+    # Sunrise at equator at equinox: 6.0 AM UTC
+    base = 6.0  # rough average
+    # Day progression: offset (-23.45 to 23.45) deg declination over year
+    declination = -23.44 * (
+        (3.141592653589793 / 180) *
+        (360 / 365) * (day_of_year + 10)
+    )
+    # Equation of time, latitude effect: higher latitude = more variation
+    # Here we simplify: latitude shift ~ 0.1 hour per 10 degrees latitude from equator
+    lat_effect = 0.1 * (abs(latitude) / 10.0)
+    # Day of year effect (sun earlier in summer, later in winter, north/south hemisphere)
+    # Peak amplitude ~ +/- 1 hour; shift with solstices (approx June 21, Dec 21)
+    # Use a sine wave to approximate
+    amplitude = 1.0 * (latitude / 90.0)  # peak sunrise shift at pole
+    # Day index for solstice (approx 172 = June 21)
+    solstice = 172 if latitude >= 0 else 355
+    import math
+    seasonal = amplitude * math.sin(2 * math.pi * ((day_of_year - solstice) / 365.25))
+    # Longitude converts to time: 360deg = 24h => 15deg = 1hr; positive east
+    long_effect = -longitude / 15.0  # convert to hours
+    return max(0.0, base + lat_effect + seasonal + long_effect)
+
+def average_sunrise_time(
+    year: int,
+    month: int,
+    latitude: float,
+    longitude: float,
+    zone: ZoneInfo,
+) -> time:
+    # Step 1: Get the first and last day of the month
+    first_day = date(year, month, 1)
+    if month == 12:
+        next_month = date(year+1, 1, 1)
+    else:
+        next_month = date(year, month+1, 1)
+    num_days = (next_month - first_day).days
+
+    # Step 2: Compute total seconds after midnight of all sunrises in local time
+    total_seconds = 0.0
+    for d in range(num_days):
+        this_date = first_day + timedelta(days=d)
+        day_of_year = this_date.timetuple().tm_yday
+        # Estimate sunrise in UTC hour
+        sunrise_hour_utc = estimate_sunrise_time(day_of_year, latitude, longitude)
+        sunrise_utc = datetime.combine(this_date, time(0, 0, 0), tzinfo=ZoneInfo('UTC')) + timedelta(hours=sunrise_hour_utc)
+        # Convert to local time
+        sunrise_local = sunrise_utc.astimezone(zone)
+        # Seconds after local midnight
+        seconds = (
+            sunrise_local.hour * 3600 +
+            sunrise_local.minute * 60 +
+            sunrise_local.second
+        )
+        total_seconds += seconds
+
+    # Step 3: Compute average seconds, make a time object
+    avg_seconds = total_seconds / num_days
+    hours = int(avg_seconds // 3600)
+    minutes = int((avg_seconds % 3600) // 60)
+    seconds = int(avg_seconds % 60)
+    # Step 4: Return as time object (with local timezone info)
+    avg_time = time(hours, minutes, seconds, tzinfo=zone)
+    return avg_time
+
+# Entry point: average_sunrise_time(
+#   year: int,
+#   month: int,
+#   latitude: float,
+#   longitude: float,
+#   zone: zoneinfo.ZoneInfo
+# ) -> datetime.time
+```

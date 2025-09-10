@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts two date objects as input arguments.
+3. **Determine the order of the dates**: Swap them if necessary to ensure we always count forward in time (from earlier to later), using the min and max functions.
+4. **Initialize the weekday counter**: Set a counter to zero.
+5. **Iterate over each day in the range**: For each day between the two dates (inclusive or exclusive as desired; here we'll make it exclusive of the end date for consistency with similar computations), check if it's a weekday (Monday=0 to Friday=4 via the `.weekday()` method).
+6. **Increment the counter for weekdays**: Each time a weekday is found, increment the counter.
+7. **Return the result**: The function should return the total number of weekdays as an integer.
+
+```python
+from datetime import date, timedelta
+
+def calculate_weekdays_between(d1: date, d2: date) -> int:
+    # Step 1: Ensure start_date is not after end_date
+    start_date = min(d1, d2)
+    end_date = max(d1, d2)
+    
+    # Step 2: Initialize weekday counter
+    weekday_count = 0
+
+    # Step 3: Iterate from start_date to end_date (exclusive)
+    current_date = start_date
+    while current_date < end_date:
+        # Step 4: Check if the current day is a weekday (Monday=0 ... Friday=4)
+        if current_date.weekday() < 5:
+            weekday_count += 1
+        current_date += timedelta(days=1)
+    
+    # Step 5: Return the number of weekdays
+    return weekday_count
+
+# Entry point: calculate_weekdays_between(d1: date, d2: date) -> int
+```

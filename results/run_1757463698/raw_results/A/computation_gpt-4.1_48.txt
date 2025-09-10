@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: To work with time objects, we need the `datetime` module from Python's standard library. Specifically, we'll use the `datetime` and `time` classes.
+2. **Define a function**: We'll write a function that takes three inputs as per the standard `time` type: hour (integer), minute (integer), and an `is_pm` boolean to indicate if the time is in the PM.
+3. **Validate and Convert**: We'll validate hour and minute, and then convert the 12-hour clock input into a 24-hour `time` object.
+   - If `is_pm` is True and hour is not 12, add 12 to hour.
+   - If `is_pm` is False and hour == 12, set hour to 0 (midnight).
+   - Otherwise, leave hour as is.
+4. **Return the result**: Return the corresponding `time` object in 24-hour format.
+
+```python
+from datetime import time
+
+def convert_12_to_24_hour_format(hour: int, minute: int, is_pm: bool) -> time:
+    # Step 1: Validate hour and minute
+    if not (1 <= hour <= 12):
+        raise ValueError("Hour must be in 1..12 for 12-hour time format.")
+    if not (0 <= minute <= 59):
+        raise ValueError("Minute must be in 0..59.")
+    
+    # Step 2: Convert to 24-hour time
+    if is_pm:
+        if hour != 12:
+            hour_24 = hour + 12
+        else:
+            hour_24 = 12
+    else:
+        if hour == 12:
+            hour_24 = 0
+        else:
+            hour_24 = hour
+    
+    # Step 3: Create and return a time object (24-hour format)
+    return time(hour=hour_24, minute=minute)
+
+# Entry point: convert_12_to_24_hour_format(hour: int, minute: int, is_pm: bool) -> time
+```

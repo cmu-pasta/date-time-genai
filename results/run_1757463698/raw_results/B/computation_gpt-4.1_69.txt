@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need to import `datetime` and `zoneinfo` from the standard library to work with dates and time zones.
+2. **Define the function**: We'll define a function that accepts a `datetime` object (must be timezone-aware) as input.
+3. **Validate timezone-awareness**: Ensure that the datetime provided has a timezone (i.e., it's not naive).
+4. **Obtain UTC offset**: Use the `utcoffset()` method of the datetime object to get the difference (as a `timedelta`) between the local time and UTC.
+5. **Convert to hours and minutes**: Extract the hours and minutes from the `timedelta` object.
+6. **Return the result**: Return the hours and minutes as two integers.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def utc_offset_hours_minutes(dt: datetime) -> int:
+    """
+    Calculates the UTC offset in hours and minutes for a timezone at a given datetime.
+
+    Args:
+        dt (datetime): A timezone-aware datetime object.
+
+    Returns:
+        int: The UTC offset as number of minutes (positive or negative).
+    """
+    if dt.tzinfo is None or dt.utcoffset() is None:
+        raise ValueError("The supplied datetime must be timezone-aware.")
+        
+    offset = dt.utcoffset()
+    total_minutes = int(offset.total_seconds() // 60)
+    return total_minutes
+
+# Example usage:
+# dt = datetime(2024, 3, 31, 15, 0, tzinfo=ZoneInfo('Europe/Berlin'))
+# utc_offset_minutes = utc_offset_hours_minutes(dt)
+
+# Entry point: utc_offset_hours_minutes(dt: datetime) -> int
+```

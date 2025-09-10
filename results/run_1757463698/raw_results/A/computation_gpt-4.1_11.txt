@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll use `datetime` and `calendar` from the Python standard library.
+2. **Define the function**: The function will accept four arguments—year, month, weekday, and n (the nth occurrence).
+   - `year`: integer (e.g., 2024)
+   - `month`: integer (1=January, ..., 12=December)
+   - `weekday`: integer (0=Monday, ..., 6=Sunday, as per Python's convention)
+   - `n`: integer (the occurrence, e.g., 2 for second Wednesday)
+3. **Calculate the first day of the month and its weekday**: Use `datetime.date(year, month, 1)` to get the first day of the month, and determine which weekday that is.
+4. **Compute the offset to the desired weekday**: Find the number of days between the first day of the month and the first occurrence of the requested weekday.
+5. **Calculate the date of the nth occurrence**: Add the necessary number of weeks (n-1) to the first occurrence to get the target occurrence.
+6. **Check if the resulting date is still in the requested month**: If it isn't, return None to indicate that occurrence doesn't exist.
+7. **Return the result as a date object**.
+
+```python
+from datetime import date, timedelta
+
+def nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date:
+    """
+    Find the date of the nth occurrence of a weekday in a given month and year.
+    - year: int (e.g., 2024)
+    - month: int (1=January, ..., 12=December)
+    - weekday: int (0=Monday, ..., 6=Sunday)
+    - n: int (nth occurrence, e.g., 2 for 2nd Wednesday)
+    Returns:
+        If the nth weekday exists, return the date as a datetime.date object.
+        If not, return None.
+    """
+    # Step 1: Get the first day of the month
+    first_day = date(year, month, 1)
+    first_day_weekday = first_day.weekday()  # 0=Monday, 6=Sunday
+
+    # Step 2: Calculate days until first occurrence of target weekday
+    days_until_weekday = (weekday - first_day_weekday + 7) % 7
+    first_occurrence = first_day + timedelta(days=days_until_weekday)
+
+    # Step 3: Calculate the nth occurrence
+    nth_occurrence = first_occurrence + timedelta(weeks=n-1)
+    
+    # Step 4: Check if the nth occurrence is still in the same month
+    if nth_occurrence.month == month:
+        return nth_occurrence
+    else:
+        return None
+
+# Entry point: nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date
+```

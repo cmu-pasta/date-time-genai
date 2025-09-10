@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We'll use the `datetime` module from Python's standard library to manipulate date and time objects.
+2. **Define a function**: We'll create a function that accepts the start and end times of a meeting as `datetime` objects. This allows us to handle meetings that span multiple days and include precise time information.
+3. **Calculate the duration**: Subtract the start `datetime` from the end `datetime` to obtain a `timedelta` object representing the duration of the meeting.
+4. **Convert the duration to milliseconds**: The `timedelta` object can be converted to milliseconds by taking the total seconds (`total_seconds()` method) and multiplying by 1000.
+5. **Return the integer result**: Return the result as an integer number of milliseconds.
+
+```python
+from datetime import datetime
+
+def meeting_duration_milliseconds(start: datetime, end: datetime) -> int:
+    # Step 1: Calculate the duration as a timedelta
+    duration = end - start
+    # Step 2: Convert to milliseconds (may be negative if end < start)
+    milliseconds = int(duration.total_seconds() * 1000)
+    # Step 3: Return the integer result
+    return abs(milliseconds)  # Return always positive duration
+
+# Entry point: meeting_duration_milliseconds(start: datetime, end: datetime) -> int
+```

@@ -1,0 +1,64 @@
+Let's think step by step to solve this problem.
+
+1. **Identify US Federal Holidays**: US federal holidays fall on specific dates or specific rules (e.g., "third Monday of January"). We need a way to check if a given date matches any federal holiday for its year.
+2. **Deal with Variable Holidays**: Some holidays (like Memorial Day or Thanksgiving) fall on variable days—e.g., "fourth Thursday of November". We need to compute these based on the date's year.
+3. **Account for Observed Holidays**: When a federal holiday falls on a weekend, it is often observed on a nearby weekday (generally the preceding Friday or following Monday). We'll account for this as well.
+4. **Write a Check Function**: Create a function that accepts a `date` object, computes all holidays for that year, and returns a boolean indicating whether the input date matches any of those holidays.
+5. **Return a Boolean**: The function should return `True` if the date is a federal holiday (or observed holiday), `False` otherwise.
+
+```python
+from datetime import date, timedelta
+
+def is_us_federal_holiday(check_date: date) -> bool:
+    # Helper to find the nth weekday in a month
+    def nth_weekday(year, month, weekday, n):
+        d = date(year, month, 1)
+        days_to_add = (weekday - d.weekday() + 7) % 7
+        result = d + timedelta(days=days_to_add + 7*(n-1))
+        return result
+
+    # Helper to find the last weekday in a month
+    def last_weekday(year, month, weekday):
+        d = date(year, month+1, 1) - timedelta(days=1) if month < 12 else date(year, 12, 31)
+        days_to_subtract = (d.weekday() - weekday + 7) % 7
+        return d - timedelta(days=days_to_subtract)
+
+    year = check_date.year
+    
+    # Fixed date holidays
+    new_years = date(year, 1, 1)
+    independence = date(year, 7, 4)
+    veterans = date(year, 11, 11)
+    christmas = date(year, 12, 25)
+    
+    # Variable holidays
+    martin_luther_king = nth_weekday(year, 1, 0, 3)          # 3rd Monday in Jan
+    washington_birthday = nth_weekday(year, 2, 0, 3)         # 3rd Monday in Feb
+    memorial = last_weekday(year, 5, 0)                      # Last Monday in May
+    labor = nth_weekday(year, 9, 0, 1)                       # 1st Monday in Sep
+    columbus = nth_weekday(year, 10, 0, 2)                   # 2nd Monday in Oct
+    thanksgiving = nth_weekday(year, 11, 3, 4)               # 4th Thursday in Nov
+    
+    # Observed holidays (if fixed-date holiday falls on weekend)
+    holidays = set()
+    for holiday in [new_years, independence, veterans, christmas]:
+        holidays.add(holiday)
+        if holiday.weekday() == 5:      # Saturday
+            holidays.add(holiday - timedelta(days=1))
+        elif holiday.weekday() == 6:    # Sunday
+            holidays.add(holiday + timedelta(days=1))
+            
+    # Add variable-date holidays
+    holidays.update([
+        martin_luther_king,
+        washington_birthday,
+        memorial,
+        labor,
+        columbus,
+        thanksgiving
+    ])
+    
+    return check_date in holidays
+
+# Entry point: is_us_federal_holiday(check_date: date) -> bool
+```

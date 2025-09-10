@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: Create a function that accepts a `date` object as input.
+3. **Determine the quarter**: For the given date, determine in which quarter (Q1, Q2, Q3, or Q4) the date belongs.
+4. **Find the last day of the quarter**: Based on the determined quarter, calculate the last day of that quarter.
+5. **Calculate the difference**: Compute the number of days between the given date and the last day of the quarter (both dates inclusive, so include the end date).
+6. **Return the result**: Format the computed days left as an integer and return it.
+
+```python
+from datetime import date
+
+def days_left_in_quarter(dt: date) -> int:
+    # Step 3: Determine which quarter the date belongs to
+    year = dt.year
+    if dt.month <= 3:
+        # Q1: Jan 1 - Mar 31
+        last_day_of_quarter = date(year, 3, 31)
+    elif dt.month <= 6:
+        # Q2: Apr 1 - Jun 30
+        last_day_of_quarter = date(year, 6, 30)
+    elif dt.month <= 9:
+        # Q3: Jul 1 - Sep 30
+        last_day_of_quarter = date(year, 9, 30)
+    else:
+        # Q4: Oct 1 - Dec 31
+        last_day_of_quarter = date(year, 12, 31)
+    
+    # Step 5: Compute the difference
+    days_left = (last_day_of_quarter - dt).days + 1  # +1 to include the end date
+    
+    # If the date is already past the last day of the quarter (shouldn't happen), return 0
+    return max(0, days_left)
+
+# Entry point: days_left_in_quarter(dt: date) -> int
+```

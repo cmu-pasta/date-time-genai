@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates. For simplicity, we assume public holidays are given as a sequence of `date` objects, but since we are not allowed to input complex types, we ask for a function that returns a boolean indicating if a date is a holiday.
+2. **Define a function**: We'll write a function that takes a start date (`date`), an integer number of business days to skip, and a callable that determines if a date is a public holiday (returns a boolean).
+3. **Iteratively calculate the future date**: We increment the date by one day, at each step checking if it's a business day (Monday-Friday) and not a public holiday.
+4. **Repeat until we've skipped the required business days**: Only increment our business day counter when a non-holiday weekday is found.
+5. **Return the resulting date**: Output as a standard `date` object.
+
+```python
+from datetime import date, timedelta
+
+def future_business_date(start_date: date, business_days_to_skip: int, is_public_holiday: callable) -> date:
+    """
+    Returns the date after skipping a set number of business days (Mon-Fri) 
+    and dates matching `is_public_holiday(date) is True`.
+    
+    Args:
+        start_date (date): The starting date.
+        business_days_to_skip (int): The number of business days to skip.
+        is_public_holiday (callable): Function that takes a `date` and returns `True` if it's a public holiday.
+    
+    Returns:
+        date: The resulting date after skipping the business days and holidays.
+    """
+    current_date = start_date
+    days_skipped = 0
+    while days_skipped < business_days_to_skip:
+        current_date += timedelta(days=1)
+        is_weekday = current_date.weekday() < 5  # 0=Monday, ..., 4=Friday
+        if is_weekday and not is_public_holiday(current_date):
+            days_skipped += 1
+    return current_date
+
+# Entry point: future_business_date(start_date: date, business_days_to_skip: int, is_public_holiday: callable) -> date
+```

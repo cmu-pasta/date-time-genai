@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We'll create a function that takes two integer arguments: the year and the month.
+3. **Find the first and last day of the month**: Initialize the start date to the first day of the month, and determine the last day by checking if the next month exists, or use December 31st for December.
+4. **Count weekends**: Loop over each day in the month. For each date, check if it is a Saturday (weekday 5) or Sunday (weekday 6). Increment a counter each time a weekend is found.
+5. **Return the result**: Return the weekend count as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_weekends_in_month(year: int, month: int) -> int:
+    # Step 1: Find the first and last day of the month
+    start_date = date(year, month, 1)
+    if month == 12:
+        next_month = date(year + 1, 1, 1)
+    else:
+        next_month = date(year, month + 1, 1)
+    last_day = next_month - timedelta(days=1)
+    
+    # Step 2: Count weekends
+    weekends = 0
+    current_day = start_date
+    while current_day <= last_day:
+        if current_day.weekday() == 5 or current_day.weekday() == 6:  # Saturday or Sunday
+            weekends += 1
+        current_day += timedelta(days=1)
+    
+    # Step 3: Return the result
+    return weekends
+
+# Entry point: count_weekends_in_month(year: int, month: int) -> int
+```

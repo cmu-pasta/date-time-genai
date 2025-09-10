@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the `datetime` module from Python's standard library to work with datetime objects.
+2. **Define a function**: We'll create a function that accepts a `datetime` object as input.
+3. **Set the UNIX epoch reference point**: The UNIX epoch is January 1, 1970 at 00:00:00 UTC.
+4. **Calculate the number of seconds since the UNIX epoch**: We'll subtract the UNIX epoch from the provided datetime and convert the result to the total number of seconds.
+5. **Return the result**: We'll return the computed number of seconds as a float (to include sub-second precision, per how `.total_seconds()` works).
+
+```python
+from datetime import datetime, timezone
+
+def seconds_since_unix_epoch(dt: datetime) -> float:
+    # Step 1: Ensure datetime is aware and in UTC
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt = dt.astimezone(timezone.utc)
+    
+    # Step 2: Define the UNIX epoch (1970-01-01T00:00:00Z)
+    unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    
+    # Step 3: Compute the difference between the input datetime and epoch
+    delta = dt - unix_epoch
+    
+    # Step 4: Get the total number of seconds (including fractions)
+    seconds = delta.total_seconds()
+    
+    # Step 5: Return the result
+    return seconds
+
+# Entry point: seconds_since_unix_epoch(dt: datetime) -> float
+```

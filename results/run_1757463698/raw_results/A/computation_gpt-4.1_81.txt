@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We'll create a function that accepts two dates as input. These dates will be of type `datetime.date`.
+3. **Normalize the dates**: Ensure that the start date is not after the end date by swapping if necessary.
+4. **Find the first Friday**: Determine the first Friday that falls on or after the start date.
+5. **Count the number of Fridays**: Increment the count by 1 for each Friday found between the dates, using a mathematically efficient way, rather than looping through every date.
+6. **Return the result**: Return the number of Fridays as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_fridays_between(start_date: date, end_date: date) -> int:
+    # Step 1: Ensure start_date is not after end_date
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+
+    # Step 2: Find the first Friday on or after start_date
+    days_until_friday = (4 - start_date.weekday()) % 7  # Friday is weekday 4
+    first_friday = start_date + timedelta(days=days_until_friday)
+
+    # If first_friday is after end_date, there are no Fridays between the dates
+    if first_friday > end_date:
+        return 0
+
+    # Step 3: Calculate number of whole weeks (i.e., Fridays) between first_friday and end_date
+    total_days = (end_date - first_friday).days
+    friday_count = 1 + (total_days // 7)  # Include the first Friday and count all subsequent Fridays
+
+    # Step 4: Return the count as an integer
+    return friday_count
+
+# Entry point: count_fridays_between(start_date: date, end_date: date) -> int
+```

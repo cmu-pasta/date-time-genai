@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We'll use Python's built-in `datetime` library.
+2. **Define the function**: We'll create a function that takes two `datetime` objects as input.
+3. **Subtract the timestamps**: Subtract one `datetime` from the other to get a `timedelta` object representing the duration.
+4. **Convert the duration to hours and minutes**: Extract the total seconds from the `timedelta` and then compute the total hours and remaining minutes.
+5. **Return the result**: The function should return two integers: the hours and the minutes.
+6. **Specify the entry point**: Make sure the function name and signature match the requirements.
+
+```python
+from datetime import datetime
+
+def subtract_timestamps_return_hours_minutes(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Subtract one timestamp from the other to get a timedelta
+    duration = abs(dt2 - dt1)
+    
+    # Step 2: Calculate the total number of hours and minutes
+    total_seconds = duration.total_seconds()
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    
+    # Step 3: Combine the result into a single integer representation
+    # For distinctness, we can return hours*100 + minutes as integer (e.g., 225 means 2 hr 25 min)
+    return hours * 100 + minutes
+
+# Entry point: subtract_timestamps_return_hours_minutes(dt1: datetime, dt2: datetime) -> int
+```

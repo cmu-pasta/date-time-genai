@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the `datetime` module to handle time objects.
+2. **Define a function**: We'll create a function that accepts three inputs—the time to check (`target_time`), the start of the interval (`interval_start`), and the end of the interval (`interval_end`). All of these will be instances of `datetime.time`.
+3. **Handle recurring intervals**: Since the interval could cross midnight (e.g., 23:00 to 01:00), we need to handle both intervals that do and do not wrap around midnight.
+4. **Check if the time falls within the interval**: 
+    - If the interval does **not** wrap around midnight (start < end), check if `interval_start <= target_time < interval_end`.
+    - If the interval **does** wrap around midnight (start >= end), check if `target_time >= interval_start` or `target_time < interval_end`.
+5. **Return the result**: The function returns a boolean indicating whether `target_time` is within the recurring interval.
+
+```python
+from datetime import time
+
+def is_time_in_recurring_interval(target_time: time, interval_start: time, interval_end: time) -> bool:
+    """
+    Determine if target_time falls within the recurring interval specified by interval_start and interval_end.
+    Handles intervals that either do or do not wrap around midnight.
+    """
+    if interval_start < interval_end:
+        # Interval does not cross midnight
+        return interval_start <= target_time < interval_end
+    else:
+        # Interval wraps around midnight
+        return target_time >= interval_start or target_time < interval_end
+
+# Entry point: is_time_in_recurring_interval(target_time: time, interval_start: time, interval_end: time) -> bool
+```
