@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2.  **Define a function**: We will create a function that accepts a `datetime` object as input.
+3.  **Determine the day name**: The `datetime` object has a `strftime` method that allows formatting the date into a string. The format code `%A` is used to get the full weekday name (e.g., Monday, Tuesday).
+4.  **Return the result**: The function will return the string representing the day name.
+
+```python
+from datetime import datetime
+
+def get_day_name(dt: datetime) -> str:
+    # Step 1: Use the strftime method with the appropriate format code
+    # %A returns the full weekday name (e.g., 'Monday', 'Tuesday')
+    day_name = dt.strftime('%A')
+    
+    # Step 2: Return the resulting string
+    return day_name
+
+# Entry point: get_day_name(dt: datetime) -> str
+```

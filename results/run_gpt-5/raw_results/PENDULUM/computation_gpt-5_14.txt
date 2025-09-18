@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts a pendulum.Date and an integer N.
+3. Initialize a counter and iterate day by day, moving forward from the given date.
+4. For each day, check if it is a business day (Monday to Friday).
+5. Increment the counter only on business days until it reaches N.
+6. Return the resulting pendulum.Date.
+
+```python
+import pendulum
+
+def add_business_days(start_date: pendulum.Date, n: int) -> pendulum.Date:
+    """
+    Return the date that is exactly n business days after start_date.
+    Business days are Monday (0) through Friday (4).
+    If n is 0, the start_date is returned unchanged.
+    """
+    if n <= 0:
+        return start_date
+
+    current = start_date
+    added = 0
+
+    while added < n:
+        current = current.add(days=1)
+        # Monday=0 ... Sunday=6
+        if 0 <= current.weekday() <= 4:
+            added += 1
+
+    return current
+
+# Entry point: add_business_days(start_date: pendulum.Date, n: int) -> pendulum.Date
+```

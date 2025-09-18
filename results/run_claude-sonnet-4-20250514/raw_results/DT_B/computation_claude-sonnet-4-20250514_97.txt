@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the Thai Buddhist Calendar**: The Thai Buddhist calendar is similar to the Gregorian calendar but uses a different year numbering system. It starts from 543 BC (the year Buddha was born), so to convert from Gregorian to Thai Buddhist, we need to add 543 years to the Gregorian year.
+
+2. **Import necessary libraries**: We need the `date` class from Python's `datetime` module to work with dates.
+
+3. **Define the conversion function**: Create a function that accepts a Gregorian date as input and returns the corresponding Thai Buddhist date.
+
+4. **Perform the conversion**: Add 543 years to the Gregorian year while keeping the month and day the same.
+
+5. **Return the result**: Create and return a new date object with the Thai Buddhist year.
+
+```python
+from datetime import date
+
+def gregorian_to_thai_buddhist(gregorian_date: date) -> date:
+    # Convert Gregorian year to Thai Buddhist year by adding 543
+    thai_buddhist_year = gregorian_date.year + 543
+    
+    # Create a new date object with the Thai Buddhist year
+    # Keep the same month and day as the original Gregorian date
+    thai_buddhist_date = date(thai_buddhist_year, gregorian_date.month, gregorian_date.day)
+    
+    return thai_buddhist_date
+
+# Entry point: gregorian_to_thai_buddhist(gregorian_date: date) -> date
+```

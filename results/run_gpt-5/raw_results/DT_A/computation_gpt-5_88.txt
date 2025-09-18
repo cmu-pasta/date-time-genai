@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the required type from Python's standard datetime library (timedelta).
+2. Define a function that accepts a duration as a timedelta.
+3. Convert the duration to total seconds and divide by 3600 to get total hours as a decimal.
+4. Return the computed float value.
+
+```python
+from datetime import timedelta
+
+def duration_to_total_hours(duration: timedelta) -> float:
+    """
+    Convert a time duration to total hours as a decimal number.
+
+    Args:
+        duration (timedelta): The time duration to convert.
+
+    Returns:
+        float: Total hours represented by the duration.
+    """
+    total_hours = duration.total_seconds() / 3600.0
+    return total_hours
+
+# Entry point: duration_to_total_hours(duration: timedelta) -> float
+```

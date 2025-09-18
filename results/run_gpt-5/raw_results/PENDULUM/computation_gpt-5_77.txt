@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Set the reference date to October 1st of the given year using pendulum.date.
+2. Determine the weekday of October 1st (0=Monday, ..., 6=Sunday) via day_of_week.
+3. Compute the day of the month for the first Monday in October.
+4. Add 7 days to the first Monday to get the second Monday (Columbus Day).
+5. Return the resulting pendulum.Date.
+
+```python
+import pendulum
+
+def columbus_day(year: int) -> pendulum.Date:
+    """
+    Compute Columbus Day (second Monday of October) for the given year.
+    
+    Args:
+        year (int): The target year.
+        
+    Returns:
+        pendulum.Date: The date of Columbus Day for the given year.
+    """
+    # Step 1: October 1st of the given year
+    oct_first = pendulum.date(year, 10, 1)
+    
+    # Step 2: Weekday of Oct 1st (0=Monday ... 6=Sunday)
+    dow = oct_first.day_of_week
+    
+    # Step 3: Day of month for the first Monday in October
+    # If Oct 1 is Monday (dow=0), offset is 0; otherwise days until next Monday
+    days_until_monday = (7 - dow) % 7
+    first_monday = oct_first.add(days=days_until_monday)
+    
+    # Step 4: Second Monday = first Monday + 7 days
+    second_monday = first_monday.add(days=7)
+    
+    # Step 5: Return the pendulum.Date for Columbus Day
+    return second_monday
+
+# Entry point: columbus_day(year: int) -> pendulum.Date
+```

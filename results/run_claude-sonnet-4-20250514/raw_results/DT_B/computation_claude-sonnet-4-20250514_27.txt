@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and years.
+
+2. **Define a function**: We will create a function that accepts two years as integers (since integers are in the allowed list of types).
+
+3. **Implement leap year logic**: A year is a leap year if:
+   - It's divisible by 4
+   - BUT if it's divisible by 100, it's not a leap year  
+   - UNLESS it's also divisible by 400, then it is a leap year
+
+4. **Count leap years**: Iterate through the range of years between the two input years (inclusive) and count how many are leap years.
+
+5. **Return the result**: Return the count as an integer.
+
+```python
+from datetime import datetime
+
+def calculate_leap_years_between(year1: int, year2: int) -> int:
+    # Ensure year1 is the smaller year for proper range calculation
+    start_year = min(year1, year2)
+    end_year = max(year1, year2)
+    
+    leap_year_count = 0
+    
+    # Iterate through all years in the range (inclusive)
+    for year in range(start_year, end_year + 1):
+        # Check if the year is a leap year
+        if is_leap_year(year):
+            leap_year_count += 1
+    
+    return leap_year_count
+
+def is_leap_year(year: int) -> bool:
+    # A year is a leap year if:
+    # 1. It's divisible by 4
+    # 2. If divisible by 100, it must also be divisible by 400
+    if year % 4 == 0:
+        if year % 100 == 0:
+            return year % 400 == 0
+        return True
+    return False
+
+# Entry point: calculate_leap_years_between(year1: int, year2: int) -> int
+```

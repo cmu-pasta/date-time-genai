@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the conversion**: In 12-hour format, hours range from 1-12 with AM/PM designation. In 24-hour format, hours range from 00-23.
+2. **Define input parameters**: Since we can only use standard datetime types, we'll accept integers for hour (1-12), minute, and second, plus a boolean to indicate AM/PM.
+3. **Implement conversion logic**: 
+   - For AM: if hour is 12, convert to 0; otherwise keep the same hour
+   - For PM: if hour is 12, keep as 12; otherwise add 12 to the hour
+4. **Return a time object**: Use the datetime.time class to create and return the 24-hour time.
+5. **Handle edge cases**: Ensure proper handling of 12:xx AM (midnight hour) and 12:xx PM (noon hour).
+
+```python
+from datetime import time
+
+def convert_12_to_24_hour(hour: int, minute: int, second: int, is_pm: bool) -> time:
+    """
+    Convert 12-hour time format to 24-hour time format.
+    
+    Args:
+        hour: Hour in 12-hour format (1-12)
+        minute: Minutes (0-59)
+        second: Seconds (0-59)
+        is_pm: True for PM, False for AM
+    
+    Returns:
+        time object in 24-hour format
+    """
+    # Convert hour from 12-hour to 24-hour format
+    if is_pm:
+        # PM case: 12 PM stays 12, 1-11 PM becomes 13-23
+        if hour == 12:
+            hour_24 = 12
+        else:
+            hour_24 = hour + 12
+    else:
+        # AM case: 12 AM becomes 0, 1-11 AM stays 1-11
+        if hour == 12:
+            hour_24 = 0
+        else:
+            hour_24 = hour
+    
+    # Create and return the time object
+    return time(hour_24, minute, second)
+
+# Entry point: convert_12_to_24_hour(hour: int, minute: int, second: int, is_pm: bool) -> time
+```

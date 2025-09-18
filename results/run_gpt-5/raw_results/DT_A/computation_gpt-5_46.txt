@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard datetime library.
+2. Define a function that accepts a datetime input.
+3. Compute the 12-hour clock hour: 1-12, mapping 0->12 and 13-23->1-11.
+4. Determine AM/PM: PM if hour >= 12, otherwise AM.
+5. Return a time object in 12-hour form. Since strings are not allowed, encode AM/PM using the time.fold attribute (0 for AM, 1 for PM), and preserve minutes, seconds, microseconds, and tzinfo.
+
+```python
+from datetime import datetime, time
+
+def to_12h_with_ampm(dt: datetime) -> time:
+    """
+    Convert a datetime (24-hour) to a 12-hour time with AM/PM encoded in time.fold.
+    - Returns a time object with hour in 1..12.
+    - AM/PM is indicated via fold: 0 = AM, 1 = PM.
+    - tzinfo, minute, second, microsecond are preserved from the input datetime.
+    """
+    if not isinstance(dt, datetime):
+        raise TypeError("Input must be a datetime instance")
+
+    # Determine if PM
+    is_pm = dt.hour >= 12
+
+    # Convert to 12-hour clock: 0->12, 13->1, ..., 23->11, 12->12
+    hour_12 = ((dt.hour + 11) % 12) + 1
+
+    # Build time with fold indicating AM(0)/PM(1)
+    t12 = time(
+        hour=hour_12,
+        minute=dt.minute,
+        second=dt.second,
+        microsecond=dt.microsecond,
+        tzinfo=dt.tzinfo,
+        fold=1 if is_pm else 0
+    )
+    return t12
+
+# Entry point: to_12h_with_ampm(dt: datetime) -> time
+```

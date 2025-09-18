@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with DateTime objects.
+2. Define a function that accepts two pendulum.DateTime timestamps.
+3. Compute the duration between them using the diff method.
+4. Convert the duration to seconds using in_seconds and take the absolute value.
+5. Return the result as an integer.
+
+```python
+import pendulum
+
+def calculate_seconds_between(ts1: pendulum.DateTime, ts2: pendulum.DateTime) -> int:
+    """
+    Calculate the absolute number of seconds between two pendulum.DateTime timestamps.
+
+    Args:
+        ts1 (pendulum.DateTime): The first timestamp.
+        ts2 (pendulum.DateTime): The second timestamp.
+
+    Returns:
+        int: The absolute difference in seconds between ts1 and ts2.
+    """
+    # Compute the duration between the two timestamps
+    duration = ts2.diff(ts1)
+    # Convert the duration to seconds and ensure non-negative result
+    seconds = abs(duration.in_seconds())
+    return seconds
+
+# Entry point: calculate_seconds_between(ts1: pendulum.DateTime, ts2: pendulum.DateTime) -> int
+```

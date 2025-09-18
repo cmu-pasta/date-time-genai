@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard library.
+2. Define a function that accepts a date input.
+3. Compute the weekday name using strftime with the %A directive.
+4. Return the weekday name as a string.
+
+```python
+from datetime import date
+
+def determine_day_name(input_date: date) -> str:
+    """
+    Determine the full day name (e.g., Monday, Tuesday) for a given date.
+
+    Parameters:
+    - input_date: date -> A Python date object.
+
+    Returns:
+    - str -> The full weekday name corresponding to the given date.
+    """
+    # Compute and return the full weekday name using strftime
+    return input_date.strftime("%A")
+
+# Entry point: determine_day_name(input_date: date) -> str
+```

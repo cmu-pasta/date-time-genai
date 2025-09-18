@@ -1,0 +1,49 @@
+Let's think step by step to solve this problem.
+
+1. **Import necessary libraries**: We need the `datetime` module to work with datetime objects and `timedelta` for time calculations.
+
+2. **Define the function**: Create a function that accepts two datetime objects as input parameters.
+
+3. **Determine the date range**: We need to iterate through each day between the start and end datetimes to check if they fall on weekdays.
+
+4. **Check for weekdays**: Use the `weekday()` method where Monday=0 and Sunday=6, so weekdays are 0-4 (Monday through Friday).
+
+5. **Calculate working hours**: For each weekday, calculate the hours that fall within that day and add them to the total.
+
+6. **Handle partial days**: The start and end datetimes might not align with full days, so we need to handle the partial hours on the first and last days.
+
+7. **Return the result**: Return the total working hours as a float.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_working_hours(start_dt: datetime, end_dt: datetime) -> float:
+    # Ensure start is before end
+    if start_dt > end_dt:
+        start_dt, end_dt = end_dt, start_dt
+    
+    total_hours = 0.0
+    current_dt = start_dt
+    
+    while current_dt < end_dt:
+        # Check if current day is a weekday (Monday=0 to Friday=4)
+        if current_dt.weekday() < 5:  # 0-4 are weekdays, 5-6 are weekend
+            # Calculate end of current day
+            end_of_day = current_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
+            
+            # Determine the end time for this day (either end of day or end_dt)
+            day_end = min(end_of_day, end_dt)
+            
+            # Calculate hours for this day
+            if current_dt < day_end:
+                day_hours = (day_end - current_dt).total_seconds() / 3600
+                total_hours += day_hours
+        
+        # Move to the start of next day
+        next_day = (current_dt + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        current_dt = next_day
+    
+    return total_hours
+
+# Entry point: calculate_working_hours(start_dt: datetime, end_dt: datetime) -> float
+```

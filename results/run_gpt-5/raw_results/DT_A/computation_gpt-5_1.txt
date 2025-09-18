@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard library: datetime, timezone, timedelta, and ZoneInfo for IANA time zones.
+2. Ensure both input timestamps are timezone-aware so DST rules can be applied correctly. If not, raise a ValueError.
+3. Convert both timestamps to UTC using astimezone(timezone.utc) to normalize them across DST transitions.
+4. Subtract the normalized timestamps to get an exact timedelta that correctly reflects DST effects.
+5. Return the signed timedelta (ts2 - ts1).
+
+```python
+from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
+
+def calculate_exact_time_difference(ts1: datetime, ts2: datetime) -> timedelta:
+    """
+    Calculate the exact time difference between two timestamps considering daylight saving time (DST).
+
+    Requirements:
+    - ts1 and ts2 must be timezone-aware datetime objects (i.e., have tzinfo set).
+    - If you need to specify a time zone, construct your datetimes with tzinfo=ZoneInfo("Region/City").
+      The 'fold' attribute can be set on the datetime to disambiguate ambiguous times during DST fall-back.
+
+    The function returns a signed timedelta: positive if ts2 occurs after ts1, negative otherwise.
+    """
+    if ts1.tzinfo is None or ts2.tzinfo is None:
+        raise ValueError("Both timestamps must be timezone-aware to account for DST.")
+
+    # Normalize both timestamps to UTC to ensure correct arithmetic across DST transitions
+    ts1_utc = ts1.astimezone(timezone.utc)
+    ts2_utc = ts2.astimezone(timezone.utc)
+
+    # Compute signed difference
+    return ts2_utc - ts1_utc
+
+# Entry point: calculate_exact_time_difference(ts1: datetime, ts2: datetime) -> timedelta
+```

@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that takes a year as an integer input.
+3. Construct the date for September 1st of the given year.
+4. Determine the weekday of September 1st (Monday=0, Sunday=6).
+5. Compute the number of days to add to reach the first Monday.
+6. Return the resulting date as the Labor Day date.
+
+```python
+from datetime import date, timedelta
+
+def labor_day_date(year: int) -> date:
+    # Step 1: Start from September 1st of the given year
+    sept_first = date(year, 9, 1)
+    # Step 2: Determine how many days to add to reach the first Monday
+    # Python's weekday(): Monday=0 ... Sunday=6
+    days_to_add = (0 - sept_first.weekday()) % 7
+    # Step 3: Compute and return the Labor Day date
+    return sept_first + timedelta(days=days_to_add)
+
+# Entry point: labor_day_date(year: int) -> date
+```

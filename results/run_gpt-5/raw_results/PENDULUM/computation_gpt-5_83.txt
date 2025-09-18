@@ -1,0 +1,69 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with timezone-aware datetimes.
+2. Accept two inputs: the target year (integer) and the timezone (pendulum.Timezone).
+3. Create timezone-aware DateTime objects for the start of the year and the start of the next year to define the search window.
+4. Scan forward in 1-hour increments through the year, checking when the DST status changes from True to False.
+5. When such a change is detected between two hourly points, refine the exact transition by scanning minute-by-minute within that hour to find the first minute that is not in DST.
+6. Return the local date (pendulum.Date) of the transition moment.
+7. If no DST end is found for the year in the given timezone, raise a ValueError.
+
+```python
+import pendulum
+
+def find_dst_end_date(year: int, tz: pendulum.Timezone) -> pendulum.Date:
+    """
+    Find the date when daylight saving time ends for a given year and timezone.
+
+    Args:
+        year: The target year as an integer.
+        tz: A pendulum.Timezone instance representing the timezone to inspect.
+
+    Returns:
+        A pendulum.Date representing the local calendar date when DST ends.
+
+    Raises:
+        ValueError: If the timezone does not observe a DST end in the given year.
+    """
+    # Define the search window: from the start of the year to the start of the next year.
+    start = pendulum.datetime(year, 1, 1, 0, 0, 0, tz=tz)
+    end = pendulum.datetime(year + 1, 1, 1, 0, 0, 0, tz=tz)
+
+    # Iterate hour by hour to detect a DST-to-standard-time transition.
+    t = start
+    prev_is_dst = t.is_dst()
+
+    while t < end:
+        t_next = t.add(hours=1)
+        if t_next > end:
+            t_next = end
+
+        curr_is_dst = t_next.is_dst()
+
+        # Detect DST end: transition from DST (True) to standard time (False).
+        if prev_is_dst and not curr_is_dst:
+            # Refine within the hour: find the first minute that is not DST.
+            # Scan minute-by-minute between t (inclusive) and t_next (inclusive).
+            prev_minute = t
+            m = 1
+            while True:
+                candidate = t.add(minutes=m)
+                # Guard against overshooting end bound (unlikely within an hour)
+                if candidate > t_next:
+                    candidate = t_next
+                if (not candidate.is_dst()) and prev_minute.is_dst():
+                    # Return the local date of the transition moment.
+                    return candidate.date()
+                if candidate >= t_next:
+                    break
+                prev_minute = candidate
+                m += 1
+
+        # Advance the scan.
+        t = t_next
+        prev_is_dst = curr_is_dst
+
+    # No DST end found for this year in the given timezone.
+    raise ValueError("No DST end found for the specified year and timezone.")
+
+# Entry point: find_dst_end_date(year: int, tz: pendulum.Timezone) -> pendulum.Date
+```

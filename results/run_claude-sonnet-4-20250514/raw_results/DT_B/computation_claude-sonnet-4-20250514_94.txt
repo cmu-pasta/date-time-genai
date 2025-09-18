@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Understand Modified Julian Date (MJD)**: The Modified Julian Date is a continuous count of days from the MJD epoch, which is November 17, 1858 at 00:00:00 UTC. MJD = JD - 2400000.5, where JD is the Julian Date.
+
+2. **Import necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and times.
+
+3. **Define the MJD epoch**: Create a datetime object representing November 17, 1858 at 00:00:00 UTC, which is the starting point for MJD calculations.
+
+4. **Calculate the difference**: Subtract the MJD epoch from the input datetime to get the time difference.
+
+5. **Convert to days**: Convert the time difference to total days (including fractional parts for hours, minutes, seconds).
+
+6. **Return the result**: Return the MJD as a float representing the number of days since the epoch.
+
+```python
+from datetime import datetime
+
+def convert_to_modified_julian_date(dt: datetime) -> float:
+    # Step 1: Define the Modified Julian Date epoch (November 17, 1858 at 00:00:00 UTC)
+    mjd_epoch = datetime(1858, 11, 17, 0, 0, 0)
+    
+    # Step 2: Calculate the difference between the input datetime and the MJD epoch
+    time_difference = dt - mjd_epoch
+    
+    # Step 3: Convert the difference to total days (including fractional days)
+    mjd = time_difference.total_seconds() / 86400.0  # 86400 seconds in a day
+    
+    # Step 4: Return the Modified Julian Date as a float
+    return mjd
+
+# Entry point: convert_to_modified_julian_date(dt: datetime) -> float
+```

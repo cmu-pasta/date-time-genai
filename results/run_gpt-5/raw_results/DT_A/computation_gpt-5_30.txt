@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts a datetime input.
+3. Normalize the input timestamp to UTC (assume UTC if naive).
+4. Define the Unix epoch as 1970-01-01 00:00:00 UTC.
+5. Compute and return the timedelta elapsed since the epoch.
+
+```python
+from datetime import datetime, timezone, timedelta
+
+def time_since_epoch(ts: datetime) -> timedelta:
+    """
+    Calculate the time elapsed since the Unix epoch (1970-01-01 00:00:00 UTC)
+    for a given timestamp.
+
+    - If the input datetime is timezone-aware, it will be converted to UTC.
+    - If the input datetime is naive (no tzinfo), it is assumed to be in UTC.
+
+    Returns:
+        A timedelta representing the elapsed time since the epoch.
+        This value can be negative for timestamps before the epoch.
+    """
+    # Step 1: Normalize to UTC
+    if ts.tzinfo is None:
+        ts_utc = ts.replace(tzinfo=timezone.utc)
+    else:
+        ts_utc = ts.astimezone(timezone.utc)
+
+    # Step 2: Define the Unix epoch in UTC
+    epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+
+    # Step 3: Compute the elapsed time as a timedelta
+    elapsed = ts_utc - epoch
+    return elapsed
+
+# Entry point: time_since_epoch(ts: datetime) -> timedelta
+```

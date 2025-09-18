@@ -1,23 +1,48 @@
-import os
-import sys
-from enum import Enum
+def sanitize_model_name_for_path(model_name: str) -> str:
+    """
+    Sanitize model name for safe use in file paths.
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import config
+    Replaces characters that are problematic in file paths:
+    - Forward slashes (/) with hyphens (-)
+    - Backslashes (\) with hyphens (-)
+    - Colons (:) with hyphens (-)
+    - Asterisks (*) with hyphens (-)
+    - Question marks (?) with hyphens (-)
+    - Double quotes (") with hyphens (-)
+    - Less than (<) with hyphens (-)
+    - Greater than (>) with hyphens (-)
+    - Pipes (|) with hyphens (-)
+    - Dots (.) with hyphens (-)
+    - Other potentially problematic characters
 
+    Args:
+        model_name: The original model name (e.g., "gemini/gemini-2.5-flash")
 
-class Languages(Enum):
-    """Supported Languages"""
+    Returns:
+        Sanitized model name safe for file paths (e.g., "gemini-gemini-2.5-flash")
+    """
 
-    Python = "python"
+    # Replace potentially problematic characters
+    sanitized = model_name
+    sanitized = sanitized.replace("\\", "-")  # Backslashes
+    sanitized = sanitized.replace("/", "-")  # Forward slashes
+    sanitized = sanitized.replace(":", "-")  # Colons
+    sanitized = sanitized.replace("*", "-")  # Asterisks
+    sanitized = sanitized.replace("?", "-")  # Question marks
+    sanitized = sanitized.replace('"', "-")  # Double quotes
+    sanitized = sanitized.replace("<", "-")  # Less than
+    sanitized = sanitized.replace(">", "-")  # Greater than
+    sanitized = sanitized.replace("|", "-")  # Pipes
+    sanitized = sanitized.replace(".", "-")  # Dots
 
+    # Remove any double hyphens that might result from replacements
+    while "--" in sanitized:
+        sanitized = sanitized.replace("--", "-")
 
-class PythonDatetimeLibraries(Enum):
-    """Supported Libraries"""
+    # Remove leading/trailing hyphens
+    sanitized = sanitized.strip("-")
 
-    Datetime = "datetime"
-    Arrow = "arrow"
-    Pendulum = "pendulum"
+    return sanitized
 
 
 # Naive prompt template
@@ -34,20 +59,3 @@ Here are a few examples for {language}:
 Your task:
 {task}
 """
-
-
-def environment_variables_set() -> bool:
-    """Check if all required API keys are set in environment variables."""
-    if "OPENAI_API_KEY" not in os.environ:
-        print("Environment variable OPENAI_API_KEY not set.")
-        return False
-
-    if "GEMINI_API_KEY" not in os.environ:
-        print("Environment variable GEMINI_API_KEY not set.")
-        return False
-
-    if "ANTHROPIC_API_KEY" not in os.environ:
-        print("Environment variable ANTHROPIC_API_KEY not set.")
-        return False
-
-    return True

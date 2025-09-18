@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts two time objects as input.
+3. Ensure both times are either naive or share the same timezone info.
+4. Combine both times with the same arbitrary date to form comparable datetime objects.
+5. Compute the time difference and convert it to an absolute number of minutes.
+6. Return the result as an integer.
+
+```python
+from datetime import datetime, date, time
+
+def calculate_minutes_between(t1: time, t2: time) -> int:
+    """
+    Calculate the absolute number of minutes between two times on the same day.
+    Accepts datetime.time objects (naive or timezone-aware with the same tzinfo).
+    Returns an integer number of minutes.
+    """
+    # Validate timezone compatibility
+    if (t1.tzinfo is None) != (t2.tzinfo is None):
+        raise ValueError("Both times must be either naive or timezone-aware.")
+    if t1.tzinfo is not None and t1.tzinfo != t2.tzinfo:
+        raise ValueError("Timezone-aware times must have the same tzinfo.")
+
+    # Use an arbitrary same date for both times since they are on the same day
+    same_day = date(2000, 1, 1)
+    dt1 = datetime.combine(same_day, t1)
+    dt2 = datetime.combine(same_day, t2)
+
+    # Compute absolute difference in minutes
+    delta_seconds = abs((dt2 - dt1).total_seconds())
+    minutes = int(delta_seconds // 60)
+
+    return minutes
+
+# Entry point: calculate_minutes_between(t1: time, t2: time) -> int
+```

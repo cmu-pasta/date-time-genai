@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Import the datetime class from the standard library to work with datetime values.
+2. Define a function that accepts four datetime inputs: start and end for each of the two ranges.
+3. Normalize each range so that the start is less than or equal to the end (in case inputs are reversed).
+4. Compute the latest of the two starts and the earliest of the two ends.
+5. Determine overlap by checking if the latest start is less than or equal to the earliest end (inclusive overlap).
+6. Return the result as a boolean.
+
+```python
+from datetime import datetime
+
+def ranges_overlap(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> bool:
+    # Normalize first range to ensure start <= end
+    if end1 < start1:
+        s1 = end1
+        e1 = start1
+    else:
+        s1 = start1
+        e1 = end1
+
+    # Normalize second range to ensure start <= end
+    if end2 < start2:
+        s2 = end2
+        e2 = start2
+    else:
+        s2 = start2
+        e2 = end2
+
+    # Calculate overlap: inclusive (touching endpoints counts as overlap)
+    latest_start = s1 if s1 >= s2 else s2
+    earliest_end = e1 if e1 <= e2 else e2
+
+    return latest_start <= earliest_end
+
+# Entry point: ranges_overlap(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> bool
+```

@@ -1,0 +1,46 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that takes year (integer), month (integer), and weekday (integer with Monday=0..Sunday=6).
+3. Compute the last day of the month by taking the first day of the next month and subtracting one day.
+4. Compute how many days to step back from the last day to reach the target weekday using modular arithmetic.
+5. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def last_weekday_of_month(year: int, month: int, weekday: int) -> date:
+    """
+    Find the last occurrence of a specific weekday in a given month.
+
+    Parameters:
+    - year: Integer year (e.g., 2025)
+    - month: Integer month (1-12)
+    - weekday: Integer weekday where Monday=0 and Sunday=6
+
+    Returns:
+    - A date object representing the last occurrence of the specified weekday in the month.
+    """
+    if weekday < 0 or weekday > 6:
+        raise ValueError("weekday must be in the range 0 (Monday) to 6 (Sunday)")
+    if month < 1 or month > 12:
+        raise ValueError("month must be in the range 1 to 12")
+
+    # Step 1: Compute the first day of the next month
+    if month == 12:
+        first_of_next_month = date(year + 1, 1, 1)
+    else:
+        first_of_next_month = date(year, month + 1, 1)
+
+    # Step 2: The last day of the target month is one day before the first of the next month
+    last_day_of_month = first_of_next_month - timedelta(days=1)
+
+    # Step 3: Compute how many days to move back to reach the desired weekday
+    # last_day_of_month.weekday() returns 0..6 for Monday..Sunday
+    days_back = (last_day_of_month.weekday() - weekday) % 7
+
+    # Step 4: Subtract the offset to get the last occurrence of the target weekday
+    result_date = last_day_of_month - timedelta(days=days_back)
+    return result_date
+
+# Entry point: last_weekday_of_month(year: integers, month: integers, weekday: integers) -> date
+```

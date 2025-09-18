@@ -1,0 +1,101 @@
+Let's think step by step to solve this problem.
+1. Import the standard datetime and zoneinfo modules to work with timezones and UTC-based iteration.
+2. Define a function that accepts a year (integer) and a timezone (zoneinfo.ZoneInfo).
+3. Iterate over the UTC timeline for the given year in coarse (hourly) steps, converting to the target timezone to detect when DST status changes from standard time to daylight time.
+4. When a change is detected, refine the transition window using minute-level, then second-level steps to find the exact transition instant.
+5. Convert the exact transition instant to the target timezone and return its local date.
+6. If no DST start is found in the given year for the timezone, raise a ValueError.
+
+```python
+from datetime import datetime, timedelta, timezone, date
+from zoneinfo import ZoneInfo
+
+def find_dst_start_date(year: int, tz: ZoneInfo) -> date:
+    """
+    Find the local calendar date when daylight saving time starts
+    for a given year and IANA timezone.
+
+    Args:
+        year: The target year as an integer.
+        tz: A ZoneInfo timezone.
+
+    Returns:
+        The date (in local time) on which DST starts.
+
+    Raises:
+        ValueError: If the timezone does not start DST in the given year.
+    """
+    # Define the UTC interval covering the entire year
+    start_utc = datetime(year, 1, 1, tzinfo=timezone.utc)
+    end_utc = datetime(year + 1, 1, 1, tzinfo=timezone.utc)
+
+    # Helper to check whether a UTC instant maps to DST in the given timezone
+    def is_dst(utc_dt: datetime) -> bool:
+        return (utc_dt.astimezone(tz).dst() or timedelta(0)) != timedelta(0)
+
+    # Coarse search: step through the year by hour to find the first DST transition from off -> on
+    step = timedelta(hours=1)
+    prev_utc = start_utc
+    prev_is_dst = is_dst(prev_utc)
+
+    transition_window_start = None
+    transition_window_end = None
+
+    current_utc = start_utc + step
+    while current_utc <= end_utc:
+        current_is_dst = is_dst(current_utc)
+        # Detect the first switch from standard time (not DST) to DST
+        if (not prev_is_dst) and current_is_dst:
+            transition_window_start = prev_utc
+            transition_window_end = current_utc
+            break
+        prev_utc = current_utc
+        prev_is_dst = current_is_dst
+        current_utc += step
+
+    # If no DST start found in coarse search, there's no DST start in this year
+    if transition_window_start is None:
+        raise ValueError("No DST start found in the given year for the specified timezone.")
+
+    # Refine search at minute resolution within the hour window
+    minute_step = timedelta(minutes=1)
+    prev_utc = transition_window_start
+    prev_is_dst = is_dst(prev_utc)
+
+    current_utc = prev_utc + minute_step
+    while current_utc <= transition_window_end:
+        current_is_dst = is_dst(current_utc)
+        if (not prev_is_dst) and current_is_dst:
+            transition_window_start = prev_utc
+            transition_window_end = current_utc
+            break
+        prev_utc = current_utc
+        prev_is_dst = current_is_dst
+        current_utc += minute_step
+
+    # Refine search at second resolution within the minute window
+    second_step = timedelta(seconds=1)
+    prev_utc = transition_window_start
+    prev_is_dst = is_dst(prev_utc)
+
+    current_utc = prev_utc + second_step
+    exact_transition_utc = None
+    while current_utc <= transition_window_end:
+        current_is_dst = is_dst(current_utc)
+        if (not prev_is_dst) and current_is_dst:
+            exact_transition_utc = current_utc
+            break
+        prev_utc = current_utc
+        prev_is_dst = current_is_dst
+        current_utc += second_step
+
+    # Fallback: if second-level loop didn't set it (edge case), use window end
+    if exact_transition_utc is None:
+        exact_transition_utc = transition_window_end
+
+    # Convert to local time and return the date component
+    local_transition = exact_transition_utc.astimezone(tz)
+    return local_transition.date()
+
+# Entry point: find_dst_start_date(year: int, tz: ZoneInfo) -> date
+```

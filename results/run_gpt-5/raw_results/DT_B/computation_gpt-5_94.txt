@@ -1,0 +1,61 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module and floor from math.
+2. Define a function that takes a datetime input and returns a float representing the Modified Julian Date (MJD).
+3. Normalize the input datetime to UTC. If naive (no tzinfo), treat it as UTC.
+4. Extract year, month, day, and time components to compute the fractional day.
+5. Compute the Julian Date (JD) using the proleptic Gregorian calendar algorithm.
+6. Convert JD to MJD by subtracting 2400000.5 and return the result.
+
+```python
+from datetime import datetime, timezone
+from math import floor
+
+def convert_to_mjd(dt: datetime) -> float:
+    """
+    Convert a datetime to Modified Julian Date (MJD).
+    - If dt is timezone-aware, it is converted to UTC.
+    - If dt is naive, it is assumed to be in UTC.
+    Returns a float representing the MJD.
+    """
+    # Normalize to UTC
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    # If naive, treat as UTC (no change needed)
+
+    Y = dt.year
+    M = dt.month
+    D = dt.day
+
+    # Time to fractional day
+    day_fraction = (
+        (dt.hour +
+         dt.minute / 60.0 +
+         (dt.second + dt.microsecond / 1_000_000.0) / 3600.0) / 24.0
+    )
+
+    # Algorithm for Julian Date (proleptic Gregorian calendar)
+    if M <= 2:
+        Yp = Y - 1
+        Mp = M + 12
+    else:
+        Yp = Y
+        Mp = M
+
+    A = floor(Yp / 100)
+    B = 2 - A + floor(A / 4)
+
+    JD = (
+        floor(365.25 * (Yp + 4716))
+        + floor(30.6001 * (Mp + 1))
+        + D
+        + B
+        - 1524.5
+        + day_fraction
+    )
+
+    # Modified Julian Date
+    MJD = JD - 2400000.5
+    return MJD
+
+# Entry point: convert_to_mjd(dt: datetime) -> float
+```

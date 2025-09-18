@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Import the necessary class `time` from the `datetime` module.
+2. Define a function that accepts a 12-hour time as a `time` object (with hour in 1..12) and a boolean indicating whether it is PM.
+3. Convert the hour to 24-hour format:
+   - Map 12 AM to 00 hours.
+   - Map 12 PM to 12 hours.
+   - Add 12 hours for PM times other than 12 PM.
+4. Preserve minutes, seconds, microseconds, tzinfo, and fold from the input time.
+5. Return the resulting 24-hour `time` object.
+
+```python
+from datetime import time
+
+def convert_12h_to_24h(t12: time, is_pm: bool) -> time:
+    """
+    Convert a 12-hour time to a 24-hour time.
+
+    Parameters:
+    - t12: time object with hour in 1..12 representing the 12-hour clock time
+    - is_pm: boolean indicating whether the time is PM (True) or AM (False)
+
+    Returns:
+    - time object in 24-hour format
+    """
+    # Normalize 12 -> 0 (so 12 AM becomes 0, and 12 PM becomes 12 after adding 12)
+    base_hour = t12.hour % 12  # 12 -> 0, 1..11 -> 1..11
+
+    hour24 = base_hour + (12 if is_pm else 0)
+
+    return time(
+        hour=hour24,
+        minute=t12.minute,
+        second=t12.second,
+        microsecond=t12.microsecond,
+        tzinfo=t12.tzinfo,
+        fold=t12.fold
+    )
+
+# Entry point: convert_12h_to_24h(t12: time, is_pm: bool) -> time
+```

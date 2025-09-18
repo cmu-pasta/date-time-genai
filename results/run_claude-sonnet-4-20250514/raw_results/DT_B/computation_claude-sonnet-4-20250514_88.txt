@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `timedelta` class from Python's `datetime` module to work with time durations.
+
+2. **Define a function**: We will create a function that accepts a `timedelta` object as input, representing the time duration.
+
+3. **Convert to total hours**: Use the `total_seconds()` method of the `timedelta` object to get the total number of seconds, then divide by 3600 (seconds per hour) to convert to hours.
+
+4. **Return the result**: Return the result as a float representing the decimal hours.
+
+```python
+from datetime import timedelta
+
+def convert_duration_to_hours(duration: timedelta) -> float:
+    # Step 1: Get total seconds from the timedelta
+    total_seconds = duration.total_seconds()
+    
+    # Step 2: Convert seconds to hours (3600 seconds = 1 hour)
+    total_hours = total_seconds / 3600
+    
+    # Step 3: Return the result as a decimal number (float)
+    return total_hours
+
+# Entry point: convert_duration_to_hours(duration: timedelta) -> float
+```

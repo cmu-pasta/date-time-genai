@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard datetime library.
+2. Define a function that accepts two datetime inputs (timestamps).
+3. Validate that both datetimes are either timezone-aware or both naive to ensure safe subtraction.
+4. Subtract the datetimes to get a timedelta and compute the absolute number of seconds using total_seconds.
+5. Return the result as a float representing the exact number of seconds between the two timestamps.
+
+```python
+from datetime import datetime
+
+def calculate_seconds_difference(ts1: datetime, ts2: datetime) -> float:
+    """
+    Calculate the absolute number of seconds between two datetime timestamps.
+
+    Args:
+        ts1: The first datetime timestamp.
+        ts2: The second datetime timestamp.
+
+    Returns:
+        A float representing the absolute number of seconds between ts1 and ts2.
+    """
+    # Ensure both datetimes are either naive or both timezone-aware
+    if (ts1.tzinfo is None) != (ts2.tzinfo is None):
+        raise ValueError("Both datetimes must be either naive or both timezone-aware.")
+
+    # Compute the time difference
+    delta = ts2 - ts1
+
+    # Return the absolute number of seconds (including fractions)
+    return abs(delta.total_seconds())
+
+# Entry point: calculate_seconds_difference(ts1: datetime, ts2: datetime) -> float
+```

@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+1. Use a well-known astronomical polynomial approximation (Meeus) to compute the Terrestrial Time (TT) Julian Ephemeris Date (JDE) of the June (Northern Hemisphere) solstice for a given year.
+2. Convert the computed JDE to a UTC-based datetime by approximating UTC ≈ TT for the purpose of determining the calendar date (the difference is on the order of a couple of minutes and does not affect the date in practice).
+3. Convert the Julian Date to a Python datetime using the relation JD(UTC) = 2440587.5 at Unix epoch 1970-01-01 00:00:00 UTC.
+4. Return only the date component as the summer solstice date.
+
+```python
+from datetime import datetime, timedelta, date
+
+def summer_solstice_date(year: int) -> date:
+    """
+    Compute the approximate date of the June (Northern Hemisphere) summer solstice for a given Gregorian year.
+    The computation uses a Meeus-style polynomial for the June solstice JDE (TT) and converts to a UTC date.
+    Returns a date object representing the solstice date in UTC.
+    
+    Valid for years reasonably close to the modern era (e.g., within a few millennia of year 2000).
+    """
+    # Step 1: Compute T in thousands of years from J2000.0
+    # T = (year - 2000) / 1000 per Meeus for solstice/equinox polynomials
+    T = (year - 2000) / 1000.0
+
+    # Step 2: Polynomial approximation for June solstice JDE (Terrestrial Time)
+    # Source: Meeus-style polynomial (approximation for -1000 to +3000)
+    # JDE0 = 2451716.56767 + 365241.62603*T + 0.00325*T^2 + 0.00888*T^3 - 0.00030*T^4
+    JDE0 = (
+        2451716.56767
+        + 365241.62603 * T
+        + 0.00325 * (T ** 2)
+        + 0.00888 * (T ** 3)
+        - 0.00030 * (T ** 4)
+    )
+
+    # Step 3: Convert JDE (TT) to an approximate UTC datetime.
+    # For date determination, we approximate UTC ≈ TT (differences are minutes and won't change the date).
+    JD_UTC_approx = JDE0
+
+    # Convert Julian Date to datetime: JD(UTC) = 2440587.5 at 1970-01-01 00:00:00 UTC
+    days_since_unix_epoch = JD_UTC_approx - 2440587.5
+    dt_utc = datetime(1970, 1, 1) + timedelta(days=days_since_unix_epoch)
+
+    # Step 4: Return only the date component
+    return dt_utc.date()
+
+# Entry point: summer_solstice_date(year: int) -> date
+```

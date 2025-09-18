@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts two dates as inputs.
+3. Compute the absolute difference in days between the two dates.
+4. Convert the day difference into fortnights by dividing by 14.
+5. Return the result as a float.
+
+```python
+from datetime import date
+
+def calculate_fortnights_between(d1: date, d2: date) -> float:
+    """
+    Calculate the number of fortnights (14-day periods) between two dates.
+
+    Parameters:
+    - d1: date
+    - d2: date
+
+    Returns:
+    - float: absolute number of fortnights between the two dates
+    """
+    day_difference = abs((d2 - d1).days)
+    fortnights = day_difference / 14.0
+    return fortnights
+
+# Entry point: calculate_fortnights_between(d1: date, d2: date) -> float
+```

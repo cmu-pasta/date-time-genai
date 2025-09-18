@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+1. Normalize the order of inputs so start <= end to handle any order of datetimes.
+2. Iterate from the start datetime to the end datetime in day-sized chunks: [cursor, start_of_next_day) intersected with [start, end).
+3. For each chunk, if the day is a weekday (not weekend), add the duration of that chunk to the total; otherwise, skip it.
+4. Return the accumulated working time as a pendulum.Duration.
+
+```python
+import pendulum
+
+def working_hours_between(start: pendulum.DateTime, end: pendulum.DateTime) -> pendulum.Duration:
+    """
+    Calculate the working time between two datetimes excluding weekends.
+    Working time includes all elapsed time on weekdays (Monday-Friday) within the interval.
+    
+    Inputs:
+      - start: pendulum.DateTime
+      - end: pendulum.DateTime
+    Output:
+      - pendulum.Duration representing total working time
+    """
+    # Ensure chronological order
+    if end < start:
+        start, end = end, start
+
+    cursor = start
+    total = pendulum.duration(seconds=0)
+
+    # Process in [cursor, start_of_next_day) slices until reaching 'end'
+    while cursor < end:
+        start_of_next_day = cursor.start_of_day().add(days=1)
+        next_boundary = end if end < start_of_next_day else start_of_next_day
+
+        # Only count time on weekdays
+        if not cursor.is_weekend():
+            total += (next_boundary - cursor)
+
+        cursor = next_boundary
+
+    return total
+
+# Entry point: working_hours_between(start: pendulum.DateTime, end: pendulum.DateTime) -> pendulum.Duration
+```

@@ -1,0 +1,8 @@
+computation_gemini-gemini-2-5-flash_0: non-differentiating (0.0%)
+computation_gemini-gemini-2-5-flash_1: program-error (0.0%)
+computation_gemini-gemini-2-5-flash_2: differentiating (100.0%)
+computation_gemini-gemini-2-5-flash_3: differentiating (25.119999999999997%)
+computation_gemini-gemini-2-5-flash_5: program-error (0.0%)
+computation_gemini-gemini-2-5-flash_7: program-error (0.0%)
+computation_gemini-gemini-2-5-flash_8: differentiating (99.74%)
+computation_gemini-gemini-2-5-flash_9: differentiating (100.0%)

@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Determine the total number of days in the specified year using Pendulum dates.
+2. Compute how many full 14-day (bi-weekly) periods fit within those days using floor division.
+3. Return the result as an integer.
+
+```python
+import pendulum
+
+def calculate_biweekly_periods_in_year(year: int) -> int:
+    """
+    Calculate the number of bi-weekly payroll periods that fully fit within a given calendar year.
+    
+    A bi-weekly period is exactly 14 days. This function counts how many full 14-day
+    periods are contained within the total number of days in the specified year.
+    """
+    # Step 1: Define the start and end dates of the year
+    start_of_year: pendulum.Date = pendulum.date(year, 1, 1)
+    end_of_year: pendulum.Date = pendulum.date(year, 12, 31)
+
+    # Step 2: Compute the total number of days in the year (inclusive)
+    total_days_in_year: int = end_of_year.diff(start_of_year, absolute=True).in_days() + 1
+
+    # Step 3: Calculate the number of full 14-day (bi-weekly) periods
+    periods: int = total_days_in_year // 14
+
+    # Step 4: Return the count as an integer
+    return periods
+
+# Entry point: calculate_biweekly_periods_in_year(year: int) -> int
+```

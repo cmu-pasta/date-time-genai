@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Import the required types from the standard datetime library.
+2. Define a function that accepts a date as input.
+3. Use meteorological season start dates for the Northern Hemisphere: spring (Mar 1), summer (Jun 1), autumn (Sep 1), winter (Dec 1).
+4. Compare the given date with these boundaries to determine the season.
+5. Return an integer code representing the season: 1 = spring, 2 = summer, 3 = autumn, 4 = winter.
+
+```python
+from datetime import date
+
+def determine_season(day: date) -> int:
+    """
+    Determine the meteorological season (Northern Hemisphere) for a given date.
+    Returns an integer code:
+      1 = spring, 2 = summer, 3 = autumn, 4 = winter
+    """
+    y = day.year
+    spring_start = date(y, 3, 1)
+    summer_start = date(y, 6, 1)
+    autumn_start = date(y, 9, 1)
+    winter_start = date(y, 12, 1)
+
+    if day >= winter_start or day < spring_start:
+        return 4  # winter
+    elif day >= autumn_start:
+        return 3  # autumn
+    elif day >= summer_start:
+        return 2  # summer
+    else:
+        return 1  # spring
+
+# Entry point: determine_season(day: date) -> int
+```

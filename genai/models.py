@@ -1,104 +1,76 @@
 import os
 import sys
 import time
+from enum import Enum
+from typing import List
 
-import anthropic
-import google.generativeai as genai
-from openai import OpenAI
+import litellm
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 
 
+class ModelType(Enum):
+    """Enum defining the allowed model types."""
+
+    OPENAI = "gpt-5"
+    GEMINI = "gemini/gemini-2.5-flash"
+    CLAUDE = "claude-sonnet-4-20250514"
+
+
 class Model:
-    def __init__(self, model_name):
-        pass
+    """Base model class providing a unified interface for all LLM providers."""
 
-    def sample(self, system_prompt, user_prompt, n):
-        pass
+    def __init__(self, model_type: ModelType):
+        """
+        Initialize the model with a specific ModelType enum.
 
+        Args:
+            model_type: ModelType enum value specifying which model to use
+        """
+        if not isinstance(model_type, ModelType):
+            raise TypeError(f"Invalid model type: {model_type}")
 
-class OpenAIModel(Model):
-    def __init__(self, model_name):
-        self.client = OpenAI()
-        self.model_name = model_name
+        self.model_type = model_type
+        self.model_name = model_type.value
 
-    def sample(self, system_prompt, user_prompt, n=1):
-        samples = []
-        message = [
+        # Set to True for debugging
+        litellm.set_verbose = False
+
+    def sample(self, system_prompt: str, user_prompt: str, n: int = 1) -> List[str]:
+        """
+        Generate samples using the specified model.
+
+        Args:
+            system_prompt: System message to set context
+            user_prompt: User message/prompt
+            n: Number of samples to generate
+
+        Returns:
+            List of generated text samples
+        """
+        messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ]
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=message,
-            n=n,
-            # temperature=config.SAMPLING_TEMPERATURE,
-        )
-        samples = [r.message.content for r in response.choices]
-        return samples
 
-
-class GeminiModel(Model):
-    def __init__(self, model_name):
-        genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-        generation_config = {
-            "max_output_tokens": config.MAX_TOKENS,
-            "temperature": config.SAMPLING_TEMPERATURE,
-            "candidate_count": 1,
-        }
-
-        self.model = genai.GenerativeModel(
-            model_name=model_name,
-            generation_config=generation_config,
-        )
-        self.model_name = model_name
-
-    def sample(self, system_prompt, user_prompt, n=1):
-        message = system_prompt + "\n" + user_prompt
         samples = []
         for i in range(n):
-            response = None
-            while response is None:
-                try:
-                    response = self.model.generate_content(message)
-                    # print(f"Sampled from gemini. {i}")
-                    time.sleep(10)
-                except Exception as e:
-                    print(f"Exception from gemini: {e}")
-                    time.sleep(30)
             try:
-                samples.append(response.text)
+                params = {
+                    "model": self.model_name,
+                    "messages": messages,
+                    "max_tokens": config.MAX_TOKENS,
+                    "temperature": config.SAMPLING_TEMPERATURE,
+                    "reasoning_effort": "low",
+                }
+
+                response = litellm.completion(**params)
+                content = response.choices[0].message.content
+                samples.append(content)
+
             except Exception as e:
-                print(f"Exception from gemini: {e}")
-                time.sleep(30)
-        return samples
+                print(f"Exception from {self.model_name}: {e}")
+                samples.append("")
 
-
-class AnthropicModel(Model):
-    def __init__(self, model_name):
-        self.client = anthropic.Anthropic()
-        self.model_name = model_name
-
-    def sample(self, system_prompt, user_prompt, n=1):
-        samples = []
-        message = [
-            {"role": "user", "content": user_prompt},
-        ]
-        for i in range(n):
-            response = None
-            while response is None:
-                try:
-                    response = self.client.messages.create(
-                        model=self.model_name,
-                        max_tokens=config.MAX_TOKENS,
-                        system=system_prompt,
-                        messages=message,
-                        temperature=config.SAMPLING_TEMPERATURE,
-                    )
-                    # print(f"Sampled from anthropic. {i}")
-                except Exception as e:
-                    print(f"Exception from anthropic: {e}")
-                    time.sleep(10)
-            samples.append(response.content[0].text)
         return samples

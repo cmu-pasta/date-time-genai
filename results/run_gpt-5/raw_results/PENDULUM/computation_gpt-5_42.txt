@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Create a function that takes a year and a month as integers.
+3. Construct a pendulum.DateTime for the first day of the given month in UTC.
+4. Use the days_in_month attribute to get the number of days in that month (leap years handled by Pendulum).
+5. Multiply the number of days by 24 to get the total hours and return it as an integer.
+
+```python
+import pendulum
+
+def calculate_hours_in_month(year: int, month: int) -> int:
+    # Create a DateTime at the start of the given month in UTC
+    dt = pendulum.datetime(year, month, 1, 0, 0, 0, tz="UTC")
+    # days_in_month accounts for leap years (e.g., February has 29 days in leap years)
+    hours = dt.days_in_month * 24
+    return hours
+
+# Entry point: calculate_hours_in_month(year: int, month: int) -> int
+```

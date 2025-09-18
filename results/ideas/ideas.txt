@@ -1,0 +1,100 @@
+1. Calculate the number of business days between two dates.
+2. Calculate the exact time difference between two timestamps considering daylight saving time.
+3. Determine the day name (e.g., Monday, Tuesday) for a given date.
+4. Determine the next leap year after a given date.
+5. Convert a timestamp from one timezone to another timezone.
+6. Find the first Monday of a given month and year.
+7. Calculate the age in years, months, and days between two dates.
+8. Determine if a given year is a leap year.
+9. Find the last day of the month for a given date.
+10. Calculate the number of seconds between two timestamps.
+11. Convert a date to Julian day number.
+12. Find the Easter Sunday date for a given year.
+13. Calculate the week number of the year for a given date.
+14. Determine the quarter of the year for a given date.
+15. Find the date that is exactly N business days after a given date.
+16. Calculate the number of weekends between two dates.
+17. Convert Unix timestamp to a human-readable datetime.
+18. Find the nth occurrence of a specific weekday in a given month.
+19. Calculate the time difference in hours between two times.
+20. Determine the season (spring, summer, autumn, winter) for a given date.
+21. Find the previous Friday before a given date.
+22. Calculate the number of days until the next birthday given a birth date.
+23. Convert 12-hour time format to 24-hour time format.
+24. Find the date of the next full moon after a given date.
+25. Calculate the working hours between two datetimes excluding weekends.
+26. Determine if two date ranges overlap.
+27. Find the midpoint datetime between two datetimes.
+28. Calculate the number of leap years between two years.
+29. Convert a datetime to ISO 8601 format string.
+30. Find the date of Thanksgiving for a given year (fourth Thursday of November).
+31. Calculate the time elapsed since epoch for a given timestamp.
+32. Determine the fiscal year for a given date (assuming April start).
+33. Find the date that falls exactly in the middle of two given dates.
+34. Calculate the number of minutes between two times on the same day.
+35. Convert a date to the corresponding day of the year (1-366).
+36. Find the last business day of a given month.
+37. Calculate the duration in milliseconds between two timestamps.
+38. Determine the zodiac sign for a given birth date.
+39. Find the next occurrence of Friday the 13th after a given date.
+40. Calculate the age in total days for a given birth date and reference date.
+41. Convert a time to seconds since midnight.
+42. Find the date of the winter solstice for a given year.
+43. Calculate the number of hours in a given month considering leap years.
+44. Determine if a given date falls on a weekend.
+45. Find the date of the first day of spring for a given year.
+46. Calculate the business days remaining in the current month for a given date.
+47. Convert a datetime from 24-hour format to 12-hour format with AM/PM.
+48. Find the date of Memorial Day for a given year (last Monday of May).
+49. Calculate the time zone offset in hours for a given datetime and timezone.
+50. Determine the number of Sundays in February for a given year.
+51. Find the date that is exactly 100 days before a given date.
+52. Calculate the total minutes in a given time period between two times.
+53. Convert a date to Roman numeral representation of the year.
+54. Find the date of the autumnal equinox for a given year.
+55. Calculate the percentage of the year that has passed for a given date.
+56. Determine the Islamic calendar date for a given Gregorian date.
+57. Find the next Valentine's Day after a given date.
+58. Calculate the number of work weeks between two dates.
+59. Convert a timestamp to a different epoch (e.g., from Unix to Windows).
+60. Find the date of the Chinese New Year for a given Gregorian year.
+61. Calculate the solar noon time for a given date and location coordinates.
+62. Determine the day number within the week (1-7) for a given date.
+63. Find the date when daylight saving time starts for a given year and timezone.
+64. Calculate the number of fortnights between two dates.
+65. Convert a 24-hour time to minutes since midnight.
+66. Find the date of the summer solstice for a given year.
+67. Calculate the number of trading days in a given year.
+68. Determine the Hebrew calendar date for a given Gregorian date.
+69. Find the date of Labor Day for a given year (first Monday of September).
+70. Calculate the time difference accounting for different time zones.
+71. Convert a Julian calendar date to Gregorian calendar date.
+72. Find the date of the vernal equinox for a given year.
+73. Calculate the number of payroll periods (bi-weekly) in a given year.
+74. Determine if a given time falls within business hours (9 AM - 5 PM).
+75. Find the date of the next new moon after a given date.
+76. Calculate the chronological age in seconds for a given birth datetime.
+77. Convert a datetime to the number of days since a reference date.
+78. Find the date of Columbus Day for a given year (second Monday of October).
+79. Calculate the sunrise time for a given date and geographic coordinates.
+80. Determine the Buddhist calendar year for a given Gregorian date.
+81. Find the last occurrence of a specific weekday in a given month.
+82. Calculate the number of milliseconds in a given time duration.
+83. Convert a date to the corresponding week of the year (1-53).
+84. Find the date when daylight saving time ends for a given year and timezone.
+85. Calculate the sunset time for a given date and geographic coordinates.
+86. Determine the Japanese calendar era and year for a given Gregorian date.
+87. Find the date of Presidents' Day for a given year (third Monday of February).
+88. Calculate the number of nanoseconds between two precise timestamps.
+89. Convert a time duration to total hours as a decimal number.
+90. Find the date of the Persian New Year (Nowruz) for a given Gregorian year.
+91. Calculate the lunar age (days since new moon) for a given date.
+92. Determine the Indian National Calendar date for a given Gregorian date.
+93. Find the date of Martin Luther King Jr. Day for a given year (third Monday of January).
+94. Calculate the sidereal time for a given datetime and longitude.
+95. Convert a datetime to Modified Julian Date format.
+96. Find the date of the next solar eclipse visible from a given location.
+97. Calculate the equation of time correction for a given date.
+98. Determine the Thai Buddhist calendar date for a given Gregorian date.
+99. Find the date of Indigenous Peoples' Day for a given year (second Monday of October).
+100. Calculate the decimal time representation for a given time of day.

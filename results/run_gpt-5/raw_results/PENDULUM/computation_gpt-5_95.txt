@@ -1,0 +1,68 @@
+Let's think step by step to solve this problem.
+1. Interpret "location" as a pendulum.Timezone to stay within Pendulum-only types.
+2. Maintain a minimal internal schedule of upcoming solar eclipses with approximate regional visibility (by timezone prefix), stored in UTC.
+3. Normalize the input datetime to UTC to compare against the eclipse times.
+4. Iterate the eclipses after the given datetime and select the first eclipse whose visibility regions match the provided timezone.
+5. Return the eclipse’s moment localized to the provided timezone. If no match is found in the schedule, approximate the next cycle using a Saros-like offset (18 years and 11 days) from the input datetime.
+
+```python
+import pendulum
+
+def next_visible_solar_eclipse(from_dt: pendulum.DateTime, location_tz: pendulum.Timezone) -> pendulum.DateTime:
+    """
+    Find the date and time of the next solar eclipse visible from a given location (approximated by timezone).
+    Returns the local datetime (in the provided timezone) of the eclipse maximum for the next visible event.
+    
+    Inputs:
+      - from_dt: pendulum.DateTime (reference datetime)
+      - location_tz: pendulum.Timezone (location proxy)
+    Output:
+      - pendulum.DateTime (localized to location_tz)
+    Notes:
+      - Visibility is approximated by timezone region prefixes for a small set of upcoming eclipses.
+      - If no event matches, falls back to an approximate Saros-cycle-based estimate.
+    """
+
+    # Ensure from_dt is timezone-aware and normalized to UTC for comparison
+    if from_dt.timezone is None:
+        # If naive, assume the provided location timezone as the context
+        local_ref = from_dt.replace(tz=location_tz)
+    else:
+        local_ref = from_dt.in_timezone(location_tz)
+    ref_utc = local_ref.in_timezone("UTC")
+
+    # Minimal schedule of upcoming eclipses with rough regional visibility
+    # Each entry: (UTC datetime of maximum, visibility prefixes)
+    # Note: This is a simplified approximation and not a precise visibility model.
+    eclipses = [
+        # 2026 Aug 12 Total (Greenland, Iceland, Spain) with wide partial across Europe/NW Africa
+        (pendulum.datetime(2026, 8, 12, 17, 0, 0, tz="UTC"),
+         ("Europe/", "Africa/", "Atlantic/", "America/") ),
+        # 2027 Aug 02 Total (North Africa, Middle East). Partial visible in Africa, S Europe, W Asia.
+        (pendulum.datetime(2027, 8, 2, 10, 0, 0, tz="UTC"),
+         ("Africa/", "Europe/", "Asia/") ),
+        # 2028 Jan 26 Annular (Australia). Partial visible in Australia, SE Asia, Pacific.
+        (pendulum.datetime(2028, 1, 26, 3, 0, 0, tz="UTC"),
+         ("Australia/", "Asia/", "Pacific/") ),
+        # 2029 Jan 14 Partial (N America, N Asia)
+        (pendulum.datetime(2029, 1, 14, 18, 0, 0, tz="UTC"),
+         ("America/", "Asia/", "Europe/") ),
+        # 2030 Jun 01 Annular (Africa, Indian Ocean, Australia partial)
+        (pendulum.datetime(2030, 6, 1, 6, 0, 0, tz="UTC"),
+         ("Africa/", "Asia/", "Australia/", "Indian/") ),
+    ]
+
+    tz_name = location_tz.name or ""
+    # Find the next eclipse after the reference moment that is "visible" for this timezone
+    for eclipse_utc, region_prefixes in eclipses:
+        if eclipse_utc > ref_utc:
+            for prefix in region_prefixes:
+                if tz_name.startswith(prefix):
+                    return eclipse_utc.in_timezone(location_tz)
+
+    # Fallback: approximate next possibility using a Saros-like period (18 years, 11 days)
+    approx = ref_utc.add(years=18, days=11).set(hour=12, minute=0, second=0)
+    return approx.in_timezone(location_tz)
+
+# Entry point: next_visible_solar_eclipse(from_dt: pendulum.DateTime, location_tz: pendulum.Timezone) -> pendulum.DateTime
+```

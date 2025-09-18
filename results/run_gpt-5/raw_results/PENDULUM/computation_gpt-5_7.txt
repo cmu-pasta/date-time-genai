@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date-related utilities.
+2. Define a function that accepts a year as an integer.
+3. Create a pendulum.Date instance for January 1st of the given year.
+4. Use the Date's days_in_year property to check if the year has 366 days.
+5. Return True if it has 366 days (leap year), otherwise False.
+
+```python
+import pendulum
+
+def is_leap_year(year: int) -> bool:
+    """
+    Determine if the given year is a leap year using the Pendulum library.
+    
+    Args:
+        year (int): The year to check.
+    
+    Returns:
+        bool: True if the year is a leap year, otherwise False.
+    """
+    # Create a pendulum.Date for the first day of the given year
+    start_of_year: pendulum.Date = pendulum.date(year, 1, 1)
+    
+    # A leap year has 366 days
+    return start_of_year.days_in_year == 366
+
+# Entry point: is_leap_year(year: int) -> bool
+```

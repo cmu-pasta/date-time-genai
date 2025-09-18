@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Decide on a definition for "first day of spring." Using meteorological seasons:
+   - Northern Hemisphere: March 1
+   - Southern Hemisphere: September 1
+2. Accept the input year as an integer and an optional boolean to indicate the hemisphere.
+3. Construct and return a pendulum.Date representing the first day of spring for the given year and hemisphere.
+
+```python
+import pendulum
+
+def first_day_of_spring(year: int, southern_hemisphere: bool = False) -> pendulum.Date:
+    """
+    Compute the first day of meteorological spring for a given year.
+
+    - Northern Hemisphere: March 1
+    - Southern Hemisphere: September 1
+
+    Parameters:
+        year (int): The target year.
+        southern_hemisphere (bool): If True, use Southern Hemisphere seasons; otherwise Northern.
+
+    Returns:
+        pendulum.Date: The date of the first day of spring.
+    """
+    month = 9 if southern_hemisphere else 3
+    return pendulum.date(year, month, 1)
+
+# Entry point: first_day_of_spring(year: int, southern_hemisphere: bool = False) -> pendulum.Date
+```

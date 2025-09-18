@@ -1,0 +1,51 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts two date objects as inputs.
+3. Normalize the order of the dates so that the first date is not after the second.
+4. Compute the total number of days in the half-open interval [start, end).
+5. Compute the number of complete 7-day weeks and their corresponding 5 workdays.
+6. Compute the remaining days and count how many of those are weekdays (Monday–Friday).
+7. Sum the total number of weekdays and divide by 5 using integer division to get the number of full work weeks.
+8. Return the integer number of work weeks.
+
+```python
+from datetime import date
+
+def calculate_work_weeks_between(start: date, end: date) -> int:
+    """
+    Calculate the number of full work weeks (Mon-Fri) between two dates.
+    The interval is half-open: [start, end), meaning the end date is not included.
+    A work week consists of 5 weekdays (Monday through Friday).
+    """
+    # Step 1: Normalize order to ensure start <= end
+    if start > end:
+        start, end = end, start
+
+    # Step 2: Compute the total days in the half-open interval [start, end)
+    total_days = (end - start).days
+    if total_days <= 0:
+        return 0
+
+    # Step 3: Compute weekdays contributed by complete weeks
+    full_weeks = total_days // 7
+    weekdays = full_weeks * 5
+
+    # Step 4: Handle the remaining days to count additional weekdays
+    remaining_days = total_days % 7
+    start_weekday = start.weekday()  # 0=Mon, 6=Sun
+
+    # Count weekdays in the remaining span
+    extra_weekdays = 0
+    for i in range(remaining_days):
+        dow = (start_weekday + i) % 7
+        if dow < 5:  # Monday-Friday
+            extra_weekdays += 1
+
+    weekdays += extra_weekdays
+
+    # Step 5: Convert total weekdays to number of full work weeks
+    work_weeks = weekdays // 5
+    return work_weeks
+
+# Entry point: calculate_work_weeks_between(start: date, end: date) -> int
+```

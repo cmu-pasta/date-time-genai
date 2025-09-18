@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with time objects.
+2. Define a function that accepts a pendulum.Time object representing a 24-hour time.
+3. Compute the total minutes since midnight as (hour * 60) + minute.
+4. Return the computed integer value.
+
+```python
+import pendulum
+
+def time_to_minutes_since_midnight(t: pendulum.Time) -> int:
+    """
+    Convert a 24-hour pendulum.Time to minutes since midnight.
+
+    Args:
+        t (pendulum.Time): The time to convert.
+
+    Returns:
+        int: Minutes since midnight.
+    """
+    # Calculate minutes since midnight using hour and minute components
+    minutes = t.hour * 60 + t.minute
+    return minutes
+
+# Entry point: time_to_minutes_since_midnight(t: pendulum.Time) -> int
+```

@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need the `datetime` class from Python's standard `datetime` module.
+2.  **Define a function**: We will create a function that accepts an integer representing the year as input.
+3.  **Construct `datetime` objects**: To determine the number of days in a year, we can create `datetime` objects for the very first day of the given year and the very first day of the *next* year.
+    *   `datetime(year, 1, 1)` for the start of the given year.
+    *   `datetime(year + 1, 1, 1)` for the start of the next year.
+4.  **Calculate the difference**: Subtracting these two `datetime` objects will yield a `timedelta` object. We can then access its `.days` attribute to get the total number of days between these two dates.
+5.  **Determine if it's a leap year**: A leap year has 366 days, while a common year has 365 days. We will compare the calculated number of days to 366. If it matches, the year is a leap year; otherwise, it is not.
+6.  **Return the result**: The function will return a boolean value (`True` if it's a leap year, `False` otherwise).
+
+```python
+from datetime import datetime
+
+def is_leap_year(year: int) -> bool:
+    # Step 3: Construct datetime objects for the beginning of the given year and the next year.
+    start_of_year = datetime(year, 1, 1)
+    start_of_next_year = datetime(year + 1, 1, 1)
+    
+    # Step 4: Calculate the difference between these two dates.
+    # The .days attribute of the timedelta object gives the total number of days.
+    number_of_days = (start_of_next_year - start_of_year).days
+    
+    # Step 5 & 6: A leap year has 366 days. Return True if the calculated number of days is 366, else False.
+    return number_of_days == 366
+
+# Entry point: is_leap_year(year: int) -> bool
+```

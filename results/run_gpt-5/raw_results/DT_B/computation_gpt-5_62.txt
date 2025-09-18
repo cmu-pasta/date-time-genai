@@ -1,0 +1,46 @@
+Let's think step by step to solve this problem.
+1. Import datetime, date, timedelta from datetime and ZoneInfo from zoneinfo.
+2. Define a function that accepts a year (integer) and a timezone (zoneinfo.ZoneInfo).
+3. Iterate hour-by-hour from the start of the given year to the start of the next year in the given timezone.
+4. Detect the first moment where DST offset increases compared to the previous hour (this indicates DST start).
+5. Return the date of that transition. If no DST start occurs in that year for the timezone, return the minimal date (date.min), i.e., 0001-01-01.
+
+```python
+from datetime import datetime, date, timedelta
+from zoneinfo import ZoneInfo
+
+def find_dst_start_date(year: int, tz: ZoneInfo) -> date:
+    """
+    Find the calendar date on which DST starts in the given year and timezone.
+    If no DST start occurs in that year, returns date.min (0001-01-01).
+    """
+    start = datetime(year, 1, 1, 0, 0, tzinfo=tz)
+    end = datetime(year + 1, 1, 1, 0, 0, tzinfo=tz)
+
+    prev = start
+    prev_dst = prev.dst() or timedelta(0)
+
+    step = timedelta(hours=1)
+    current = prev
+
+    found_transition_dt = None
+
+    while current < end:
+        current = current + step
+        curr_dst = current.dst() or timedelta(0)
+
+        # DST "start" is characterized by an increase in DST offset
+        if curr_dst > prev_dst:
+            found_transition_dt = current
+            break
+
+        prev_dst = curr_dst
+
+    if found_transition_dt is None:
+        # No DST start found for this year in this timezone
+        return date.min
+
+    return found_transition_dt.date()
+
+# Entry point: find_dst_start_date(year: int, tz: zoneinfo.ZoneInfo) -> date
+```

@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Understand the Thai Buddhist calendar: It uses the same months and days as the Gregorian calendar, but the year is offset by +543 (B.E. = C.E. + 543).
+2. Determine the mapping: For a given Gregorian date, the Thai Buddhist date has the same month and day, with the year increased by 543.
+3. Implement the conversion: Take a date input and construct a new date with year + 543, month, and day unchanged.
+4. Provide optional support for datetime: Extend the same logic to datetime inputs while preserving time and tzinfo.
+5. Return the result using only standard datetime types.
+
+```python
+from datetime import date, datetime
+
+def to_thai_buddhist_date(gregorian: date) -> date:
+    """
+    Convert a Gregorian calendar date to the Thai Buddhist calendar date.
+    - Thai Buddhist Era (BE) year = Common Era (CE) year + 543
+    - Month and day remain the same.
+
+    Note:
+    This returns a datetime.date object with the BE year. This is a representation
+    of the Thai Buddhist calendar date using the standard datetime date type.
+    """
+    return date(gregorian.year + 543, gregorian.month, gregorian.day)
+
+def to_thai_buddhist_datetime(gregorian: datetime) -> datetime:
+    """
+    Convert a Gregorian calendar datetime to the Thai Buddhist calendar datetime,
+    preserving time and tzinfo.
+    """
+    return datetime(
+        gregorian.year + 543,
+        gregorian.month,
+        gregorian.day,
+        gregorian.hour,
+        gregorian.minute,
+        gregorian.second,
+        gregorian.microsecond,
+        tzinfo=gregorian.tzinfo,
+    )
+
+# Entry point: to_thai_buddhist_date(gregorian: date) -> date
+```

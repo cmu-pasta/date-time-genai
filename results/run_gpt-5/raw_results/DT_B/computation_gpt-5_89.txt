@@ -1,0 +1,60 @@
+Let's think step by step to solve this problem.
+1. Nowruz (Persian New Year) corresponds to the first day of the Persian (Jalali) year, which can be determined arithmetically without external libraries.
+2. We will use the well-established Jalaali calendar arithmetic (jalCal) to compute the Gregorian date in March on which 1 Farvardin (Nowruz) falls for a given Persian year.
+3. For a given Gregorian year G, the corresponding Persian year that begins in that Gregorian year is jy = G - 621. The Gregorian date of Nowruz will then be in March of year G.
+4. Implement jalCal(jy) to obtain the Gregorian year gy and the March day (march) when Nowruz occurs.
+5. Return the Gregorian date as a standard datetime.date object.
+
+```python
+from datetime import date
+
+def _div(a: int, b: int) -> int:
+    # Integer division matching floor for non-negative b
+    return a // b
+
+def _mod(a: int, b: int) -> int:
+    return a % b
+
+def _jalCal(jy: int) -> (int, int):
+    # Calculates Gregorian year (gy) and March day (march) for the start of Jalaali year jy.
+    # This is based on the well-known Jalaali calendar arithmetic with defined break points.
+    breaks = [
+        -61, 9, 38, 199, 426, 686, 756, 818, 1111,
+        1181, 1210, 1635, 2060, 2097, 2192, 2262,
+        2324, 2394, 2456, 3178
+    ]
+    gy = jy + 621
+    leapJ = -14
+    jp = breaks[0]
+    jump = 0
+
+    # Advance through break points to find the segment containing jy
+    for jm in breaks[1:]:
+        jump = jm - jp
+        if jy < jm:
+            break
+        leapJ += _div(jump, 33) * 8 + _div(_mod(jump, 33), 4)
+        jp = jm
+
+    N = jy - jp
+    leapJ += _div(N, 33) * 8 + _div(_mod(N, 33) + 3, 4)
+    if _mod(jump, 33) == 4 and (jump - N) == 4:
+        leapJ += 1
+
+    leapG = _div(gy, 4) - _div((_div(gy, 100) + 1) * 3, 4) - 150
+    march = 20 + leapJ - leapG
+
+    return gy, march
+
+def persian_new_year_date(gregorian_year: int) -> date:
+    """
+    Return the Gregorian date of Persian New Year (Nowruz) for the given Gregorian year.
+    The result is the date in March on which 1 Farvardin occurs in that Gregorian year.
+    """
+    jy = gregorian_year - 621
+    gy, march_day = _jalCal(jy)
+    # gy should equal gregorian_year; march_day is the day in March when Nowruz occurs.
+    return date(gy, 3, march_day)
+
+# Entry point: persian_new_year_date(gregorian_year: int) -> date
+```

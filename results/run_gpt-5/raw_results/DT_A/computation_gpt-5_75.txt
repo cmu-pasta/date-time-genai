@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard datetime library.
+2. Define a function that takes a birth datetime and an "as of" datetime as inputs.
+3. Validate that both inputs are datetime instances.
+4. Ensure both datetimes are either timezone-aware or both naive to avoid subtraction errors.
+5. Subtract the birth datetime from the "as of" datetime to get a timedelta.
+6. Convert the timedelta to total seconds and return it as an integer.
+
+```python
+from datetime import datetime
+
+def calculate_chronological_age_seconds(birth_dt: datetime, as_of: datetime) -> int:
+    """
+    Calculate the chronological age in seconds between a birth datetime and a reference datetime.
+
+    Parameters:
+    - birth_dt: datetime of birth (naive or timezone-aware).
+    - as_of: reference datetime at which to compute age (must match awareness of birth_dt).
+
+    Returns:
+    - int: number of seconds between birth_dt and as_of. Can be negative if as_of < birth_dt.
+    """
+    if not isinstance(birth_dt, datetime) or not isinstance(as_of, datetime):
+        raise TypeError("Both birth_dt and as_of must be datetime instances.")
+
+    # Ensure both datetimes are either both naive or both timezone-aware
+    if (birth_dt.tzinfo is None) != (as_of.tzinfo is None):
+        raise ValueError("birth_dt and as_of must both be naive or both be timezone-aware.")
+
+    delta = as_of - birth_dt
+    return int(delta.total_seconds())
+
+# Entry point: calculate_chronological_age_seconds(birth_dt: datetime, as_of: datetime) -> int
+```

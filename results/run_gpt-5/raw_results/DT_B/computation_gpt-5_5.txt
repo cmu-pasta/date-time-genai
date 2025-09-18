@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module: date and timedelta.
+2. Define a function that accepts the year and month as integers.
+3. Construct the first day of the given month and year.
+4. Determine the weekday of the first day (Monday=0, Sunday=6).
+5. Compute the offset in days to reach the first Monday using modular arithmetic.
+6. Add the offset to the first day to get the first Monday.
+7. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def first_monday(year: int, month: int) -> date:
+    """
+    Find the first Monday of a given month and year.
+
+    Args:
+        year (int): The calendar year (e.g., 2025).
+        month (int): The month number (1-12).
+
+    Returns:
+        date: The date corresponding to the first Monday of the specified month and year.
+    """
+    first_day = date(year, month, 1)
+    # In Python's datetime: Monday=0, Sunday=6
+    offset_days = (0 - first_day.weekday()) % 7
+    return first_day + timedelta(days=offset_days)
+
+# Entry point: first_monday(year: int, month: int) -> date
+```

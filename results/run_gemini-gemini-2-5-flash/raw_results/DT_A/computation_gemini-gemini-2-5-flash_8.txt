@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and `timedelta` to perform date arithmetic.
+2.  **Define a function**: We will create a function that accepts a `datetime` object as input.
+3.  **Calculate the first day of the next month**: To find the last day of the current month, a common strategy is to find the first day of the *next* month and then subtract one day. We can achieve this by first setting the input date's day to 1, then adding a `timedelta` of 32 days (which guarantees moving into the next month, even from months like January to February), and finally setting the day to 1 again. This robustly gives us the first day of the month *after* the input date's month.
+4.  **Subtract one day**: From the first day of the next month, subtract a `timedelta` of one day. This will result in the last day of the original month.
+5.  **Return the result**: The function will return the calculated `datetime` object representing the last day of the month.
+
+```python
+from datetime import datetime, timedelta
+
+def find_last_day_of_month(dt: datetime) -> datetime:
+    # Step 1: Get the first day of the month after the input date's month.
+    # We set the day to 1 to get the start of the current month.
+    # Then we add 32 days to guarantee we land in the *next* month.
+    # Finally, we set the day to 1 again to get the *first* day of that next month.
+    first_day_of_next_month = (dt.replace(day=1) + timedelta(days=32)).replace(day=1)
+    
+    # Step 2: Subtract one day from the first day of the next month
+    # This gives us the last day of the original month.
+    last_day = first_day_of_next_month - timedelta(days=1)
+    
+    # Step 3: Return the result
+    return last_day
+
+# Entry point: find_last_day_of_month(dt: datetime) -> datetime
+```

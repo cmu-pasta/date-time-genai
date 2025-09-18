@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+1. Import the required datetime class from the standard library.
+2. Define a function that accepts a datetime input.
+3. Validate that the input is a datetime instance to prevent misuse.
+4. Use the built-in isoformat() method to convert the datetime to an ISO 8601 string.
+5. Return the resulting string.
+
+```python
+from datetime import datetime
+
+def datetime_to_iso8601(dt: datetime) -> str:
+    """
+    Convert a datetime object to an ISO 8601 formatted string.
+    Handles both naive and timezone-aware datetimes.
+    """
+    if not isinstance(dt, datetime):
+        raise TypeError("dt must be a datetime instance")
+    return dt.isoformat()
+
+# Entry point: datetime_to_iso8601(dt: datetime) -> str
+```

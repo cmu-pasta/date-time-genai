@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Import the required classes (date, timedelta) from the datetime module.
+2. Define a function that accepts a start date and an integer N representing business days to add.
+3. Iterate day by day, moving forward for positive N and backward for negative N, only counting Monday to Friday as business days.
+4. Return the resulting date once the required number of business days has been traversed.
+
+```python
+from datetime import date, timedelta
+
+def add_business_days(start_date: date, n: int) -> date:
+    """
+    Return the date that is exactly n business days after start_date.
+    - Business days are Monday (0) through Friday (4).
+    - If n is 0, returns start_date.
+    - Supports negative n to move backward in business days.
+    """
+    if n == 0:
+        return start_date
+
+    step = 1 if n > 0 else -1
+    remaining = abs(n)
+    current = start_date
+
+    while remaining > 0:
+        current += timedelta(days=step)
+        if 0 <= current.weekday() <= 4:  # Monday=0, Sunday=6
+            remaining -= 1
+
+    return current
+
+# Entry point: add_business_days(start_date: date, n: int) -> date
+```

@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date and time operations.
+2. Define a function that accepts two pendulum.DateTime inputs.
+3. Normalize both inputs to dates (drop time) to compute day-based differences.
+4. Iterate from the earlier date up to (but not including) the later date, counting days where the weekday is Monday–Friday.
+5. Return the total count as an integer.
+
+```python
+import pendulum
+
+def calculate_business_days(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    """
+    Calculate the number of business days (Monday-Friday) between two dates.
+    - The calculation is exclusive of the ending date and inclusive of the starting date when iterating day by day.
+    - Time components are ignored by converting inputs to dates.
+    - The result is always non-negative.
+    """
+    # Normalize to dates (drop time components)
+    d1: pendulum.Date = dt1.date()
+    d2: pendulum.Date = dt2.date()
+
+    # Ensure d_start <= d_end
+    if d1 <= d2:
+        d_start, d_end = d1, d2
+    else:
+        d_start, d_end = d2, d1
+
+    # Count business days from d_start (inclusive) to d_end (exclusive)
+    count: int = 0
+    current: pendulum.Date = d_start
+    while current < d_end:
+        # ISO weekday: 1=Monday, ..., 7=Sunday
+        if current.isoweekday() <= 5:
+            count += 1
+        current = current.add(days=1)
+
+    return count
+
+# Entry point: calculate_business_days(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+```

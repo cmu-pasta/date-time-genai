@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+1. Import the datetime library and use date.min and date.max to validate supported year ranges.
+2. Implement a helper function that computes the number of leap years up to a given year using Gregorian rules.
+3. Normalize the input years so the range is ascending.
+4. Use the inclusive range formula: leaps_up_to(b) - leaps_up_to(a - 1).
+5. Return the result as an integer.
+
+```python
+from datetime import date
+
+def count_leap_years_between(year1: int, year2: int) -> int:
+    """
+    Calculate the number of leap years between two years (inclusive of both endpoints).
+
+    Args:
+        year1: An integer year within the supported datetime range [1, 9999].
+        year2: An integer year within the supported datetime range [1, 9999].
+
+    Returns:
+        An integer count of leap years between the two years, inclusive.
+    """
+    # Validate input years using datetime.date bounds
+    min_year, max_year = date.min.year, date.max.year
+    if not (min_year <= year1 <= max_year) or not (min_year <= year2 <= max_year):
+        raise ValueError(f"Years must be in the range [{min_year}, {max_year}].")
+
+    # Ensure a <= b for the inclusive range [a, b]
+    a, b = (year1, year2) if year1 <= year2 else (year2, year1)
+
+    # Helper: number of leap years from year 1 up to and including y
+    def _leaps_up_to(y: int) -> int:
+        return (y // 4) - (y // 100) + (y // 400)
+
+    # Inclusive count in [a, b]
+    return _leaps_up_to(b) - _leaps_up_to(a - 1)
+
+# Entry point: count_leap_years_between(year1: int, year2: int) -> int
+```

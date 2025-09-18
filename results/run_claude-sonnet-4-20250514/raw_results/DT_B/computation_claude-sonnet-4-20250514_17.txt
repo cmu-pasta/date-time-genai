@@ -1,0 +1,60 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the requirement**: We need to find the nth occurrence of a specific weekday (like Monday, Tuesday, etc.) within a given month and year.
+
+2. **Define the input parameters**: We need the year, month, the target weekday (0=Monday, 1=Tuesday, ..., 6=Sunday), and which occurrence (n) we're looking for.
+
+3. **Algorithm approach**: Start from the first day of the given month, iterate through each day, count occurrences of the target weekday, and return the date when we reach the nth occurrence.
+
+4. **Handle month boundaries**: We need to ensure we don't go beyond the last day of the specified month.
+
+5. **Use datetime operations**: Utilize date arithmetic to move through days and check weekdays using the `weekday()` method.
+
+```python
+from datetime import date, timedelta
+
+def find_nth_weekday_in_month(year: int, month: int, weekday: int, n: int) -> date:
+    """
+    Find the nth occurrence of a specific weekday in a given month.
+    
+    Args:
+        year: The year (integer)
+        month: The month (1-12)
+        weekday: The target weekday (0=Monday, 1=Tuesday, ..., 6=Sunday)
+        n: Which occurrence to find (1st, 2nd, 3rd, etc.)
+    
+    Returns:
+        date: The date of the nth occurrence of the weekday
+    """
+    # Start from the first day of the month
+    current_date = date(year, month, 1)
+    
+    # Calculate the last day of the month
+    if month == 12:
+        next_month_first = date(year + 1, 1, 1)
+    else:
+        next_month_first = date(year, month + 1, 1)
+    
+    last_day_of_month = next_month_first - timedelta(days=1)
+    
+    # Count occurrences of the target weekday
+    occurrence_count = 0
+    
+    # Iterate through each day of the month
+    while current_date <= last_day_of_month:
+        # Check if current day matches the target weekday
+        if current_date.weekday() == weekday:
+            occurrence_count += 1
+            # If we've found the nth occurrence, return this date
+            if occurrence_count == n:
+                return current_date
+        
+        # Move to the next day
+        current_date += timedelta(days=1)
+    
+    # If nth occurrence doesn't exist, return the last day of the month
+    # (This handles edge cases where nth occurrence doesn't exist)
+    return last_day_of_month
+
+# Entry point: find_nth_weekday_in_month(year: int, month: int, weekday: int, n: int) -> date
+```

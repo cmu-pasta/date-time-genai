@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the standard library: datetime from datetime and ZoneInfo from zoneinfo.
+2. Define a function that accepts a datetime, a source timezone (ZoneInfo), and a target timezone (ZoneInfo).
+3. If the input datetime is naive, attach the source timezone without shifting the wall time.
+4. If the input datetime is aware but not in the source timezone, normalize it to the source timezone.
+5. Convert the datetime to the target timezone using astimezone and return the result.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_timezone(timestamp: datetime, from_tz: ZoneInfo, to_tz: ZoneInfo) -> datetime:
+    """
+    Convert a timestamp from one timezone to another.
+
+    Parameters:
+    - timestamp: datetime (naive or aware)
+    - from_tz: ZoneInfo representing the source timezone
+    - to_tz: ZoneInfo representing the target timezone
+
+    Returns:
+    - datetime: the timestamp converted to the target timezone (aware)
+    """
+    # If timestamp is naive, interpret it as being in from_tz
+    if timestamp.tzinfo is None:
+        aware = timestamp.replace(tzinfo=from_tz)
+    else:
+        # If timestamp is aware but not in from_tz, normalize it to from_tz
+        if timestamp.tzinfo != from_tz:
+            aware = timestamp.astimezone(from_tz)
+        else:
+            aware = timestamp
+
+    # Convert to the target timezone
+    converted = aware.astimezone(to_tz)
+    return converted
+
+# Entry point: convert_timezone(timestamp: datetime, from_tz: ZoneInfo, to_tz: ZoneInfo) -> datetime
+```

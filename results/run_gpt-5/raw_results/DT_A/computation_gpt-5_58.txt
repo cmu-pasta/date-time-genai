@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the standard datetime library.
+2. Define a helper to normalize datetimes to UTC (treat naive datetimes as UTC).
+3. Implement a function that takes a timestamp (seconds since a source epoch) and two epoch datetimes (source and target) and returns the timestamp relative to the target epoch.
+4. Provide convenience wrapper to convert specifically between Unix and Windows epochs using the general function.
+
+```python
+from datetime import datetime, timezone, timedelta
+
+def _to_utc(dt: datetime) -> datetime:
+    # Treat naive datetimes as UTC; convert aware datetimes to UTC
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+def convert_timestamp_between_epochs(timestamp: float, source_epoch: datetime, target_epoch: datetime) -> float:
+    # Normalize epochs to UTC to avoid timezone inconsistencies
+    src_epoch_utc = _to_utc(source_epoch)
+    tgt_epoch_utc = _to_utc(target_epoch)
+    # Compute the absolute moment represented by the source timestamp
+    instant = src_epoch_utc + timedelta(seconds=timestamp)
+    # Return seconds relative to the target epoch
+    return (instant - tgt_epoch_utc).total_seconds()
+
+def convert_unix_to_windows_seconds(unix_seconds: float) -> float:
+    # Unix epoch: 1970-01-01 UTC, Windows FILETIME epoch: 1601-01-01 UTC
+    unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
+    return convert_timestamp_between_epochs(unix_seconds, unix_epoch, windows_epoch)
+
+def convert_windows_to_unix_seconds(windows_seconds: float) -> float:
+    windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
+    unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    return convert_timestamp_between_epochs(windows_seconds, windows_epoch, unix_epoch)
+
+# Entry point: convert_timestamp_between_epochs(timestamp: float, source_epoch: datetime, target_epoch: datetime) -> float
+```

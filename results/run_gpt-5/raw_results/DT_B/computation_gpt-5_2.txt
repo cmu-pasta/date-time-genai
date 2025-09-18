@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Import the required type (date) from Python's datetime library.
+2. Define a function that accepts a date as input.
+3. Use the built-in date.weekday() to compute the weekday index (0=Monday, 6=Sunday).
+4. Return the computed integer. Note: This integer maps to day names as 0=Monday, 1=Tuesday, ..., 6=Sunday.
+
+```python
+from datetime import date
+
+def day_name_index(input_date: date) -> int:
+    """
+    Determine the weekday index for a given date.
+    Returns an integer where:
+      0 = Monday, 1 = Tuesday, 2 = Wednesday, 3 = Thursday,
+      4 = Friday, 5 = Saturday, 6 = Sunday.
+    """
+    if not isinstance(input_date, date):
+        raise TypeError("input_date must be a datetime.date instance")
+    return input_date.weekday()
+
+# Entry point: day_name_index(input_date: date) -> int
+```

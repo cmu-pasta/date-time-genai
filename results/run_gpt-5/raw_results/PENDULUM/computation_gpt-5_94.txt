@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with DateTime objects.
+2. Define a function that accepts a pendulum.DateTime as input.
+3. Convert the input datetime to UTC to ensure consistent time reference.
+4. Obtain the Unix timestamp in seconds with fractional part.
+5. Convert the timestamp to Modified Julian Date using MJD = (unix_seconds / 86400) + 40587.
+6. Return the result as a float.
+
+```python
+import pendulum
+
+def datetime_to_mjd(dt: pendulum.DateTime) -> float:
+    """
+    Convert a pendulum.DateTime to Modified Julian Date (MJD).
+    MJD = JD - 2400000.5
+    Using relation: JD = 2440587.5 + (unix_seconds / 86400)
+    Therefore: MJD = 40587.0 + (unix_seconds / 86400)
+    """
+    # Ensure the datetime is in UTC for a consistent epoch reference
+    dt_utc = dt.in_timezone("UTC")
+    
+    # Get Unix timestamp in seconds as a float (includes fractional seconds)
+    unix_seconds: float = dt_utc.float_timestamp
+    
+    # Convert to Modified Julian Date
+    mjd: float = unix_seconds / 86400.0 + 40587.0
+    
+    return mjd
+
+# Entry point: datetime_to_mjd(dt: pendulum.DateTime) -> float
+```

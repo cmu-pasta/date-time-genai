@@ -1,0 +1,80 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2.  **Define a function**: We will create a function that accepts two `datetime` objects as input: a `start_date` and an `end_date`.
+3.  **Ensure correct order**: To calculate age, the `start_date` should logically be earlier than or equal to the `end_date`. We will ensure this order by swapping them if necessary, but for age calculation, we'll assume `start_date` is the earlier date (e.g., birth date) and `end_date` is the later date (e.g., current date).
+4.  **Calculate years**:
+    *   Initialize `years` as the difference between the `end_date`'s year and the `start_date`'s year.
+    *   If the `end_date`'s month is before the `start_date`'s month, or if they are the same month but the `end_date`'s day is before the `start_date`'s day, decrement `years` by 1 because a full year has not yet passed.
+5.  **Calculate months**:
+    *   Initialize `months` as the difference between the `end_date`'s month and the `start_date`'s month.
+    *   If the `end_date`'s day is before the `start_date`'s day, decrement `months` by 1.
+    *   If `months` becomes negative, add 12 to it (e.g., if it's Nov (11) and birth month is Jan (1), diff is -10, actual months are 11).
+6.  **Calculate days**:
+    *   Initialize `days`.
+    *   If the `end_date`'s day is greater than or equal to the `start_date`'s day, the `days` are simply the difference.
+    *   If the `end_date`'s day is less than the `start_date`'s day, we need to consider the number of days in the *previous* month relative to `end_date`.
+        *   Find the previous month's number and year. Handle the case where the `end_date` is January (previous month is December of the previous year).
+        *   Calculate the number of days in that previous month. We can do this by taking the last day of the previous month.
+        *   `days` will be `(days_in_previous_month - start_date.day) + end_date.day`.
+7.  **Return the result**: Return the calculated `years`, `months`, and `days` as separate integers.
+
+```python
+from datetime import datetime
+
+def calculate_age_ymd(start_date: datetime, end_date: datetime) -> (int, int, int):
+    # Ensure start_date is earlier than or equal to end_date for age calculation
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+
+    # Step 1: Calculate initial years difference
+    years = end_date.year - start_date.year
+
+    # Step 2: Adjust years if the birthday hasn't occurred yet in the current year
+    if (end_date.month < start_date.month) or \
+       (end_date.month == start_date.month and end_date.day < start_date.day):
+        years -= 1
+
+    # Step 3: Calculate initial months difference
+    months = end_date.month - start_date.month
+
+    # Step 4: Adjust months if the day hasn't occurred yet or if months become negative
+    if end_date.day < start_date.day:
+        months -= 1
+    
+    if months < 0:
+        months += 12
+
+    # Step 5: Calculate days difference
+    days = 0
+    if end_date.day >= start_date.day:
+        days = end_date.day - start_date.day
+    else:
+        # Determine the last day of the month prior to end_date
+        # If end_date is Jan 1st, previous month is Dec of previous year
+        prev_month_year = end_date.year
+        prev_month_num = end_date.month - 1
+        if prev_month_num == 0: # If end_date is January
+            prev_month_num = 12
+            prev_month_year -= 1
+
+        # To get the number of days in the previous month,
+        # we can get the last day of that month.
+        # Create a datetime object for the last day of the previous month.
+        # A simpler way to get days in month:
+        # Go to the first day of the current month, then subtract a timedelta of 1 day
+        # to get to the last day of the previous month.
+        
+        # Get the first day of the current month (end_date's month)
+        first_day_of_current_month = datetime(end_date.year, end_date.month, 1)
+        # Subtract one day to get the last day of the previous month
+        last_day_of_prev_month = first_day_of_current_month - datetime.timedelta(days=1)
+        days_in_prev_month = last_day_of_prev_month.day
+        
+        days = (days_in_prev_month - start_date.day) + end_date.day
+
+    # Step 6: Return the result as a tuple of integers
+    return years, months, days
+
+# Entry point: calculate_age_ymd(start_date: datetime, end_date: datetime) -> (int, int, int)
+```

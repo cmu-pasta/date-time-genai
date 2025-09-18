@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts a pendulum.Date as input.
+3. Convert the Date to a DateTime to leverage the previous() method.
+4. Use previous(pendulum.FRIDAY) to get the strictly previous Friday.
+5. Return the result as a pendulum.Date.
+
+```python
+import pendulum
+
+def previous_friday(given_date: pendulum.Date) -> pendulum.Date:
+    # Convert the Date to a DateTime at midnight to use the 'previous' method
+    dt = pendulum.datetime(given_date.year, given_date.month, given_date.day)
+    # Find the strictly previous Friday
+    prev_dt = dt.previous(pendulum.FRIDAY)
+    # Return as pendulum.Date
+    return prev_dt.date()
+
+# Entry point: previous_friday(given_date: pendulum.Date) -> pendulum.Date
+```

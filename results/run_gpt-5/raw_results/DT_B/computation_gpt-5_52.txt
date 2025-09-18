@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module to work with date/datetime inputs.
+2. Define a helper function to convert an integer year to its Roman numeral representation (supporting 1 to 3999).
+3. Define the main function that accepts a date or datetime object, extracts the year, validates the supported range, and returns the Roman numeral string.
+4. Provide the entry point signature.
+
+```python
+from datetime import date, datetime
+
+def _int_to_roman(year: int) -> str:
+    """
+    Convert an integer year (1..3999) to its Roman numeral representation.
+    """
+    if year < 1 or year > 3999:
+        raise ValueError("Year out of supported range (1..3999) for Roman numeral conversion.")
+    
+    val = (1000, 900, 500, 400, 100, 90,  50,  40,  10,  9,   5,   4,   1)
+    syms = ("M",  "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    
+    result = []
+    n = year
+    for v, s in zip(val, syms):
+        count, n = divmod(n, v)
+        if count:
+            result.append(s * count)
+        if n == 0:
+            break
+    return "".join(result)
+
+def date_to_roman_year(d: date) -> str:
+    """
+    Convert the year of a given date/datetime to its Roman numeral representation.
+    Accepts:
+      - datetime.date
+      - datetime.datetime (subclass of date)
+    Returns:
+      - str Roman numeral of the year (supports 1..3999)
+    """
+    year = d.year  # datetime.datetime is a subclass of date; both have .year
+    return _int_to_roman(year)
+
+# Entry point: date_to_roman_year(d: date) -> str
+```

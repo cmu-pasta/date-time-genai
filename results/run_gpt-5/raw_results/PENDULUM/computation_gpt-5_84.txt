@@ -1,0 +1,110 @@
+Let's think step by step to solve this problem.
+1. Parse the input date (pendulum.Date) and geographic coordinates (floats for latitude and longitude), along with the target timezone (pendulum.Timezone).
+2. Use the NOAA solar calculation algorithm to compute the sunset time in UTC for the given date and coordinates:
+   - Compute the day of year and an approximate time for sunset.
+   - Compute the Sun's mean anomaly, true longitude, right ascension, and declination.
+   - Compute the local hour angle for sunset using the standard zenith for civil sunset (90.833 degrees).
+   - Convert the result to Universal Time (UT).
+3. Construct a pendulum.DateTime in UTC using the computed time and convert it to the provided timezone.
+4. Handle edge cases: if the sun never sets or never rises on that date at that location, raise a ValueError.
+
+```python
+import math
+import pendulum
+
+def _normalize_degrees(angle: float) -> float:
+    a = angle % 360.0
+    return a if a >= 0.0 else a + 360.0
+
+def _to_radians(deg: float) -> float:
+    return deg * math.pi / 180.0
+
+def _to_degrees(rad: float) -> float:
+    return rad * 180.0 / math.pi
+
+def calculate_sunset(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime:
+    """
+    Calculate local sunset time for a given date and geographic coordinates using the NOAA algorithm.
+    Inputs:
+      - date: pendulum.Date (calendar date)
+      - latitude: float (degrees, positive north)
+      - longitude: float (degrees, positive east; west is negative)
+      - tz: pendulum.Timezone (desired output timezone)
+    Output:
+      - pendulum.DateTime representing the local sunset time in the provided timezone.
+    Raises:
+      - ValueError if the sun never rises or never sets on the given date/location.
+    """
+    # Constants
+    zenith = 90.833  # degrees (standard for civil sunrise/sunset)
+    day_of_year = date.day_of_year  # 1..366
+
+    # Helper values
+    lng_hour = longitude / 15.0
+
+    # Approximate time for sunset: 18h local solar time anchor
+    t = day_of_year + ((18.0 - lng_hour) / 24.0)
+
+    # Sun's mean anomaly
+    M = (0.9856 * t) - 3.289
+
+    # Sun's true longitude (L)
+    L = M + (1.916 * math.sin(_to_radians(M))) + (0.020 * math.sin(_to_radians(2 * M))) + 282.634
+    L = _normalize_degrees(L)
+
+    # Sun's right ascension (RA)
+    RA = _to_degrees(math.atan(0.91764 * math.tan(_to_radians(L))))
+    RA = _normalize_degrees(RA)
+
+    # Right ascension must be in the same quadrant as L
+    L_quadrant = math.floor(L / 90.0) * 90.0
+    RA_quadrant = math.floor(RA / 90.0) * 90.0
+    RA = RA + (L_quadrant - RA_quadrant)
+
+    # Convert RA to hours
+    RA_hours = RA / 15.0
+
+    # Sun's declination
+    sinDec = 0.39782 * math.sin(_to_radians(L))
+    cosDec = math.cos(math.asin(sinDec))
+
+    # Sun's local hour angle for sunset
+    cosH = (math.cos(_to_radians(zenith)) - (sinDec * math.sin(_to_radians(latitude)))) / (cosDec * math.cos(_to_radians(latitude)))
+
+    if cosH > 1.0:
+        raise ValueError("The sun never rises on this date at this location (no sunset).")
+    if cosH < -1.0:
+        raise ValueError("The sun never sets on this date at this location.")
+
+    # H in degrees for sunset (use arccos; sunset uses the positive angle)
+    H = _to_degrees(math.acos(cosH))
+    H_hours = H / 15.0
+
+    # Local mean time of setting
+    T_local = H_hours + RA_hours - (0.06571 * t) - 6.622
+
+    # Convert to UT
+    UT = T_local - lng_hour
+    # Normalize to [0,24)
+    UT = UT % 24.0
+
+    # Build UTC DateTime for the given date with computed hour/minute/second
+    hour = int(UT)
+    minute = int((UT - hour) * 60.0)
+    second = int(round((((UT - hour) * 60.0) - minute) * 60.0))
+
+    # Correct rounding overflow
+    if second == 60:
+        second = 0
+        minute += 1
+    if minute == 60:
+        minute = 0
+        hour = (hour + 1) % 24
+
+    dt_utc = pendulum.datetime(date.year, date.month, date.day, hour, minute, second, tz="UTC")
+
+    # Convert to requested timezone
+    return dt_utc.in_timezone(tz)
+
+# Entry point: calculate_sunset(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime
+```

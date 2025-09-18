@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts two datetimes as inputs.
+3. Compute half of the absolute timedelta between the two inputs.
+4. Add this half-delta to the earlier of the two inputs to obtain the exact midpoint.
+5. Return the computed midpoint as a datetime.
+
+```python
+from datetime import datetime, timedelta
+
+def midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
+    """
+    Compute the exact midpoint datetime between two given datetime values.
+    
+    Parameters:
+    - dt1: datetime
+    - dt2: datetime
+    
+    Returns:
+    - datetime: The datetime exactly halfway between dt1 and dt2.
+    """
+    # Calculate half of the absolute difference between the two datetimes
+    half_delta: timedelta = abs(dt2 - dt1) / 2
+
+    # Use the earlier datetime as the base and add the half-difference
+    base: datetime = dt1 if dt1 <= dt2 else dt2
+    return base + half_delta
+
+# Entry point: midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime
+```

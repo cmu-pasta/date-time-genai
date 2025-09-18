@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to construct and return date objects.
+2. Use the standard Japanese approximation formula (valid for years 1900–2099) to compute the September equinox day:
+   day = floor(23.2488 + 0.242194*(year - 1980) - floor((year - 1980)/4))
+3. Build and return a pendulum.Date for the computed day in September of the given year.
+4. Validate the input year range (1900–2099) to ensure the approximation remains reliable.
+
+```python
+import pendulum
+
+def autumnal_equinox_date(year: int) -> pendulum.Date:
+    """
+    Compute the date of the autumnal equinox (September) for a given year
+    using the widely used Japanese approximation formula, which is reliable
+    for years in the range 1900–2099.
+
+    Parameters:
+        year (int): The Gregorian calendar year (1900–2099).
+
+    Returns:
+        pendulum.Date: The date of the autumnal equinox in September.
+    """
+    # Validate supported range for the approximation
+    if year < 1900 or year > 2099:
+        raise ValueError("Year out of supported range (1900–2099) for this approximation.")
+
+    # Apply the approximation formula:
+    # day = floor(23.2488 + 0.242194*(year - 1980) - floor((year - 1980)/4))
+    a = year - 1980
+    correction = a // 4  # floor((year - 1980)/4)
+    value = 23.2488 + 0.242194 * a - correction
+    day = int(value)  # value is positive in supported range; int() == floor() here
+
+    # Construct and return the equinox date in September
+    return pendulum.date(year, 9, day)
+
+# Entry point: autumnal_equinox_date(year: int) -> pendulum.Date
+```

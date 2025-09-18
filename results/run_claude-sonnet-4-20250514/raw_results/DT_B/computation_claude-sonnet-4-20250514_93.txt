@@ -1,0 +1,67 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module and `timezone` from Python's standard library to work with dates and UTC conversion.
+
+2. **Define a function**: We will create a function that accepts a datetime object and longitude (as a float) as inputs.
+
+3. **Convert to UTC**: Ensure the datetime is in UTC for accurate sidereal time calculation.
+
+4. **Calculate Julian Day Number**: Convert the UTC datetime to Julian Day Number, which is needed for sidereal time calculations.
+
+5. **Calculate Greenwich Mean Sidereal Time (GMST)**: Use the standard astronomical formula to compute GMST based on the Julian Day.
+
+6. **Convert to Local Sidereal Time**: Adjust GMST by the longitude to get the local sidereal time.
+
+7. **Return the result**: Return the sidereal time as a float representing hours.
+
+```python
+from datetime import datetime, timezone
+import math
+
+def calculate_sidereal_time(dt: datetime, longitude: float) -> float:
+    # Step 1: Convert to UTC if not already
+    if dt.tzinfo is None:
+        dt_utc = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = dt.astimezone(timezone.utc)
+    
+    # Step 2: Calculate Julian Day Number
+    # Formula for Julian Day calculation
+    year = dt_utc.year
+    month = dt_utc.month
+    day = dt_utc.day
+    hour = dt_utc.hour
+    minute = dt_utc.minute
+    second = dt_utc.second + dt_utc.microsecond / 1000000.0
+    
+    if month <= 2:
+        year -= 1
+        month += 12
+    
+    a = int(year / 100)
+    b = 2 - a + int(a / 4)
+    
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + b - 1524.5
+    jd += (hour + minute / 60.0 + second / 3600.0) / 24.0
+    
+    # Step 3: Calculate number of centuries since J2000.0
+    t = (jd - 2451545.0) / 36525.0
+    
+    # Step 4: Calculate Greenwich Mean Sidereal Time in degrees
+    # Formula: GMST = 280.46061837 + 360.98564736629 * (JD - 2451545.0) + 0.000387933 * T^2 - T^3 / 38710000
+    gmst_deg = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * t * t - t * t * t / 38710000.0
+    
+    # Step 5: Normalize to 0-360 degrees
+    gmst_deg = gmst_deg % 360.0
+    
+    # Step 6: Convert to Local Sidereal Time by adding longitude
+    lst_deg = gmst_deg + longitude
+    lst_deg = lst_deg % 360.0
+    
+    # Step 7: Convert to hours (divide by 15 since 360 degrees = 24 hours)
+    sidereal_time_hours = lst_deg / 15.0
+    
+    return sidereal_time_hours
+
+# Entry point: calculate_sidereal_time(dt: datetime, longitude: float) -> float
+```

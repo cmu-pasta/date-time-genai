@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a birth date as input and returns the number of days until the next birthday.
+3. **Get the current date**: We need to know today's date to calculate the difference.
+4. **Determine this year's birthday**: Create a date object for the birthday in the current year.
+5. **Check if birthday has passed**: If this year's birthday has already occurred, we need to calculate days until next year's birthday.
+6. **Calculate the difference**: Use subtraction to find the number of days between today and the next birthday.
+7. **Return the result**: Return the result as an integer representing the number of days.
+
+```python
+from datetime import datetime, date
+
+def days_until_next_birthday(birth_date: date) -> int:
+    # Step 1: Get today's date
+    today = date.today()
+    
+    # Step 2: Create this year's birthday date
+    current_year = today.year
+    this_year_birthday = date(current_year, birth_date.month, birth_date.day)
+    
+    # Step 3: Check if this year's birthday has already passed
+    if this_year_birthday < today:
+        # Birthday has passed, calculate days until next year's birthday
+        next_year_birthday = date(current_year + 1, birth_date.month, birth_date.day)
+        days_until = (next_year_birthday - today).days
+    elif this_year_birthday > today:
+        # Birthday hasn't occurred yet this year
+        days_until = (this_year_birthday - today).days
+    else:
+        # Today is the birthday!
+        days_until = 0
+    
+    # Step 4: Return the result as an integer
+    return days_until
+
+# Entry point: days_until_next_birthday(birth_date: date) -> int
+```

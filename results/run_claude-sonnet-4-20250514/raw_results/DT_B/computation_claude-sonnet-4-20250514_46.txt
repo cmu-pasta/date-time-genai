@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` and `time` modules from Python's standard library to work with dates and times.
+
+2. **Define a function**: We will create a function that accepts a datetime object as input.
+
+3. **Extract time components**: Get the hour, minute, and second from the datetime object.
+
+4. **Convert to 12-hour format**: Convert the 24-hour format to 12-hour format logic. For hours 0, we use 12; for hours 1-12, we keep them as is; for hours 13-23, we subtract 12.
+
+5. **Determine AM/PM**: Hours 0-11 are AM, hours 12-23 are PM.
+
+6. **Return the result**: Since we can only return standard datetime types and cannot return strings, we'll return a time object representing the 12-hour format time, and use a boolean to indicate AM (False) or PM (True).
+
+```python
+from datetime import datetime, time
+
+def convert_to_12_hour_format(dt: datetime) -> time:
+    # Step 1: Extract hour, minute, second from datetime
+    hour_24 = dt.hour
+    minute = dt.minute
+    second = dt.second
+    microsecond = dt.microsecond
+    
+    # Step 2: Convert 24-hour format to 12-hour format
+    if hour_24 == 0:
+        hour_12 = 12  # Midnight is 12:xx AM
+    elif hour_24 <= 12:
+        hour_12 = hour_24  # 1 AM to 12 PM
+    else:
+        hour_12 = hour_24 - 12  # 1 PM to 11 PM
+    
+    # Step 3: Create and return time object with 12-hour format hour
+    return time(hour_12, minute, second, microsecond)
+
+def is_pm(dt: datetime) -> bool:
+    # Returns True for PM (12:00 PM to 11:59 PM), False for AM (12:00 AM to 11:59 AM)
+    return dt.hour >= 12
+
+# Entry point: convert_to_12_hour_format(dt: datetime) -> time, is_pm(dt: datetime) -> bool
+```

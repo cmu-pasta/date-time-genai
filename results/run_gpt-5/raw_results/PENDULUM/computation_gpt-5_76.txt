@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates and times.
+2. Define a function that accepts a pendulum.DateTime and a pendulum.Date as inputs.
+3. Normalize the reference date to a pendulum.DateTime at midnight in the same timezone as the input datetime.
+4. Compute the signed difference between the datetime and the reference datetime.
+5. Convert the difference to an integer number of days and return it.
+
+```python
+import pendulum
+
+def days_since_reference(dt: pendulum.DateTime, reference: pendulum.Date) -> int:
+    # Normalize the reference date to a DateTime at midnight in the same timezone as dt
+    reference_dt = pendulum.datetime(reference.year, reference.month, reference.day, tz=dt.timezone)
+
+    # Compute the signed difference and convert to days
+    days = dt.diff(reference_dt, absolute=False).in_days()
+
+    # Return the number of days as an integer
+    return int(days)
+
+# Entry point: days_since_reference(dt: pendulum.DateTime, reference: pendulum.Date) -> int
+```

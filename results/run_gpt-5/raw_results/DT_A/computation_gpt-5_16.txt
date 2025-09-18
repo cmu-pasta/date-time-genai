@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard library: datetime and ZoneInfo.
+2. Define a function that accepts a Unix timestamp (float or integer seconds since the Unix epoch) and an optional timezone (ZoneInfo), defaulting to UTC.
+3. Convert the Unix timestamp to a timezone-aware datetime using datetime.fromtimestamp with the provided timezone.
+4. Return the resulting datetime object.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def unix_timestamp_to_datetime(timestamp: float, tz: ZoneInfo = ZoneInfo("UTC")) -> datetime:
+    """
+    Convert a Unix timestamp (seconds since the Unix epoch) to a human-readable timezone-aware datetime.
+
+    Parameters:
+    - timestamp: float - Unix timestamp in seconds (can be integer or float).
+    - tz: ZoneInfo - Timezone for the resulting datetime. Defaults to UTC.
+
+    Returns:
+    - datetime: A timezone-aware datetime representing the given timestamp in the specified timezone.
+    """
+    # Step 1: Convert the Unix timestamp to a datetime in the specified timezone
+    dt = datetime.fromtimestamp(timestamp, tz=tz)
+
+    # Step 2: Return the resulting datetime
+    return dt
+
+# Entry point: unix_timestamp_to_datetime(timestamp: float, tz: ZoneInfo = ZoneInfo("UTC")) -> datetime
+```

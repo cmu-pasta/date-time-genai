@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the fiscal year concept**: A fiscal year starting in April means that April 1st marks the beginning of a new fiscal year. So dates from April 1st to March 31st of the following year belong to the same fiscal year.
+
+2. **Determine the logic**: If a date falls between April and December of year X, it belongs to fiscal year X. If a date falls between January and March of year X, it belongs to fiscal year X-1 (since it's part of the fiscal year that started in April of the previous year).
+
+3. **Import necessary libraries**: We need the `datetime` module to work with date objects.
+
+4. **Create the function**: The function should take a datetime object as input and return an integer representing the fiscal year.
+
+5. **Implement the logic**: Check if the month is April (4) or later. If yes, return the current year. If no (January-March), return the previous year.
+
+```python
+from datetime import datetime
+
+def determine_fiscal_year(date: datetime) -> int:
+    # If the month is April (4) or later, the fiscal year is the same as the calendar year
+    if date.month >= 4:
+        return date.year
+    # If the month is before April (January-March), the fiscal year is the previous year
+    else:
+        return date.year - 1
+
+# Entry point: determine_fiscal_year(date: datetime) -> int
+```

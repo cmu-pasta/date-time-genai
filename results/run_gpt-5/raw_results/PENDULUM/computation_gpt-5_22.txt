@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to construct pendulum.Time objects.
+2. Define a function that accepts a 12-hour time as hour (1-12), minute (0-59), second (0-59), and a boolean indicating PM.
+3. Validate the input ranges to ensure correct time values.
+4. Convert the 12-hour components to a 24-hour hour value using standard rules:
+   - If hour is 12 AM, convert to 0.
+   - If hour is 12 PM, keep as 12.
+   - If PM and hour is 1-11, add 12.
+   - Otherwise, keep as-is.
+5. Construct and return a pendulum.Time object representing the 24-hour time.
+
+```python
+import pendulum
+
+def convert_12h_to_24h(hour_12: int, minute: int, second: int, is_pm: bool) -> pendulum.Time:
+    # Validate inputs
+    if not (1 <= hour_12 <= 12):
+        raise ValueError("hour_12 must be in the range 1..12")
+    if not (0 <= minute <= 59):
+        raise ValueError("minute must be in the range 0..59")
+    if not (0 <= second <= 59):
+        raise ValueError("second must be in the range 0..59")
+    if not isinstance(is_pm, bool):
+        raise ValueError("is_pm must be a boolean")
+
+    # Convert to 24-hour format
+    if hour_12 == 12:
+        hour_24 = 12 if is_pm else 0
+    else:
+        hour_24 = hour_12 + 12 if is_pm else hour_12
+
+    # Return a pendulum.Time object in 24-hour format
+    return pendulum.time(hour_24, minute, second)
+
+# Entry point: convert_12h_to_24h(hour_12: int, minute: int, second: int, is_pm: bool) -> pendulum.Time
+```

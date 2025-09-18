@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts year (int), month (int), and weekday (int where Monday=0 … Sunday=6).
+3. Compute the last day of the given month by taking the first day of the next month and subtracting one day.
+4. Calculate how many days to step back from the last day to reach the desired weekday.
+5. Subtract that offset to get the last occurrence of the specified weekday and return it as a pendulum.Date.
+
+```python
+import pendulum
+
+def find_last_weekday_in_month(year: int, month: int, weekday: int) -> pendulum.Date:
+    """
+    Find the last occurrence of a specific weekday in a given month.
+
+    Parameters:
+    - year: Integer year (e.g., 2025)
+    - month: Integer month 1-12
+    - weekday: Integer weekday where Monday=0 ... Sunday=6
+
+    Returns:
+    - pendulum.Date representing the last occurrence of the specified weekday in the given month.
+    """
+    if not (1 <= month <= 12):
+        raise ValueError("month must be in 1..12")
+    if not (0 <= weekday <= 6):
+        raise ValueError("weekday must be in 0..6 (Monday=0 ... Sunday=6)")
+
+    # First day of the given month
+    first_day = pendulum.date(year, month, 1)
+
+    # Last day of the month: go to first day of next month, then subtract one day
+    last_day = first_day.add(months=1).subtract(days=1)
+
+    # Compute offset back to the target weekday
+    offset = (last_day.weekday() - weekday) % 7
+
+    # The last occurrence of the target weekday
+    result = last_day.subtract(days=offset)
+
+    return result
+
+# Entry point: find_last_weekday_in_month(year: int, month: int, weekday: int) -> pendulum.Date
+```

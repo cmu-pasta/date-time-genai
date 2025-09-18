@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts two pendulum.Date objects representing the start and end dates.
+3. Ensure the range is in chronological order by swapping if start is after end.
+4. Compute the total number of days in the inclusive range.
+5. Calculate the number of complete weeks in the range; each complete week contributes exactly two weekend days (Saturday and Sunday).
+6. For the remaining days beyond complete weeks, iterate from the start day-of-week to count additional weekend days.
+7. Return the total count of weekend days as an integer.
+
+```python
+import pendulum
+
+def count_weekends_between(start: pendulum.Date, end: pendulum.Date) -> int:
+    """
+    Counts the number of weekend days (Saturdays and Sundays) between two dates, inclusive.
+    Inputs: start, end - pendulum.Date
+    Output: int - number of weekend days
+    """
+    # Normalize order to ensure start <= end
+    if start > end:
+        start, end = end, start
+
+    # Total days inclusive
+    total_days = end.diff(start).in_days() + 1  # inclusive of both endpoints
+
+    # Count weekend days from complete weeks
+    full_weeks = total_days // 7
+    weekend_days = full_weeks * 2  # Each full week has Saturday and Sunday
+
+    # Count weekend days in the remaining partial week
+    remaining_days = total_days % 7
+    start_dow = start.day_of_week  # Monday=0, ..., Sunday=6
+
+    # Iterate up to 6 days for the remainder
+    for i in range(remaining_days):
+        dow = (start_dow + i) % 7
+        if dow == 5 or dow == 6:  # Saturday=5, Sunday=6
+            weekend_days += 1
+
+    return weekend_days
+
+# Entry point: count_weekends_between(start: pendulum.Date, end: pendulum.Date) -> int
+```

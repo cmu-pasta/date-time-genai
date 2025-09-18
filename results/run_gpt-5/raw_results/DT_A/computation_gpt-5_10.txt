@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+1. Import the required class from the datetime module to work with date objects.
+2. Define a function that accepts a date object as input.
+3. Extract the year, month, and day components from the input date.
+4. Apply the Fliegel-Van Flandern algorithm to convert the Gregorian date to a Julian Day Number (JDN).
+5. Return the JDN as an integer.
+
+```python
+from datetime import date
+
+def date_to_julian_day_number(d: date) -> int:
+    """
+    Convert a Gregorian calendar date to its Julian Day Number (JDN).
+    Uses the Fliegel-Van Flandern algorithm. The result is an integer JDN
+    commonly used in astronomy and calendrical calculations.
+
+    Parameters:
+        d (date): The Gregorian date.
+
+    Returns:
+        int: The Julian Day Number corresponding to the input date.
+    """
+    y = d.year
+    m = d.month
+    day = d.day
+
+    a = (14 - m) // 12
+    y_prime = y + 4800 - a
+    m_prime = m + 12 * a - 3
+
+    jdn = day \
+          + (153 * m_prime + 2) // 5 \
+          + 365 * y_prime \
+          + y_prime // 4 \
+          - y_prime // 100 \
+          + y_prime // 400 \
+          - 32045
+
+    return int(jdn)
+
+# Entry point: date_to_julian_day_number(d: date) -> int
+```

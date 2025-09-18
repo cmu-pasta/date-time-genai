@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard datetime library (date, timedelta).
+2. Accept an integer year as input to determine the target October.
+3. Construct the date for October 1st of the given year.
+4. Compute the weekday of October 1st (Monday=0, Sunday=6).
+5. Calculate the offset to the first Monday of October.
+6. Add 7 days to the first Monday to get the second Monday (Columbus Day).
+7. Return the resulting date object.
+
+```python
+from datetime import date, timedelta
+
+def columbus_day(year: int) -> date:
+    """
+    Compute the date of Columbus Day for a given year.
+    Columbus Day is observed on the second Monday of October.
+    
+    Parameters:
+        year (int): The year for which to compute Columbus Day.
+    
+    Returns:
+        date: The date of Columbus Day in the given year.
+    """
+    # October 1st of the given year
+    oct_first = date(year, 10, 1)
+    
+    # Weekday of October 1st (Monday=0, Sunday=6)
+    weekday_oct_first = oct_first.weekday()
+    
+    # Days to add to reach the first Monday in October
+    days_to_first_monday = (0 - weekday_oct_first) % 7
+    
+    # First Monday in October
+    first_monday = oct_first + timedelta(days=days_to_first_monday)
+    
+    # Second Monday in October (Columbus Day)
+    columbus_day_date = first_monday + timedelta(days=7)
+    
+    return columbus_day_date
+
+# Entry point: columbus_day(year: int) -> date
+```

@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard datetime library.
+2. Define a function that accepts two datetimes as inputs.
+3. Normalize the order of inputs so the start is not after the end.
+4. Iterate day by day, summing only the portions that fall on weekdays (Monday–Friday).
+5. Return the total accumulated duration as a timedelta.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_working_hours_between(dt_start: datetime, dt_end: datetime) -> timedelta:
+    """
+    Calculate the total duration that falls on weekdays (Monday-Friday)
+    between two datetimes, excluding all time that falls on Saturdays and Sundays.
+
+    The result is returned as a timedelta representing the working hours (here defined
+    as all hours on weekdays). If dt_end is earlier than dt_start, the duration is computed
+    using the absolute interval.
+    """
+    # Ensure dt_start <= dt_end
+    if dt_start == dt_end:
+        return timedelta(0)
+    if dt_start > dt_end:
+        dt_start, dt_end = dt_end, dt_start
+
+    total = timedelta(0)
+    current = dt_start
+
+    while current < dt_end:
+        # Start and end boundaries for the current day
+        day_start = current.replace(hour=0, minute=0, second=0, microsecond=0)
+        day_end = day_start + timedelta(days=1)
+
+        # The end of the interval within the current day
+        interval_end = dt_end if dt_end < day_end else day_end
+
+        # Weekday check: Monday=0 ... Sunday=6
+        if day_start.weekday() < 5:
+            total += interval_end - current
+
+        # Move to the next segment
+        current = interval_end
+
+    return total
+
+# Entry point: calculate_working_hours_between(dt_start: datetime, dt_end: datetime) -> timedelta
+```

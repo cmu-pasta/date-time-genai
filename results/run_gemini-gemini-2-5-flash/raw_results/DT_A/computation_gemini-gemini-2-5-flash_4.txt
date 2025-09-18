@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need `datetime` from the `datetime` module for date and time objects, and `ZoneInfo` from the `zoneinfo` module to handle different timezones.
+2.  **Define a function**: Create a function that accepts three parameters: the original `datetime` object, the `ZoneInfo` object for the source timezone, and the `ZoneInfo` object for the target timezone.
+3.  **Localize the original datetime (if naive)**: If the input `datetime` object is "naive" (i.e., it has no timezone information), we need to make it "timezone-aware" by associating it with the `source_timezone`. We can use the `replace()` method for this, setting its `tzinfo` attribute. If it's already timezone-aware, we'll ensure it's correctly interpreted in the source timezone by converting it using `astimezone()`.
+4.  **Convert to the target timezone**: Once the `datetime` object is properly localized to the source timezone, we can use the `astimezone()` method to convert it to the `target_timezone`.
+5.  **Return the result**: The function will return the new `datetime` object, which is now in the `target_timezone`.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_timezone(dt_original: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime:
+    # Step 1: Ensure the original datetime is timezone-aware in the source timezone.
+    # If dt_original is naive, replace its tzinfo.
+    # If dt_original is already timezone-aware, convert it to the source_tz first
+    # to handle cases where it might be aware in a different timezone initially.
+    if dt_original.tzinfo is None:
+        dt_localized_source = dt_original.replace(tzinfo=source_tz)
+    else:
+        dt_localized_source = dt_original.astimezone(source_tz)
+    
+    # Step 2: Convert the localized datetime from the source timezone to the target timezone.
+    dt_in_target_tz = dt_localized_source.astimezone(target_tz)
+    
+    # Step 3: Return the datetime object in the target timezone.
+    return dt_in_target_tz
+
+# Entry point: convert_timezone(dt_original: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime
+```

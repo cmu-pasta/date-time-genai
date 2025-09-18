@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library for date and time handling.
+2. Define a function that accepts a pendulum.DateTime as input.
+3. Compute the 12-hour clock hour: map 0 to 12 (midnight) and 13–23 to 1–11; keep 12 as 12.
+4. Construct and return a pendulum.Time with the computed 12-hour value while preserving minutes, seconds, microseconds, and timezone.
+
+```python
+import pendulum
+
+def to_12_hour_time(dt: pendulum.DateTime) -> pendulum.Time:
+    """
+    Convert a pendulum.DateTime (24-hour clock) to a pendulum.Time that reflects
+    the 12-hour clock representation (hour in 1..12). AM/PM can be inferred as:
+      - AM if dt.hour < 12
+      - PM if dt.hour >= 12
+    """
+    # Step 1: Extract 24-hour components
+    hour24 = dt.hour
+    minute = dt.minute
+    second = dt.second
+    microsecond = dt.microsecond
+    tz = dt.timezone
+
+    # Step 2: Convert to 12-hour clock hour
+    hour12 = 12 if (hour24 % 12) == 0 else (hour24 % 12)
+
+    # Step 3: Build a pendulum.Time with hour in 1..12, preserving other components and timezone
+    return pendulum.time(hour12, minute, second, microsecond, tz=tz)
+
+# Entry point: to_12_hour_time(dt: pendulum.DateTime) -> pendulum.Time
+```

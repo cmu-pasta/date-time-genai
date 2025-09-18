@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need `datetime` for date and time objects, and `zoneinfo` (available from Python 3.9+) for timezone definitions.
+2.  **Define a function**: Create a function that accepts two arguments: a timezone-aware `datetime` object (the timestamp to convert) and a `zoneinfo.ZoneInfo` object representing the target timezone.
+3.  **Perform the timezone conversion**: The `datetime` object has an `astimezone()` method, which can take a `zoneinfo.ZoneInfo` object as an argument to convert the datetime to the specified target timezone. This method inherently handles daylight saving time transitions.
+4.  **Return the result**: The function will return a new `datetime` object, now representing the same point in time but adjusted to the target timezone.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_timezone(dt: datetime, target_timezone: ZoneInfo) -> datetime:
+    """
+    Converts a timezone-aware datetime object from its current timezone
+    to a specified target timezone.
+
+    Args:
+        dt: A timezone-aware datetime object that needs to be converted.
+            The dt object must have its tzinfo attribute set (e.g., using ZoneInfo).
+        target_timezone: A zoneinfo.ZoneInfo object representing the desired
+                         target timezone.
+
+    Returns:
+        A new datetime object representing the same point in time, but
+        adjusted to the target_timezone.
+    """
+    # Step 1: Ensure the input datetime is timezone-aware.
+    # The astimezone() method requires a timezone-aware datetime object.
+    if dt.tzinfo is None:
+        raise ValueError("Input datetime object must be timezone-aware.")
+
+    # Step 2: Convert the datetime object to the target timezone
+    converted_dt = dt.astimezone(target_timezone)
+    
+    # Step 3: Return the newly converted datetime object
+    return converted_dt
+
+# Entry point: convert_timezone(dt: datetime, target_timezone: zoneinfo.ZoneInfo) -> datetime
+```

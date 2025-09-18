@@ -1,0 +1,53 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date types and intervals.
+2. Normalize the inputs to pendulum.Date objects so the time-of-day does not affect the age computation.
+3. Ensure the start date is not after the end date (swap if necessary) to compute a forward age.
+4. Build a pendulum.Period between the two dates to obtain exact calendar components.
+5. Extract the years, months, and days from the period.
+6. Return a pendulum.Duration constructed with those years, months, and days components.
+
+```python
+import pendulum
+
+def calculate_age_ymd(start: pendulum.Date, end: pendulum.Date) -> pendulum.Duration:
+    """
+    Calculate the age as a compound of years, months, and days between two dates.
+
+    Inputs:
+      - start: pendulum.Date or pendulum.DateTime
+      - end: pendulum.Date or pendulum.DateTime
+
+    Returns:
+      - pendulum.Duration with years, months, and days components representing the age.
+    """
+    # Normalize to pendulum.Date (ignore time components if DateTime is provided)
+    if isinstance(start, pendulum.DateTime):
+        start_date = start.date()
+    elif isinstance(start, pendulum.Date):
+        start_date = start
+    else:
+        raise TypeError("start must be a pendulum.Date or pendulum.DateTime")
+
+    if isinstance(end, pendulum.DateTime):
+        end_date = end.date()
+    elif isinstance(end, pendulum.Date):
+        end_date = end
+    else:
+        raise TypeError("end must be a pendulum.Date or pendulum.DateTime")
+
+    # Ensure chronological order
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+
+    # Build a period to extract calendar-aware components
+    period = pendulum.period(start_date, end_date)
+
+    years = period.years
+    months = period.months
+    days = period.days
+
+    # Return as a pendulum.Duration preserving Y/M/D components
+    return pendulum.duration(years=years, months=months, days=days)
+
+# Entry point: calculate_age_ymd(start: pendulum.Date, end: pendulum.Date) -> pendulum.Duration
+```

@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with time objects.
+2. Define a function that accepts two pendulum.Time objects representing times on the same day.
+3. Build two pendulum.DateTime objects on a fixed reference date using the provided times.
+4. Compute the absolute difference between these DateTime objects and convert it to total minutes.
+5. Return the result as an integer.
+
+```python
+import pendulum
+
+def minutes_between_times(t1: pendulum.Time, t2: pendulum.Time) -> int:
+    """
+    Calculate the number of minutes between two times on the same day.
+
+    Args:
+        t1 (pendulum.Time): The first time.
+        t2 (pendulum.Time): The second time.
+
+    Returns:
+        int: The absolute number of minutes between t1 and t2.
+    """
+    # Use a fixed reference date since only the time-of-day matters
+    dt1 = pendulum.datetime(2000, 1, 1, t1.hour, t1.minute, t1.second, t1.microsecond)
+    dt2 = pendulum.datetime(2000, 1, 1, t2.hour, t2.minute, t2.second, t2.microsecond)
+
+    # Compute absolute difference in minutes
+    difference_minutes = dt2.diff(dt1, absolute=True).in_minutes()
+
+    return difference_minutes
+
+# Entry point: minutes_between_times(t1: pendulum.Time, t2: pendulum.Time) -> int
+```

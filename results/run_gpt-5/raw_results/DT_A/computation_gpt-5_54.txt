@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts a datetime as input.
+3. Compute the start of the current year and the start of the next year, preserving the input's tzinfo.
+4. Compute the total number of seconds in the year and the number of seconds elapsed since the start of the year.
+5. Calculate the fraction of the year elapsed and convert it to a percentage.
+6. Clamp the result to the range [0.0, 100.0] to handle inputs outside the year.
+7. Return the percentage as a float.
+
+```python
+from datetime import datetime
+
+def calculate_year_progress(dt: datetime) -> float:
+    """
+    Calculate the percentage of the year that has passed for a given datetime.
+
+    Args:
+        dt (datetime): The datetime for which to calculate the year's progress.
+
+    Returns:
+        float: The percentage (0.0 to 100.0) of the year that has passed.
+    """
+    # Start of the current year (preserve timezone awareness)
+    start_of_year = datetime(dt.year, 1, 1, tzinfo=dt.tzinfo)
+    # Start of the next year
+    start_of_next_year = datetime(dt.year + 1, 1, 1, tzinfo=dt.tzinfo)
+
+    # Total seconds in the year (handles leap years and timezone offsets)
+    total_seconds = (start_of_next_year - start_of_year).total_seconds()
+    # Seconds elapsed since the start of the year
+    elapsed_seconds = (dt - start_of_year).total_seconds()
+
+    # Calculate percentage and clamp to [0.0, 100.0]
+    percentage = (elapsed_seconds / total_seconds) * 100.0 if total_seconds > 0 else 0.0
+    if percentage < 0.0:
+        percentage = 0.0
+    elif percentage > 100.0:
+        percentage = 100.0
+
+    return percentage
+
+# Entry point: calculate_year_progress(dt: datetime) -> float
+```

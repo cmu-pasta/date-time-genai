@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates and times.
+2. Define a function that accepts a pendulum.DateTime input.
+3. Use Pendulum's formatting capability to extract the full weekday name from the given date.
+4. Return the weekday name as a string.
+
+```python
+import pendulum
+
+def determine_day_name(dt: pendulum.DateTime) -> str:
+    """
+    Determine the full day name (e.g., Monday, Tuesday) for the given Pendulum DateTime.
+    """
+    # 'dddd' produces the full weekday name in Pendulum's formatter.
+    return dt.format('dddd')
+
+# Entry point: determine_day_name(dt: pendulum.DateTime) -> str
+```

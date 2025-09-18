@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a helper to convert a time to seconds since midnight to enable arithmetic.
+3. Compute the absolute difference in seconds between the two times.
+4. Convert the difference to hours as a float and return it.
+
+```python
+from datetime import time
+
+def _time_to_seconds_since_midnight(t: time) -> float:
+    """
+    Convert a time object to fractional seconds since midnight.
+    """
+    return (
+        t.hour * 3600
+        + t.minute * 60
+        + t.second
+        + t.microsecond / 1_000_000
+    )
+
+def calculate_time_difference_hours(t1: time, t2: time) -> float:
+    """
+    Calculate the absolute time difference between two times on the same day,
+    expressed in hours as a float.
+
+    Parameters:
+    - t1: time
+    - t2: time
+
+    Returns:
+    - float: absolute difference in hours
+    """
+    seconds_diff = abs(_time_to_seconds_since_midnight(t2) - _time_to_seconds_since_midnight(t1))
+    return seconds_diff / 3600.0
+
+# Entry point: calculate_time_difference_hours(t1: time, t2: time) -> float
+```

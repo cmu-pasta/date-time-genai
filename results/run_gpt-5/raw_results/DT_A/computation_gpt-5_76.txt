@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that takes a target datetime and a reference datetime as inputs.
+3. Convert both datetimes to dates to measure full calendar days, ignoring time-of-day.
+4. Subtract the reference date from the target date to get a timedelta.
+5. Return the number of days as an integer.
+
+```python
+from datetime import datetime
+
+def days_since_reference(dt: datetime, reference: datetime) -> int:
+    """
+    Convert a datetime to the number of days since a reference datetime.
+    The calculation uses calendar days by comparing the date components.
+    
+    Args:
+        dt: The target datetime.
+        reference: The reference datetime to measure from.
+    
+    Returns:
+        Integer number of days between the date of dt and the date of reference.
+        Positive if dt is after reference, negative if before, zero if same date.
+    """
+    # Use date components to compute whole-day differences irrespective of time-of-day
+    days_difference = (dt.date() - reference.date()).days
+    return days_difference
+
+# Entry point: days_since_reference(dt: datetime, reference: datetime) -> int
+```

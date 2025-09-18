@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes (time) from the datetime module.
+2. Define business hours boundaries: start at 09:00 inclusive and end at 17:00 exclusive.
+3. If the input time has tzinfo, construct boundary times with the same tzinfo to allow valid comparisons.
+4. Compare the input time against the boundaries and return True if it falls within, otherwise False.
+
+```python
+from datetime import time
+
+def is_within_business_hours(t: time) -> bool:
+    """
+    Determine if a given time falls within business hours: 9:00 (inclusive) to 17:00 (exclusive).
+    The comparison respects tz-aware times by constructing boundaries with the same tzinfo as the input.
+
+    Parameters:
+    - t: time
+
+    Returns:
+    - bool: True if t is within business hours, else False.
+    """
+    # Create boundaries with matching tzinfo (supports both naive and tz-aware times)
+    start = time(9, 0, 0, tzinfo=t.tzinfo)
+    end = time(17, 0, 0, tzinfo=t.tzinfo)
+
+    return start <= t < end
+
+# Entry point: is_within_business_hours(t: time) -> bool
+```

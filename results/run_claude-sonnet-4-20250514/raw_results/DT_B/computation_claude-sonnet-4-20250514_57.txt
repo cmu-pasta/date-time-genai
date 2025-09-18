@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts two dates as datetime objects.
+3. **Calculate working days**: We need to count only the working days (Monday through Friday) between the two dates, excluding weekends.
+4. **Convert to work weeks**: Divide the total working days by 5 to get the number of work weeks.
+5. **Return the result**: Return the result as a float to handle partial work weeks.
+
+Here is the implementation of the above steps in code:
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_work_weeks(start_date: datetime, end_date: datetime) -> float:
+    # Ensure start_date is before end_date
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+    
+    # Initialize working days counter
+    working_days = 0
+    current_date = start_date
+    
+    # Count working days (Monday=0 to Sunday=6, so weekdays are 0-4)
+    while current_date < end_date:
+        if current_date.weekday() < 5:  # Monday to Friday (0-4)
+            working_days += 1
+        current_date += timedelta(days=1)
+    
+    # Convert working days to work weeks (5 working days per work week)
+    work_weeks = working_days / 5.0
+    
+    return work_weeks
+
+# Entry point: calculate_work_weeks(start_date: datetime, end_date: datetime) -> float
+```

@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Import date and timedelta from the datetime module to work with calendar dates and day offsets.
+2. Take the input year as an integer and construct February 1st of that year.
+3. Determine the weekday of February 1st (Monday=0, Sunday=6).
+4. Compute the offset to the first Monday in February.
+5. Add two weeks to the first Monday to get the third Monday (Presidents' Day).
+6. Return the computed date.
+
+```python
+from datetime import date, timedelta
+
+def presidents_day(year: int) -> date:
+    """
+    Compute Presidents' Day (third Monday of February) for a given year.
+    
+    Args:
+        year: The year for which to compute Presidents' Day.
+        
+    Returns:
+        A date object representing Presidents' Day in the given year.
+    """
+    feb_first = date(year, 2, 1)
+    # Monday is 0, Sunday is 6
+    days_to_first_monday = (0 - feb_first.weekday()) % 7
+    first_monday = feb_first + timedelta(days=days_to_first_monday)
+    third_monday = first_monday + timedelta(weeks=2)
+    return third_monday
+
+# Entry point: presidents_day(year: int) -> date
+```

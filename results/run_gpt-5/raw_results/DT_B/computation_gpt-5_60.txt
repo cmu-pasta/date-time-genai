@@ -1,0 +1,59 @@
+Let's think step by step to solve this problem.
+1. Accept inputs: a calendar date, latitude (float), longitude (float), and a zoneinfo time zone for the location.
+2. Compute the day of year (n) for the given date to feed into the equation of time model.
+3. Compute the equation of time (EoT) in minutes using a standard NOAA-style approximation.
+4. Determine the UTC offset (in hours) for the given date in the provided time zone, accounting for DST if applicable.
+5. Compute local clock time of solar noon in hours using: 12 + tz_offset_hours - (longitude/15) - (EoT/60).
+6. Normalize the result to the 0–24 hour range and convert fractional hours to a time value (hours, minutes, seconds).
+7. Return the time object representing solar noon local clock time for that date and location.
+
+```python
+from datetime import date, datetime, time, timedelta
+from zoneinfo import ZoneInfo
+import math
+
+def calculate_solar_noon(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> time:
+    """
+    Calculate the local clock time of solar noon for a given date and location.
+
+    Parameters:
+    - d: date object for the day of interest.
+    - latitude: geographic latitude in degrees (positive north, negative south). Not used in the time computation.
+    - longitude: geographic longitude in degrees (positive east, negative west).
+    - tz: zoneinfo.ZoneInfo representing the local time zone.
+
+    Returns:
+    - time: local clock time of solar noon on the given date in the provided time zone.
+    """
+    # Day of year (1..366)
+    n = d.timetuple().tm_yday
+
+    # Equation of Time (EoT) in minutes using a common approximation.
+    # B in radians; using 365 (or 364) variants are common; here we follow NOAA's typical form with 365.
+    B = 2.0 * math.pi * (n - 81) / 364.0
+    eot_minutes = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+
+    # Time zone offset (hours) for the given date, including DST if applicable.
+    # Use noon wall time to avoid ambiguity during transitions.
+    local_noon = datetime(d.year, d.month, d.day, 12, 0, 0, tzinfo=tz)
+    tz_offset_hours = local_noon.utcoffset().total_seconds() / 3600.0
+
+    # Solar noon in local clock hours:
+    # 12:00 + time zone offset (hours) - longitude/15 (hours) - EoT/60 (hours)
+    solar_noon_hours = 12.0 + tz_offset_hours - (longitude / 15.0) - (eot_minutes / 60.0)
+
+    # Normalize to [0, 24) range
+    solar_noon_hours = solar_noon_hours % 24.0
+
+    # Convert fractional hours to h:m:s
+    total_seconds = int(round(solar_noon_hours * 3600.0))
+    # Handle rounding that may produce 24:00:00
+    total_seconds %= 24 * 3600
+    h = total_seconds // 3600
+    m = (total_seconds % 3600) // 60
+    s = total_seconds % 60
+
+    return time(hour=h, minute=m, second=s)
+
+# Entry point: calculate_solar_noon(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> time
+```

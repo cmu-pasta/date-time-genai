@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+1. Import Pendulum for date handling and Duration creation.
+2. Accept a pendulum.Date as input and extract its day-of-year (N).
+3. Compute the auxiliary angle B = 2π(N − 81)/364 in radians.
+4. Compute the Equation of Time (EoT) in minutes using the standard approximation:
+   EoT ≈ 9.87·sin(2B) − 7.53·cos(B) − 1.5·sin(B)
+5. Convert the EoT minutes to seconds and create a pendulum.Duration that can be positive or negative.
+6. Return the pendulum.Duration.
+
+```python
+import math
+import pendulum
+
+def calculate_equation_of_time(date: pendulum.Date) -> pendulum.Duration:
+    """
+    Calculate the Equation of Time (EoT) for a given date.
+
+    The EoT is the discrepancy (apparent solar time - mean solar time),
+    approximated in minutes by:
+        EoT ≈ 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B)
+    where B = 2π*(N - 81)/364 and N is the day-of-year (1..366).
+
+    Args:
+        date: pendulum.Date representing the date for which to compute the EoT.
+
+    Returns:
+        pendulum.Duration representing the EoT (can be negative).
+    """
+    # Day of year (N)
+    N = date.day_of_year
+
+    # Auxiliary angle B in radians
+    B = (2 * math.pi) * (N - 81) / 364.0
+
+    # Equation of Time in minutes (approximation)
+    eot_minutes = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+
+    # Convert to a pendulum.Duration (allowing negative durations)
+    eot_seconds = eot_minutes * 60.0
+    return pendulum.duration(seconds=eot_seconds)
+
+# Entry point: calculate_equation_of_time(date: pendulum.Date) -> pendulum.Duration
+```

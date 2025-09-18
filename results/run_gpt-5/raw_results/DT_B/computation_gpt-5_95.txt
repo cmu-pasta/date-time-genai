@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime library to represent dates.
+2. Define a simplified catalog of upcoming solar eclipses with coarse visibility bounding boxes (latitude/longitude ranges) and their dates.
+3. Implement a helper to test whether a given latitude/longitude falls within a bounding box.
+4. Search the catalog in chronological order for the first eclipse after the provided start date that is visible at the provided location.
+5. Return the date of that eclipse; if none is found, return date.max as a sentinel.
+
+```python
+from datetime import date
+
+def _in_box(lat: float, lon: float, lat_min: float, lat_max: float, lon_min: float, lon_max: float) -> bool:
+    # Checks if a point (lat, lon) lies within the inclusive bounding box
+    return (lat_min <= lat <= lat_max) and (lon_min <= lon <= lon_max)
+
+def find_next_visible_solar_eclipse(from_date: date, latitude: float, longitude: float) -> date:
+    # Simplified visibility catalog: coarse bounding boxes where the eclipse is (at least partial) visible.
+    # Note: These are approximate and intended for demonstration, not precise astronomical prediction.
+    eclipses = [
+        # 2026 Aug 12: Broad visibility across North America and Europe (approximate partial visibility region)
+        {"d": date(2026, 8, 12), "lat_min": -5.0,  "lat_max": 85.0, "lon_min": -170.0, "lon_max": 60.0},
+        # 2027 Aug 02: North Africa, southern Europe, Middle East (approximate)
+        {"d": date(2027, 8, 2),  "lat_min": -40.0, "lat_max": 50.0, "lon_min": -20.0,  "lon_max": 60.0},
+        # 2028 Jan 26: Australia and parts of SE Asia (approximate)
+        {"d": date(2028, 1, 26), "lat_min": -50.0, "lat_max": 20.0, "lon_min": 80.0,   "lon_max": 180.0},
+        # 2030 Jun 01: Arctic/Asia regions (approximate)
+        {"d": date(2030, 6, 1),  "lat_min": 20.0,  "lat_max": 85.0, "lon_min": 30.0,   "lon_max": 180.0},
+        # 2035 Sep 02: East Asia (approximate)
+        {"d": date(2035, 9, 2),  "lat_min": 0.0,   "lat_max": 70.0, "lon_min": 90.0,   "lon_max": 180.0},
+        # 2044 Aug 23: North America (approximate)
+        {"d": date(2044, 8, 23), "lat_min": 20.0,  "lat_max": 85.0, "lon_min": -170.0, "lon_max": -30.0},
+        # 2045 Aug 12: North America (approximate)
+        {"d": date(2045, 8, 12), "lat_min": 10.0,  "lat_max": 80.0, "lon_min": -170.0, "lon_max": -30.0},
+    ]
+
+    # Ensure chronological order
+    eclipses.sort(key=lambda e: e["d"])
+
+    # Find the next eclipse strictly after from_date that is visible from (latitude, longitude)
+    for e in eclipses:
+        if e["d"] > from_date and _in_box(latitude, longitude, e["lat_min"], e["lat_max"], e["lon_min"], e["lon_max"]):
+            return e["d"]
+
+    # If none found in the catalog, return a sentinel maximum date
+    return date.max
+
+# Entry point: find_next_visible_solar_eclipse(from_date: date, latitude: float, longitude: float) -> date
+```

@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and times.
+
+2. **Define a function**: We will create a function that accepts a datetime object as input representing the date for which we want to calculate the year percentage.
+
+3. **Determine the year boundaries**: For the given date, we need to find the start of that year (January 1st at 00:00:00) and the start of the next year to calculate the total duration of the year.
+
+4. **Calculate time elapsed**: Find the time difference between the start of the year and the given date to determine how much time has passed.
+
+5. **Calculate total year duration**: Find the total duration of the year by calculating the difference between the start of the current year and the start of the next year.
+
+6. **Calculate percentage**: Divide the elapsed time by the total year duration and multiply by 100 to get the percentage.
+
+7. **Return the result**: Return the calculated percentage as a float.
+
+```python
+from datetime import datetime
+
+def calculate_year_percentage(input_date: datetime) -> float:
+    # Get the year from the input date
+    year = input_date.year
+    
+    # Create the start of the year (January 1st, 00:00:00)
+    year_start = datetime(year, 1, 1)
+    
+    # Create the start of the next year (January 1st of next year, 00:00:00)
+    next_year_start = datetime(year + 1, 1, 1)
+    
+    # Calculate total seconds in the year
+    total_seconds_in_year = (next_year_start - year_start).total_seconds()
+    
+    # Calculate seconds passed from start of year to input_date
+    seconds_passed = (input_date - year_start).total_seconds()
+    
+    # Calculate percentage
+    percentage = (seconds_passed / total_seconds_in_year) * 100
+    
+    return percentage
+
+# Entry point: calculate_year_percentage(input_date: datetime) -> float
+```

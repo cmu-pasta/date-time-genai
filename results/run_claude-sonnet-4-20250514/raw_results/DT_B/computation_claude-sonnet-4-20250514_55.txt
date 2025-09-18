@@ -1,0 +1,53 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the Islamic Calendar**: The Islamic (Hijri) calendar is a lunar calendar that started on July 16, 622 CE (Gregorian). It has 12 months with alternating 29 and 30 days, totaling approximately 354.37 days per year.
+
+2. **Define the Islamic Epoch**: The Islamic calendar begins on July 16, 622 CE in the Gregorian calendar.
+
+3. **Calculate the conversion**: We need to find the number of days between the given Gregorian date and the Islamic epoch, then convert this to Islamic years, months, and days using the average Islamic year length.
+
+4. **Implement approximation logic**: Since the standard datetime library doesn't have direct Islamic calendar support, we'll use mathematical approximation based on average year/month lengths.
+
+5. **Return the result**: We'll return the Islamic year, month, and day as separate integers since we can't use complex data types.
+
+```python
+from datetime import datetime, date
+
+def gregorian_to_islamic_date(gregorian_date: date) -> int:
+    # Islamic calendar epoch: July 16, 622 CE
+    islamic_epoch = date(622, 7, 16)
+    
+    # Calculate days since Islamic epoch
+    if gregorian_date < islamic_epoch:
+        return 0  # Invalid date before Islamic calendar started
+    
+    days_since_epoch = (gregorian_date - islamic_epoch).days
+    
+    # Average Islamic year length (354.37 days)
+    # Average Islamic month length (29.53 days)
+    islamic_year_length = 354.37
+    islamic_month_length = 29.53
+    
+    # Calculate Islamic year (starting from year 1)
+    islamic_year = int(days_since_epoch / islamic_year_length) + 1
+    
+    # Calculate remaining days after full years
+    remaining_days = days_since_epoch - ((islamic_year - 1) * islamic_year_length)
+    
+    # Calculate Islamic month (1-12)
+    islamic_month = int(remaining_days / islamic_month_length) + 1
+    if islamic_month > 12:
+        islamic_month = 12
+    
+    # Calculate Islamic day (1-30)
+    islamic_day = int(remaining_days - ((islamic_month - 1) * islamic_month_length)) + 1
+    if islamic_day < 1:
+        islamic_day = 1
+    elif islamic_day > 30:
+        islamic_day = 30
+    
+    # Return as a combined integer: YYYYMMDD format
+    return int(f"{islamic_year:04d}{islamic_month:02d}{islamic_day:02d}")
+
+# Entry point: gregorian_to_islamic_date(gregorian_date: date) -> int
+```

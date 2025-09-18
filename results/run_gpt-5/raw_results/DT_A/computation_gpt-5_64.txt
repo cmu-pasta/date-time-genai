@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the standard datetime library.
+2. Define a function that accepts a time object in 24-hour format.
+3. Compute the minutes since midnight by converting hours to minutes and adding the minutes component.
+4. Optionally account for seconds and microseconds by flooring to the nearest whole minute using total seconds.
+5. Return the result as an integer.
+
+```python
+from datetime import time, datetime, date, timedelta
+
+def minutes_since_midnight(t: time) -> int:
+    """
+    Convert a 24-hour time to minutes since midnight.
+
+    If the time includes seconds or microseconds, this function floors to the nearest whole minute.
+    """
+    # Combine with an arbitrary date to create a datetime for precise difference
+    dt = datetime.combine(date(2000, 1, 1), t)  # arbitrary fixed date
+    midnight = datetime.combine(date(2000, 1, 1), time(0, 0))
+    # Calculate total seconds since midnight and convert to whole minutes
+    total_minutes = int((dt - midnight).total_seconds() // 60)
+    return total_minutes
+
+# Entry point: minutes_since_midnight(t: time) -> int
+```

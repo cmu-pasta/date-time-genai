@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date computations.
+2. Define a function that accepts a pendulum.Date as input.
+3. Convert the date to a DateTime to use end_of('month'), then extract the date component.
+4. Return the result as a pendulum.Date representing the last day of the month.
+
+```python
+import pendulum
+
+def last_day_of_month(date_input: pendulum.Date) -> pendulum.Date:
+    """
+    Find the last day of the month for the given pendulum.Date.
+    """
+    # Convert to DateTime to use end_of('month'), then get the date part
+    last_day = pendulum.datetime(date_input.year, date_input.month, date_input.day).end_of('month').date()
+    return last_day
+
+# Entry point: last_day_of_month(date_input: pendulum.Date) -> pendulum.Date
+```

@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date computations.
+2. Accept the target year as an integer input.
+3. Construct the date for February 1st of the given year using pendulum.
+4. Determine the number of days in February for that year using days_in_month.
+5. Compute the day-of-week for February 1st and find the first Sunday in February.
+6. Calculate how many Sundays occur by counting every 7th day from the first Sunday within the month.
+7. Return the count as an integer.
+
+```python
+import pendulum
+
+def count_sundays_in_february(year: int) -> int:
+    # Step 1: Create a Pendulum Date for February 1st of the given year
+    feb_first = pendulum.date(year, 2, 1)
+    
+    # Step 2: Get number of days in February for the given year
+    days_in_feb = feb_first.days_in_month  # 28 or 29 depending on leap year
+    
+    # Step 3: Compute offset to the first Sunday in February
+    # pendulum day_of_week: Monday=0 ... Sunday=6
+    offset_to_sunday = (pendulum.SUNDAY - feb_first.day_of_week) % 7
+    first_sunday_day = 1 + offset_to_sunday  # Day number within February
+    
+    # Step 4: Count Sundays: first Sunday plus every 7th day within the month
+    count = 0
+    if first_sunday_day <= days_in_feb:
+        count = 1 + (days_in_feb - first_sunday_day) // 7
+    
+    # Step 5: Return the count as an integer
+    return int(count)
+
+# Entry point: count_sundays_in_february(year: int) -> int
+```

@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Choose a known reference new moon epoch in UTC.
+2. Convert the input datetime to UTC to ensure consistent calculations.
+3. Compute the exact elapsed time in days between the input datetime and the reference new moon.
+4. Reduce the elapsed days modulo the synodic month length to get the lunar age in days.
+5. Return the lunar age as a float.
+
+```python
+import pendulum
+
+def lunar_age_days(dt: pendulum.DateTime) -> float:
+    """
+    Calculate the lunar age (days since the last new moon) for the given datetime.
+
+    Args:
+        dt (pendulum.DateTime): The datetime for which to compute the lunar age.
+
+    Returns:
+        float: Lunar age in days (0 <= age < 29.530588853).
+    """
+    # Synodic month length in days (mean lunar cycle)
+    SYNODIC_MONTH_DAYS = 29.530588853
+
+    # Reference new moon: 2000-01-06 18:14:00 UTC (widely used astronomical epoch)
+    ref_new_moon = pendulum.datetime(2000, 1, 6, 18, 14, tz="UTC")
+
+    # Normalize input to UTC (assume UTC if naive)
+    utc = pendulum.timezone("UTC")
+    dt_utc = dt.in_timezone(utc) if dt.timezone is not None else dt.replace(tzinfo=utc)
+
+    # Compute precise elapsed days between dt and reference
+    delta = dt_utc - ref_new_moon  # pendulum.Duration
+    total_days = delta.total_seconds() / 86400.0
+
+    # Lunar age is elapsed days modulo the synodic month
+    age = total_days % SYNODIC_MONTH_DAYS
+    return float(age)
+
+# Entry point: lunar_age_days(dt: pendulum.DateTime) -> float
+```

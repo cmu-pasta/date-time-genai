@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with time objects.
+2. Define a function that accepts a pendulum.Time input.
+3. Extract hour, minute, and second components from the pendulum.Time.
+4. Compute total seconds since midnight as hour*3600 + minute*60 + second.
+5. Return the result as an integer.
+
+```python
+import pendulum
+
+def seconds_since_midnight(t: pendulum.Time) -> int:
+    """
+    Convert a pendulum.Time to the number of whole seconds since midnight.
+    """
+    # Extract components from the pendulum.Time object
+    hours = t.hour
+    minutes = t.minute
+    seconds = t.second
+
+    # Compute total seconds since midnight
+    total_seconds = hours * 3600 + minutes * 60 + seconds
+    return total_seconds
+
+# Entry point: seconds_since_midnight(t: pendulum.Time) -> int
+```

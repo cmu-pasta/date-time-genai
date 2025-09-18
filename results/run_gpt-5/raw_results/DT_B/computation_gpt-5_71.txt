@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+1. Choose a practical astronomical approximation for the vernal equinox date that can be implemented without external libraries.
+2. Use the well-known approximation (used in Japan for “Shunbun no Hi”) valid for Gregorian years 1900–2099:
+   day = floor(20.8431 + 0.242194*(year - 1980) - floor((year - 1980)/4))
+3. Validate that the input year is within the supported range (1900–2099). If not, raise an informative error.
+4. Construct and return a date object for March of the given year using the computed day.
+
+```python
+from datetime import date
+
+def vernal_equinox_date(year: int) -> date:
+    """
+    Compute the approximate date of the vernal equinox (March equinox) for a given year.
+    This implementation uses a widely known approximation valid for Gregorian years 1900–2099,
+    yielding a date in March (typically the 20th or 21st).
+
+    Parameters:
+        year (int): Gregorian calendar year, must be in the range 1900–2099.
+
+    Returns:
+        date: The approximated date of the vernal equinox for the given year.
+    """
+    if not (1900 <= year <= 2099):
+        raise ValueError("Year out of supported range: valid for 1900–2099")
+
+    # Approximation used in practice (e.g., for Japan's 'Shunbun no Hi')
+    # day = floor(20.8431 + 0.242194*(year - 1980) - floor((year - 1980)/4))
+    offset = year - 1980
+    day = int(20.8431 + 0.242194 * offset - (offset // 4))
+
+    return date(year, 3, day)
+
+# Entry point: vernal_equinox_date(year: int) -> date
+```

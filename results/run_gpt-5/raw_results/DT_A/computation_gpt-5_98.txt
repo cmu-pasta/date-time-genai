@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts a year as an integer.
+3. Construct the date for October 1st of the given year.
+4. Compute the number of days to the first Monday in October.
+5. Add 7 days to get the second Monday (Indigenous Peoples' Day).
+6. Return the computed date.
+
+```python
+from datetime import date, timedelta
+
+def indigenous_peoples_day(year: int) -> date:
+    """
+    Calculate Indigenous Peoples' Day (second Monday of October) for a given year.
+    
+    Args:
+        year (int): The year for which to compute the holiday.
+    
+    Returns:
+        date: The date of Indigenous Peoples' Day in the given year.
+    """
+    # October 1st of the given year
+    oct_first = date(year, 10, 1)
+    
+    # Weekday: Monday=0, Sunday=6. Compute days to the first Monday in October.
+    days_to_first_monday = (0 - oct_first.weekday()) % 7
+    first_monday = oct_first + timedelta(days=days_to_first_monday)
+    
+    # Indigenous Peoples' Day is the second Monday in October
+    second_monday = first_monday + timedelta(days=7)
+    return second_monday
+
+# Entry point: indigenous_peoples_day(year: int) -> date
+```

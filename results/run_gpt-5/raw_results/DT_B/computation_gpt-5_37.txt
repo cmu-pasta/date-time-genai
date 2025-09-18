@@ -1,0 +1,75 @@
+Let's think step by step to solve this problem.
+1. Import the necessary date class from the datetime module to work with dates.
+2. Define a function that accepts a birth date as a datetime.date.
+3. Determine the zodiac sign by comparing the month and day of the input date against the standard zodiac date ranges.
+4. Return the zodiac sign as an integer code (1-12) to comply with allowed output types.
+5. Document the mapping from integer codes to zodiac sign names in comments.
+
+```python
+from datetime import date
+
+def zodiac_sign_code(birth_date: date) -> int:
+    """
+    Determine the zodiac sign for a given birth date and return it as an integer code.
+
+    Zodiac code mapping (1-12):
+      1 = Capricorn   (Dec 22 - Jan 19)
+      2 = Aquarius    (Jan 20 - Feb 18)
+      3 = Pisces      (Feb 19 - Mar 20)
+      4 = Aries       (Mar 21 - Apr 19)
+      5 = Taurus      (Apr 20 - May 20)
+      6 = Gemini      (May 21 - Jun 20)
+      7 = Cancer      (Jun 21 - Jul 22)
+      8 = Leo         (Jul 23 - Aug 22)
+      9 = Virgo       (Aug 23 - Sep 22)
+     10 = Libra       (Sep 23 - Oct 22)
+     11 = Scorpio     (Oct 23 - Nov 21)
+     12 = Sagittarius (Nov 22 - Dec 21)
+    """
+    m = birth_date.month
+    d = birth_date.day
+
+    # Capricorn: Dec 22 - Jan 19
+    if (m == 12 and d >= 22) or (m == 1 and d <= 19):
+        return 1
+    # Aquarius: Jan 20 - Feb 18
+    if (m == 1 and d >= 20) or (m == 2 and d <= 18):
+        return 2
+    # Pisces: Feb 19 - Mar 20
+    if (m == 2 and d >= 19) or (m == 3 and d <= 20):
+        return 3
+    # Aries: Mar 21 - Apr 19
+    if (m == 3 and d >= 21) or (m == 4 and d <= 19):
+        return 4
+    # Taurus: Apr 20 - May 20
+    if (m == 4 and d >= 20) or (m == 5 and d <= 20):
+        return 5
+    # Gemini: May 21 - Jun 20
+    if (m == 5 and d >= 21) or (m == 6 and d <= 20):
+        return 6
+    # Cancer: Jun 21 - Jul 22
+    if (m == 6 and d >= 21) or (m == 7 and d <= 22):
+        return 7
+    # Leo: Jul 23 - Aug 22
+    if (m == 7 and d >= 23) or (m == 8 and d <= 22):
+        return 8
+    # Virgo: Aug 23 - Sep 22
+    if (m == 8 and d >= 23) or (m == 9 and d <= 22):
+        return 9
+    # Libra: Sep 23 - Oct 22
+    if (m == 9 and d >= 23) or (m == 10 and d <= 22):
+        return 10
+    # Scorpio: Oct 23 - Nov 21
+    if (m == 10 and d >= 23) or (m == 11 and d <= 21):
+        return 11
+    # Sagittarius: Nov 22 - Dec 21
+    # Remaining dates fall here by exclusion, but we keep the explicit check for clarity.
+    if (m == 11 and d >= 22) or (m == 12 and d <= 21):
+        return 12
+
+    # Fallback (should never be reached with valid Gregorian dates)
+    # Assign Capricorn by default to maintain integer return type.
+    return 1
+
+# Entry point: zodiac_sign_code(birth_date: date) -> int
+```

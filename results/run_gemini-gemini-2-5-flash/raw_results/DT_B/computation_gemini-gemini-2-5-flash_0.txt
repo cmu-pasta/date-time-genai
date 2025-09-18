@@ -1,0 +1,44 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need `datetime` for date objects and `timedelta` to increment dates.
+2.  **Define a function**: Create a function that accepts two `datetime` objects as input.
+3.  **Ensure correct date order**: Determine the earlier and later date from the two inputs to simplify the iteration logic.
+4.  **Initialize a counter**: A variable will be used to keep track of the number of business days.
+5.  **Iterate through dates**: Loop day by day from the earlier date up to and including the later date.
+6.  **Check for business day**: Inside the loop, for each date, check if its weekday falls between Monday (0) and Friday (4). Python's `weekday()` method returns 0 for Monday and 6 for Sunday. So, any day with a `weekday()` value less than 5 is a business day.
+7.  **Increment counter**: If the current day is a business day, increment the counter.
+8.  **Return the result**: After iterating through all days, return the final count of business days as an integer.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_business_days(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Ensure dt_start is the earlier date and dt_end is the later date.
+    # This simplifies the iteration logic.
+    if dt1 > dt2:
+        dt_start = dt2
+        dt_end = dt1
+    else:
+        dt_start = dt1
+        dt_end = dt2
+
+    business_days_count = 0
+    current_date = dt_start
+
+    # Step 2: Iterate day by day from the start date to the end date (inclusive).
+    # We only care about the date component, so the time part of datetime objects
+    # does not affect the business day calculation.
+    while current_date <= dt_end:
+        # Step 3: Check if the current day is a business day (Monday to Friday).
+        # weekday() returns 0 for Monday, 1 for Tuesday, ..., 4 for Friday, 5 for Saturday, 6 for Sunday.
+        if current_date.weekday() < 5:  # Monday (0) through Friday (4)
+            business_days_count += 1
+        
+        # Step 4: Move to the next day.
+        current_date += timedelta(days=1)
+        
+    # Step 5: Return the total count of business days.
+    return business_days_count
+
+# Entry point: calculate_business_days(dt1: datetime, dt2: datetime) -> int
+```

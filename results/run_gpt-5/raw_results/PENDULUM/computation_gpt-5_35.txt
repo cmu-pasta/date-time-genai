@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Accept a pendulum.Date representing any day in the target month.
+2. Determine the last calendar day of that month.
+3. If that day falls on a weekend (Saturday or Sunday), move backward day by day until reaching a weekday (Monday to Friday).
+4. Return the resulting pendulum.Date as the last business day of the month.
+
+```python
+import pendulum
+
+def last_business_day_of_month(d: pendulum.Date) -> pendulum.Date:
+    # Step 1: Determine the number of days in the month using a helper DateTime
+    days_in_month = pendulum.datetime(d.year, d.month, 1).days_in_month
+    
+    # Step 2: Get the last calendar day of the month as a Date
+    current = pendulum.date(d.year, d.month, days_in_month)
+    
+    # Step 3: Move backward if the last day is on a weekend
+    while current.day_of_week == pendulum.SATURDAY or current.day_of_week == pendulum.SUNDAY:
+        current = current.subtract(days=1)
+    
+    # Step 4: Return the last business day (Mon-Fri)
+    return current
+
+# Entry point: last_business_day_of_month(d: pendulum.Date) -> pendulum.Date
+```

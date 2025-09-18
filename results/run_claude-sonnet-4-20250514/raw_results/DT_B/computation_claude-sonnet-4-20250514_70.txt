@@ -1,0 +1,46 @@
+Let's think step by step to solve this problem.
+
+1. **Understanding the problem**: We need to convert a date from the Julian calendar system to the Gregorian calendar system. The Julian calendar was used before the Gregorian calendar was adopted in 1582.
+
+2. **Calculate the offset**: The difference between Julian and Gregorian calendars accumulates over time. The offset can be calculated using the formula that accounts for the different leap year rules between the two calendar systems.
+
+3. **Import necessary libraries**: We need the `datetime` and `timedelta` modules to work with dates and perform date arithmetic.
+
+4. **Define the conversion function**: Create a function that takes a Julian date (represented as a datetime object) and returns the corresponding Gregorian date.
+
+5. **Apply the conversion formula**: The offset between Julian and Gregorian dates is calculated as: `(year // 100) - (year // 400) - 2` for years after 300 CE.
+
+6. **Return the result**: Add the calculated offset to the Julian date to get the Gregorian date.
+
+```python
+from datetime import datetime, timedelta
+
+def julian_to_gregorian(julian_date: datetime) -> datetime:
+    """
+    Convert a Julian calendar date to Gregorian calendar date.
+    
+    Args:
+        julian_date: A datetime object representing a date in the Julian calendar
+    
+    Returns:
+        A datetime object representing the equivalent date in the Gregorian calendar
+    """
+    
+    year = julian_date.year
+    
+    # Calculate the offset between Julian and Gregorian calendars
+    # Formula: (year // 100) - (year // 400) - 2
+    # This accounts for the different leap year rules
+    if year >= 300:
+        offset = (year // 100) - (year // 400) - 2
+    else:
+        # For years before 300 CE, use a simpler calculation
+        offset = 0
+    
+    # Convert Julian date to Gregorian by adding the offset
+    gregorian_date = julian_date + timedelta(days=offset)
+    
+    return gregorian_date
+
+# Entry point: julian_to_gregorian(julian_date: datetime) -> datetime
+```

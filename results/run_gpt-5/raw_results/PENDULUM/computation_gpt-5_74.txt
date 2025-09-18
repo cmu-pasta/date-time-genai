@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+1. Choose a known reference new moon instant in UTC as an epoch.
+2. Use the mean synodic month length (in days) to step from the reference to the next new moon after the input.
+3. Convert the input to UTC to avoid timezone ambiguity.
+4. Compute the difference in days between the input and the reference.
+5. Use floor division to estimate the cycle count, build a candidate new moon time, and if it is not strictly after the input, add one synodic month.
+6. Return the resulting pendulum.DateTime in UTC.
+
+```python
+import pendulum
+
+# Mean synodic month length (days)
+_SYNODIC_MONTH_DAYS: float = 29.530588853
+
+# Reference new moon: 2000-01-06 18:14 UTC (well-known epoch)
+_REF_NEW_MOON_UTC: pendulum.DateTime = pendulum.datetime(2000, 1, 6, 18, 14, tz='UTC')
+
+def next_new_moon(after_dt: pendulum.DateTime) -> pendulum.DateTime:
+    """
+    Compute the date-time of the next new moon strictly after the given datetime.
+    The computation uses a mean synodic month approximation from a known epoch.
+    The result is returned as a pendulum.DateTime in UTC.
+    """
+    # Normalize input to UTC for consistent arithmetic
+    dt_utc: pendulum.DateTime = after_dt.in_timezone('UTC')
+
+    # Time difference in days from the reference new moon
+    delta: pendulum.Duration = dt_utc - _REF_NEW_MOON_UTC
+    diff_days: float = delta.total_seconds() / 86400.0
+
+    # Estimate cycle index using floor division for floats
+    n_cycles: int = int(diff_days // _SYNODIC_MONTH_DAYS)
+
+    # Construct candidate new moon
+    seconds_per_cycle: float = _SYNODIC_MONTH_DAYS * 86400.0
+    candidate: pendulum.DateTime = _REF_NEW_MOON_UTC.add(seconds=n_cycles * seconds_per_cycle)
+
+    # Ensure the returned new moon is strictly after the input
+    if not (candidate > dt_utc):
+        candidate = candidate.add(seconds=seconds_per_cycle)
+
+    return candidate
+
+# Entry point: next_new_moon(after_dt: pendulum.DateTime) -> pendulum.DateTime
+```

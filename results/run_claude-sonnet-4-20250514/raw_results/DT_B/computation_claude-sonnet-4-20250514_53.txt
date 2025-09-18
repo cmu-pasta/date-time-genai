@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input.
+3. **Calculate the autumnal equinox date**: The autumnal equinox typically occurs around September 22-23. We can use an approximation formula based on astronomical calculations to determine the exact date for a given year.
+4. **Use approximation formula**: For years around the 21st century, we can use a simplified calculation that accounts for the slight variation in the equinox date due to Earth's orbital mechanics.
+5. **Return the result**: Return the calculated date as a datetime.date object.
+
+```python
+from datetime import datetime, date
+
+def find_autumnal_equinox(year: int) -> date:
+    # Approximation formula for autumnal equinox in the Northern Hemisphere
+    # Based on astronomical calculations, the autumnal equinox typically occurs
+    # around September 22-23, with slight variations based on the year
+    
+    # Simple approximation: Start with September 22 as base
+    # Adjust based on leap year cycle and long-term drift
+    base_day = 22
+    
+    # Account for the 4-year leap year cycle
+    # The equinox shifts by about 6 hours per year (0.25 days)
+    year_offset = (year - 2000) % 4
+    day_adjustment = year_offset * 0.25
+    
+    # Account for longer-term drift (very simplified)
+    century_offset = (year - 2000) // 100
+    day_adjustment += century_offset * 0.01
+    
+    # Determine if we should use September 22 or 23
+    if day_adjustment >= 0.5:
+        equinox_day = base_day + 1
+    else:
+        equinox_day = base_day
+    
+    # Ensure the day is within valid range (22 or 23)
+    if equinox_day > 23:
+        equinox_day = 23
+    elif equinox_day < 22:
+        equinox_day = 22
+    
+    return date(year, 9, equinox_day)
+
+# Entry point: find_autumnal_equinox(year: int) -> date
+```

@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the problem**: The Persian New Year (Nowruz) occurs on the spring equinox, which typically falls on March 20th or 21st in the Gregorian calendar.
+
+2. **Import necessary libraries**: We need the `datetime` module to work with dates.
+
+3. **Define the function**: Create a function that accepts a Gregorian year as an integer and returns the date of Nowruz for that year.
+
+4. **Implement the logic**: Since precise astronomical calculations aren't possible with just the datetime library, we'll use the fact that Nowruz typically falls on March 20th for most years in recent decades.
+
+5. **Return the result**: Return the date as a datetime.date object.
+
+```python
+from datetime import date
+
+def find_nowruz_date(year: int) -> date:
+    """
+    Find the date of the Persian New Year (Nowruz) for a given Gregorian year.
+    
+    Nowruz occurs on the spring equinox, which typically falls on March 20th
+    or 21st. For most years in recent decades, it falls on March 20th.
+    
+    Args:
+        year: The Gregorian year as an integer
+        
+    Returns:
+        The date of Nowruz as a date object
+    """
+    # For most years, Nowruz falls on March 20th
+    # This is a reasonable approximation without astronomical calculations
+    nowruz_date = date(year, 3, 20)
+    
+    return nowruz_date
+
+# Entry point: find_nowruz_date(year: int) -> date
+```

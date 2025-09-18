@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+1. Understand MJD: Modified Julian Date (MJD) is defined as JD - 2400000.5.
+2. Use a reliable reference: The Unix epoch (1970-01-01 00:00:00 UTC) corresponds to JD 2440587.5, hence MJD at Unix epoch is 40587.0.
+3. Convert the input datetime to UTC to ensure consistent results. If naive (no tzinfo), assume UTC.
+4. Compute the total seconds since the Unix epoch and convert seconds to days by dividing by 86400.
+5. Add 40587.0 to get the MJD and return it as a float.
+
+```python
+from datetime import datetime, timezone
+
+def datetime_to_mjd(dt: datetime) -> float:
+    """
+    Convert a datetime to Modified Julian Date (MJD).
+    
+    Assumptions:
+    - If `dt` is naive (no tzinfo), it is interpreted as UTC.
+    - Leap seconds are ignored (standard civil time handling).
+    
+    Returns:
+    - MJD as a float.
+    """
+    # Step 1: Normalize to UTC (assume naive datetimes are UTC)
+    if dt.tzinfo is None:
+        dt_utc = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = dt.astimezone(timezone.utc)
+
+    # Step 2: Compute seconds since Unix epoch (1970-01-01T00:00:00Z)
+    epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    seconds_since_epoch = (dt_utc - epoch).total_seconds()
+
+    # Step 3: Convert seconds to days and add MJD at Unix epoch (40587.0)
+    mjd = seconds_since_epoch / 86400.0 + 40587.0
+    return mjd
+
+# Entry point: datetime_to_mjd(dt: datetime) -> float
+```

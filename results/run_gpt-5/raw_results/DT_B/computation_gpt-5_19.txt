@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Import the required type(s) from the standard datetime library.
+2. Define a function that accepts a date input.
+3. Determine the month of the given date.
+4. Map the month to a season using meteorological seasons for the Northern Hemisphere.
+5. Return the season as an integer code (1=spring, 2=summer, 3=autumn, 4=winter).
+
+```python
+from datetime import date
+
+def determine_season(input_date: date) -> int:
+    """
+    Determine the meteorological season (Northern Hemisphere) for a given date.
+    Returns an integer code:
+      1 = spring (Mar 1 - May 31)
+      2 = summer (Jun 1 - Aug 31)
+      3 = autumn (Sep 1 - Nov 30)
+      4 = winter (Dec 1 - Feb 28/29)
+    """
+    month = input_date.month
+
+    if month in (3, 4, 5):
+        return 1  # spring
+    elif month in (6, 7, 8):
+        return 2  # summer
+    elif month in (9, 10, 11):
+        return 3  # autumn
+    else:
+        return 4  # winter
+
+# Entry point: determine_season(input_date: date) -> int
+```

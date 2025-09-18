@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+1. Understand the concept: The Equation of Time (EoT) quantifies the difference between apparent solar time (sundial) and mean solar time (clock). A positive EoT means the sundial is ahead of the clock.
+2. Choose a standard approximation: Use the widely accepted Spencer/NOAA approximation: EoT (minutes) = 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B), where B = 2π*(n - 81)/364 and n is the day of year.
+3. Determine inputs and outputs: Accept a standard datetime.date as input and return a datetime.timedelta representing the EoT offset, which can be positive or negative.
+4. Compute day-of-year: Use the date’s tm_yday to get n in [1, 365] (366 in leap years).
+5. Compute B in radians: B = 2π*(n - 81)/364.
+6. Compute EoT in minutes using the formula, then convert to a timedelta for output.
+7. Document the sign convention in comments and ensure no non-standard types are used.
+
+```python
+from datetime import date, timedelta
+import math
+
+def equation_of_time(d: date) -> timedelta:
+    """
+    Calculate the Equation of Time (EoT) for a given date.
+
+    Definition and sign:
+    - EoT = apparent solar time - mean solar time.
+    - A positive EoT means a sundial (apparent solar time) is ahead of a clock (mean solar time).
+    
+    Approximation used (Spencer/NOAA):
+    EoT(minutes) = 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B),
+    where B = 2π*(n - 81)/364 and n is the day of year (1-based).
+
+    Parameters:
+    - d: datetime.date for which to compute the EoT.
+
+    Returns:
+    - datetime.timedelta representing the EoT (can be negative).
+    """
+    # Day of year (1..365/366)
+    n = d.timetuple().tm_yday
+
+    # Compute B in radians using the NOAA convention
+    B = 2 * math.pi * (n - 81) / 364.0
+
+    # Equation of Time in minutes (float, can be negative)
+    eot_minutes = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+
+    # Convert minutes to a timedelta
+    return timedelta(seconds=eot_minutes * 60.0)
+
+# Entry point: equation_of_time(d: date) -> timedelta
+```

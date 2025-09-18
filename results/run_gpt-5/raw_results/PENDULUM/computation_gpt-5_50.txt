@@ -1,0 +1,17 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date objects.
+2. Define a function that accepts a pendulum.Date as input.
+3. Subtract exactly 100 days from the given date using Pendulum's subtract method.
+4. Return the resulting pendulum.Date.
+
+```python
+import pendulum
+
+def date_100_days_before(d: pendulum.Date) -> pendulum.Date:
+    """
+    Return the date that is exactly 100 days before the given pendulum.Date.
+    """
+    return d.subtract(days=100)
+
+# Entry point: date_100_days_before(d: pendulum.Date) -> pendulum.Date
+```

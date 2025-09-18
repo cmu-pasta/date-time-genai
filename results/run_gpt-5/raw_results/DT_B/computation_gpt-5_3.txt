@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module to work with dates and construct specific calendar dates.
+2. Define a helper function to determine if a given year is a leap year by attempting to create February 29 of that year.
+3. Define the main function that takes a date, starts from the following year, and iterates until it finds the next leap year.
+4. Return the year (as an integer) of the next leap year after the given date.
+
+```python
+from datetime import date, datetime
+
+def _is_leap_year(year: int) -> bool:
+    """
+    Determine if a given year is a leap year using the datetime module.
+    Returns True if Feb 29 exists for the year; otherwise False.
+    """
+    try:
+        datetime(year, 2, 29)
+        return True
+    except ValueError:
+        return False
+
+def next_leap_year_after(d: date) -> int:
+    """
+    Given a date, determine the next leap year strictly after the year of the given date.
+    For example, if d is in 2024, the function returns 2028 (not 2024).
+    """
+    year = d.year + 1
+    while not _is_leap_year(year):
+        year += 1
+    return year
+
+# Entry point: next_leap_year_after(d: date) -> int
+```

@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the standard datetime library.
+2. Define a function that accepts two datetime inputs.
+3. Validate that both inputs are datetimes and are either both naive or both timezone-aware.
+4. Compute the time difference between the two datetimes.
+5. Divide the difference by 2 to get the half-duration.
+6. Add the half-duration to the first datetime to obtain the midpoint.
+7. Return the midpoint datetime.
+
+```python
+from datetime import datetime, timedelta
+
+def midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
+    """
+    Compute the midpoint datetime between two datetimes.
+    The function supports both naive and timezone-aware datetimes, but both inputs
+    must be of the same kind (both naive or both aware).
+    """
+    # Validate input types
+    if not isinstance(dt1, datetime) or not isinstance(dt2, datetime):
+        raise TypeError("Both inputs must be datetime instances.")
+
+    # Ensure both are either naive or aware
+    if (dt1.tzinfo is None) != (dt2.tzinfo is None):
+        raise ValueError("Both datetimes must be either naive or both timezone-aware.")
+
+    # Compute the midpoint
+    delta = dt2 - dt1
+    midpoint = dt1 + (delta / 2)
+
+    return midpoint
+
+# Entry point: midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime
+```

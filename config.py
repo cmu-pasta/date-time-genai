@@ -6,21 +6,41 @@ framework for generating AI-powered datetime computations and running differenti
 """
 
 import os
+from enum import Enum
 
-from genai.utils import Languages
+# =============================================================================
+# ENUMS for configuration (placed here to avoid circular imports)
+# =============================================================================
+
+
+class Languages(Enum):
+    """Supported Languages"""
+
+    Python = "python"
+
+
+class PythonDatetimeLibraries(Enum):
+    """Supported Libraries"""
+
+    Datetime = "datetime"
+    Pendulum = "pendulum"
+
 
 # =============================================================================
 # AI Model Parameters
 # =============================================================================
 
 # Temperature for LLM sampling (0.0 = deterministic, 1.0 = very random)
-SAMPLING_TEMPERATURE = 0.5
+SAMPLING_TEMPERATURE = 1.0
 
 # Maximum number of tokens for LLM responses
 MAX_TOKENS = 32896
 
 # Number of interesting datetime computation ideas to generate
-IDEAS = 100
+IDEAS = 10
+
+# Maximum number of retries for LLM sampling
+MAX_RETRIES = 3
 
 # =============================================================================
 # File Paths and Directory Structure
@@ -29,21 +49,26 @@ IDEAS = 100
 # Base directory for all output files
 OUTPUT_DIR_PATH = "./results/"
 
-# Timestamped output directory (formatted with timestamp at runtime)
-OUTPUT_DIR = "./results/run_{timestamp}/"
+# Timestamped output directory (formatted with ai_model at runtime)
+OUTPUT_DIR = "./results/run_{ai_model}/"
 
 # Subdirectories for generated code sets A and B (for differential testing)
-OUTPUT_DIR_A = "raw_results/A/"
-OUTPUT_DIR_B = "raw_results/B/"
+OUTPUT_DIR_DT_A = "raw_results/DT_A/"
+OUTPUT_DIR_DT_B = "raw_results/DT_B/"
+OUTPUT_DIR_PENDULUM = "raw_results/PENDULUM/"
 
-# Template for ideas file naming (formatted with model name)
-IDEAS_PATH = "ideas_{model}.txt"
 
-# Template for computation file naming (formatted with model name and index)
+# Path to ideas file for caching generated ideas
+IDEAS_PATH = "results/ideas/ideas.txt"
+
+# Template for computation file naming (formatted with ai_model and index)
 COMPUTATION_PATH = "computation_{model}_{i}.txt"
 
 # Path to demonstration file used for few-shot prompting
-GENERATION_DEMONSTRATION = "./genai/demonstrations/generate_computation.txt"
+DT_GENERATION_DEMONSTRATION = "./sample_llm/demonstrations/dt_generate_computation.txt"
+PENDULUM_GENERATION_DEMONSTRATION = (
+    "./sample_llm/demonstrations/pendulum_generate_computation.txt"
+)
 
 # =============================================================================
 # Testing Framework Parameters
@@ -56,7 +81,8 @@ LANGUAGE = Languages.Python.value
 EXTENSION = ".py"
 
 # Directory name for differential test files
-DIFF_TESTS_DIR = "diff_tests/"
+DT_VS_DT_DIFF_TESTS_DIR = "dt_vs_dt_diff_tests/"
+DT_VS_PENDULUM_DIFF_TESTS_DIR = "dt_vs_pendulum_diff_tests/"
 
 # Maximum number of test examples to generate per test case
 MAX_EXAMPLES = 10000
@@ -71,11 +97,12 @@ SEED = 27
 # Logging Configuration
 # =============================================================================
 
-# Main logs directory
-LOGS_DIR = ".logs"
+# Logs directory
+LOGS_DIR = "./results/run_{ai_model}/.logs/"
 
-# Directory for differential test logs
-DIFF_TEST_LOGS_DIR = os.path.join(LOGS_DIR, "diff_test_logs")
+# Directory names for differential test logs (to be joined with LOGS_DIR dynamically)
+DT_VS_DT_DIFF_TEST_LOGS_DIRNAME = "dt_vs_dt_diff_test_logs"
+DT_VS_PENDULUM_DIFF_TEST_LOGS_DIRNAME = "dt_vs_pendulum_diff_test_logs"
 
 # =============================================================================
 # Test Analysis Parameters
@@ -83,7 +110,7 @@ DIFF_TEST_LOGS_DIR = os.path.join(LOGS_DIR, "diff_test_logs")
 
 # Threshold percentage for considering a test as differentiating
 # (tests with <= THRESHOLD% differing lines are flagged for attention)
-THRESHOLD = 99
+THRESHOLD = 101
 
 
 # =============================================================================

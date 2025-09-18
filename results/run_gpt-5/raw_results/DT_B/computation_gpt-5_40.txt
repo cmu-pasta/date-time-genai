@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime module.
+2. Define a function that accepts a time input.
+3. Compute total seconds since midnight as hours*3600 + minutes*60 + seconds (microseconds are ignored to return an integer).
+4. Return the computed integer.
+
+```python
+from datetime import time
+
+def time_to_seconds_since_midnight(t: time) -> int:
+    """
+    Convert a time object to the number of whole seconds since midnight.
+    Microseconds are ignored to ensure an integer result.
+    """
+    if not isinstance(t, time):
+        raise TypeError("Input must be a datetime.time instance.")
+    return t.hour * 3600 + t.minute * 60 + t.second
+
+# Entry point: time_to_seconds_since_midnight(t: time) -> int
+```

@@ -1,0 +1,53 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input.
+3. **Implement the Easter calculation algorithm**: Use a well-established algorithm to calculate Easter Sunday. The most common approach is based on the Gregorian calendar rules established by the Council of Nicaea.
+4. **Apply the Easter algorithm**: Use modular arithmetic and date calculations to determine the correct date.
+5. **Return the result**: Return the Easter Sunday date as a `date` object.
+
+```python
+from datetime import date
+
+def find_easter_sunday(year: int) -> date:
+    # Algorithm for calculating Easter Sunday based on the Gregorian calendar
+    # This uses the algorithm commonly known as the "Anonymous Gregorian algorithm"
+    
+    # Calculate the golden number (19-year Metonic cycle)
+    golden = (year % 19) + 1
+    
+    # Calculate the century
+    century = (year // 100) + 1
+    
+    # Calculate leap year corrections
+    leap_correction = (3 * century) // 4 - 12
+    moon_correction = (8 * century + 5) // 25 - 5
+    
+    # Calculate the Sunday letter (day of week for January 1st)
+    sunday_letter = (5 * year) // 4 - leap_correction - 10
+    
+    # Calculate the epact (age of moon on January 1st)
+    epact = (11 * golden + 20 + moon_correction - leap_correction) % 30
+    
+    # Adjust epact for specific cases
+    if (epact == 25 and golden > 11) or epact == 24:
+        epact += 1
+    
+    # Calculate the paschal full moon date in March
+    full_moon_date = 44 - epact
+    if full_moon_date < 21:
+        full_moon_date += 30
+    
+    # Find the first Sunday after the paschal full moon
+    easter_date = full_moon_date + 7 - ((sunday_letter + full_moon_date) % 7)
+    
+    # Determine the month and day
+    if easter_date > 31:
+        # Easter falls in April
+        return date(year, 4, easter_date - 31)
+    else:
+        # Easter falls in March
+        return date(year, 3, easter_date)
+
+# Entry point: find_easter_sunday(year: int) -> date
+```

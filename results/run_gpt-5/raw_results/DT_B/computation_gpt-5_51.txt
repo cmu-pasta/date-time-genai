@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module: datetime, time, and timedelta.
+2. Define a function that accepts two time inputs representing the start and end times.
+3. Combine each time with a reference date to create datetime objects for arithmetic.
+4. If the end time is earlier than the start time, assume the period crosses midnight and add one day to the end datetime.
+5. Compute the timedelta between the two datetimes.
+6. Convert the timedelta to total minutes by dividing total seconds by 60.
+7. Return the result as a float representing total minutes.
+
+```python
+from datetime import datetime, time, timedelta
+
+def total_minutes_between_times(t1: time, t2: time) -> float:
+    """
+    Calculate the total minutes in the time period between two times.
+    If t2 is earlier than t1, the period is assumed to cross midnight into the next day.
+
+    Args:
+        t1 (time): Start time.
+        t2 (time): End time.
+
+    Returns:
+        float: Total minutes between t1 and t2.
+    """
+    # Step 1: Use a reference date to combine with the times
+    ref_date = datetime(1900, 1, 1)
+    dt1 = datetime.combine(ref_date.date(), t1)
+    dt2 = datetime.combine(ref_date.date(), t2)
+
+    # Step 2: Handle crossing midnight
+    if dt2 < dt1:
+        dt2 += timedelta(days=1)
+
+    # Step 3: Compute the difference and convert to minutes
+    delta = dt2 - dt1
+    minutes = delta.total_seconds() / 60.0
+    return float(minutes)
+
+# Entry point: total_minutes_between_times(t1: time, t2: time) -> float
+```

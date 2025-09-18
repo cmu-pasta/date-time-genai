@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `pendulum` library to work with date and time objects and timezones.
+2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object (the timestamp to convert) and a string representing the target timezone name.
+3.  **Perform the timezone conversion**: Use the `in_timezone()` method available on the `pendulum.DateTime` object to convert it to the specified target timezone. This method changes the timezone attribute of the `DateTime` object while ensuring it represents the same instant in time.
+4.  **Return the converted `pendulum.DateTime` object**: The function should return the newly created `pendulum.DateTime` object in the target timezone.
+
+```python
+import pendulum
+
+def convert_timezone(dt: pendulum.DateTime, target_timezone: str) -> pendulum.DateTime:
+    # Step 1: Use the in_timezone() method to convert the datetime object
+    # to the specified target timezone. This method ensures the same
+    # instant in time is preserved, but the timezone and local time components
+    # are adjusted accordingly.
+    converted_dt = dt.in_timezone(target_timezone)
+    
+    # Step 2: Return the pendulum.DateTime object in the new timezone
+    return converted_dt
+
+# Entry point: convert_timezone(dt: pendulum.DateTime, target_timezone: str) -> pendulum.DateTime
+```

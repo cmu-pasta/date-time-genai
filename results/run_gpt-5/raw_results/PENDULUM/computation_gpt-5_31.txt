@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date and time operations.
+2. Define a function that accepts a pendulum.DateTime as input.
+3. Determine if the month is April (4) or later; if so, the fiscal year is the calendar year + 1; otherwise, it is the calendar year.
+4. Return the fiscal year as an integer.
+
+```python
+import pendulum
+
+def determine_fiscal_year(dt: pendulum.DateTime) -> int:
+    """
+    Determine the fiscal year for a given date assuming the fiscal year starts on April 1
+    and is named by the year in which it ends.
+    For example:
+      - 2024-03-31 -> 2024 (FY2024)
+      - 2024-04-01 -> 2025 (FY2025)
+    """
+    if dt.month >= 4:
+        return dt.year + 1
+    else:
+        return dt.year
+
+# Entry point: determine_fiscal_year(dt: pendulum.DateTime) -> int
+```

@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts a datetime input.
+3. Use strftime with the "%I:%M:%S %p" format to convert the 24-hour time to 12-hour with AM/PM.
+4. Return the formatted string.
+
+```python
+from datetime import datetime
+
+def convert_24h_to_12h_ampm(dt: datetime) -> str:
+    """
+    Convert the time component of a datetime from 24-hour format to 12-hour format with AM/PM.
+
+    Args:
+        dt: A datetime object representing the 24-hour time.
+
+    Returns:
+        A string representing the time in 12-hour format with AM/PM (e.g., "03:45:00 PM").
+    """
+    # Step 1: Format using 12-hour clock with AM/PM
+    formatted_time = dt.strftime("%I:%M:%S %p")
+    return formatted_time
+
+# Entry point: convert_24h_to_12h_ampm(dt: datetime) -> str
+```

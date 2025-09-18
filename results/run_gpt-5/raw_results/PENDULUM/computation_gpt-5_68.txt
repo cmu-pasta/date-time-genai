@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date computations.
+2. Create a pendulum.Date representing September 1st of the given year.
+3. Determine the day of the week for September 1st (Monday=0, Sunday=6).
+4. Compute how many days to add to reach the first Monday using modular arithmetic.
+5. Add the computed number of days to September 1st and return the resulting pendulum.Date.
+
+```python
+import pendulum
+
+def labor_day(year: int) -> pendulum.Date:
+    """
+    Compute Labor Day (first Monday of September) for a given year.
+
+    Args:
+        year (int): The year for which to compute Labor Day.
+
+    Returns:
+        pendulum.Date: The date of Labor Day in the given year.
+    """
+    sept_first = pendulum.date(year, 9, 1)
+    # Monday is 0 in pendulum's day_of_week
+    days_to_add = (0 - sept_first.day_of_week) % 7
+    labor_day_date = sept_first.add(days=days_to_add)
+    return labor_day_date
+
+# Entry point: labor_day(year: int) -> pendulum.Date
+```

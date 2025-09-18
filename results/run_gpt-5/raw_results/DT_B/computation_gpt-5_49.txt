@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Import the required classes date and timedelta from the datetime module.
+2. Define a function that accepts the year as an integer input.
+3. Compute the last day of February by taking March 1st of the given year and subtracting one day.
+4. Iterate from February 1st to the last day of February, counting the days where weekday() equals 6 (Sunday).
+5. Return the count as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_sundays_in_february(year: int) -> int:
+    """
+    Determine the number of Sundays in February for a given year.
+
+    Args:
+        year (int): The target year (1..9999).
+
+    Returns:
+        int: The number of Sundays in February of the given year.
+    """
+    # Step 1: Define the start of February
+    feb_start = date(year, 2, 1)
+    # Step 2: Determine the last day of February by taking March 1st and subtracting one day
+    feb_end = date(year, 3, 1) - timedelta(days=1)
+    # Step 3: Iterate through February and count Sundays (weekday() == 6)
+    count = 0
+    current = feb_start
+    one_day = timedelta(days=1)
+    while current <= feb_end:
+        if current.weekday() == 6:  # Monday=0 ... Sunday=6
+            count += 1
+        current += one_day
+    return count
+
+# Entry point: count_sundays_in_february(year: int) -> int
+```

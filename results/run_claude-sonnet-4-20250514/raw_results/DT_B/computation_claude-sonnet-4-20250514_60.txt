@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+
+1. **Understand solar noon**: Solar noon occurs when the sun reaches its highest point in the sky for a given location. This happens when the local solar time is 12:00 PM, but we need to adjust for longitude differences from the time zone center.
+
+2. **Calculate longitude offset**: Each 15° of longitude represents 1 hour of time difference. We need to convert the longitude difference into a time offset in minutes.
+
+3. **Apply the equation of time**: This accounts for Earth's elliptical orbit and axial tilt, but for simplicity, we'll use an approximation based on the day of year.
+
+4. **Combine adjustments**: Add the longitude adjustment and equation of time correction to 12:00 PM to get the solar noon time.
+
+5. **Return the result**: Format the result as a datetime object for the given date with the calculated solar noon time.
+
+```python
+from datetime import datetime, timedelta
+import math
+
+def calculate_solar_noon(date: datetime, longitude: float, latitude: float) -> datetime:
+    # Step 1: Calculate day of year
+    day_of_year = date.timetuple().tm_yday
+    
+    # Step 2: Calculate equation of time approximation (in minutes)
+    # Simplified formula based on day of year
+    B = 2 * math.pi * (day_of_year - 81) / 365
+    equation_of_time = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+    
+    # Step 3: Calculate longitude correction (4 minutes per degree)
+    # Assuming standard time zone meridian (approximate)
+    time_zone_meridian = round(longitude / 15) * 15  # Nearest 15-degree meridian
+    longitude_correction = (time_zone_meridian - longitude) * 4  # 4 minutes per degree
+    
+    # Step 4: Calculate solar noon adjustment in minutes
+    total_adjustment_minutes = longitude_correction + equation_of_time
+    
+    # Step 5: Start with 12:00 PM (noon) and apply adjustments
+    solar_noon = datetime.combine(date.date(), datetime.min.time().replace(hour=12))
+    solar_noon += timedelta(minutes=total_adjustment_minutes)
+    
+    return solar_noon
+
+# Entry point: calculate_solar_noon(date: datetime, longitude: float, latitude: float) -> datetime
+```

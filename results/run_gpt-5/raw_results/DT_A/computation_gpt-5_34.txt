@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the standard datetime library.
+2. Define a function that accepts a date input.
+3. Compute the day of the year by subtracting January 1st of the same year from the given date and adding 1.
+4. Return the result as an integer.
+
+```python
+from datetime import date
+
+def convert_date_to_day_of_year(d: date) -> int:
+    """
+    Convert a given date to its corresponding day of the year (1-366).
+    
+    Parameters:
+    - d: date -> The date to convert.
+    
+    Returns:
+    - int -> The day of the year (1-366).
+    """
+    # Calculate days since January 1st and add 1 to get 1-based day-of-year
+    return (d - date(d.year, 1, 1)).days + 1
+
+# Entry point: convert_date_to_day_of_year(d: date) -> int
+```

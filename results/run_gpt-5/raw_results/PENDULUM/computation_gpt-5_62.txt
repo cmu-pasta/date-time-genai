@@ -1,0 +1,67 @@
+Let's think step by step to solve this problem.
+1. Parse the inputs: a target year (integer) and a timezone (pendulum.Timezone).
+2. Initialize two pendulum.DateTime objects at the start and end of the given year in the provided timezone.
+3. Walk forward hour by hour to find the first transition where DST switches from off to on.
+4. Once a transition window is detected, refine the exact moment using a binary search down to one-second precision.
+5. Return the first pendulum.DateTime instant in that year when DST is in effect. If there is no DST start in that year for the timezone, return False.
+
+```python
+import pendulum
+
+def _is_dst(dt: pendulum.DateTime) -> bool:
+    # In pendulum, dst() returns a Duration; DST is active if offset > 0 seconds
+    offset_seconds = dt.dst().in_seconds()
+    return offset_seconds > 0
+
+def _binary_search_transition(start_dt: pendulum.DateTime, end_dt: pendulum.DateTime) -> pendulum.DateTime:
+    # Find the first instant where DST is on within (start_dt, end_dt], assuming
+    # start_dt is non-DST and end_dt is DST.
+    start_is_dst = _is_dst(start_dt)
+    end_is_dst = _is_dst(end_dt)
+
+    # Safety: ensure the precondition holds
+    if start_is_dst or not end_is_dst:
+        return end_dt
+
+    # Narrow down to 1-second resolution
+    while (end_dt.int_timestamp - start_dt.int_timestamp) > 1:
+        mid_ts = start_dt.int_timestamp + (end_dt.int_timestamp - start_dt.int_timestamp) // 2
+        mid_dt = pendulum.from_timestamp(mid_ts, tz=end_dt.timezone)
+
+        if _is_dst(mid_dt) == start_is_dst:
+            # Transition is in (mid_dt, end_dt]
+            start_dt = mid_dt
+        else:
+            # Transition is in (start_dt, mid_dt]
+            end_dt = mid_dt
+
+    # end_dt should be the first instant in DST
+    return end_dt
+
+def find_dst_start(year: int, tz: pendulum.Timezone) -> pendulum.DateTime | bool:
+    # Start scanning from the first moment of the year in the given timezone
+    current = pendulum.datetime(year, 1, 1, 0, 0, 0, tz=tz)
+    end_of_year = pendulum.datetime(year, 12, 31, 23, 59, 59, tz=tz)
+
+    prev = current
+    prev_is_dst = _is_dst(prev)
+
+    # Step hourly through the year to find the first DST transition from off -> on
+    while current <= end_of_year:
+        current = current.add(hours=1)
+        if current.year != year:
+            break
+
+        cur_is_dst = _is_dst(current)
+        if (not prev_is_dst) and cur_is_dst:
+            # Found the transition window (prev, current]
+            return _binary_search_transition(prev, current)
+
+        prev = current
+        prev_is_dst = cur_is_dst
+
+    # No DST start found for this year/timezone
+    return False
+
+# Entry point: find_dst_start(year: int, tz: pendulum.Timezone) -> pendulum.DateTime | bool
+```

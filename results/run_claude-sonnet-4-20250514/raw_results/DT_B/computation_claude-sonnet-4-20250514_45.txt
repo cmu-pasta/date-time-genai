@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates, and potentially `calendar` to help find the last day of the month.
+2. **Define a function**: Create a function that accepts a date as input to calculate business days remaining in that month.
+3. **Find the end of the month**: We need to determine the last day of the current month for the given date.
+4. **Count business days**: Iterate through all days from the given date to the end of the month and count only business days (Monday through Friday, where weekday() returns 0-4).
+5. **Return the result**: Return the count of business days as an integer.
+
+```python
+from datetime import datetime, timedelta
+import calendar
+
+def calculate_business_days_remaining(given_date: datetime) -> int:
+    # Step 1: Find the last day of the current month
+    year = given_date.year
+    month = given_date.month
+    last_day_of_month = calendar.monthrange(year, month)[1]
+    end_of_month = datetime(year, month, last_day_of_month)
+    
+    # Step 2: Count business days from given_date to end of month (inclusive)
+    business_days_count = 0
+    current_date = given_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    # Step 3: Iterate through each day and count business days
+    while current_date <= end_of_month:
+        # Check if current day is a business day (Monday=0 to Friday=4)
+        if current_date.weekday() < 5:  # 0-4 are business days
+            business_days_count += 1
+        current_date += timedelta(days=1)
+    
+    # Step 4: Return the count of business days
+    return business_days_count
+
+# Entry point: calculate_business_days_remaining(given_date: datetime) -> int
+```

@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Decide on a consistent definition of "first day of spring" that can be computed with the standard datetime library. We'll use the meteorological definition: March 1 in the Northern Hemisphere and September 1 in the Southern Hemisphere.
+2. Accept the year as an integer and a boolean indicating hemisphere (True for Northern, False for Southern).
+3. Construct and return a date object for the corresponding first day of spring.
+
+```python
+from datetime import date
+
+def first_day_of_spring(year: int, is_northern_hemisphere: bool) -> date:
+    """
+    Return the date of the first day of spring for a given year based on the meteorological definition.
+    
+    Parameters:
+    - year: An integer year (e.g., 2025).
+    - is_northern_hemisphere: True for Northern Hemisphere, False for Southern Hemisphere.
+    
+    Returns:
+    - A datetime.date representing the first day of spring in the specified hemisphere.
+    """
+    if is_northern_hemisphere:
+        # Northern Hemisphere meteorological spring begins on March 1
+        return date(year, 3, 1)
+    else:
+        # Southern Hemisphere meteorological spring begins on September 1
+        return date(year, 9, 1)
+
+# Entry point: first_day_of_spring(year: int, is_northern_hemisphere: bool) -> date
+```

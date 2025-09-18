@@ -1,0 +1,68 @@
+Let's think step by step to solve this problem.
+
+1. **Import necessary libraries**: We need the `datetime` module and `math` for trigonometric calculations.
+2. **Define the function**: Create a function that accepts a date object, latitude, and longitude as floats.
+3. **Calculate day of year**: Determine which day of the year it is for solar position calculations.
+4. **Calculate solar declination**: This determines the sun's position relative to the equator.
+5. **Calculate hour angle**: This determines when the sun sets at the given latitude.
+6. **Calculate sunset time**: Convert the hour angle to actual time and account for longitude.
+7. **Return the result**: Return the sunset time as a time object.
+
+```python
+from datetime import date, time
+import math
+
+def calculate_sunset_time(target_date: date, latitude: float, longitude: float) -> time:
+    # Step 1: Calculate day of year
+    day_of_year = target_date.timetuple().tm_yday
+    
+    # Step 2: Calculate solar declination angle (simplified formula)
+    solar_declination = 23.45 * math.sin(math.radians(360 * (284 + day_of_year) / 365))
+    
+    # Step 3: Convert latitude to radians
+    lat_rad = math.radians(latitude)
+    decl_rad = math.radians(solar_declination)
+    
+    # Step 4: Calculate hour angle for sunset
+    # Using the formula: cos(hour_angle) = -tan(latitude) * tan(declination)
+    try:
+        cos_hour_angle = -math.tan(lat_rad) * math.tan(decl_rad)
+        
+        # Check for polar day/night conditions
+        if cos_hour_angle > 1:
+            # Polar night - sun doesn't rise
+            return time(0, 0, 0)
+        elif cos_hour_angle < -1:
+            # Polar day - sun doesn't set
+            return time(23, 59, 59)
+        
+        hour_angle = math.degrees(math.acos(cos_hour_angle))
+    except:
+        # Handle edge cases
+        return time(18, 0, 0)  # Default sunset time
+    
+    # Step 5: Calculate sunset time in hours from solar noon
+    sunset_hour_offset = hour_angle / 15.0  # Convert degrees to hours
+    
+    # Step 6: Calculate solar noon time accounting for longitude
+    solar_noon = 12.0 - (longitude / 15.0)  # Longitude correction
+    
+    # Step 7: Calculate actual sunset time
+    sunset_decimal_hour = solar_noon + sunset_hour_offset
+    
+    # Step 8: Handle day overflow/underflow
+    if sunset_decimal_hour >= 24:
+        sunset_decimal_hour -= 24
+    elif sunset_decimal_hour < 0:
+        sunset_decimal_hour += 24
+    
+    # Step 9: Convert to hours, minutes, seconds
+    hours = int(sunset_decimal_hour)
+    minutes = int((sunset_decimal_hour - hours) * 60)
+    seconds = int(((sunset_decimal_hour - hours) * 60 - minutes) * 60)
+    
+    # Step 10: Return as time object
+    return time(hours, minutes, seconds)
+
+# Entry point: calculate_sunset_time(target_date: date, latitude: float, longitude: float) -> time
+```

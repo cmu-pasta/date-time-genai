@@ -1,0 +1,44 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts a birth datetime and a reference datetime.
+3. Ensure both datetimes are either both naive or both timezone-aware for a valid comparison.
+4. If timezone-aware, convert both to UTC to avoid DST/offset issues before subtraction.
+5. Compute the time delta between the reference and birth datetimes.
+6. Convert the time delta to total seconds, ensure non-negative, and return it as an integer.
+
+```python
+from datetime import datetime, timezone
+
+def calculate_age_in_seconds(birth_dt: datetime, reference_dt: datetime) -> int:
+    # Validate input types
+    if not isinstance(birth_dt, datetime) or not isinstance(reference_dt, datetime):
+        raise TypeError("Both inputs must be datetime instances from the standard library.")
+
+    # Determine timezone awareness
+    def is_aware(dt: datetime) -> bool:
+        return dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None
+
+    birth_aware = is_aware(birth_dt)
+    ref_aware = is_aware(reference_dt)
+
+    # Ensure both datetimes are either naive or both aware
+    if birth_aware != ref_aware:
+        raise ValueError("Both datetimes must be either naive or timezone-aware.")
+
+    # Normalize to UTC if timezone-aware to ensure correct chronological comparison
+    if birth_aware:
+        birth_norm = birth_dt.astimezone(timezone.utc)
+        ref_norm = reference_dt.astimezone(timezone.utc)
+    else:
+        birth_norm = birth_dt
+        ref_norm = reference_dt
+
+    # Compute the difference
+    delta = ref_norm - birth_norm
+
+    # Age cannot be negative; clamp at zero seconds
+    total_seconds = int(delta.total_seconds())
+    return total_seconds if total_seconds >= 0 else 0
+
+# Entry point: calculate_age_in_seconds(birth_dt: datetime, reference_dt: datetime) -> int
+```

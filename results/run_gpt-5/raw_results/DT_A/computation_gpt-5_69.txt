@@ -1,0 +1,55 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard library: datetime, timedelta, and ZoneInfo.
+2. Define a function that accepts two datetimes and their corresponding time zones as ZoneInfo objects.
+3. If a datetime is naive (no tzinfo), interpret it as being in the provided time zone by attaching tzinfo via replace.
+4. Convert both datetimes to a common reference (UTC) using astimezone to account for time zone offsets and DST.
+5. Subtract the UTC-normalized datetimes to obtain a timedelta representing the time difference.
+6. Return the timedelta.
+
+```python
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
+def calculate_timezone_aware_difference(
+    dt1: datetime,
+    tz1: ZoneInfo,
+    dt2: datetime,
+    tz2: ZoneInfo
+) -> timedelta:
+    """
+    Calculate the time difference between two datetimes accounting for different time zones.
+
+    Behavior:
+    - If a datetime is naive (tzinfo is None), it is interpreted in the provided ZoneInfo.
+    - If a datetime is already timezone-aware, its existing tzinfo is respected (tz1/tz2 are ignored for that datetime).
+    - Both datetimes are converted to UTC before subtraction to correctly handle offsets and DST.
+    - The result is dt2_in_utc - dt1_in_utc as a timedelta (can be negative).
+
+    Args:
+        dt1: The first datetime.
+        tz1: The time zone in which to interpret dt1 if it is naive.
+        dt2: The second datetime.
+        tz2: The time zone in which to interpret dt2 if it is naive.
+
+    Returns:
+        timedelta: The time difference (dt2 - dt1) accounting for time zones.
+    """
+    # Interpret naive datetimes in the provided time zones
+    if dt1.tzinfo is None:
+        dt1_aware = dt1.replace(tzinfo=tz1)
+    else:
+        dt1_aware = dt1
+
+    if dt2.tzinfo is None:
+        dt2_aware = dt2.replace(tzinfo=tz2)
+    else:
+        dt2_aware = dt2
+
+    # Normalize both to UTC to account for offsets/DST, then compute difference
+    dt1_utc = dt1_aware.astimezone(timezone.utc)
+    dt2_utc = dt2_aware.astimezone(timezone.utc)
+
+    return dt2_utc - dt1_utc
+
+# Entry point: calculate_timezone_aware_difference(dt1: datetime, tz1: ZoneInfo, dt2: datetime, tz2: ZoneInfo) -> timedelta
+```

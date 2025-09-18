@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the required date class from the datetime module.
+2. Define a function that accepts a date as input.
+3. Construct Valentine's Day for the given date's year (February 14).
+4. If the given date is before that Valentine's Day, return that date; otherwise, return February 14 of the next year.
+5. Ensure that if the given date is exactly on Valentine's Day, the function returns the Valentine's Day of the next year (strictly after).
+
+```python
+from datetime import date
+
+def next_valentines_day(current: date) -> date:
+    """
+    Find the next Valentine's Day (February 14) strictly after the given date.
+    
+    Args:
+        current: A date object representing the starting date.
+    
+    Returns:
+        A date object representing the next Valentine's Day after 'current'.
+    """
+    valentines_this_year = date(current.year, 2, 14)
+    if current < valentines_this_year:
+        return valentines_this_year
+    # If 'current' is on or after Feb 14 of this year, return next year's Feb 14
+    return date(current.year + 1, 2, 14)
+
+# Entry point: next_valentines_day(current: date) -> date
+```

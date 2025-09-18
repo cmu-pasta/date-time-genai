@@ -1,0 +1,54 @@
+Let's think step by step to solve this problem.
+1. Choose a well-known reference new moon epoch in UTC and the mean synodic month length in days.
+2. Normalize the input to a timezone-aware UTC datetime (assume UTC if naive).
+3. Compute the number of synodic months elapsed since the epoch up to the given datetime.
+4. Determine the next lunation index strictly after the given datetime.
+5. Compute the datetime of the next new moon using the epoch plus the lunation index times the synodic month length.
+6. Guard against floating-point rounding by verifying the result is strictly after the input; if not, advance by one more synodic month.
+7. Return the resulting UTC datetime of the next new moon.
+
+```python
+from datetime import datetime, timedelta, timezone
+import math
+
+# Constants for mean new moon calculations
+# Reference: A known new moon occurred on 2000-01-06 18:14:00 UTC
+EPOCH_NEW_MOON_UTC = datetime(2000, 1, 6, 18, 14, 0, tzinfo=timezone.utc)
+SYNODIC_MONTH_DAYS = 29.530588853  # Mean synodic month
+
+def next_new_moon(after: datetime) -> datetime:
+    """
+    Compute the datetime (UTC) of the next new moon strictly after the given datetime.
+
+    If 'after' is timezone-naive, it is assumed to be in UTC.
+
+    Parameters:
+    - after: datetime
+
+    Returns:
+    - datetime (UTC): the moment of the next new moon after 'after'
+    """
+    # Normalize to UTC and ensure tz-aware
+    if after.tzinfo is None:
+        t = after.replace(tzinfo=timezone.utc)
+    else:
+        t = after.astimezone(timezone.utc)
+
+    # Compute elapsed days since epoch
+    elapsed_days = (t - EPOCH_NEW_MOON_UTC).total_seconds() / 86400.0
+
+    # Determine the next lunation index strictly after 't'
+    k = math.floor(elapsed_days / SYNODIC_MONTH_DAYS) + 1
+
+    # Compute the candidate new moon time
+    nm_time = EPOCH_NEW_MOON_UTC + timedelta(days=SYNODIC_MONTH_DAYS * k)
+
+    # Guard against floating point round-off: ensure strictly after 't'
+    if nm_time <= t:
+        k += 1
+        nm_time = EPOCH_NEW_MOON_UTC + timedelta(days=SYNODIC_MONTH_DAYS * k)
+
+    return nm_time
+
+# Entry point: next_new_moon(after: datetime) -> datetime
+```

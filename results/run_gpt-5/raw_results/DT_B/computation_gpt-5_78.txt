@@ -1,0 +1,149 @@
+Let's think step by step to solve this problem.
+1. Accept inputs: a calendar date, latitude (degrees), longitude (degrees), and an optional time zone.
+2. Validate latitude and longitude ranges.
+3. Compute the day of year from the input date.
+4. Apply the NOAA sunrise algorithm to compute the Universal Time (UTC) of sunrise:
+   - Estimate the solar mean anomaly.
+   - Compute the Sun’s true longitude.
+   - Compute right ascension and adjust it to the correct quadrant.
+   - Compute solar declination.
+   - Compute the hour angle for sunrise using the standard refraction-corrected solar zenith (90.833 degrees).
+   - Compute local mean time, then convert to UTC considering longitude.
+5. Construct a timezone-aware datetime in UTC for the sunrise time.
+6. If a time zone is provided, convert the UTC datetime to the given time zone.
+7. Handle polar day/night conditions by raising a ValueError when sunrise does not occur on the given date at the given location.
+
+```python
+from datetime import date, datetime, timezone
+from math import sin, cos, tan, asin, acos, atan, floor, radians, degrees
+from zoneinfo import ZoneInfo
+
+def _normalize_degrees(x: float) -> float:
+    # Normalize angle to [0, 360)
+    return x % 360.0
+
+def _deg_to_rad(d: float) -> float:
+    return radians(d)
+
+def _rad_to_deg(r: float) -> float:
+    return degrees(r)
+
+def _calc_day_of_year(d: date) -> int:
+    return d.timetuple().tm_yday
+
+def _noaa_sunrise_utc(day_of_year: int, latitude: float, longitude: float) -> float:
+    # NOAA Sunrise/Sunset Algorithm (sunrise branch), returns UTC hour as decimal [0,24)
+    # Longitude: positive East, negative West
+    # Latitude: positive North, negative South
+
+    # Zenith for sunrise/sunset including atmospheric refraction and solar disc: 90°50' = 90.833°
+    ZENITH = 90.833
+
+    lng_hour = longitude / 15.0
+
+    # Approximate time
+    t = day_of_year + ((6.0 - lng_hour) / 24.0)
+
+    # Sun's mean anomaly
+    M = (0.9856 * t) - 3.289
+
+    # Sun's true longitude
+    L = M + (1.916 * sin(_deg_to_rad(M))) + (0.020 * sin(_deg_to_rad(2 * M))) + 282.634
+    L = _normalize_degrees(L)
+
+    # Sun's right ascension
+    RA = _rad_to_deg(atan(0.91764 * tan(_deg_to_rad(L))))
+    RA = _normalize_degrees(RA)
+
+    # Adjust RA to be in the same quadrant as L
+    L_quadrant = floor(L / 90.0) * 90.0
+    RA_quadrant = floor(RA / 90.0) * 90.0
+    RA = RA + (L_quadrant - RA_quadrant)
+
+    # Convert RA into hours
+    RA /= 15.0
+
+    # Sun's declination
+    sinDec = 0.39782 * sin(_deg_to_rad(L))
+    cosDec = cos(asin(sinDec))
+
+    # Sun's local hour angle
+    cosH = (cos(_deg_to_rad(ZENITH)) - (sinDec * sin(_deg_to_rad(latitude)))) / (cosDec * cos(_deg_to_rad(latitude)))
+
+    # Check for polar conditions: no sunrise or no sunset
+    if cosH > 1.0:
+        # Sun never rises on this location (on the specified date)
+        raise ValueError("No sunrise occurs at this location on this date (polar night).")
+    if cosH < -1.0:
+        # Sun never sets on this location (on the specified date)
+        raise ValueError("Sun does not set on this date at this location (polar day), no discrete sunrise.")
+
+    # For sunrise, H = 360 - arccos(cosH)
+    H = 360.0 - _rad_to_deg(acos(cosH))
+    H /= 15.0
+
+    # Local mean time
+    T = H + RA - (0.06571 * t) - 6.622
+
+    # UTC
+    UT = T - lng_hour
+    UT = UT % 24.0
+
+    return UT
+
+def calculate_sunrise(input_date: date, latitude: float, longitude: float, tz: ZoneInfo = None) -> datetime:
+    """
+    Calculate the sunrise time for a given date and geographic coordinates.
+
+    - input_date: date for which to compute sunrise.
+    - latitude: degrees North positive, South negative, range [-90, 90].
+    - longitude: degrees East positive, West negative, range [-180, 180].
+    - tz: optional ZoneInfo time zone. If provided, the returned datetime is converted to this zone.
+          If not provided, the result is in UTC (tzinfo=timezone.utc).
+
+    Returns a timezone-aware datetime representing the sunrise time.
+
+    Raises ValueError for invalid coordinates or when no sunrise occurs on this date/location.
+    """
+    if not (-90.0 <= latitude <= 90.0):
+        raise ValueError("Latitude must be between -90 and 90 degrees.")
+    if not (-180.0 <= longitude <= 180.0):
+        raise ValueError("Longitude must be between -180 and 180 degrees.")
+
+    N = _calc_day_of_year(input_date)
+    UT_hours = _noaa_sunrise_utc(N, latitude, longitude)
+
+    # Break down decimal hours into h:m:s with rounding care
+    hour = int(UT_hours)
+    rem_min = (UT_hours - hour) * 60.0
+    minute = int(rem_min)
+    rem_sec = (rem_min - minute) * 60.0
+    second = int(round(rem_sec))
+
+    # Normalize potential rounding overflow (e.g., 60 seconds -> carry to minutes)
+    if second >= 60:
+        second -= 60
+        minute += 1
+    if minute >= 60:
+        minute -= 60
+        hour += 1
+    if hour >= 24:
+        hour -= 24
+
+    sunrise_utc = datetime(
+        year=input_date.year,
+        month=input_date.month,
+        day=input_date.day,
+        hour=hour,
+        minute=minute,
+        second=second,
+        tzinfo=timezone.utc,
+    )
+
+    if tz is not None:
+        return sunrise_utc.astimezone(tz)
+
+    return sunrise_utc
+
+# Entry point: calculate_sunrise(input_date: date, latitude: float, longitude: float, tz: ZoneInfo = None) -> datetime
+```

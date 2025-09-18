@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts a birth date as a pendulum.Date.
+3. Determine today’s date using pendulum.today().
+4. Construct this year’s birthday date, adjusting Feb 29 birthdays to Feb 28 in non-leap years.
+5. If this year’s birthday has already passed, compute next year’s adjusted birthday.
+6. Compute the difference in days between today and the next birthday and return it as an integer.
+
+```python
+import pendulum
+
+def _adjusted_birthday_for_year(year: int, birth_month: int, birth_day: int) -> pendulum.Date:
+    # Handle Feb 29 birthdays in non-leap years by using Feb 28
+    if birth_month == 2 and birth_day == 29 and not pendulum.is_leap_year(year):
+        return pendulum.date(year, 2, 28)
+    return pendulum.date(year, birth_month, birth_day)
+
+def days_until_next_birthday(birth_date: pendulum.Date) -> int:
+    # Today's date
+    today: pendulum.Date = pendulum.today()
+
+    # Candidate for this year's birthday (with leap-day adjustment)
+    this_year_bday: pendulum.Date = _adjusted_birthday_for_year(
+        today.year, birth_date.month, birth_date.day
+    )
+
+    # Decide whether the next birthday is this year or next year
+    if this_year_bday < today:
+        next_bday: pendulum.Date = _adjusted_birthday_for_year(
+            today.year + 1, birth_date.month, birth_date.day
+        )
+    else:
+        next_bday = this_year_bday
+
+    # Difference in days
+    days_diff: int = next_bday.diff(today).in_days()
+    return days_diff
+
+# Entry point: days_until_next_birthday(birth_date: pendulum.Date) -> int
+```

@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts two datetime inputs representing precise timestamps.
+3. Subtract the two datetimes to obtain a timedelta.
+4. Convert the timedelta into an integer count of nanoseconds using integer arithmetic to avoid floating-point precision loss.
+5. Return the absolute number of nanoseconds between the two timestamps as an integer.
+
+```python
+from datetime import datetime
+
+def calculate_nanoseconds_between(ts1: datetime, ts2: datetime) -> int:
+    """
+    Calculate the absolute number of nanoseconds between two datetime timestamps.
+    """
+    delta = ts2 - ts1  # type: ignore[arg-type]  # valid if both are datetime
+    # Convert timedelta to nanoseconds using integer arithmetic:
+    # total_ns = ((days * 86400) + seconds) * 1_000_000_000 + (microseconds * 1_000)
+    total_ns = ((delta.days * 86_400) + delta.seconds) * 1_000_000_000 + (delta.microseconds * 1_000)
+    return abs(total_ns)
+
+# Entry point: calculate_nanoseconds_between(ts1: datetime, ts2: datetime) -> int
+```

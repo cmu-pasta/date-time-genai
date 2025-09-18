@@ -1,0 +1,50 @@
+Let's think step by step to solve this problem.
+1. Choose a known reference timestamp of a full moon (epoch) and the average synodic month duration (time between full moons).
+2. Normalize the input datetime to UTC to ensure consistent calculations regardless of timezone.
+3. Compute how many lunar cycles have elapsed since the reference full moon.
+4. Determine the next full moon index strictly after the input moment.
+5. Compute the next full moon datetime and return its calendar date.
+
+```python
+from datetime import datetime, timedelta, timezone, date
+import math
+
+# Constants for lunar phase calculations
+_SYNODIC_MONTH = timedelta(days=29.530588853)  # Average synodic month length
+_REF_FULL_MOON_UTC = datetime(2000, 1, 21, 4, 40, tzinfo=timezone.utc)  # Reference full moon (UTC)
+
+def next_full_moon_after(dt: datetime) -> date:
+    """
+    Compute the calendar date of the next full moon strictly after the given datetime.
+    
+    Assumptions:
+    - Uses an average synodic month; yields an approximation suitable for general use.
+    - If 'dt' is naive, it is treated as UTC.
+    
+    Parameters:
+    - dt: datetime -> The reference moment from which to find the next full moon.
+    
+    Returns:
+    - date -> The calendar date (UTC) on which the next full moon occurs.
+    """
+    # Normalize input to UTC (treat naive datetimes as UTC)
+    if dt.tzinfo is None:
+        dt_utc = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = dt.astimezone(timezone.utc)
+
+    # Cycles elapsed since the reference full moon
+    elapsed = dt_utc - _REF_FULL_MOON_UTC
+    cycles = elapsed.total_seconds() / _SYNODIC_MONTH.total_seconds()
+
+    # Next full moon index strictly after the input moment
+    next_index = math.floor(cycles) + 1
+
+    # Compute next full moon datetime in UTC
+    next_full_moon_utc = _REF_FULL_MOON_UTC + _SYNODIC_MONTH * next_index
+
+    # Return the calendar date (UTC)
+    return next_full_moon_utc.date()
+
+# Entry point: next_full_moon_after(dt: datetime) -> date
+```

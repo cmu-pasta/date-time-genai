@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts a pendulum.Date representing the given date.
+3. Determine the last date of the same month as the given date.
+4. Iterate from the given date through the last date of the month, counting only weekdays (Monday=0 to Friday=4).
+5. Return the count as an integer.
+
+```python
+import pendulum
+
+def business_days_remaining_in_month(d: pendulum.Date) -> int:
+    """
+    Calculate the number of business days (Mon-Fri) remaining in the current month,
+    including the given date if it is a business day.
+    """
+    # Start from the given date
+    start = d
+
+    # Compute the last day of the same month
+    month_start = pendulum.date(d.year, d.month, 1)
+    last_day = month_start.add(months=1).subtract(days=1)
+
+    # Count business days from start to last_day (inclusive)
+    count = 0
+    current = start
+    while current <= last_day:
+        if current.day_of_week < 5:  # 0=Mon, ..., 4=Fri
+            count += 1
+        current = current.add(days=1)
+
+    return count
+
+# Entry point: business_days_remaining_in_month(d: pendulum.Date) -> int
+```

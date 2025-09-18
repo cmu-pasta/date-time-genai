@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date types.
+2. Define a function that accepts a pendulum.Date as input.
+3. Use the day_of_week attribute (Monday=0 ... Sunday=6) to determine if the date is Saturday or Sunday.
+4. Return True if the day_of_week is 5 or 6; otherwise return False.
+
+```python
+import pendulum
+
+def is_weekend(d: pendulum.Date) -> bool:
+    """
+    Determine if the given pendulum.Date falls on a weekend.
+    Weekend days are Saturday (5) and Sunday (6) per Pendulum's day_of_week.
+    """
+    return d.day_of_week >= 5
+
+# Entry point: is_weekend(d: pendulum.Date) -> bool
+```

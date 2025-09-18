@@ -1,16 +1,53 @@
 import argparse
+import os
 from datetime import datetime
 
 from dotenv import load_dotenv
 
 import config
 from analyze.log_parser import generate_summary_report, parse_log_file
-from genai.models import OpenAIModel
-from genai.sample_code import sample_interesting_computations
-from genai.sample_ideas import sample_ideas
-from genai.utils import Languages, PythonDatetimeLibraries, environment_variables_set
-from testing_framework.diff_test_creator import create_diff_tests
-from testing_framework.diff_test_runner import run_diff_tests_dt_vs_dt
+from genai.models import Model, ModelType
+from genai.utils import sanitize_model_name_for_path
+from sample_llm.sample_code import sample_dt_vs_dt_code_sets, sample_pendulum_code_sets
+from sample_llm.sample_ideas import sample_ideas
+from testing_framework.diff_test_runner import (
+    init,
+    run_diff_tests_dt_vs_dt,
+    run_diff_tests_dt_vs_pendulum,
+)
+from testing_framework.dt_vs_dt_diff_test_creator import create_dt_vs_dt_diff_tests
+from testing_framework.dt_vs_pendulum_diff_test_creator import (
+    create_dt_vs_pendulum_diff_tests,
+)
+
+
+def environment_variables_set() -> bool:
+    """Check if required API keys are set in environment variables.
+
+    LiteLLM automatically detects and uses the appropriate API keys:
+    - OPENAI_API_KEY for OpenAI models
+    - ANTHROPIC_API_KEY for Anthropic models
+    - GEMINI_API_KEY or GOOGLE_API_KEY for Google models
+    """
+    missing_keys = []
+
+    if "OPENAI_API_KEY" not in os.environ:
+        missing_keys.append("OPENAI_API_KEY")
+
+    if "ANTHROPIC_API_KEY" not in os.environ:
+        missing_keys.append("ANTHROPIC_API_KEY")
+
+    if "GEMINI_API_KEY" not in os.environ and "GOOGLE_API_KEY" not in os.environ:
+        missing_keys.append("GEMINI_API_KEY or GOOGLE_API_KEY")
+
+    if missing_keys:
+        print("Missing environment variables:")
+        for key in missing_keys:
+            print(f"  - {key}")
+        print("\nNote: Only set the API keys for the models you plan to use.")
+        return False
+
+    return True
 
 
 def parse_args():
@@ -20,16 +57,66 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python run.py gen          # Generate ideas and code snippets
-  python run.py test         # Run diff tests only
-  python run.py all          # Run complete pipeline (generate + test)
+  python run.py --model openai --ideas                        # Generate ideas only
+  python run.py --model gemini --dt-code                      # Generate datetime library code snippets only
+  python run.py --model claude --pd-code                      # Generate pendulum library code snippets only
+  python run.py --model openai --create-tests                 # Create diff tests only
+  python run.py --model openai --run-tests                    # Run diff tests only
+  python run.py --model openai --analyze                      # Analyze results only
+  python run.py --model openai --ideas --dt-code              # Generate ideas and datetime code
+  python run.py --model gemini --dt-code --pd-code            # Generate all code snippets
+  python run.py --model claude --create-tests --run-tests     # Create and run tests
+  python run.py --model openai --all                          # Run complete pipeline
         """,
     )
 
     parser.add_argument(
-        "mode",
-        choices=["gen", "test", "all"],
-        help="Operation mode: 'gen' to generate code, 'test' to run tests, 'all' for complete pipeline",
+        "--ideas",
+        action="store_true",
+        help="Generate ideas for datetime computations",
+    )
+
+    parser.add_argument(
+        "--dt-code",
+        action="store_true",
+        help="Generate datetime library code snippets based on ideas",
+    )
+
+    parser.add_argument(
+        "--pd-code",
+        action="store_true",
+        help="Generate pendulum library code snippets based on ideas",
+    )
+
+    parser.add_argument(
+        "--create-tests",
+        action="store_true",
+        help="Create diff tests from generated code",
+    )
+
+    parser.add_argument(
+        "--run-tests",
+        action="store_true",
+        help="Run the diff tests",
+    )
+
+    parser.add_argument(
+        "--analyze",
+        action="store_true",
+        help="Analyze test results and generate summary report",
+    )
+
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Run complete pipeline (all steps)",
+    )
+
+    parser.add_argument(
+        "--model",
+        choices=["openai", "gemini", "claude"],
+        required=True,
+        help="AI model to use for generation (required)",
     )
 
     return parser.parse_args()
@@ -39,67 +126,154 @@ def main():
     args = parse_args()
     load_dotenv()
 
+    # Check if any arguments are provided, if not show help
+    if not any(
+        [
+            args.ideas,
+            args.dt_code,
+            args.pd_code,
+            args.create_tests,
+            args.run_tests,
+            args.analyze,
+            args.all,
+        ]
+    ):
+        print("Error: No operation specified. Use --help to see available options.")
+        return
+
     if not environment_variables_set():
         return
 
     # Sample outputs for Python
-    programming_lang = Languages.Python.value
-    model_gpt_41 = OpenAIModel("gpt-4.1")
+    programming_lang = config.Languages.Python.value
+
+    # Map user input to ModelType enum
+    model_mapping = {
+        "openai": ModelType.OPENAI,
+        "gemini": ModelType.GEMINI,
+        "claude": ModelType.CLAUDE,
+    }
+    ai_model = Model(model_mapping[args.model])
+
+    # Determine which operations to run
+    run_ideas = args.ideas or args.all
+    run_dt_code = args.dt_code or args.all
+    run_pd_code = args.pd_code or args.all
+    run_create_tests = args.create_tests or args.all
+    run_run_tests = args.run_tests or args.all
+    run_analyze = args.analyze or args.all
+
+    # Build operation list for display
+    operations = []
+    if run_ideas:
+        operations.append("ideas")
+    if run_dt_code:
+        operations.append("dt-code")
+    if run_pd_code:
+        operations.append("pd-code")
+    if run_create_tests:
+        operations.append("create-tests")
+    if run_run_tests:
+        operations.append("run-tests")
+    if run_analyze:
+        operations.append("analyze")
 
     print(
-        f"\n#####\nStarting experiment run for {programming_lang} (mode: {args.mode})\n#####\n"
+        f"\n#####\nStarting experiment run for {programming_lang}\nOperations: {', '.join(operations)}\n#####\n"
     )
 
     config.OUTPUT_DIR = config.OUTPUT_DIR.format(
-        timestamp=int(datetime.now().timestamp())
+        ai_model=sanitize_model_name_for_path(ai_model.model_name)
+    )
+    config.LOGS_DIR = config.LOGS_DIR.format(
+        ai_model=sanitize_model_name_for_path(ai_model.model_name)
     )
 
-    # Execute based on mode
-    if args.mode in ["gen", "all"]:
-        print("🚀 Generating ideas and code snippets...")
+    ideas_file = None
 
-        # Generate ideas
-        ideas_file = sample_ideas(model_gpt_41)
+    # Generate ideas
+    if run_ideas:
+        print("💡 Generating ideas...")
+        ideas_file = sample_ideas(ai_model)
+        print("✅ Ideas generation completed!\n")
 
-        # Generate code snippets
-        sample_interesting_computations(
-            model_gpt_41,
+    # Generate datetime code snippets
+    if run_dt_code:
+        print("🚀 Generating datetime library code snippets...")
+        if ideas_file is None:
+            # If we're only running code generation without ideas,
+            # we need to find the existing ideas file from config
+            ideas_file = config.IDEAS_PATH
+            if not os.path.exists(ideas_file):
+                print(f"Error: Ideas file not found at {ideas_file}")
+                print(
+                    "Please run with --ideas first to generate ideas, or run --all for the complete pipeline."
+                )
+                return
+
+        sample_dt_vs_dt_code_sets(
+            ai_model,
             programming_lang,
-            PythonDatetimeLibraries.Datetime,
-            PythonDatetimeLibraries.Datetime,
+            ideas_file,
+        )
+        print("✅ Datetime code generation completed!\n")
+
+    # Generate pendulum library code snippets
+    if run_pd_code:
+        print("🚀 Generating pendulum library code snippets...")
+        if ideas_file is None:
+            # If we're only running code generation without ideas,
+            # we need to find the existing ideas file from config
+            ideas_file = config.IDEAS_PATH
+            if not os.path.exists(ideas_file):
+                print(f"Error: Ideas file not found at {ideas_file}")
+                print(
+                    "Please run with --ideas first to generate ideas, or run --all for the complete pipeline."
+                )
+                return
+
+        sample_pendulum_code_sets(
+            ai_model,
+            programming_lang,
             ideas_file,
         )
 
-        print("✅ Generation phase completed!")
+        print("✅ Pendulum code generation completed!\n")
 
-    if args.mode in ["test", "all"]:
-        print("🧪 Creating and running diff tests...")
+    # Create diff tests
+    if run_create_tests:
+        print("🧪 Creating diff tests...")
+        create_dt_vs_dt_diff_tests(config.LANGUAGE, config.EXTENSION, config.OUTPUT_DIR)
+        create_dt_vs_pendulum_diff_tests(
+            config.LANGUAGE, config.EXTENSION, config.OUTPUT_DIR
+        )
+        print("✅ Diff tests creation completed!\n")
 
-        # Create diff tests
-        create_diff_tests(config.LANGUAGE, config.EXTENSION)
+    # Run diff tests
+    if run_run_tests:
+        print("🏃 Running diff tests...")
+        # Initialize logs directory (clean up old logs and create fresh directory)
+        init()
+        run_diff_tests_dt_vs_dt(config.OUTPUT_DIR)
+        run_diff_tests_dt_vs_pendulum(config.OUTPUT_DIR)
+        print("✅ Diff tests execution completed!\n")
 
-        # Run diff tests
-        run_diff_tests_dt_vs_dt()
+    # Analyze results
+    if run_analyze:
+        print("📊 Analyzing results...")
+        try:
+            # Generate summary report
+            results = parse_log_file()
+            report_file = f"{config.ANALYSIS_OUTPUT_DIR}/summary_report.md"
+            generate_summary_report(results, report_file)
+            print(f"Summary report saved to {report_file}")
+        except FileNotFoundError as e:
+            print(f"Warning: Could not analyze results - {e}")
+        except Exception as e:
+            print(f"Error during results analysis: {e}")
+        print("✅ Results analysis completed!")
 
-        print("\n✅ Testing phase completed!")
-
-    print(f"\n🎉 All operations for mode '{args.mode}' completed successfully!")
-
-    # Analyze results at the end
-    print("\n📊 Analyzing results...")
-    try:
-        # Generate summary report
-        results = parse_log_file()
-        report_file = f"{config.ANALYSIS_OUTPUT_DIR}/summary_report.md"
-        generate_summary_report(results, report_file)
-        print(f"Summary report saved to {report_file}")
-
-    except FileNotFoundError as e:
-        print(f"Warning: Could not analyze results - {e}")
-    except Exception as e:
-        print(f"Error during results analysis: {e}")
-
-    print("✅ Results analysis completed!")
+    print(f"\n🎉 All requested operations completed successfully!")
 
 
 if __name__ == "__main__":

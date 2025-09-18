@@ -1,0 +1,57 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module: datetime and timedelta.
+2. Define a function that accepts two datetime inputs representing the interval bounds.
+3. Normalize the order of the inputs so the earlier datetime is first.
+4. If both datetimes fall on the same calendar day:
+   - If it is a weekday (Monday–Friday), return the direct difference.
+   - Otherwise, return zero timedelta.
+5. Otherwise, compute:
+   - The remaining time on the first day if it is a weekday.
+   - Full 24-hour contributions for each full weekday between the two dates.
+   - The elapsed time on the last day if it is a weekday.
+6. Exclude weekends (Saturday and Sunday) by checking weekday() < 5.
+7. Return the total as a timedelta.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_working_hours_between(start: datetime, end: datetime) -> timedelta:
+    # Ensure start <= end
+    if end < start:
+        start, end = end, start
+
+    # If equal, zero duration
+    if start == end:
+        return timedelta(0)
+
+    # Helper to check weekday (Mon-Fri)
+    def is_weekday(d: datetime) -> bool:
+        return d.weekday() < 5  # Monday=0, Sunday=6
+
+    # If within the same calendar day
+    if start.date() == end.date():
+        return (end - start) if is_weekday(start) else timedelta(0)
+
+    total = timedelta(0)
+
+    # First day contribution
+    start_day_end = datetime(start.year, start.month, start.day) + timedelta(days=1)
+    if is_weekday(start):
+        total += (start_day_end - start)
+
+    # Middle full days
+    current = start_day_end
+    end_day_start = datetime(end.year, end.month, end.day)
+    while current < end_day_start:
+        if is_weekday(current):
+            total += timedelta(days=1)
+        current += timedelta(days=1)
+
+    # Last day contribution
+    if is_weekday(end):
+        total += (end - end_day_start)
+
+    return total
+
+# Entry point: calculate_working_hours_between(start: datetime, end: datetime) -> timedelta
+```

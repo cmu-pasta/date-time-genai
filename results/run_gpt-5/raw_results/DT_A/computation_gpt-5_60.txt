@@ -1,0 +1,58 @@
+Let's think step by step to solve this problem.
+1. Import the necessary standard libraries: datetime components, math for trigonometry, and zoneinfo for timezone handling.
+2. Accept inputs: a date, latitude (not required for solar noon but accepted per the idea), longitude in degrees (east positive), and a ZoneInfo timezone.
+3. Compute the day of year to parameterize the equation of time using NOAA’s approximation.
+4. Compute the equation of time (in minutes) using the fractional year angle.
+5. Compute the solar noon time in UTC minutes from midnight using the formula: 720 - 4*longitude - equation_of_time.
+6. Convert this UTC instant to a timezone-aware local datetime using the provided ZoneInfo.
+7. Return the local datetime representing solar noon for the given date and location.
+
+```python
+from datetime import date, datetime, time, timedelta, timezone
+from math import sin, cos, pi
+from zoneinfo import ZoneInfo
+
+def calculate_solar_noon(target_date: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime:
+    """
+    Calculate the solar noon time for a given date and location.
+
+    Parameters:
+    - target_date: The calendar date for which to compute solar noon (interpreted in UTC for the intermediate computation).
+    - latitude: Latitude in degrees (not required for solar noon; included for interface completeness).
+    - longitude: Longitude in degrees, positive east of Greenwich, negative west.
+    - tz: The local time zone as a ZoneInfo object.
+
+    Returns:
+    - A timezone-aware datetime representing local solar noon on/around the given date.
+    """
+    # Step 1: Day of year (1..366)
+    N = target_date.timetuple().tm_yday
+
+    # Step 2: Fractional year (radians), NOAA formulation
+    gamma = 2.0 * pi * (N - 1) / 365.0
+
+    # Step 3: Equation of time E (minutes), NOAA approximation
+    # E = 229.18 * (0.000075 + 0.001868*cos(gamma) - 0.032077*sin(gamma)
+    #               - 0.014615*cos(2*gamma) - 0.040849*sin(2*gamma))
+    E = 229.18 * (
+        0.000075
+        + 0.001868 * cos(gamma)
+        - 0.032077 * sin(gamma)
+        - 0.014615 * cos(2.0 * gamma)
+        - 0.040849 * sin(2.0 * gamma)
+    )
+
+    # Step 4: Solar noon in UTC minutes from midnight
+    # Formula: 720 - 4 * longitude - E
+    # longitude in degrees (east positive)
+    utc_minutes = 720.0 - 4.0 * longitude - E
+
+    # Step 5: Build UTC datetime and convert to local timezone
+    utc_midnight = datetime.combine(target_date, time(0, 0), tzinfo=timezone.utc)
+    solar_noon_utc = utc_midnight + timedelta(minutes=utc_minutes)
+    solar_noon_local = solar_noon_utc.astimezone(tz)
+
+    return solar_noon_local
+
+# Entry point: calculate_solar_noon(target_date: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime
+```

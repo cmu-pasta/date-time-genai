@@ -1,0 +1,48 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with epoch anchors and duration computations.
+2. Define constants for the Unix and Windows epochs using pendulum.DateTime in UTC.
+3. Compute the epoch offset in whole seconds between Windows (1601-01-01) and Unix (1970-01-01) epochs using pendulum’s diff and in_seconds.
+4. Implement a function that:
+   - If converting Unix to Windows: adds the offset in seconds and multiplies by 10,000,000 to get 100-nanosecond FILETIME ticks.
+   - If converting Windows to Unix: divides ticks by 10,000,000 to get whole seconds and subtracts the offset.
+5. Return the result as an integer.
+
+```python
+import pendulum
+
+# Epoch anchors in UTC using Pendulum
+_WINDOWS_EPOCH: pendulum.DateTime = pendulum.datetime(1601, 1, 1, tz="UTC")
+_UNIX_EPOCH: pendulum.DateTime = pendulum.datetime(1970, 1, 1, tz="UTC")
+
+# Compute the offset between epochs in whole seconds using Pendulum
+# This yields 11644473600 seconds (from 1601-01-01 to 1970-01-01).
+_EPOCH_OFFSET_SECONDS: int = _WINDOWS_EPOCH.diff(_UNIX_EPOCH).in_seconds()
+
+# Number of 100-nanosecond intervals per second for Windows FILETIME
+_FILETIME_TICKS_PER_SECOND: int = 10_000_000
+
+def convert_epoch(value: int, unix_to_windows: bool) -> int:
+    """
+    Convert a timestamp between Unix epoch seconds and Windows FILETIME ticks.
+
+    Inputs:
+    - value: 
+        If unix_to_windows is True -> Unix timestamp (seconds since 1970-01-01 UTC).
+        If unix_to_windows is False -> Windows FILETIME (100-ns ticks since 1601-01-01 UTC).
+    - unix_to_windows: 
+        True to convert Unix -> Windows FILETIME, False for Windows FILETIME -> Unix.
+
+    Output:
+    - Integer representing the converted timestamp in the target epoch.
+    """
+    if unix_to_windows:
+        # Unix seconds -> Windows FILETIME ticks
+        # Add the epoch offset (in seconds), then convert to 100-ns ticks
+        return (value + _EPOCH_OFFSET_SECONDS) * _FILETIME_TICKS_PER_SECOND
+    else:
+        # Windows FILETIME ticks -> Unix seconds (truncated to whole seconds)
+        seconds_from_windows_epoch: int = value // _FILETIME_TICKS_PER_SECOND
+        return seconds_from_windows_epoch - _EPOCH_OFFSET_SECONDS
+
+# Entry point: convert_epoch(value: integers, unix_to_windows: booleans) -> integers
+```

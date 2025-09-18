@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts two time inputs representing times on the same day.
+3. Convert each time to the total number of seconds since midnight (including microseconds).
+4. Compute the absolute difference in seconds between the two times.
+5. Convert the difference in seconds to whole minutes by flooring the result.
+6. Return the difference as an integer.
+
+```python
+from datetime import time
+
+def calculate_minutes_difference(t1: time, t2: time) -> int:
+    # Convert a time to total seconds since midnight (including microseconds)
+    def seconds_since_midnight(t: time) -> float:
+        return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000
+
+    s1 = seconds_since_midnight(t1)
+    s2 = seconds_since_midnight(t2)
+
+    # Absolute difference in seconds
+    diff_seconds = abs(s2 - s1)
+
+    # Convert to whole minutes (floor)
+    minutes = int(diff_seconds // 60)
+    return minutes
+
+# Entry point: calculate_minutes_difference(t1: time, t2: time) -> int
+```

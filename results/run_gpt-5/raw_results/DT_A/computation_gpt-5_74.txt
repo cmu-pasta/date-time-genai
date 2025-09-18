@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+1. Choose a precise synodic month length (average time between new moons), approximately 29.530588853 days.
+2. Pick a well-known reference new moon timestamp (e.g., 2000-01-06 18:14 UTC).
+3. Convert the input moment to UTC (assuming naive inputs are UTC).
+4. Compute how many full synodic cycles have elapsed since the reference.
+5. Take the next integer cycle strictly after the input moment.
+6. Add that many synodic months to the reference to get the next new moon instant.
+7. Return the calendar date (UTC) of that next new moon.
+
+```python
+from datetime import datetime, timedelta, timezone, date
+import math
+
+# Constants: average synodic month and a well-known reference new moon
+_SYNODIC_MONTH_DAYS = 29.530588853  # mean synodic month length
+_SYNODIC_MONTH = timedelta(days=_SYNODIC_MONTH_DAYS)
+
+# Reference new moon: 2000-01-06 18:14 UTC (widely used epoch)
+_REF_NEW_MOON_UTC = datetime(2000, 1, 6, 18, 14, tzinfo=timezone.utc)
+
+def next_new_moon(after_dt: datetime) -> date:
+    """
+    Compute the UTC calendar date of the next new moon strictly after the given moment.
+    - If 'after_dt' is naive, it is interpreted as UTC.
+    - The returned value is the date in UTC on which the next new moon occurs.
+    """
+    # Normalize input to timezone-aware UTC
+    if after_dt.tzinfo is None:
+        dt_utc = after_dt.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = after_dt.astimezone(timezone.utc)
+
+    # Compute how many synodic cycles have elapsed since the reference new moon
+    elapsed = dt_utc - _REF_NEW_MOON_UTC
+    cycles_elapsed = elapsed / _SYNODIC_MONTH  # float number of cycles
+
+    # We want the next new moon strictly after the input time
+    next_cycle_index = math.floor(cycles_elapsed) + 1
+
+    # Compute the instant of the next new moon and return its UTC date
+    next_new_moon_dt = _REF_NEW_MOON_UTC + next_cycle_index * _SYNODIC_MONTH
+    return next_new_moon_dt.date()
+
+# Entry point: next_new_moon(after_dt: datetime) -> date
+```

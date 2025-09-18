@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Choose a reliable civil-date approximation for the September (autumnal) equinox. A widely used empirical formula (used for Japanese holiday calculations) estimates the day-of-month as floor(23.2488 + 0.242194*(year - 1980) - floor((year - 1980)/4)).
+2. Restrict the valid range to years where the approximation is accurate for civil dates (1900–2099).
+3. Compute the day-of-month using the formula and construct a date object for September of the given year.
+4. Return the resulting date.
+
+```python
+from datetime import date
+
+def autumnal_equinox_date(year: int) -> date:
+    """
+    Estimate the date of the September (autumnal) equinox for a given Gregorian year.
+    Valid for years 1900 through 2099 (civil-date approximation).
+    
+    Parameters:
+        year (int): Gregorian calendar year.
+    
+    Returns:
+        date: Estimated date of the September equinox in the given year.
+    """
+    if year < 1900 or year > 2099:
+        raise ValueError("Year out of supported range: 1900–2099")
+
+    y = year - 1980
+    # Empirical civil-date formula used for Japanese holiday calculations
+    day = int((23.2488 + 0.242194 * y) - int(y / 4))
+    return date(year, 9, day)
+
+# Entry point: autumnal_equinox_date(year: int) -> date
+```

@@ -1,0 +1,105 @@
+Let's think step by step to solve this problem.
+1. Accept the inputs: a calendar date, latitude, longitude, and a target time zone to return the local sunset time.
+2. Compute the day of year for the given date.
+3. Apply the NOAA solar calculation algorithm for sunset:
+   - Estimate the approximate time.
+   - Compute the Sun’s mean anomaly, true longitude, and right ascension.
+   - Compute the Sun’s declination.
+   - Compute the local hour angle for sunset.
+4. Convert the computed Universal Time (UT) for sunset to a UTC datetime on the given date.
+5. Convert the UTC datetime to the requested local timezone and return it.
+6. Handle edge cases where the sun does not set for the given date and location by raising a ValueError.
+
+```python
+from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+import math
+
+def _normalize_degrees(deg: float) -> float:
+    # Normalize an angle to [0, 360)
+    return deg % 360.0
+
+def calculate_sunset(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime:
+    """
+    Calculate the sunset time for a given date and geographic coordinates using NOAA's algorithm.
+    
+    Inputs:
+      - d: date (calendar date for which to compute sunset)
+      - latitude: float (degrees, positive north, negative south)
+      - longitude: float (degrees, positive east, negative west)
+      - tz: ZoneInfo (target timezone for the returned datetime)
+    
+    Returns:
+      - datetime with tzinfo=tz representing the local sunset time on date d.
+    
+    Raises:
+      - ValueError if the sun does not set on the given date at the given location.
+      - ValueError if latitude or longitude are out of bounds.
+    """
+    if not (-90.0 <= latitude <= 90.0):
+        raise ValueError("Latitude must be between -90 and 90 degrees.")
+    if not (-180.0 <= longitude <= 180.0):
+        raise ValueError("Longitude must be between -180 and 180 degrees.")
+    
+    # Constants
+    zenith = 90.833  # degrees, standard refraction + solar radius for official sunset
+    
+    # 1) Day of year
+    N = d.timetuple().tm_yday
+    
+    # 2) Longitude hour
+    lngHour = longitude / 15.0
+    
+    # 3) Approximate time (for sunset, use 18h local solar time)
+    t = N + ((18.0 - lngHour) / 24.0)
+    
+    # 4) Sun's mean anomaly
+    M = (0.9856 * t) - 3.289
+    
+    # 5) Sun's true longitude
+    L = M + (1.916 * math.sin(math.radians(M))) + (0.020 * math.sin(math.radians(2 * M))) + 282.634
+    L = _normalize_degrees(L)
+    
+    # 6) Sun's right ascension
+    RA = math.degrees(math.atan(0.91764 * math.tan(math.radians(L))))
+    RA = _normalize_degrees(RA)
+    
+    # Adjust RA to be in the same quadrant as L
+    L_quadrant = math.floor(L / 90.0) * 90.0
+    RA_quadrant = math.floor(RA / 90.0) * 90.0
+    RA = RA + (L_quadrant - RA_quadrant)
+    
+    # Convert RA to hours
+    RA /= 15.0
+    
+    # 7) Sun's declination
+    sinDec = 0.39782 * math.sin(math.radians(L))
+    cosDec = math.cos(math.asin(sinDec))
+    
+    # 8) Sun's local hour angle for sunset
+    cosH = (math.cos(math.radians(zenith)) - (sinDec * math.sin(math.radians(latitude)))) / (cosDec * math.cos(math.radians(latitude)))
+    
+    # If |cosH| > 1, the sun never sets or never rises on this date at this location
+    if cosH < -1.0 or cosH > 1.0:
+        raise ValueError("The sun does not set on this date at this location.")
+    
+    # For sunset, H = arccos(cosH)
+    H = math.degrees(math.acos(cosH))
+    H = H / 15.0  # convert to hours
+    
+    # 9) Local mean time of setting
+    T = H + RA - (0.06571 * t) - 6.622
+    
+    # 10) Convert to UT
+    UT = T - lngHour
+    UT = UT % 24.0  # normalize to [0, 24)
+    
+    # 11) Build UTC datetime for this date, then convert to target timezone
+    utc_midnight = datetime(d.year, d.month, d.day, tzinfo=timezone.utc)
+    sunset_utc = utc_midnight + timedelta(hours=UT)
+    sunset_local = sunset_utc.astimezone(tz)
+    
+    return sunset_local
+
+# Entry point: calculate_sunset(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime
+```

@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+1. Import required classes from the datetime module and math functions for trigonometry.
+2. Accept a calendar date as input and compute its day-of-year (N).
+3. Compute the auxiliary angle B in radians using N.
+4. Use the standard NOAA approximation to calculate the Equation of Time (in minutes).
+5. Convert the result to a timedelta to represent the correction.
+6. Return the timedelta where a positive value means apparent solar time is ahead of mean solar time.
+
+```python
+from datetime import date, timedelta
+from math import sin, cos, pi
+
+def equation_of_time(d: date) -> timedelta:
+    """
+    Calculate the Equation of Time (EoT) for a given date.
+
+    Definition:
+    EoT = apparent solar time - mean solar time.
+    Positive EoT means the sundial (apparent solar time) is ahead of clock time.
+
+    Method:
+    Uses the commonly employed NOAA approximation:
+      B = 2π * (N - 81) / 364
+      EoT_minutes = 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B)
+
+    Args:
+        d: A calendar date (datetime.date).
+
+    Returns:
+        A datetime.timedelta representing the Equation of Time correction.
+    """
+    # Day of year (1..365/366)
+    N = d.timetuple().tm_yday
+
+    # Auxiliary angle in radians
+    B = 2 * pi * (N - 81) / 364.0
+
+    # Equation of Time in minutes (NOAA approximation)
+    eot_minutes = 9.87 * sin(2 * B) - 7.53 * cos(B) - 1.5 * sin(B)
+
+    # Return as a timedelta (can be positive or negative)
+    return timedelta(minutes=eot_minutes)
+
+# Entry point: equation_of_time(d: date) -> timedelta
+```

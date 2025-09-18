@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the requirement**: We need to calculate how many bi-weekly (14-day) payroll periods fit into a given year.
+
+2. **Import necessary libraries**: We'll need the `datetime` module to work with dates and calculate the number of days in a year.
+
+3. **Define the function**: Create a function that takes a year as input (integer) and returns the number of bi-weekly periods (integer).
+
+4. **Calculate days in the year**: Use datetime objects to accurately determine the total number of days in the given year, accounting for leap years.
+
+5. **Calculate bi-weekly periods**: Divide the total days by 14 (since bi-weekly means every 2 weeks = 14 days) and use integer division to get whole periods.
+
+6. **Return the result**: Return the calculated number of periods as an integer.
+
+```python
+from datetime import date
+
+def calculate_biweekly_payroll_periods(year: int) -> int:
+    # Create date objects for the start of the given year and the start of the next year
+    start_of_year = date(year, 1, 1)
+    start_of_next_year = date(year + 1, 1, 1)
+    
+    # Calculate the total number of days in the given year
+    days_in_year = (start_of_next_year - start_of_year).days
+    
+    # Calculate the number of bi-weekly periods (14 days each)
+    # Using integer division to get complete periods only
+    periods = days_in_year // 14
+    
+    return periods
+
+# Entry point: calculate_biweekly_payroll_periods(year: int) -> int
+```

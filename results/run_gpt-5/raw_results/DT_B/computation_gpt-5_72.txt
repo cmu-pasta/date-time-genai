@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+1. Accept the calendar year (integer) and an anchor date that is a known start of a bi-weekly pay period.
+2. Define the start (January 1) and end (December 31) dates of the given year.
+3. Use modulo arithmetic with a 14-day interval to find the first aligned pay period start date on or after January 1.
+4. If this first start date is beyond December 31, return 0; otherwise, compute how many 14-day spans fit from that date through December 31 using integer division.
+5. Return the computed count as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_biweekly_pay_periods_in_year(year: int, anchor_period_start: date) -> int:
+    """
+    Calculate the number of bi-weekly payroll periods in a given year,
+    based on a known anchor date that starts a bi-weekly pay period.
+
+    Args:
+        year: The calendar year for which to count periods.
+        anchor_period_start: A date known to be the start of a bi-weekly pay period on the schedule.
+
+    Returns:
+        An integer count of bi-weekly payroll periods whose start dates fall within the given year.
+    """
+    # Define the boundaries of the year
+    year_start = date(year, 1, 1)
+    year_end = date(year, 12, 31)
+
+    # Length of one bi-weekly period
+    period = timedelta(days=14)
+
+    # Compute the first pay period start on or after Jan 1 of the given year
+    delta_days = (year_start - anchor_period_start).days
+    remainder = delta_days % 14  # alignment relative to the anchor
+    if remainder == 0:
+        first_start_in_year = year_start
+    else:
+        first_start_in_year = year_start + timedelta(days=(14 - remainder))
+
+    # If no period starts within the year, return 0
+    if first_start_in_year > year_end:
+        return 0
+
+    # Count how many starts occur from the first_start_in_year through Dec 31 inclusive
+    count = 1 + ((year_end - first_start_in_year).days // 14)
+    return int(count)
+
+# Entry point: count_biweekly_pay_periods_in_year(year: int, anchor_period_start: date) -> int
+```

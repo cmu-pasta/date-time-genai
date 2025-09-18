@@ -1,0 +1,560 @@
+Error in file computation_gemini-gemini-2-5-flash_0_pd.py:
+Return Code: 1
+Standard Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.2.2, pluggy-1.5.0
+rootdir: /Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests
+configfile: pytest.ini
+plugins: time-machine-2.14.2, cov-5.0.0, hypothesis-6.104.2, anyio-4.10.0
+collected 1 item
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_0_pd.py F [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_calculate_business_days_between _____________________
+
+    @seed(27)
+>   @settings(max_examples=10000, deadline=None, derandomize=True)
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_0_pd.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_0_pd.py:76: in test_calculate_business_days_between
+    result = calculate_business_days_between(dt1, dt2)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dt1 = DateTime(2000, 1, 1, 0, 0, 0, tzinfo=Timezone('UTC'))
+dt2 = DateTime(2000, 1, 1, 0, 0, 0, tzinfo=Timezone('UTC'))
+
+    def calculate_business_days_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+        # Step 1 & 2: Determine the start and end dates to ensure correct iteration
+        if dt1 <= dt2:
+            start_date = dt1
+            end_date = dt2
+        else:
+            start_date = dt2
+            end_date = dt1
+    
+        business_days_count = 0
+    
+        # Step 3: Iterate through each day in the period from start_date to end_date (exclusive of end_date)
+        # pendulum.period(start, end) iterates from 'start' up to, but not including, 'end'.
+        # For example, between Monday and Wednesday, it iterates Monday and Tuesday.
+        # If the user means to include the 'end_date' if it's a business day, then the iteration needs adjustment.
+        # As per typical "between" calculations, we iterate the days *strictly between* the two endpoints.
+        # If the problem implies an inclusive range for days, then we might need to adjust end_date by +1 day,
+        # or iterate 'start_date' to 'end_date' inclusive.
+        # Given the previous example calculated difference, it typically refers to the number of full days *between*
+        # or the count of specific days in the interval [start_date, end_date).
+        # Let's interpret "between two dates" as the days in the interval [start_date, end_date).
+    
+>       for day in pendulum.period(start_date.start_of('day'), end_date.start_of('day')):
+E       AttributeError: module 'pendulum' has no attribute 'period'
+E       Falsifying example: test_calculate_business_days_between(
+E           # The test always failed when commented parts were varied together.
+E           dt1=DateTime(2000, 1, 1, 0, 0, 0, tzinfo=Timezone('UTC')),  # or any other generated value
+E           dt2=DateTime(2000, 1, 1, 0, 0, 0, tzinfo=Timezone('UTC')),  # or any other generated value
+E       )
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_0_pd.py:31: AttributeError
+=========================== short test summary info ============================
+FAILED results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_0_pd.py::test_calculate_business_days_between
+============================== 1 failed in 2.46s ===============================
+
+Standard Error:
+
+==================================================
+Error in file computation_gemini-gemini-2-5-flash_1_dt.py:
+Return Code: 1
+Standard Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.2.2, pluggy-1.5.0
+rootdir: /Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests
+configfile: pytest.ini
+plugins: time-machine-2.14.2, cov-5.0.0, hypothesis-6.104.2, anyio-4.10.0
+collected 1 item
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_1_dt.py F [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_calculate_exact_time_difference _____________________
+
+    @seed(27)
+>   @settings(max_examples=10000, deadline=None, derandomize=True)
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_1_dt.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_1_dt.py:63: in test_calculate_exact_time_difference
+    result = calculate_exact_time_difference(dt1, dt2)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dt1 = datetime.datetime(2000, 1, 1, 0, 0)
+dt2 = datetime.datetime(2000, 1, 1, 0, 0)
+
+    def calculate_exact_time_difference(dt1: datetime, dt2: datetime) -> timedelta:
+        """
+        Calculates the exact time difference between two timezone-aware datetime objects,
+        considering daylight saving time.
+    
+        Args:
+            dt1: The first timezone-aware datetime object.
+            dt2: The second timezone-aware datetime object.
+    
+        Returns:
+            A timedelta object representing the exact time difference.
+            The result will be positive if dt2 is after dt1, and negative if dt2 is before dt1.
+        """
+        # Ensure both datetime objects are timezone-aware.
+        # If they are not, this function assumes they should be localized
+        # before calling, as naive datetimes cannot correctly account for DST.
+        if dt1.tzinfo is None or dt2.tzinfo is None:
+>           raise ValueError("Both datetime objects must be timezone-aware to correctly handle DST.")
+E           ValueError: Both datetime objects must be timezone-aware to correctly handle DST.
+E           Falsifying example: test_calculate_exact_time_difference(
+E               # The test always failed when commented parts were varied together.
+E               dt1=datetime.datetime(2000, 1, 1, 0, 0),  # or any other generated value
+E               dt2=datetime.datetime(2000, 1, 1, 0, 0),  # or any other generated value
+E           )
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_1_dt.py:27: ValueError
+=========================== short test summary info ============================
+FAILED results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_1_dt.py::test_calculate_exact_time_difference
+============================== 1 failed in 1.76s ===============================
+
+Standard Error:
+
+==================================================
+Error in file computation_gemini-gemini-2-5-flash_3_pd.py:
+Return Code: 1
+Standard Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.2.2, pluggy-1.5.0
+rootdir: /Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests
+configfile: pytest.ini
+plugins: time-machine-2.14.2, cov-5.0.0, hypothesis-6.104.2, anyio-4.10.0
+collected 1 item
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_3_pd.py F [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_find_next_leap_year ___________________________
+
+    @seed(27)
+>   @settings(max_examples=10000, deadline=None, derandomize=True)
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_3_pd.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_3_pd.py:80: in test_find_next_leap_year
+    result = find_next_leap_year(dt)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dt = DateTime(2000, 1, 1, 0, 0, 0, tzinfo=Timezone('UTC'))
+
+    def find_next_leap_year(dt: pendulum.DateTime) -> int:
+        # Step 1: Get the year from the input date
+        year = dt.year
+    
+        # Step 2: Determine the starting year for the search
+        # If the current year is a leap year and the date is on or before Feb 29th of that year,
+        # then the current year is the next leap year.
+        # Otherwise, we need to search from the next year.
+>       if pendulum.is_leap(year):
+E       AttributeError: module 'pendulum' has no attribute 'is_leap'
+E       Falsifying example: test_find_next_leap_year(
+E           dt=DateTime(2000, 1, 1, 0, 0, 0, tzinfo=Timezone('UTC')),  # or any other generated value
+E       )
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_3_pd.py:17: AttributeError
+=========================== short test summary info ============================
+FAILED results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_3_pd.py::test_find_next_leap_year
+============================== 1 failed in 0.84s ===============================
+
+Standard Error:
+
+==================================================
+Error in file computation_gemini-gemini-2-5-flash_5_dt.py:
+Return Code: 1
+Standard Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.2.2, pluggy-1.5.0
+rootdir: /Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests
+configfile: pytest.ini
+plugins: time-machine-2.14.2, cov-5.0.0, hypothesis-6.104.2, anyio-4.10.0
+collected 1 item
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_dt.py F [100%]
+
+=================================== FAILURES ===================================
+____________________________ test_find_first_monday ____________________________
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 341, in from_call
+  |     result: Optional[TResult] = func()
+  |                                 ^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 241, in <lambda>
+  |     lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 513, in __call__
+  |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+  |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 182, in _multicall
+  |     return outcome.get_result()
+  |            ^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_result.py", line 100, in get_result
+  |     raise exc.with_traceback(exc.__traceback__)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/threadexception.py", line 87, in pytest_runtest_call
+  |     yield from thread_exception_runtest_hook()
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/threadexception.py", line 63, in thread_exception_runtest_hook
+  |     yield
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/unraisableexception.py", line 90, in pytest_runtest_call
+  |     yield from unraisable_exception_runtest_hook()
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/unraisableexception.py", line 65, in unraisable_exception_runtest_hook
+  |     yield
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/logging.py", line 850, in pytest_runtest_call
+  |     yield from self._runtest_for(item, "call")
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/logging.py", line 833, in _runtest_for
+  |     yield
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/capture.py", line 878, in pytest_runtest_call
+  |     return (yield)
+  |             ^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/skipping.py", line 257, in pytest_runtest_call
+  |     return (yield)
+  |             ^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 103, in _multicall
+  |     res = hook_impl.function(*args)
+  |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 183, in pytest_runtest_call
+  |     raise e
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 173, in pytest_runtest_call
+  |     item.runtest()
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/python.py", line 1632, in runtest
+  |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 513, in __call__
+  |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+  |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+  |     raise exception.with_traceback(exception.__traceback__)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 103, in _multicall
+  |     res = hook_impl.function(*args)
+  |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/python.py", line 162, in pytest_pyfunc_call
+  |     result = testfunction(**testargs)
+  |              ^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_dt.py", line 55, in test_find_first_monday
+  |     @settings(max_examples=10000, deadline=None, derandomize=True)
+  |                    ^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/hypothesis/core.py", line 1657, in wrapped_test
+  |     raise the_error_hypothesis_found
+  | ExceptionGroup: Hypothesis found 2 distinct failures. (2 sub-exceptions)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_dt.py", line 58, in test_find_first_monday
+    |     result = find_first_monday(year, month)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_dt.py", line 11, in find_first_monday
+    |     first_day_of_month = datetime(year, month, 1)
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^
+    | OverflowError: signed integer is greater than maximum
+    | Falsifying example: test_find_first_monday(
+    |     # The test always failed when commented parts were varied together.
+    |     year=946702800,  # or any other generated value
+    |     month=2177470800,  # or any other generated value
+    | )
+    +---------------- 2 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_dt.py", line 58, in test_find_first_monday
+    |     result = find_first_monday(year, month)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_dt.py", line 11, in find_first_monday
+    |     first_day_of_month = datetime(year, month, 1)
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^
+    | ValueError: year 946702800 is out of range
+    | Falsifying example: test_find_first_monday(
+    |     # The test always failed when commented parts were varied together.
+    |     year=946702800,  # or any other generated value
+    |     month=946702800,  # or any other generated value
+    | )
+    +------------------------------------
+=========================== short test summary info ============================
+FAILED results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_dt.py::test_find_first_monday
+============================== 1 failed in 6.26s ===============================
+
+Standard Error:
+
+==================================================
+Error in file computation_gemini-gemini-2-5-flash_5_pd.py:
+Return Code: 1
+Standard Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.2.2, pluggy-1.5.0
+rootdir: /Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests
+configfile: pytest.ini
+plugins: time-machine-2.14.2, cov-5.0.0, hypothesis-6.104.2, anyio-4.10.0
+collected 1 item
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_pd.py F [100%]
+
+=================================== FAILURES ===================================
+____________________________ test_find_first_monday ____________________________
+
+    @seed(27)
+>   @settings(max_examples=10000, deadline=None, derandomize=True)
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_pd.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_pd.py:64: in test_find_first_monday
+    result = find_first_monday(year, month)
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_pd.py:11: in find_first_monday
+    first_day_of_month = pendulum.datetime(year, month, 1)
+../datetime_venv/lib/python3.12/site-packages/pendulum/__init__.py:140: in datetime
+    return DateTime.create(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'pendulum.datetime.DateTime'>
+year = DateTime(2000, 1, 1, 5, 0, 0, tzinfo=Timezone('UTC'))
+month = DateTime(2000, 1, 1, 5, 0, 0, tzinfo=Timezone('UTC')), day = 1, hour = 0
+minute = 0, second = 0, microsecond = 0, tz = Timezone('UTC'), fold = 1
+raise_on_unknown_times = False
+
+    @classmethod
+    def create(
+        cls,
+        year: SupportsIndex,
+        month: SupportsIndex,
+        day: SupportsIndex,
+        hour: SupportsIndex = 0,
+        minute: SupportsIndex = 0,
+        second: SupportsIndex = 0,
+        microsecond: SupportsIndex = 0,
+        tz: str | float | Timezone | FixedTimezone | None | datetime.tzinfo = UTC,
+        fold: int = 1,
+        raise_on_unknown_times: bool = False,
+    ) -> Self:
+        """
+        Creates a new DateTime instance from a specific date and time.
+        """
+        if tz is not None:
+            tz = pendulum._safe_timezone(tz)
+    
+>       dt = datetime.datetime(
+            year, month, day, hour, minute, second, microsecond, fold=fold
+        )
+E       TypeError: 'DateTime' object cannot be interpreted as an integer
+E       Falsifying example: test_find_first_monday(
+E           # The test always failed when commented parts were varied together.
+E           year=DateTime(2000, 1, 1, 5, 0, 0, tzinfo=Timezone('UTC')),  # or any other generated value
+E           month=DateTime(2000, 1, 1, 5, 0, 0, tzinfo=Timezone('UTC')),  # or any other generated value
+E       )
+
+../datetime_venv/lib/python3.12/site-packages/pendulum/datetime.py:105: TypeError
+=========================== short test summary info ============================
+FAILED results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_5_pd.py::test_find_first_monday
+============================== 1 failed in 7.04s ===============================
+
+Standard Error:
+
+==================================================
+Error in file computation_gemini-gemini-2-5-flash_7_dt.py:
+Return Code: 1
+Standard Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.2.2, pluggy-1.5.0
+rootdir: /Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests
+configfile: pytest.ini
+plugins: time-machine-2.14.2, cov-5.0.0, hypothesis-6.104.2, anyio-4.10.0
+collected 1 item
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_dt.py F [100%]
+
+=================================== FAILURES ===================================
+______________________________ test_is_leap_year _______________________________
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 341, in from_call
+  |     result: Optional[TResult] = func()
+  |                                 ^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 241, in <lambda>
+  |     lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 513, in __call__
+  |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+  |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 182, in _multicall
+  |     return outcome.get_result()
+  |            ^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_result.py", line 100, in get_result
+  |     raise exc.with_traceback(exc.__traceback__)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/threadexception.py", line 87, in pytest_runtest_call
+  |     yield from thread_exception_runtest_hook()
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/threadexception.py", line 63, in thread_exception_runtest_hook
+  |     yield
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/unraisableexception.py", line 90, in pytest_runtest_call
+  |     yield from unraisable_exception_runtest_hook()
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/unraisableexception.py", line 65, in unraisable_exception_runtest_hook
+  |     yield
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/logging.py", line 850, in pytest_runtest_call
+  |     yield from self._runtest_for(item, "call")
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/logging.py", line 833, in _runtest_for
+  |     yield
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/capture.py", line 878, in pytest_runtest_call
+  |     return (yield)
+  |             ^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  |     teardown.throw(outcome._exception)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/skipping.py", line 257, in pytest_runtest_call
+  |     return (yield)
+  |             ^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 103, in _multicall
+  |     res = hook_impl.function(*args)
+  |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 183, in pytest_runtest_call
+  |     raise e
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/runner.py", line 173, in pytest_runtest_call
+  |     item.runtest()
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/python.py", line 1632, in runtest
+  |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 513, in __call__
+  |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+  |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+  |     raise exception.with_traceback(exception.__traceback__)
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/pluggy/_callers.py", line 103, in _multicall
+  |     res = hook_impl.function(*args)
+  |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/_pytest/python.py", line 162, in pytest_pyfunc_call
+  |     result = testfunction(**testargs)
+  |              ^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_dt.py", line 46, in test_is_leap_year
+  |     @settings(max_examples=10000, deadline=None, derandomize=True)
+  |                    ^^^
+  |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_venv/lib/python3.12/site-packages/hypothesis/core.py", line 1657, in wrapped_test
+  |     raise the_error_hypothesis_found
+  | ExceptionGroup: Hypothesis found 2 distinct failures. (2 sub-exceptions)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_dt.py", line 49, in test_is_leap_year
+    |     result = is_leap_year(year)
+    |              ^^^^^^^^^^^^^^^^^^
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_dt.py", line 11, in is_leap_year
+    |     start_of_year = datetime(year, 1, 1)
+    |                     ^^^^^^^^^^^^^^^^^^^^
+    | OverflowError: signed integer is greater than maximum
+    | Falsifying example: test_is_leap_year(
+    |     year=2148613200,  # or any other generated value
+    | )
+    +---------------- 2 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_dt.py", line 49, in test_is_leap_year
+    |     result = is_leap_year(year)
+    |              ^^^^^^^^^^^^^^^^^^
+    |   File "/Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_dt.py", line 11, in is_leap_year
+    |     start_of_year = datetime(year, 1, 1)
+    |                     ^^^^^^^^^^^^^^^^^^^^
+    | ValueError: year 946702800 is out of range
+    | Falsifying example: test_is_leap_year(
+    |     year=946702800,  # or any other generated value
+    | )
+    +------------------------------------
+=========================== short test summary info ============================
+FAILED results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_dt.py::test_is_leap_year
+============================== 1 failed in 2.06s ===============================
+
+Standard Error:
+
+==================================================
+Error in file computation_gemini-gemini-2-5-flash_7_pd.py:
+Return Code: 1
+Standard Output:
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.2.2, pluggy-1.5.0
+rootdir: /Users/smtiwari/Documents/DateTimeTesting/datetime_genai/results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests
+configfile: pytest.ini
+plugins: time-machine-2.14.2, cov-5.0.0, hypothesis-6.104.2, anyio-4.10.0
+collected 1 item
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_pd.py F [100%]
+
+=================================== FAILURES ===================================
+______________________________ test_is_leap_year _______________________________
+
+    @seed(27)
+>   @settings(max_examples=10000, deadline=None, derandomize=True)
+
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_pd.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_pd.py:59: in test_is_leap_year
+    result = is_leap_year(year)
+results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_pd.py:12: in is_leap_year
+    date_in_year = pendulum.datetime(year, 1, 1)
+../datetime_venv/lib/python3.12/site-packages/pendulum/__init__.py:140: in datetime
+    return DateTime.create(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'pendulum.datetime.DateTime'>
+year = DateTime(2000, 1, 1, 5, 0, 0, tzinfo=Timezone('UTC')), month = 1, day = 1
+hour = 0, minute = 0, second = 0, microsecond = 0, tz = Timezone('UTC')
+fold = 1, raise_on_unknown_times = False
+
+    @classmethod
+    def create(
+        cls,
+        year: SupportsIndex,
+        month: SupportsIndex,
+        day: SupportsIndex,
+        hour: SupportsIndex = 0,
+        minute: SupportsIndex = 0,
+        second: SupportsIndex = 0,
+        microsecond: SupportsIndex = 0,
+        tz: str | float | Timezone | FixedTimezone | None | datetime.tzinfo = UTC,
+        fold: int = 1,
+        raise_on_unknown_times: bool = False,
+    ) -> Self:
+        """
+        Creates a new DateTime instance from a specific date and time.
+        """
+        if tz is not None:
+            tz = pendulum._safe_timezone(tz)
+    
+>       dt = datetime.datetime(
+            year, month, day, hour, minute, second, microsecond, fold=fold
+        )
+E       TypeError: 'DateTime' object cannot be interpreted as an integer
+E       Falsifying example: test_is_leap_year(
+E           year=DateTime(2000, 1, 1, 5, 0, 0, tzinfo=Timezone('UTC')),  # or any other generated value
+E       )
+
+../datetime_venv/lib/python3.12/site-packages/pendulum/datetime.py:105: TypeError
+=========================== short test summary info ============================
+FAILED results/run_gemini-gemini-2-5-flash/dt_vs_pendulum_diff_tests/computation_gemini-gemini-2-5-flash_7_pd.py::test_is_leap_year
+============================== 1 failed in 2.19s ===============================
+
+Standard Error:
+
+==================================================

@@ -1,0 +1,79 @@
+Let's think step by step to solve this problem.
+1. Normalize the input datetime to UTC. If the datetime is naive (no tzinfo), treat it as UTC.
+2. Convert the UTC datetime to Julian Date (JD) using the Unix epoch relationship: JD = seconds_since_unix_epoch / 86400 + 2440587.5.
+3. Compute Julian centuries since J2000.0: T = (JD - 2451545.0) / 36525.
+4. Compute the Greenwich Mean Sidereal Time (GMST) in degrees using the IAU 2006 approximation: GMST = 280.46061837 + 360.98564736629*(JD - 2451545.0) + 0.000387933*T^2 - (T^3)/38710000.
+5. Normalize GMST degrees to the [0, 360) range.
+6. Compute Local Sidereal Time (LST) in degrees by adding the observer’s longitude in degrees (east positive) to GMST and normalize to [0, 360).
+7. Convert LST degrees to sidereal hours by dividing by 15 and return the result in the [0, 24) range.
+
+```python
+from datetime import datetime, timezone
+
+def _normalize_angle_deg(angle: float) -> float:
+    """
+    Normalize an angle in degrees to the [0, 360) interval.
+    """
+    angle_mod = angle % 360.0
+    # Handle potential negative modulo results explicitly (though % handles it in Python)
+    if angle_mod < 0:
+        angle_mod += 360.0
+    return angle_mod
+
+def _julian_date_from_datetime_utc(dt_utc: datetime) -> float:
+    """
+    Compute the Julian Date from a UTC datetime using the Unix epoch relation.
+    JD = (seconds since 1970-01-01T00:00:00Z)/86400 + 2440587.5
+    """
+    # dt_utc must be timezone-aware in UTC
+    unix_seconds = dt_utc.timestamp()
+    jd = (unix_seconds / 86400.0) + 2440587.5
+    return jd
+
+def calculate_sidereal_time(dt: datetime, longitude_degrees: float) -> float:
+    """
+    Calculate the Local Sidereal Time (LST) for a given datetime and longitude.
+
+    Inputs:
+    - dt: datetime (naive treated as UTC; aware will be converted to UTC)
+    - longitude_degrees: float, geographic longitude in degrees (east positive, west negative)
+
+    Output:
+    - float: Local Sidereal Time in sidereal hours within [0, 24)
+    """
+    # Step 1: Ensure the datetime is in UTC
+    if dt.tzinfo is None:
+        # Treat naive datetime as UTC by assumption
+        dt_utc = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = dt.astimezone(timezone.utc)
+
+    # Step 2: Compute Julian Date
+    jd = _julian_date_from_datetime_utc(dt_utc)
+
+    # Step 3: Julian centuries since J2000.0
+    T = (jd - 2451545.0) / 36525.0
+
+    # Step 4: Compute GMST in degrees using IAU approximation
+    gmst_deg = (
+        280.46061837
+        + 360.98564736629 * (jd - 2451545.0)
+        + 0.000387933 * (T ** 2)
+        - (T ** 3) / 38710000.0
+    )
+    gmst_deg = _normalize_angle_deg(gmst_deg)
+
+    # Step 5: Local Sidereal Time in degrees (east longitudes positive)
+    lst_deg = _normalize_angle_deg(gmst_deg + longitude_degrees)
+
+    # Step 6: Convert degrees to sidereal hours
+    lst_hours = lst_deg / 15.0
+    if lst_hours >= 24.0:
+        lst_hours -= 24.0
+    elif lst_hours < 0.0:
+        lst_hours += 24.0
+
+    return lst_hours
+
+# Entry point: calculate_sidereal_time(dt: datetime, longitude_degrees: float) -> float
+```

@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and perform date arithmetic.
+
+2. **Define a function**: We will create a function that accepts two datetime objects as input - the target datetime and the reference datetime.
+
+3. **Calculate the difference**: Subtract the reference date from the target date to get a timedelta object, then extract the days component.
+
+4. **Return the result**: Return the number of days as an integer. This will be positive if the target date is after the reference date, and negative if it's before.
+
+```python
+from datetime import datetime
+
+def days_since_reference(target_date: datetime, reference_date: datetime) -> int:
+    # Calculate the difference between target datetime and reference datetime
+    difference = target_date - reference_date
+    
+    # Extract and return the number of days as an integer
+    return difference.days
+
+# Entry point: days_since_reference(target_date: datetime, reference_date: datetime) -> int
+```

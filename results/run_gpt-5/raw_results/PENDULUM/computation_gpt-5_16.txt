@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with datetime and timezones.
+2. Define a function that accepts a Unix timestamp (as a float) and an optional pendulum.Timezone.
+3. Use pendulum.from_timestamp to convert the Unix timestamp to a pendulum.DateTime in the specified timezone.
+4. Return the resulting pendulum.DateTime.
+
+```python
+import pendulum
+
+def convert_unix_to_datetime(timestamp: float, tz: pendulum.Timezone = pendulum.timezone("UTC")) -> pendulum.DateTime:
+    """
+    Convert a Unix timestamp (seconds since epoch) to a pendulum.DateTime in the given timezone.
+    
+    :param timestamp: Unix timestamp in seconds (can be integer-like; float is accepted).
+    :param tz: pendulum.Timezone to localize the resulting DateTime (default: UTC).
+    :return: pendulum.DateTime representing the given timestamp in the specified timezone.
+    """
+    # Step 1: Convert the Unix timestamp to a pendulum.DateTime in the specified timezone
+    dt = pendulum.from_timestamp(timestamp, tz=tz)
+    
+    # Step 2: Return the resulting DateTime
+    return dt
+
+# Entry point: convert_unix_to_datetime(timestamp: float, tz: pendulum.Timezone = pendulum.timezone("UTC")) -> pendulum.DateTime
+```

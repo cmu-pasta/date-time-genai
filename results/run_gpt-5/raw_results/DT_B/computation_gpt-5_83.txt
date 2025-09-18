@@ -1,0 +1,83 @@
+Let's think step by step to solve this problem.
+1. Accept the target year and a timezone (zoneinfo.ZoneInfo).
+2. Search the second half of the year (from July 1) to detect a DST decrease between consecutive days at local noon.
+3. When a decrease is detected, perform a binary search within that calendar day to pinpoint the transition moment when DST drops to standard time.
+4. Return the local calendar date on which the DST-to-standard-time transition occurs.
+5. If no DST end is found for the given year and timezone, raise a ValueError.
+
+```python
+from datetime import datetime, timedelta, date, time
+from zoneinfo import ZoneInfo
+
+def find_dst_end_date(year: int, tz: ZoneInfo) -> date:
+    """
+    Find the calendar date when daylight saving time ends in the given year for the specified timezone.
+    Raises ValueError if the timezone does not end DST in that year.
+    """
+    # Start scanning from mid-year to reduce chance of catching DST start
+    start_day = date(year, 7, 1)
+    end_day = date(year, 12, 31)
+
+    def local_noon(d: date) -> datetime:
+        return datetime(d.year, d.month, d.day, 12, 0, 0, tzinfo=tz)
+
+    prev_dt = local_noon(start_day)
+    prev_dst = prev_dt.dst() or timedelta(0)
+
+    # Scan by day to find a decrease in DST offset (typical for DST end)
+    current_day = start_day
+    one_day = timedelta(days=1)
+
+    dst_end_day = None
+
+    while current_day < end_day:
+        next_day = current_day + one_day
+        next_dt = local_noon(next_day)
+        next_dst = next_dt.dst() or timedelta(0)
+
+        # Detect a drop in DST offset (e.g., from 1h to 0h)
+        if next_dst < prev_dst:
+            # Transition occurs sometime within 'next_day'
+            dst_end_day = next_day
+            break
+
+        current_day = next_day
+        prev_dt = next_dt
+        prev_dst = next_dst
+
+    if dst_end_day is None:
+        raise ValueError("No DST end found for the specified year and timezone.")
+
+    # Binary search within the identified day to find the first instant with post-DST offset
+    day_start = datetime(dst_end_day.year, dst_end_day.month, dst_end_day.day, 0, 0, 0, tzinfo=tz)
+    day_end = day_start + one_day
+
+    low = day_start
+    high = day_end
+
+    # Define a small resolution for the search (1 second)
+    one_second = timedelta(seconds=1)
+
+    def is_std_time(dt: datetime) -> bool:
+        # Standard time is when dst() == 0
+        return (dt.dst() or timedelta(0)) == timedelta(0)
+
+    # Ensure we are actually transitioning within this day
+    if is_std_time(day_start) and not is_std_time(day_start - one_second):
+        # Already at the instant after transition; return today's date
+        return day_start.date()
+
+    # Binary search to locate the first moment of standard time within the day
+    while (high - low) > one_second:
+        mid = low + (high - low) / 2
+        # Using datetime arithmetic returns a timedelta; mid will be a datetime
+        if is_std_time(mid):
+            high = mid
+        else:
+            low = mid
+
+    transition_instant = high
+    return transition_instant.date()
+
+# Entry point: find_dst_end_date(year: int, tz: ZoneInfo) -> date
+```
