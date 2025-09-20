@@ -1,34 +1,23 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the standard datetime library.
-2. Define a function that takes a birth datetime and an "as of" datetime as inputs.
-3. Validate that both inputs are datetime instances.
-4. Ensure both datetimes are either timezone-aware or both naive to avoid subtraction errors.
-5. Subtract the birth datetime from the "as of" datetime to get a timedelta.
-6. Convert the timedelta to total seconds and return it as an integer.
+1. Import the datetime class from the datetime module to work with datetime objects and compute time differences.
+2. Define a function that accepts a birth datetime as input.
+3. Obtain the current datetime in the same timezone as the input birth datetime to ensure correct comparison.
+4. Compute the time delta between now and the birth datetime.
+5. Convert the time delta to total seconds.
+6. Ensure the result is not negative (return 0 if birth is in the future).
+7. Return the integer number of seconds.
 
 ```python
 from datetime import datetime
 
-def calculate_chronological_age_seconds(birth_dt: datetime, as_of: datetime) -> int:
-    """
-    Calculate the chronological age in seconds between a birth datetime and a reference datetime.
+def calculate_age_in_seconds(birth: datetime) -> int:
+    # Get current datetime aligned with the timezone awareness of the input
+    now = datetime.now(tz=birth.tzinfo)
+    # Compute the time difference
+    delta = now - birth
+    # Convert to total seconds and ensure non-negative age
+    seconds = int(delta.total_seconds())
+    return seconds if seconds >= 0 else 0
 
-    Parameters:
-    - birth_dt: datetime of birth (naive or timezone-aware).
-    - as_of: reference datetime at which to compute age (must match awareness of birth_dt).
-
-    Returns:
-    - int: number of seconds between birth_dt and as_of. Can be negative if as_of < birth_dt.
-    """
-    if not isinstance(birth_dt, datetime) or not isinstance(as_of, datetime):
-        raise TypeError("Both birth_dt and as_of must be datetime instances.")
-
-    # Ensure both datetimes are either both naive or both timezone-aware
-    if (birth_dt.tzinfo is None) != (as_of.tzinfo is None):
-        raise ValueError("birth_dt and as_of must both be naive or both be timezone-aware.")
-
-    delta = as_of - birth_dt
-    return int(delta.total_seconds())
-
-# Entry point: calculate_chronological_age_seconds(birth_dt: datetime, as_of: datetime) -> int
+# Entry point: calculate_age_in_seconds(birth: datetime) -> int
 ```

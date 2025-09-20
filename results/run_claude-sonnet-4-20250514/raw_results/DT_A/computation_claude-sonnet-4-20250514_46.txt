@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with datetime objects.
+2. **Define a function**: We will create a function that accepts a datetime object as input.
+3. **Extract the time component**: Since we need to convert to 12-hour format, we'll extract the time portion from the datetime object.
+4. **Return the time object**: Return the time component as a time object, which can be formatted to display in 12-hour format when needed.
+
+```python
+from datetime import datetime, time
+
+def convert_to_12hour_format(dt: datetime) -> time:
+    # Step 1: Extract the time component from the datetime object
+    time_component = dt.time()
+    
+    # Step 2: Return the time object (which can be formatted as 12-hour when displayed)
+    return time_component
+
+# Entry point: convert_to_12hour_format(dt: datetime) -> time
+```

@@ -1,41 +1,26 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard datetime library.
-2. Define a function that accepts a datetime input for precise computation (including time-of-day).
-3. Compute the start and end instants of the given date's year, preserving the tzinfo if present.
-4. Calculate total seconds in the year and the elapsed seconds since the start of the year.
-5. Compute the percentage as (elapsed / total) * 100 and return it as a float.
+1. Import the required types from the datetime module.
+2. Define a function that takes a datetime as input.
+3. Construct the start of the current year and the start of the next year, preserving the input's tzinfo.
+4. Compute the total duration of the year in seconds.
+5. Compute the elapsed duration since the start of the year in seconds.
+6. Calculate and return the percentage of the year that has passed as a float.
 
 ```python
-from datetime import datetime, date
+from datetime import datetime
 
-def calculate_year_percentage(dt: datetime) -> float:
-    """
-    Calculate the percentage of the year that has passed for the given datetime.
+def calculate_year_progress(dt: datetime) -> float:
+    # Determine the start of the year and the start of the next year, preserving tzinfo
+    year_start = datetime(dt.year, 1, 1, tzinfo=dt.tzinfo)
+    next_year_start = datetime(dt.year + 1, 1, 1, tzinfo=dt.tzinfo)
     
-    - The calculation preserves tzinfo if present on the input.
-    - The result is a float percentage in the range [0.0, 100.0].
-    """
-    # Start and end of the year in the same timezone context as dt
-    start_of_year = datetime(dt.year, 1, 1, tzinfo=dt.tzinfo)
-    start_of_next_year = datetime(dt.year + 1, 1, 1, tzinfo=dt.tzinfo)
-
-    total_seconds_in_year = (start_of_next_year - start_of_year).total_seconds()
-    elapsed_seconds = (dt - start_of_year).total_seconds()
-
-    # Compute percentage and clamp to [0, 100] to be robust
+    # Compute total seconds in the year and elapsed seconds since year start
+    total_seconds_in_year = (next_year_start - year_start).total_seconds()
+    elapsed_seconds = (dt - year_start).total_seconds()
+    
+    # Calculate percentage of the year that has passed
     percentage = (elapsed_seconds / total_seconds_in_year) * 100.0
-    if percentage < 0.0:
-        return 0.0
-    if percentage > 100.0:
-        return 100.0
     return percentage
 
-def calculate_year_percentage_for_date(d: date) -> float:
-    """
-    Convenience function to accept a date input (assumes midnight at the start of the day).
-    """
-    dt = datetime(d.year, d.month, d.day)  # naive midnight
-    return calculate_year_percentage(dt)
-
-# Entry point: calculate_year_percentage(dt: datetime) -> float
+# Entry point: calculate_year_progress(dt: datetime) -> float
 ```

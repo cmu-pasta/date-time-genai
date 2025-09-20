@@ -1,34 +1,25 @@
 Let's think step by step to solve this problem.
-1. Import the required classes (date, timedelta) from the datetime module.
-2. Define a function that accepts a year as an integer.
-3. Create a date object for January 1st of the given year.
-4. Compute the number of days to the first Monday in January using the weekday value.
-5. Compute the third Monday by adding 14 days (two weeks) to the first Monday.
-6. Return the resulting date.
+1. Import the necessary classes from the datetime module: date and timedelta.
+2. Accept the target year as an integer input.
+3. Construct the date for January 1st of the given year.
+4. Compute the weekday of January 1st (Monday=0, Sunday=6).
+5. Calculate the offset to the first Monday of January.
+6. Add 14 days to the first Monday to get the third Monday.
+7. Return the computed date.
 
 ```python
 from datetime import date, timedelta
 
-def martin_luther_king_jr_day(year: int) -> date:
+def mlk_day(year: int) -> date:
     """
     Compute Martin Luther King Jr. Day (third Monday of January) for a given year.
-
-    Parameters:
-    - year: int, the year for which to compute the holiday.
-
-    Returns:
-    - date: the date of Martin Luther King Jr. Day in the given year.
     """
-    # January 1st of the given year
-    jan1 = date(year, 1, 1)
-    # Weekday of Jan 1st: Monday=0, Sunday=6
-    jan1_weekday = jan1.weekday()
-    # Days to the first Monday in January
-    days_to_first_monday = (0 - jan1_weekday) % 7
-    first_monday = jan1 + timedelta(days=days_to_first_monday)
-    # Third Monday = first Monday + 14 days
-    mlk_day = first_monday + timedelta(days=14)
-    return mlk_day
+    jan_first = date(year, 1, 1)
+    # Monday is 0, Sunday is 6
+    days_to_first_monday = (0 - jan_first.weekday()) % 7
+    first_monday = jan_first + timedelta(days=days_to_first_monday)
+    third_monday = first_monday + timedelta(days=14)
+    return third_monday
 
-# Entry point: martin_luther_king_jr_day(year: int) -> date
+# Entry point: mlk_day(year: int) -> date
 ```

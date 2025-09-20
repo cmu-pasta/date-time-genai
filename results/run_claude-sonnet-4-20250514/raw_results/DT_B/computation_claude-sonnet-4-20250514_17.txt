@@ -1,60 +1,44 @@
 Let's think step by step to solve this problem.
 
-1. **Understand the requirement**: We need to find the nth occurrence of a specific weekday (like Monday, Tuesday, etc.) within a given month and year.
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` from Python's standard library to work with dates and iterate through days.
 
-2. **Define the input parameters**: We need the year, month, the target weekday (0=Monday, 1=Tuesday, ..., 6=Sunday), and which occurrence (n) we're looking for.
+2. **Define the function parameters**: The function should accept a datetime object representing any date in the target month, an integer representing the weekday (0=Monday, 6=Sunday), and an integer representing which occurrence (1st, 2nd, 3rd, etc.).
 
-3. **Algorithm approach**: Start from the first day of the given month, iterate through each day, count occurrences of the target weekday, and return the date when we reach the nth occurrence.
+3. **Initialize the search**: Start from the first day of the given month and initialize a counter to track occurrences of the target weekday.
 
-4. **Handle month boundaries**: We need to ensure we don't go beyond the last day of the specified month.
+4. **Iterate through the month**: Loop through each day of the month, checking if it matches the target weekday.
 
-5. **Use datetime operations**: Utilize date arithmetic to move through days and check weekdays using the `weekday()` method.
+5. **Count occurrences**: When we find a matching weekday, increment the counter. When the counter reaches the desired nth occurrence, return that date.
+
+6. **Handle month boundaries**: Use timedelta to safely increment days and check when we've moved beyond the target month.
 
 ```python
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 
-def find_nth_weekday_in_month(year: int, month: int, weekday: int, n: int) -> date:
-    """
-    Find the nth occurrence of a specific weekday in a given month.
+def find_nth_weekday_occurrence(month_date: datetime, weekday: int, n: int) -> datetime:
+    # Get the year and month from the input date
+    year = month_date.year
+    month = month_date.month
     
-    Args:
-        year: The year (integer)
-        month: The month (1-12)
-        weekday: The target weekday (0=Monday, 1=Tuesday, ..., 6=Sunday)
-        n: Which occurrence to find (1st, 2nd, 3rd, etc.)
-    
-    Returns:
-        date: The date of the nth occurrence of the weekday
-    """
     # Start from the first day of the month
-    current_date = date(year, month, 1)
+    current_date = datetime(year, month, 1)
     
-    # Calculate the last day of the month
-    if month == 12:
-        next_month_first = date(year + 1, 1, 1)
-    else:
-        next_month_first = date(year, month + 1, 1)
+    count = 0
     
-    last_day_of_month = next_month_first - timedelta(days=1)
-    
-    # Count occurrences of the target weekday
-    occurrence_count = 0
-    
-    # Iterate through each day of the month
-    while current_date <= last_day_of_month:
-        # Check if current day matches the target weekday
+    # Iterate through the days of the month
+    while current_date.month == month:
+        # Check if this day is the target weekday (0=Monday, 6=Sunday)
         if current_date.weekday() == weekday:
-            occurrence_count += 1
-            # If we've found the nth occurrence, return this date
-            if occurrence_count == n:
+            count += 1
+            if count == n:
                 return current_date
         
         # Move to the next day
         current_date += timedelta(days=1)
     
-    # If nth occurrence doesn't exist, return the last day of the month
-    # (This handles edge cases where nth occurrence doesn't exist)
-    return last_day_of_month
+    # If nth occurrence doesn't exist, return the first day of the month
+    # (This assumes valid input where nth occurrence exists)
+    return datetime(year, month, 1)
 
-# Entry point: find_nth_weekday_in_month(year: int, month: int, weekday: int, n: int) -> date
+# Entry point: find_nth_weekday_occurrence(month_date: datetime, weekday: int, n: int) -> datetime
 ```

@@ -1,28 +1,27 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard datetime library.
-2. Define a function that accepts two datetime objects as inputs.
-3. Compute the timedelta difference between the two datetimes.
-4. Convert the timedelta to an exact integer count of nanoseconds using integer arithmetic.
-5. Return the absolute value of the nanosecond difference as an integer.
+1. Import the datetime module to work with datetime objects and timedeltas.
+2. Define a function that accepts two datetime inputs representing the timestamps.
+3. Subtract the two datetimes to obtain a timedelta.
+4. Convert the timedelta to nanoseconds using integer arithmetic to avoid floating-point rounding.
+5. Return the absolute number of nanoseconds as an integer.
 
 ```python
-from datetime import datetime, timedelta
+from datetime import datetime
 
-def nanoseconds_between(ts1: datetime, ts2: datetime) -> int:
-    """
-    Calculate the absolute number of nanoseconds between two precise timestamps.
-
-    Parameters:
-    - ts1: datetime
-    - ts2: datetime
-
-    Returns:
-    - int: absolute difference in nanoseconds
-    """
+def calculate_nanoseconds_between(ts1: datetime, ts2: datetime) -> int:
+    # Step 1: Compute the timedelta difference
     delta = ts2 - ts1
-    # Convert timedelta to nanoseconds using exact integer arithmetic
-    total_ns = (delta.days * 86_400 + delta.seconds) * 1_000_000_000 + delta.microseconds * 1_000
-    return abs(total_ns)
 
-# Entry point: nanoseconds_between(ts1: datetime, ts2: datetime) -> int
+    # Step 2: Convert the timedelta to nanoseconds using integer math
+    # Note: datetime supports microsecond precision; resulting nanoseconds will be multiples of 1,000.
+    total_nanoseconds = (
+        delta.days * 86_400_000_000_000  # 24*60*60*1e9
+        + delta.seconds * 1_000_000_000
+        + delta.microseconds * 1_000
+    )
+
+    # Step 3: Return the absolute nanoseconds as an integer
+    return abs(total_nanoseconds)
+
+# Entry point: calculate_nanoseconds_between(ts1: datetime, ts2: datetime) -> int
 ```

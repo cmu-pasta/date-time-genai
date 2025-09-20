@@ -1,0 +1,60 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `pendulum` library to handle date and time objects.
+2.  **Define the function signature**: Create a function that accepts two `pendulum.DateTime` objects, `start_dt` and `end_dt`, and returns a `float` representing the total working hours.
+3.  **Ensure correct order**: Swap `start_dt` and `end_dt` if `start_dt` is after `end_dt` to simplify the calculation.
+4.  **Define working hours**: Establish a standard working day, e.g., 9:00 to 17:00. These hours will be used for calculating daily working time.
+5.  **Initialize total hours**: Start with `total_working_hours = 0.0`.
+6.  **Iterate day by day**: Loop through each day from the start date to the end date. For each day:
+    *   Check if the current day is a weekday (Monday to Friday).
+    *   If it's a weekday, calculate the overlap between the working hours (9:00-17:00) and the specific time range being considered for that day (which could be partial for the first and last day).
+    *   Specifically, determine the `actual_day_start` (the later of `start_dt` or 9:00 AM on the current day) and `actual_day_end` (the earlier of `end_dt` or 5:00 PM on the current day).
+    *   Also, consider the `daily_working_start` (9:00 AM) and `daily_working_end` (5:00 PM) for the current day.
+    *   Calculate the intersection of `[max(actual_day_start, daily_working_start), min(actual_day_end, daily_working_end)]`. If this interval is valid (start < end), add its duration in hours to the `total_working_hours`.
+7.  **Return the total working hours**: After iterating through all relevant days, return the accumulated `total_working_hours`.
+
+```python
+import pendulum
+
+def calculate_working_hours_between(start_dt: pendulum.DateTime, end_dt: pendulum.DateTime) -> float:
+    # Step 1: Ensure start_dt is always before end_dt
+    if start_dt > end_dt:
+        start_dt, end_dt = end_dt, start_dt
+
+    total_working_hours = 0.0
+
+    # Define standard daily working hours (e.g., 9 AM to 5 PM)
+    WORKING_START_HOUR = 9
+    WORKING_END_HOUR = 17
+
+    current_day = start_dt.start_of('day')
+
+    # Step 2: Iterate day by day from start_dt to end_dt
+    while current_day <= end_dt.start_of('day'):
+        # Step 3: Check if the current day is a weekday (Monday to Friday)
+        # Pendulum's is_weekend() returns True for Saturday and Sunday
+        if not current_day.is_weekend():
+            # Define the working start and end for the current day
+            daily_working_start = current_day.set(hour=WORKING_START_HOUR)
+            daily_working_end = current_day.set(hour=WORKING_END_HOUR)
+
+            # Determine the effective start and end for this specific day, considering the overall start_dt and end_dt
+            effective_start_for_day = max(start_dt, daily_working_start)
+            effective_end_for_day = min(end_dt, daily_working_end)
+
+            # Step 4: Calculate the overlap between the effective range and the daily working hours
+            if effective_start_for_day < effective_end_for_day:
+                duration = effective_end_for_day - effective_start_for_day
+                total_working_hours += duration.in_hours()
+        
+        # Move to the next day
+        current_day = current_day.add(days=1).start_of('day')
+
+    # Ensure the calculation doesn't go beyond end_dt if end_dt is not exactly at the start of a day
+    # The loop condition `current_day <= end_dt.start_of('day')` handles this by including the day of end_dt.
+    # The `min(end_dt, daily_working_end)` in `effective_end_for_day` makes sure we don't count past end_dt's time.
+
+    return total_working_hours
+
+# Entry point: calculate_working_hours_between(start_dt: pendulum.DateTime, end_dt: pendulum.DateTime) -> float
+```

@@ -1,27 +1,20 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard library's datetime module.
-2. Define a function that accepts two date objects as inputs.
-3. Compute the absolute difference between the two dates to obtain a timedelta.
-4. Extract the number of days from the timedelta.
-5. Convert the number of days into fortnights by performing integer division by 14.
-6. Return the integer count of complete fortnights.
+1. Import the required types from the datetime module.
+2. Define a function that accepts two date objects.
+3. Compute the absolute difference in days between the two dates.
+4. Convert the day difference to fortnights by integer division by 14.
+5. Return the fortnights as an integer.
 
 ```python
 from datetime import date
 
 def calculate_fortnights_between(d1: date, d2: date) -> int:
     """
-    Calculate the number of complete fortnights (14-day periods) between two dates.
-
-    Parameters:
-    - d1: date
-    - d2: date
-
-    Returns:
-    - int: Number of complete fortnights between d1 and d2 (non-negative).
+    Calculate the number of whole fortnights (14-day periods) between two dates.
+    The result is the absolute number of fortnights as an integer.
     """
     day_difference = abs((d2 - d1).days)
-    fortnights = day_difference // 14  # Integer count of complete 14-day periods
+    fortnights = day_difference // 14
     return fortnights
 
 # Entry point: calculate_fortnights_between(d1: date, d2: date) -> int

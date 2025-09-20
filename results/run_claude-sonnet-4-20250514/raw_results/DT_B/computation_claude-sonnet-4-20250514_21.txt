@@ -1,38 +1,33 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
-2. **Define a function**: We will create a function that accepts a birth date as input and returns the number of days until the next birthday.
-3. **Get the current date**: We need to know today's date to calculate the difference.
-4. **Determine this year's birthday**: Create a date object for the birthday in the current year.
-5. **Check if birthday has passed**: If this year's birthday has already occurred, we need to calculate days until next year's birthday.
-6. **Calculate the difference**: Use subtraction to find the number of days between today and the next birthday.
-7. **Return the result**: Return the result as an integer representing the number of days.
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and times.
+2. **Define a function**: Create a function that accepts a birth date as a datetime object.
+3. **Get the current date**: Use `datetime.now()` to get the current date and time.
+4. **Calculate this year's birthday**: Create a datetime object for the birthday in the current year using the birth month and day.
+5. **Determine next birthday**: If this year's birthday has already passed, the next birthday will be in the following year.
+6. **Calculate the difference**: Subtract the current datetime from the next birthday datetime to get the difference.
+7. **Return the result**: Extract the number of days from the timedelta and return as an integer.
 
 ```python
-from datetime import datetime, date
+from datetime import datetime
 
-def days_until_next_birthday(birth_date: date) -> int:
-    # Step 1: Get today's date
-    today = date.today()
+def days_until_next_birthday(birth_date: datetime) -> int:
+    # Get current date and time
+    now = datetime.now()
     
-    # Step 2: Create this year's birthday date
-    current_year = today.year
-    this_year_birthday = date(current_year, birth_date.month, birth_date.day)
+    # Create this year's birthday with the same month and day as birth_date
+    this_year_birthday = datetime(now.year, birth_date.month, birth_date.day)
     
-    # Step 3: Check if this year's birthday has already passed
-    if this_year_birthday < today:
-        # Birthday has passed, calculate days until next year's birthday
-        next_year_birthday = date(current_year + 1, birth_date.month, birth_date.day)
-        days_until = (next_year_birthday - today).days
-    elif this_year_birthday > today:
-        # Birthday hasn't occurred yet this year
-        days_until = (this_year_birthday - today).days
+    # If birthday already passed this year, use next year
+    if this_year_birthday < now:
+        next_birthday = datetime(now.year + 1, birth_date.month, birth_date.day)
     else:
-        # Today is the birthday!
-        days_until = 0
+        next_birthday = this_year_birthday
     
-    # Step 4: Return the result as an integer
+    # Calculate difference in days
+    days_until = (next_birthday - now).days
+    
     return days_until
 
-# Entry point: days_until_next_birthday(birth_date: date) -> int
+# Entry point: days_until_next_birthday(birth_date: datetime) -> int
 ```

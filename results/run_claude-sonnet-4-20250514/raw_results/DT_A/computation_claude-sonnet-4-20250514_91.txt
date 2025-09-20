@@ -1,0 +1,56 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the Indian National Calendar**: The Indian National Calendar (Saka Calendar) starts from March 22 (or March 21 in leap years) of the Gregorian calendar. The Saka era begins from 78 CE, so we need to subtract 78 from the Gregorian year and adjust for the different starting month.
+
+2. **Import necessary libraries**: We need the `datetime` module to work with dates and perform date calculations.
+
+3. **Calculate the Saka year**: The Saka year changes on March 22 (or March 21 in leap years). If the Gregorian date is before this date, we subtract 79 from the Gregorian year; otherwise, we subtract 78.
+
+4. **Determine the month and day**: Map the Gregorian date to the corresponding Saka month and day based on the calendar conversion rules.
+
+5. **Return the result**: Format the Saka date as an integer in YYYYMMDD format.
+
+```python
+from datetime import datetime, date
+
+def gregorian_to_saka_date(gregorian_date: date) -> int:
+    # Step 1: Determine if it's a leap year in Gregorian calendar
+    is_leap_year = gregorian_date.year % 4 == 0 and (gregorian_date.year % 100 != 0 or gregorian_date.year % 400 == 0)
+    
+    # Step 2: Determine the start date of Saka year for this Gregorian year
+    if is_leap_year:
+        saka_start = date(gregorian_date.year, 3, 21)  # March 21 in leap years
+    else:
+        saka_start = date(gregorian_date.year, 3, 22)  # March 22 in normal years
+    
+    # Step 3: Calculate Saka year
+    if gregorian_date < saka_start:
+        saka_year = gregorian_date.year - 79  # Previous Saka year
+        # Calculate from previous year's start
+        if (gregorian_date.year - 1) % 4 == 0 and ((gregorian_date.year - 1) % 100 != 0 or (gregorian_date.year - 1) % 400 == 0):
+            prev_saka_start = date(gregorian_date.year - 1, 3, 21)
+        else:
+            prev_saka_start = date(gregorian_date.year - 1, 3, 22)
+        days_from_start = (gregorian_date - prev_saka_start).days
+    else:
+        saka_year = gregorian_date.year - 78  # Current Saka year
+        days_from_start = (gregorian_date - saka_start).days
+    
+    # Step 4: Calculate Saka month and day based on days from start
+    # Saka calendar months and their days: Chaitra(30/31), then 5 months of 31 days, then 6 months of 30 days
+    saka_month_days = [31 if is_leap_year else 30, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30]
+    
+    saka_month = 1
+    saka_day = days_from_start + 1
+    
+    for month_days in saka_month_days:
+        if saka_day <= month_days:
+            break
+        saka_day -= month_days
+        saka_month += 1
+    
+    # Step 5: Return as integer in YYYYMMDD format
+    return saka_year * 10000 + saka_month * 100 + saka_day
+
+# Entry point: gregorian_to_saka_date(gregorian_date: date) -> int
+```

@@ -6,40 +6,30 @@ from pendulum_generators import *
 from hypothesis import settings, seed, given
 
 import pendulum
-def find_next_leap_year(dt: pendulum.DateTime) -> int:
-    # Step 1: Get the year from the input date
-    year = dt.year
+def find_next_leap_year(date: pendulum.DateTime) -> int:
+    """
+    Determines the next leap year after a given date.
 
-    # Step 2: Determine the starting year for the search
-    # If the current year is a leap year and the date is on or before Feb 29th of that year,
-    # then the current year is the next leap year.
-    # Otherwise, we need to search from the next year.
-    if pendulum.is_leap(year):
-        # Create a pendulum.DateTime for February 29th of the current year
-        # Note: If the year is not a leap year, pendulum.datetime(year, 2, 29) would raise an error.
-        # But we only enter this block if pendulum.is_leap(year) is True, so Feb 29th exists.
-        feb_29_current_year = pendulum.datetime(year, 2, 29, tz=dt.timezone)
-        
-        if dt <= feb_29_current_year:
-            # The current year is a leap year and the date has not passed Feb 29th,
-            # so the current year is the next leap year.
-            return year
-        else:
-            # The current year is a leap year, but the date has passed Feb 29th,
-            # so we need to find the next one starting from year + 1.
-            start_year = year + 1
-    else:
-        # The current year is not a leap year, so we start searching from the next year.
-        start_year = year + 1
-    
-    # Step 3: Iterate from start_year to find the next leap year
-    current_search_year = start_year
+    Args:
+        date: The reference date (pendulum.DateTime).
+
+    Returns:
+        An integer representing the year of the next leap year.
+    """
+    current_year = date.year
+    year_to_check = current_year + 1
+
     while True:
-        if pendulum.is_leap(current_search_year):
-            return current_search_year
-        current_search_year += 1
+        # Create a pendulum.DateTime object for the first day of the year_to_check
+        # This allows us to use the is_leap() method.
+        test_date = pendulum.datetime(year_to_check, 1, 1)
+        
+        if test_date.is_leap():
+            return year_to_check
+        
+        year_to_check += 1
 
-# Entry point: find_next_leap_year(dt: pendulum.DateTime) -> int
+# Entry point: find_next_leap_year(date: pendulum.DateTime) -> int
 
 def format_value_pd(*values):
     formatted_values = []
@@ -76,7 +66,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(datetime_strategy())
-def test_find_next_leap_year(dt):
-    result = find_next_leap_year(dt)
-    formatted_result = format_value_pd(result, dt)
+def test_find_next_leap_year(date):
+    result = find_next_leap_year(date)
+    formatted_result = format_value_pd(result, date)
     log_file.write(formatted_result + "\n")

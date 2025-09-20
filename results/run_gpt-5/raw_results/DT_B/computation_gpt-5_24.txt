@@ -1,47 +1,60 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the standard datetime library.
-2. Define a function that accepts two datetimes as inputs.
-3. Normalize the order of inputs so the start is not after the end.
-4. Iterate day by day, summing only the portions that fall on weekdays (Monday–Friday).
-5. Return the total accumulated duration as a timedelta.
+1. Normalize the input datetimes so that dt_start <= dt_end; if both are timezone-aware, convert both to UTC to ensure consistent computation.
+2. Define business hours for each weekday as 09:00 to 17:00.
+3. Iterate over each calendar day spanned by the interval [dt_start, dt_end).
+4. For each weekday (Monday–Friday), compute the overlap between the day's business-hours window and the overall interval.
+5. Accumulate the total overlapped seconds across all applicable days.
+6. Convert the accumulated seconds to hours as a float and return the result.
 
 ```python
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta, timezone
 
-def calculate_working_hours_between(dt_start: datetime, dt_end: datetime) -> timedelta:
-    """
-    Calculate the total duration that falls on weekdays (Monday-Friday)
-    between two datetimes, excluding all time that falls on Saturdays and Sundays.
-
-    The result is returned as a timedelta representing the working hours (here defined
-    as all hours on weekdays). If dt_end is earlier than dt_start, the duration is computed
-    using the absolute interval.
-    """
-    # Ensure dt_start <= dt_end
-    if dt_start == dt_end:
-        return timedelta(0)
+def calculate_working_hours_between(dt_start: datetime, dt_end: datetime) -> float:
+    # Ensure chronological order
     if dt_start > dt_end:
         dt_start, dt_end = dt_end, dt_start
 
-    total = timedelta(0)
-    current = dt_start
+    # If both are timezone-aware, normalize to UTC for consistent day boundaries
+    if (dt_start.tzinfo is not None and dt_start.tzinfo.utcoffset(dt_start) is not None) and \
+       (dt_end.tzinfo is not None and dt_end.tzinfo.utcoffset(dt_end) is not None):
+        dt_start = dt_start.astimezone(timezone.utc)
+        dt_end = dt_end.astimezone(timezone.utc)
 
-    while current < dt_end:
-        # Start and end boundaries for the current day
-        day_start = current.replace(hour=0, minute=0, second=0, microsecond=0)
-        day_end = day_start + timedelta(days=1)
+    # Business hours: 09:00 to 17:00 (8 hours)
+    biz_start_t = time(9, 0, 0)
+    biz_end_t = time(17, 0, 0)
 
-        # The end of the interval within the current day
-        interval_end = dt_end if dt_end < day_end else day_end
+    # Helper to build a datetime with the same tzinfo as the provided datetime
+    def at_time(d: datetime, t: time) -> datetime:
+        return datetime(d.year, d.month, d.day, t.hour, t.minute, t.second, t.microsecond, tzinfo=d.tzinfo)
 
-        # Weekday check: Monday=0 ... Sunday=6
-        if day_start.weekday() < 5:
-            total += interval_end - current
+    total_seconds = 0.0
 
-        # Move to the next segment
-        current = interval_end
+    # Iterate over days
+    current_day = datetime(dt_start.year, dt_start.month, dt_start.day, tzinfo=dt_start.tzinfo)
+    end_day = datetime(dt_end.year, dt_end.month, dt_end.day, tzinfo=dt_end.tzinfo)
 
-    return total
+    # We will loop until we pass the date part of dt_end
+    days = (end_day.date() - current_day.date()).days
+    for i in range(days + 1):
+        day = current_day + timedelta(days=i)
 
-# Entry point: calculate_working_hours_between(dt_start: datetime, dt_end: datetime) -> timedelta
+        # Skip weekends: Saturday=5, Sunday=6
+        if day.weekday() >= 5:
+            continue
+
+        day_start = at_time(day, biz_start_t)
+        day_end = at_time(day, biz_end_t)
+
+        # Compute overlap between [day_start, day_end] and [dt_start, dt_end]
+        start_overlap = max(day_start, dt_start)
+        end_overlap = min(day_end, dt_end)
+
+        if end_overlap > start_overlap:
+            total_seconds += (end_overlap - start_overlap).total_seconds()
+
+    # Convert seconds to hours
+    return total_seconds / 3600.0
+
+# Entry point: calculate_working_hours_between(dt_start: datetime, dt_end: datetime) -> float
 ```

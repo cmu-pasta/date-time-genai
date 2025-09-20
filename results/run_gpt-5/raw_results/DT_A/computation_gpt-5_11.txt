@@ -1,27 +1,16 @@
 Let's think step by step to solve this problem.
-1. Import the required class from the datetime module to represent calendar dates.
-2. Define a function that accepts a year as an integer input.
-3. Use the Meeus/Jones/Butcher algorithm to compute the month and day of Easter Sunday for the given year in the Gregorian calendar.
-4. Construct and return a datetime.date object for the computed Easter Sunday.
+1. Import the date class from the datetime module to construct a calendar date.
+2. Use the Meeus/Jones/Butcher algorithm to compute the month and day of Easter Sunday for the Gregorian calendar.
+3. Construct and return a date object for the computed year, month, and day.
 
 ```python
 from datetime import date
 
-def find_easter_sunday(year: int) -> date:
+def easter_sunday(year: int) -> date:
     """
-    Compute the date of Easter Sunday for a given year using the
-    Meeus/Jones/Butcher algorithm for the Gregorian calendar.
-    
-    Input:
-      - year: integer in the range 1..9999
-    
-    Output:
-      - date: a datetime.date representing Easter Sunday of the given year
+    Compute the date of Easter Sunday for a given Gregorian calendar year.
+    Uses the Meeus/Jones/Butcher algorithm.
     """
-    if not (1 <= year <= 9999):
-        raise ValueError("year must be in the range 1..9999")
-    
-    # Meeus/Jones/Butcher algorithm
     a = year % 19
     b = year // 100
     c = year % 100
@@ -34,10 +23,9 @@ def find_easter_sunday(year: int) -> date:
     k = c % 4
     l = (32 + 2 * e + 2 * i - h - k) % 7
     m = (a + 11 * h + 22 * l) // 451
-    month = (h + l - 7 * m + 114) // 31  # 3 = March, 4 = April
+    month = (h + l - 7 * m + 114) // 31
     day = ((h + l - 7 * m + 114) % 31) + 1
-
     return date(year, month, day)
 
-# Entry point: find_easter_sunday(year: int) -> date
+# Entry point: easter_sunday(year: int) -> date
 ```

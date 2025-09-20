@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with date and time objects.
+2.  **Define a function**: Create a function that accepts two `datetime` objects as input, representing the two timestamps.
+3.  **Calculate the time difference**: Subtract the earlier `datetime` object from the later one (or vice versa and take the absolute value) to obtain a `timedelta` object.
+4.  **Convert timedelta to nanoseconds**: The `timedelta` object provides a `total_seconds()` method, which returns the total duration in seconds as a float. To convert this to nanoseconds, multiply the total seconds by `1,000,000,000`.
+5.  **Return the result**: Cast the final calculated value to an integer, as requested, ensuring the absolute difference is returned.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_nanoseconds_difference(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Calculate the difference between the two datetime objects.
+    # The result is a timedelta object.
+    # Use abs() to ensure the difference is always positive, regardless of input order.
+    difference: timedelta = abs(dt2 - dt1)
+    
+    # Step 2: Get the total number of seconds from the timedelta.
+    # This value is a float, representing seconds with microsecond precision.
+    total_seconds_float: float = difference.total_seconds()
+    
+    # Step 3: Convert the total seconds to nanoseconds.
+    # Multiply by 1,000,000,000 (1 billion) to get nanoseconds.
+    # Since standard datetime objects have microsecond precision, the last three
+    # digits of the nanosecond count will effectively be zero.
+    nanoseconds: float = total_seconds_float * 1_000_000_000
+    
+    # Step 4: Return the result as an integer.
+    # Converting the float to an integer will truncate any fractional parts.
+    return int(nanoseconds)
+
+# Entry point: calculate_nanoseconds_difference(dt1: datetime, dt2: datetime) -> int
+```

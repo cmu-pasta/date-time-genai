@@ -7,13 +7,13 @@ from hypothesis import settings, seed, given
 
 import pendulum
 def is_leap_year(year: int) -> bool:
-    # Step 1: Create a pendulum.DateTime object for the given year.
-    # The day and month (e.g., January 1st) don't affect the leap year check for the year itself.
-    date_in_year = pendulum.datetime(year, 1, 1)
+    # Step 1: Create a pendulum.Date object for the given year.
+    # We can use any date within that year, for simplicity, we pick January 1st.
+    date_in_year = pendulum.date(year, 1, 1)
     
-    # Step 2: Use the is_leap() method available on pendulum.DateTime objects.
-    # This method returns True if the year of the object is a leap year, False otherwise.
-    is_leap = date_in_year.is_leap()
+    # Step 2: Access the is_leap_year property of the pendulum.Date object.
+    # This property directly returns a boolean indicating if the year is a leap year.
+    is_leap = date_in_year.is_leap_year
     
     # Step 3: Return the boolean result.
     return is_leap

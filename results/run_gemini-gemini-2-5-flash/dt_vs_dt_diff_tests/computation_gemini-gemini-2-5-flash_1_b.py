@@ -8,31 +8,19 @@ from hypothesis import given, seed, settings
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 def calculate_exact_time_difference(dt1: datetime, dt2: datetime) -> timedelta:
-    """
-    Calculates the exact time difference between two timezone-aware datetime objects,
-    considering daylight saving time.
-
-    Args:
-        dt1: The first timezone-aware datetime object.
-        dt2: The second timezone-aware datetime object.
-
-    Returns:
-        A timedelta object representing the exact time difference between dt1 and dt2.
-        The result is always dt2 - dt1.
-    """
-    # Ensure both datetime objects are timezone-aware.
-    # If they are naive, this function will not correctly account for DST.
-    # For this problem, we assume the inputs are already timezone-aware.
+    # Step 1: Ensure both datetime objects are timezone-aware.
+    # The problem implies handling DST, which requires timezone-aware datetimes.
+    # We'll rely on the inputs being correctly timezone-aware.
     if dt1.tzinfo is None or dt2.tzinfo is None:
-        raise ValueError("Input datetime objects must be timezone-aware to correctly account for DST.")
+        raise ValueError("Both datetime objects must be timezone-aware to correctly calculate DST-adjusted difference.")
 
-    # Step 1: Calculate the difference between the two timezone-aware datetime objects.
-    # The subtraction of two timezone-aware datetimes automatically accounts for
-    # any DST changes that occur between them.
-    difference = dt2 - dt1
+    # Step 2: Calculate the difference between the two timezone-aware datetime objects.
+    # Python's datetime subtraction handles timezone and DST transitions automatically
+    # by internally converting to UTC before calculating the difference.
+    time_difference = abs(dt2 - dt1)
     
-    # Step 2: Return the result as a timedelta object.
-    return difference
+    # Step 3: Return the timedelta object representing the exact time difference.
+    return time_difference
 
 # Entry point: calculate_exact_time_difference(dt1: datetime, dt2: datetime) -> timedelta
 

@@ -1,35 +1,24 @@
 Let's think step by step to solve this problem.
-1. Import necessary classes from the standard datetime library.
-2. Define a function that accepts a date as input.
-3. Extract the year, month, and day from the input date.
-4. Apply the standard proleptic Gregorian algorithm (Fliegel–Van Flandern) to compute the Julian Day Number.
-5. Return the resulting integer.
+1. Import the required type (date) from the datetime module.
+2. Define a function that accepts a date and extracts its year, month, and day.
+3. Apply the well-known Fliegel–Van Flandern algorithm to compute the Julian Day Number for the given proleptic Gregorian date.
+4. Return the Julian Day Number as an integer.
 
 ```python
 from datetime import date
 
 def date_to_julian_day_number(d: date) -> int:
-    """
-    Convert a Gregorian calendar date (proleptic, as used by datetime.date)
-    to its corresponding Julian Day Number (JDN), which is the integer count
-    of days since the start of the Julian Period.
-
-    Parameters:
-        d (date): The input date.
-
-    Returns:
-        int: The Julian Day Number corresponding to the given date at 00:00 UTC.
-    """
-    y = d.year
-    m = d.month
-    day = d.day
+    # Extract Y, M, D from the provided date
+    Y = d.year
+    M = d.month
+    D = d.day
 
     # Fliegel–Van Flandern algorithm for proleptic Gregorian calendar
-    a = (14 - m) // 12
-    y_adj = y + 4800 - a
-    m_adj = m + 12 * a - 3
+    a = (14 - M) // 12
+    y = Y + 4800 - a
+    m = M + 12 * a - 3
 
-    jdn = day + (153 * m_adj + 2) // 5 + 365 * y_adj + y_adj // 4 - y_adj // 100 + y_adj // 400 - 32045
+    jdn = D + ((153 * m + 2) // 5) + 365 * y + (y // 4) - (y // 100) + (y // 400) - 32045
     return jdn
 
 # Entry point: date_to_julian_day_number(d: date) -> int

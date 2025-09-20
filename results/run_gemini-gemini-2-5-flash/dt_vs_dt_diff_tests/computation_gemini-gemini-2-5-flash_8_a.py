@@ -7,17 +7,32 @@ from hypothesis import given, seed, settings
 
 from datetime import datetime, timedelta
 def find_last_day_of_month(dt: datetime) -> datetime:
-    # Step 1: Get the first day of the month after the input date's month.
-    # We set the day to 1 to get the start of the current month.
-    # Then we add 32 days to guarantee we land in the *next* month.
-    # Finally, we set the day to 1 again to get the *first* day of that next month.
-    first_day_of_next_month = (dt.replace(day=1) + timedelta(days=32)).replace(day=1)
+    # Step 1: Determine the year and month of the next month
+    # If the current month is December, the next month is January of the next year
+    if dt.month == 12:
+        next_month_year = dt.year + 1
+        next_month = 1
+    else:
+        next_month_year = dt.year
+        next_month = dt.month + 1
     
-    # Step 2: Subtract one day from the first day of the next month
-    # This gives us the last day of the original month.
+    # Step 2: Create a datetime object for the first day of the next month.
+    # We will preserve the time components from the original date for consistency.
+    first_day_of_next_month = datetime(
+        year=next_month_year,
+        month=next_month,
+        day=1,
+        hour=dt.hour,
+        minute=dt.minute,
+        second=dt.second,
+        microsecond=dt.microsecond,
+        tzinfo=dt.tzinfo
+    )
+    
+    # Step 3: Subtract one day to get the last day of the current month
     last_day = first_day_of_next_month - timedelta(days=1)
     
-    # Step 3: Return the result
+    # Step 4: Return the result
     return last_day
 
 # Entry point: find_last_day_of_month(dt: datetime) -> datetime

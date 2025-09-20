@@ -1,0 +1,53 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and times.
+2. **Define a function**: We will create a function that accepts a date, latitude, and longitude as inputs.
+3. **Implement sunset calculation**: Use astronomical formulas to calculate the sunset time based on the date and coordinates.
+4. **Convert to local time**: Return the result as a pendulum.DateTime object representing the sunset time.
+
+```python
+import pendulum
+import math
+
+def calculate_sunset_time(date: pendulum.Date, latitude: float, longitude: float) -> pendulum.DateTime:
+    # Convert date to day of year
+    day_of_year = date.day_of_year
+    
+    # Calculate solar declination angle (approximation)
+    declination = 23.45 * math.sin(math.radians(360 * (284 + day_of_year) / 365))
+    
+    # Convert latitude to radians
+    lat_rad = math.radians(latitude)
+    decl_rad = math.radians(declination)
+    
+    # Calculate hour angle for sunset
+    try:
+        cos_hour_angle = -math.tan(lat_rad) * math.tan(decl_rad)
+        # Clamp the value to avoid math domain errors
+        cos_hour_angle = max(-1, min(1, cos_hour_angle))
+        hour_angle = math.degrees(math.acos(cos_hour_angle))
+    except ValueError:
+        # Handle polar day/night cases - assume 6 PM as default
+        hour_angle = 90
+    
+    # Calculate sunset time in hours from solar noon
+    sunset_hour_decimal = 12 + hour_angle / 15
+    
+    # Apply longitude correction (4 minutes per degree)
+    longitude_correction = longitude / 15
+    local_sunset_hour = sunset_hour_decimal - longitude_correction
+    
+    # Ensure the hour is within 0-24 range
+    local_sunset_hour = local_sunset_hour % 24
+    
+    # Convert decimal hour to hours and minutes
+    sunset_hour = int(local_sunset_hour)
+    sunset_minute = int((local_sunset_hour - sunset_hour) * 60)
+    
+    # Create the sunset datetime
+    sunset_datetime = pendulum.datetime(date.year, date.month, date.day, sunset_hour, sunset_minute, 0)
+    
+    return sunset_datetime
+
+# Entry point: calculate_sunset_time(date: pendulum.Date, latitude: float, longitude: float) -> pendulum.DateTime
+```

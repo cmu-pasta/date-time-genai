@@ -1,45 +1,58 @@
 Let's think step by step to solve this problem.
-1. Choose a known reference new moon instant in UTC as an epoch.
-2. Use the mean synodic month length (in days) to step from the reference to the next new moon after the input.
-3. Convert the input to UTC to avoid timezone ambiguity.
-4. Compute the difference in days between the input and the reference.
-5. Use floor division to estimate the cycle count, build a candidate new moon time, and if it is not strictly after the input, add one synodic month.
-6. Return the resulting pendulum.DateTime in UTC.
+1. Choose a reliable reference new moon moment in UTC and the average synodic month length (29.530588853 days).
+2. Convert the input datetime to UTC and represent both the input and reference moments as integer microseconds since the Unix epoch to avoid floating-point drift.
+3. Compute how many complete synodic months have elapsed since the reference. If the input is before the reference, zero elapsed months; otherwise, take the integer quotient and move to the next lunation to ensure the result is strictly after the given date.
+4. Add that number of synodic months (in microseconds) to the reference microsecond timestamp.
+5. Convert the resulting microsecond timestamp back to a pendulum.DateTime in UTC and return it.
 
 ```python
 import pendulum
 
-# Mean synodic month length (days)
-_SYNODIC_MONTH_DAYS: float = 29.530588853
-
-# Reference new moon: 2000-01-06 18:14 UTC (well-known epoch)
-_REF_NEW_MOON_UTC: pendulum.DateTime = pendulum.datetime(2000, 1, 6, 18, 14, tz='UTC')
-
-def next_new_moon(after_dt: pendulum.DateTime) -> pendulum.DateTime:
+def next_new_moon(after: pendulum.DateTime) -> pendulum.DateTime:
     """
-    Compute the date-time of the next new moon strictly after the given datetime.
-    The computation uses a mean synodic month approximation from a known epoch.
-    The result is returned as a pendulum.DateTime in UTC.
+    Compute the date and time of the next new moon strictly after the given datetime.
+    Uses an average synodic month approximation relative to a known reference new moon.
+
+    Input:  after (pendulum.DateTime) - the moment after which to find the next new moon
+    Output: pendulum.DateTime - the UTC datetime of the next new moon
     """
-    # Normalize input to UTC for consistent arithmetic
-    dt_utc: pendulum.DateTime = after_dt.in_timezone('UTC')
+    # Step 1: Reference new moon (UTC): 2000-01-06 18:14:00 UTC
+    ref_new_moon = pendulum.datetime(2000, 1, 6, 18, 14, 0, tz="UTC")
 
-    # Time difference in days from the reference new moon
-    delta: pendulum.Duration = dt_utc - _REF_NEW_MOON_UTC
-    diff_days: float = delta.total_seconds() / 86400.0
+    # Step 2: Average synodic month length in microseconds (integer arithmetic)
+    # 1 day = 86_400 seconds = 86_400_000_000 microseconds
+    synodic_days = 29.530588853
+    synodic_us = int(round(synodic_days * 86_400_000_000))  # microseconds per synodic month
 
-    # Estimate cycle index using floor division for floats
-    n_cycles: int = int(diff_days // _SYNODIC_MONTH_DAYS)
+    # Helper to convert a DateTime to UTC microseconds since epoch using pendulum only
+    def to_utc_microseconds(dt: pendulum.DateTime) -> int:
+        dt_utc = dt.in_timezone("UTC")
+        return dt_utc.int_timestamp * 1_000_000 + dt_utc.microsecond
 
-    # Construct candidate new moon
-    seconds_per_cycle: float = _SYNODIC_MONTH_DAYS * 86400.0
-    candidate: pendulum.DateTime = _REF_NEW_MOON_UTC.add(seconds=n_cycles * seconds_per_cycle)
+    # Step 3: Compute elapsed microseconds since the reference
+    after_us = to_utc_microseconds(after)
+    ref_us = to_utc_microseconds(ref_new_moon)
+    diff_us = after_us - ref_us
 
-    # Ensure the returned new moon is strictly after the input
-    if not (candidate > dt_utc):
-        candidate = candidate.add(seconds=seconds_per_cycle)
+    # Step 4: Determine the number of lunations to add to reach the next new moon strictly after 'after'
+    if diff_us < 0:
+        # Input is before the reference; the next new moon is the reference itself
+        n = 0
+    else:
+        # Number of complete lunations that have fully elapsed
+        complete = diff_us // synodic_us
+        # Move to the next lunation to ensure result is strictly after 'after'
+        n = complete + 1
 
-    return candidate
+    # Step 5: Compute the next new moon timestamp in microseconds
+    next_new_moon_us = ref_us + n * synodic_us
 
-# Entry point: next_new_moon(after_dt: pendulum.DateTime) -> pendulum.DateTime
+    # Step 6: Convert microseconds back to a pendulum.DateTime in UTC
+    next_sec = next_new_moon_us // 1_000_000
+    next_micro = next_new_moon_us % 1_000_000
+    next_dt = pendulum.from_timestamp(next_sec, tz="UTC").replace(microsecond=next_micro)
+
+    return next_dt
+
+# Entry point: next_new_moon(after: pendulum.DateTime) -> pendulum.DateTime
 ```

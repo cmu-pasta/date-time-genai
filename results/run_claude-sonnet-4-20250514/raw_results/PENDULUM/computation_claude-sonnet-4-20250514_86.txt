@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the pendulum library to work with dates.
+2. **Create a function**: Define a function that accepts a year as an integer input.
+3. **Find February 1st**: Create a date object for February 1st of the given year.
+4. **Find the first Monday**: Determine what day of the week February 1st falls on and calculate the first Monday of February.
+5. **Calculate the third Monday**: Add 14 days (2 weeks) to the first Monday to get the third Monday.
+6. **Return the result**: Return the Presidents' Day date as a pendulum.Date object.
+
+```python
+import pendulum
+
+def find_presidents_day(year: int) -> pendulum.Date:
+    # Step 1: Create February 1st for the given year
+    feb_first = pendulum.date(year, 2, 1)
+    
+    # Step 2: Find the first Monday of February
+    # Monday is weekday 1 in pendulum
+    days_until_monday = (8 - feb_first.weekday()) % 7
+    if feb_first.weekday() == 1:  # If Feb 1st is already Monday
+        days_until_monday = 0
+    
+    first_monday = feb_first.add(days=days_until_monday)
+    
+    # Step 3: Add 14 days (2 weeks) to get the third Monday
+    third_monday = first_monday.add(days=14)
+    
+    return third_monday
+
+# Entry point: find_presidents_day(year: int) -> pendulum.Date
+```

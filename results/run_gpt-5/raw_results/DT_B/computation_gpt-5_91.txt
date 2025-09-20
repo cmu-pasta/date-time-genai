@@ -1,58 +1,52 @@
 Let's think step by step to solve this problem.
-1. Identify how the Indian National Calendar (Saka) aligns with the Gregorian calendar:
-   - Chaitra 1 falls on March 22 in common Gregorian years and March 21 in Gregorian leap years.
-   - Chaitra has 30 days in common years and 31 days in leap years; subsequent months have fixed lengths.
-2. Determine the Gregorian date of Chaitra 1 for the relevant year:
-   - If the input date is on/after Chaitra 1 of its Gregorian year, use that year; otherwise, use the previous Gregorian year.
-3. Compute the Saka year:
-   - If on/after Chaitra 1 of the Gregorian year G, Saka year = G - 78.
-   - Otherwise, Saka year = (G - 1) - 78 = G - 79.
-4. Compute the day offset from Chaitra 1 and map it to Saka month/day using month lengths:
-   - Month lengths: Chaitra (31 if leap year of Chaitra’s Gregorian anchor, else 30), Vaisakha–Bhadra: 31 each, Asvina–Phalguna: 30 each.
-5. Return the Saka date as a standard datetime.date, where year, month, day are the Saka values.
+1. Identify if the given Gregorian year is a leap year using only datetime by attempting to construct February 29.
+2. Determine the Gregorian date on which the Saka year starts: March 21 if the Gregorian year is leap, otherwise March 22.
+3. Decide whether the input date falls on or after the Saka New Year of its Gregorian year; if not, use the previous year's Saka New Year.
+4. Compute the Saka year relative to Gregorian: if on/after Saka start, Saka year = Gregorian year - 78; otherwise Saka year = Gregorian year - 79.
+5. Calculate the offset in days from the Saka New Year start date.
+6. Determine month lengths in the Saka year: Chaitra has 31 days if the Saka year starts in a Gregorian leap year, otherwise 30; months 2–7 have 31 days; months 8–12 have 30 days.
+7. Map the day offset to Saka month and day.
+8. Return the Saka date as a datetime.date with year set to the Saka year and month/day set to the Saka calendar values.
 
 ```python
 from datetime import date
 
 def _is_gregorian_leap(year: int) -> bool:
-    # Gregorian leap year rule
-    return (year % 4 == 0) and (year % 100 != 0 or year % 400 == 0)
+    # Use datetime.date construction to test for Feb 29 existence
+    try:
+        date(year, 2, 29)
+        return True
+    except ValueError:
+        return False
 
-def _chaitra_start_gregorian(g_year: int) -> date:
-    # Chaitra 1 falls on March 22 in common years and March 21 in Gregorian leap years
-    if _is_gregorian_leap(g_year):
-        return date(g_year, 3, 21)
+def gregorian_to_saka(gregorian_date: date) -> date:
+    # Determine Saka New Year start for the relevant Gregorian year
+    gy = gregorian_date.year
+    gy_is_leap = _is_gregorian_leap(gy)
+    saka_start_current = date(gy, 3, 21 if gy_is_leap else 22)
+
+    if gregorian_date >= saka_start_current:
+        saka_year = gy - 78
+        saka_year_start = saka_start_current
+        chaitra_len = 31 if gy_is_leap else 30
     else:
-        return date(g_year, 3, 22)
+        prev_gy = gy - 1
+        prev_is_leap = _is_gregorian_leap(prev_gy)
+        saka_year = gy - 79
+        saka_year_start = date(prev_gy, 3, 21 if prev_is_leap else 22)
+        chaitra_len = 31 if prev_is_leap else 30
 
-def determine_indian_national_date(gregorian_day: date) -> date:
-    # Determine which Gregorian year’s Chaitra 1 anchors this Saka year
-    chaitra_start_this_year = _chaitra_start_gregorian(gregorian_day.year)
-    if gregorian_day >= chaitra_start_this_year:
-        saka_year = gregorian_day.year - 78
-        chaitra_anchor = chaitra_start_this_year
-        leap_for_chaitra = _is_gregorian_leap(gregorian_day.year)
-    else:
-        prev_year = gregorian_day.year - 1
-        saka_year = prev_year - 78
-        chaitra_anchor = _chaitra_start_gregorian(prev_year)
-        leap_for_chaitra = _is_gregorian_leap(prev_year)
+    # Compute days since start of Saka year
+    days_since_start = (gregorian_date - saka_year_start).days  # 0-based
 
-    # Month lengths in Saka year starting at Chaitra
-    # Chaitra length depends on leap_for_chaitra
-    chaitra_len = 31 if leap_for_chaitra else 30
+    # Month lengths in Saka year starting from Chaitra
     month_lengths = (
-        chaitra_len,  # Chaitra
-        31, 31, 31, 31, 31,  # Vaisakha .. Bhadra
-        30, 30, 30, 30, 30, 30  # Asvina .. Phalguna
+        chaitra_len, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30
     )
 
-    # Compute offset from Chaitra 1
-    days_since_chaitra1 = (gregorian_day - chaitra_anchor).days
-
-    # Determine Saka month and day
+    # Map day offset to month and day
     month = 1
-    remaining = days_since_chaitra1
+    remaining = days_since_start
     for ml in month_lengths:
         if remaining < ml:
             day = remaining + 1
@@ -60,9 +54,8 @@ def determine_indian_national_date(gregorian_day: date) -> date:
         remaining -= ml
         month += 1
 
-    # Construct Saka calendar date as a standard date object
-    # Note: The returned date's year/month/day represent Saka values.
+    # Return as a datetime.date representing the Saka calendar components
     return date(saka_year, month, day)
 
-# Entry point: determine_indian_national_date(gregorian_day: date) -> date
+# Entry point: gregorian_to_saka(gregorian_date: date) -> date
 ```

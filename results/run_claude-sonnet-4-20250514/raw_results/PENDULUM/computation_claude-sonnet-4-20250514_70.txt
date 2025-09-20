@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Understand the conversion**: The Julian calendar is currently 13 days behind the Gregorian calendar (for dates after 1900). The offset varies depending on the century.
+3. **Calculate the offset**: For a given Julian date, we need to calculate how many days to add to convert it to the equivalent Gregorian date.
+4. **Define a function**: Create a function that accepts a pendulum.Date representing a Julian date and returns the equivalent Gregorian date.
+5. **Apply the conversion**: Add the appropriate number of days to the Julian date to get the Gregorian equivalent.
+
+```python
+import pendulum
+
+def convert_julian_to_gregorian(julian_date: pendulum.Date) -> pendulum.Date:
+    # Calculate the offset between Julian and Gregorian calendars
+    # The offset depends on the century
+    year = julian_date.year
+    
+    # Calculate the number of centuries since year 1
+    centuries = year // 100
+    
+    # The offset is calculated as: centuries - centuries//4 - 2
+    # This accounts for the different leap year rules
+    if year >= 1582:  # Gregorian calendar was introduced in 1582
+        offset = centuries - centuries // 4 - 2
+    else:
+        offset = 0  # No offset before Gregorian calendar introduction
+    
+    # Add the offset to convert Julian to Gregorian
+    gregorian_date = julian_date.add(days=offset)
+    
+    return gregorian_date
+
+# Entry point: convert_julian_to_gregorian(julian_date: pendulum.Date) -> pendulum.Date
+```

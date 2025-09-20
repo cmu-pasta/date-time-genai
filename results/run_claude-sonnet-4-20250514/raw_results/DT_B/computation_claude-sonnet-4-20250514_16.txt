@@ -1,20 +1,19 @@
 Let's think step by step to solve this problem.
 
 1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with timestamps and datetime objects.
-2. **Define a function**: We will create a function that accepts a Unix timestamp as input. Unix timestamps are typically represented as floats (seconds since epoch).
-3. **Convert the timestamp**: Use `datetime.fromtimestamp()` method to convert the Unix timestamp to a human-readable datetime object.
-4. **Return the result**: Return the datetime object which represents the human-readable format of the timestamp.
+2. **Define a function**: We will create a function that accepts a Unix timestamp as input (as a float representing seconds since epoch).
+3. **Convert timestamp to datetime**: Use `datetime.fromtimestamp()` to convert the Unix timestamp to a datetime object.
+4. **Return the result**: Return the datetime object which represents the human-readable datetime.
 
 ```python
 from datetime import datetime
 
-def convert_unix_timestamp(timestamp: float) -> datetime:
+def convert_unix_to_datetime(timestamp: float) -> datetime:
     # Step 1: Convert Unix timestamp to datetime object
-    # fromtimestamp() converts the timestamp to local time
-    human_readable_datetime = datetime.fromtimestamp(timestamp)
+    dt = datetime.fromtimestamp(timestamp)
     
     # Step 2: Return the datetime object
-    return human_readable_datetime
+    return dt
 
-# Entry point: convert_unix_timestamp(timestamp: float) -> datetime
+# Entry point: convert_unix_to_datetime(timestamp: float) -> datetime
 ```

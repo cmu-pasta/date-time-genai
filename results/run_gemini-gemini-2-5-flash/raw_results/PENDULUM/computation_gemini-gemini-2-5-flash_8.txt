@@ -2,19 +2,20 @@ Let's think step by step to solve this problem.
 
 1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
 2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object as input.
-3.  **Find the last day of the month**: The `pendulum.DateTime` object has a convenient `end_of()` method. By calling `date.end_of('month')`, we can directly get a new `pendulum.DateTime` object representing the last moment of the last day of that month.
-4.  **Return the result**: Return the newly created `pendulum.DateTime` object.
+3.  **Use `end_of_month()` method**: The `pendulum.DateTime` object has a convenient `end_of_month()` method which directly returns a new `pendulum.DateTime` object set to the last day of the month at the very end of that day (23:59:59.999999).
+4.  **Return the result**: Return the `pendulum.DateTime` object representing the last day of the month.
 
 ```python
 import pendulum
 
-def get_last_day_of_month(date: pendulum.DateTime) -> pendulum.DateTime:
-    # Step 1: Use the end_of('month') method to get the last day of the month
-    # This method returns a new pendulum.DateTime object set to the last moment of the last day.
-    last_day_of_month = date.end_of('month')
+def find_last_day_of_month(dt: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Use the end_of_month() method on the input DateTime object.
+    # This method returns a new DateTime object representing the last moment
+    # of the last day of the month for the given date.
+    last_day = dt.end_of_month()
     
-    # Step 2: Return the resulting pendulum.DateTime object
-    return last_day_of_month
+    # Step 2: Return the resulting pendulum.DateTime object.
+    return last_day
 
-# Entry point: get_last_day_of_month(date: pendulum.DateTime) -> pendulum.DateTime
+# Entry point: find_last_day_of_month(dt: pendulum.DateTime) -> pendulum.DateTime
 ```

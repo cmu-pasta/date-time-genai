@@ -1,41 +1,32 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module to work with dates and compute differences.
-2. Define a function that accepts the year and month as integers.
-3. Construct the date for the first day of the given month and the first day of the next month. Handle December by rolling over to January of the next year.
-4. Subtract the two dates to get a timedelta representing the number of days in the month.
-5. Convert the number of days to hours by multiplying by 24 and return the result as an integer.
+1. Import the datetime class from the datetime module to work with dates.
+2. Define a function that accepts two integers: the year and the month.
+3. Construct a datetime representing the first day of the given month.
+4. Construct a datetime representing the first day of the next month (handling December rollover).
+5. Compute the timedelta between these two dates.
+6. Convert the timedelta to hours by multiplying the number of days by 24.
+7. Return the integer number of hours.
 
 ```python
-from datetime import date
+from datetime import datetime
 
-def hours_in_month(year: int, month: int) -> int:
+def calculate_hours_in_month(year: int, month: int) -> int:
     """
-    Calculate the number of hours in a given month for a specific year,
-    correctly accounting for leap years.
-    
-    Parameters:
-        year (int): The year (e.g., 2024)
-        month (int): The month (1-12)
-    
-    Returns:
-        int: The number of hours in the specified month.
+    Calculate the number of hours in a given month of a given year.
+    Handles leap years by relying on datetime arithmetic.
     """
-    # Step 1: Determine the first day of the given month
-    start = date(year, month, 1)
-    
-    # Step 2: Determine the first day of the next month
+    if month < 1 or month > 12:
+        raise ValueError("month must be in 1..12")
+
+    start = datetime(year, month, 1)
     if month == 12:
-        next_month_start = date(year + 1, 1, 1)
+        next_month_start = datetime(year + 1, 1, 1)
     else:
-        next_month_start = date(year, month + 1, 1)
-    
-    # Step 3: Calculate the difference in days between the two dates
-    days_in_month = (next_month_start - start).days
-    
-    # Step 4: Convert days to hours
-    hours = days_in_month * 24
-    
+        next_month_start = datetime(year, month + 1, 1)
+
+    delta = next_month_start - start
+    hours = delta.days * 24
     return hours
 
-# Entry point: hours_in_month(year: int, month: int) -> int
+# Entry point: calculate_hours_in_month(year: int, month: int) -> int
 ```

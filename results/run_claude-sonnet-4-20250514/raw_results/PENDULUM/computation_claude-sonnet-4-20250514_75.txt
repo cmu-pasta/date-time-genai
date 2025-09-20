@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and times.
+2. **Define a function**: We will create a function that accepts a birth datetime as a pendulum.DateTime object.
+3. **Get current time**: We need to get the current datetime to calculate the age from birth until now.
+4. **Calculate the time difference**: Subtract the birth datetime from the current datetime to get the age duration.
+5. **Convert to seconds**: Convert the duration to seconds using pendulum's built-in methods.
+6. **Return the result**: Return the age in seconds as an integer.
+
+```python
+import pendulum
+
+def calculate_age_in_seconds(birth_datetime: pendulum.DateTime) -> int:
+    # Step 1: Get the current datetime
+    current_datetime = pendulum.now()
+    
+    # Step 2: Calculate the duration between current time and birth datetime
+    age_duration = current_datetime - birth_datetime
+    
+    # Step 3: Convert the duration to seconds and return as integer
+    return age_duration.in_seconds()
+
+# Entry point: calculate_age_in_seconds(birth_datetime: pendulum.DateTime) -> int
+```

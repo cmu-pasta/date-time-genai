@@ -1,38 +1,39 @@
 Let's think step by step to solve this problem.
-1. Import the datetime library and use date.min and date.max to validate supported year ranges.
-2. Implement a helper function that computes the number of leap years up to a given year using Gregorian rules.
-3. Normalize the input years so the range is ascending.
-4. Use the inclusive range formula: leaps_up_to(b) - leaps_up_to(a - 1).
-5. Return the result as an integer.
+1. Import the datetime class from the datetime module to validate leap years via date construction.
+2. Define a function that accepts two integers representing years.
+3. Ensure the range is correctly ordered by swapping if needed so the start year is less than or equal to the end year.
+4. Iterate over each year in the inclusive range and attempt to construct February 29; if successful, it’s a leap year.
+5. Count and return the number of leap years as an integer.
 
 ```python
-from datetime import date
+from datetime import datetime
 
 def count_leap_years_between(year1: int, year2: int) -> int:
     """
-    Calculate the number of leap years between two years (inclusive of both endpoints).
-
-    Args:
-        year1: An integer year within the supported datetime range [1, 9999].
-        year2: An integer year within the supported datetime range [1, 9999].
-
-    Returns:
-        An integer count of leap years between the two years, inclusive.
+    Count the number of leap years between two years, inclusive.
+    A year is considered leap if February 29 exists for that year.
     """
-    # Validate input years using datetime.date bounds
-    min_year, max_year = date.min.year, date.max.year
-    if not (min_year <= year1 <= max_year) or not (min_year <= year2 <= max_year):
-        raise ValueError(f"Years must be in the range [{min_year}, {max_year}].")
+    # Ensure start_year <= end_year without using tuples
+    if year1 <= year2:
+        start_year = year1
+        end_year = year2
+    else:
+        start_year = year2
+        end_year = year1
 
-    # Ensure a <= b for the inclusive range [a, b]
-    a, b = (year1, year2) if year1 <= year2 else (year2, year1)
+    count = 0
+    year = start_year
+    while year <= end_year:
+        try:
+            # If this succeeds, the year is a leap year
+            datetime(year, 2, 29)
+            count += 1
+        except ValueError:
+            # Not a leap year
+            pass
+        year += 1
 
-    # Helper: number of leap years from year 1 up to and including y
-    def _leaps_up_to(y: int) -> int:
-        return (y // 4) - (y // 100) + (y // 400)
-
-    # Inclusive count in [a, b]
-    return _leaps_up_to(b) - _leaps_up_to(a - 1)
+    return count
 
 # Entry point: count_leap_years_between(year1: int, year2: int) -> int
 ```

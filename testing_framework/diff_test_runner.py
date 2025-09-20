@@ -180,6 +180,8 @@ def run_diff_tests_dt_vs_pendulum(path):
                     test_log_file_dt, test_log_file_pd, file_name
                 )
                 with open(dt_vs_pendulum_result_log, "a") as log_file:
-                    log_file.write(f"{file_name}: {status} ({differing_percentage}%)\n")
+                    log_file.write(
+                        f"{file_name}: {status.value} ({differing_percentage}%)\n"
+                    )
             else:
                 print(f"  \\_Skipping {file_name}.")

@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with time objects.
+2. **Define a function**: We will create a function that accepts a time as input using pendulum.Time object.
+3. **Extract time components**: Get the hours, minutes, and seconds from the pendulum.Time object.
+4. **Calculate decimal representation**: Convert the time to a decimal fraction of a day where 0.0 represents midnight and 1.0 represents the end of day.
+5. **Return the result**: Return the decimal time representation as a float.
+
+The decimal time formula is: (hours + minutes/60 + seconds/3600) / 24
+
+```python
+import pendulum
+
+def calculate_decimal_time(time: pendulum.Time) -> float:
+    # Step 1: Extract hours, minutes, and seconds from the time
+    hours = time.hour
+    minutes = time.minute
+    seconds = time.second
+    
+    # Step 2: Calculate decimal time representation
+    # Convert to decimal fraction of a day (0.0 = midnight, 1.0 = end of day)
+    decimal_time = (hours + minutes/60 + seconds/3600) / 24
+    
+    # Step 3: Return the result as a float
+    return decimal_time
+
+# Entry point: calculate_decimal_time(time: pendulum.Time) -> float
+```

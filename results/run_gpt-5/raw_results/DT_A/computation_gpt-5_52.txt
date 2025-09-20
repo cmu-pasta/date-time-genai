@@ -1,48 +1,37 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from Python's datetime library.
-2. Implement a helper function to convert an integer year to its Roman numeral representation, supporting years from 1 to 9999 by extending 'M' beyond 3999.
-3. Implement the main function that accepts a date (or datetime) and extracts the year.
-4. Convert the extracted year to a Roman numeral string and return it.
+1. Import the datetime library to work with date objects.
+2. Define a function that accepts a date input.
+3. Extract the year from the provided date.
+4. Validate the year is within the standard Roman numeral range (1 to 3999).
+5. Convert the year to its Roman numeral representation using standard rules.
+6. Return the Roman numeral string.
 
 ```python
-from datetime import date, datetime
+from datetime import date
 
-def _int_to_roman_year(year: int) -> str:
-    # Ensure the year is within the valid Gregorian proleptic range used by datetime (1..9999)
-    if year < 1 or year > 9999:
-        raise ValueError("Year must be between 1 and 9999 inclusive.")
-    
-    # Roman numeral mapping
-    numerals = [
-        (1000, "M"), (900, "CM"),
-        (500, "D"),  (400, "CD"),
-        (100, "C"),  (90, "XC"),
-        (50, "L"),   (40, "XL"),
-        (10, "X"),   (9, "IX"),
-        (5, "V"),    (4, "IV"),
-        (1, "I"),
-    ]
-    
-    # For years > 3999, extend by repeating 'M' (common ASCII-friendly approach)
-    n = year
-    result = []
-    for value, symbol in numerals:
-        if n == 0:
-            break
-        count, n = divmod(n, value)
-        if count:
-            result.append(symbol * count)
-    return "".join(result)
+def date_year_to_roman(d: date) -> str:
+    # Step 1: Extract the year from the date
+    y = d.year
 
-def date_to_roman_year(d: date) -> str:
-    """
-    Convert the year component of a date or datetime to its Roman numeral representation.
-    Accepts: datetime.date or datetime.datetime (both have a 'year' attribute)
-    Returns: str containing the Roman numeral year
-    """
-    # Supports both date and datetime since both provide 'year'
-    yr = d.year
-    return _int_to_roman_year(yr)
+    # Step 2: Validate the year (standard Roman numerals cover 1..3999)
+    if y < 1 or y > 3999:
+        raise ValueError("Year out of range for standard Roman numerals (1..3999).")
 
-# Entry point: date_to_roman_year(d: date) -> str
+    # Step 3: Convert to Roman numeral using positional mapping
+    thousands = ["", "M", "MM", "MMM"]
+    hundreds  = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"]
+    tens      = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"]
+    ones      = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+
+    roman = (
+        thousands[y // 1000] +
+        hundreds[(y % 1000) // 100] +
+        tens[(y % 100) // 10] +
+        ones[y % 10]
+    )
+
+    # Step 4: Return the Roman numeral representation
+    return roman
+
+# Entry point: date_year_to_roman(d: date) -> str
 ```

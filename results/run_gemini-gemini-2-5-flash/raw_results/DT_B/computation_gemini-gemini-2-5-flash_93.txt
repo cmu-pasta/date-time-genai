@@ -1,0 +1,89 @@
+Let's think step by step to solve this problem.
+
+1.  **Define the J2000.0 epoch**: Sidereal time calculations are often referenced to the J2000.0 epoch, which is January 1, 2000, 12:00:00 UT. We'll need this as a `datetime` object.
+2.  **Convert input datetime to UTC**: Astronomical calculations are typically performed using Universal Time (UT). The input `datetime` object should be converted to UTC if it's not already, or assumed to be in UT if no timezone information is present. We'll use `astimezone(timezone.utc)` for robustness.
+3.  **Calculate the number of Julian days since J2000.0**: Determine the difference in days (including fractional parts) between the given UTC `datetime` and the J2000.0 epoch. This is crucial for the sidereal time formula.
+4.  **Calculate Greenwich Mean Sidereal Time (GMST)**: Use a standard formula to compute GMST based on the Julian days since J2000.0. A commonly used formula is from the IAU (International Astronomical Union) and involves a polynomial in `T`, the number of Julian centuries since J2000.0.
+    *   `T = D / 36525.0` (where `D` is the number of Julian days since J2000.0).
+    *   `GMST (seconds) = 67310.54841 + (876600 * 3600 + 8640184.812866) * T + 0.093104 * T^2 - 0.0000062 * T^3`
+    *   This formula gives GMST in seconds. We'll convert it to hours or degrees as needed and ensure it's within the 0-24 hour range (or 0-360 degrees).
+5.  **Calculate Local Mean Sidereal Time (LMST)**: LMST is found by adding the observer's longitude (converted to time units) to the GMST.
+    *   `LMST = GMST + longitude_in_hours`
+    *   Longitude should be in degrees, positive for East, negative for West. Convert degrees to hours by dividing by 15 (since 1 hour = 15 degrees).
+6.  **Normalize the result**: Ensure the final sidereal time is within the 0 to 24-hour range.
+
+Let's refine the GMST formula to a more commonly cited one in degrees (from Explanatory Supplement to the Astronomical Almanac, 3rd ed., 2013, p. 283; also often found as a simplification of IAU 2000/2006).
+
+GMST in degrees:
+`GMST_deg = 280.46061837 + 360.98564736629 * D + 0.000387933 * T^2 - T^3 / 38710000`
+where:
+*   `D` is the number of days (including fraction) from J2000.0 to the given UTC datetime.
+*   `T = D / 36525.0` (Julian centuries from J2000.0).
+
+Then convert GMST from degrees to hours.
+`GMST_hours = GMST_deg / 15.0`
+
+```python
+from datetime import datetime, timedelta, timezone
+
+def calculate_sidereal_time(dt_input: datetime, longitude: float) -> float:
+    """
+    Calculates the Local Mean Sidereal Time (LMST) for a given datetime and longitude.
+
+    Args:
+        dt_input: The input datetime object. It is recommended to provide this
+                  in UTC or with timezone information. If it's naive, it's treated as UTC.
+        longitude: The longitude in degrees. Positive for East, negative for West.
+
+    Returns:
+        The Local Mean Sidereal Time (LMST) in hours (0 to 24).
+    """
+    # Step 1 & 2: Define J2000.0 epoch and convert input datetime to UTC
+    # J2000.0 epoch: 2000 January 1, 12:00:00 UT
+    J2000_EPOCH = datetime(2000, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+
+    # Convert input datetime to UTC. If naive, assume it's already UTC.
+    if dt_input.tzinfo is None:
+        dt_utc = dt_input.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = dt_input.astimezone(timezone.utc)
+
+    # Step 3: Calculate the number of Julian days since J2000.0
+    # The difference in days, including fractional part.
+    delta_t = dt_utc - J2000_EPOCH
+    D = delta_t.total_seconds() / (24 * 3600.0) # Total days since J2000.0
+
+    # Step 4: Calculate Greenwich Mean Sidereal Time (GMST) in degrees
+    # T is the number of Julian centuries since J2000.0
+    T = D / 36525.0
+
+    # GMST formula (degrees) - from Explanatory Supplement to the Astronomical Almanac
+    # and other standard astronomical sources.
+    GMST_deg = (280.46061837 +
+                360.98564736629 * D +
+                0.000387933 * T**2 -
+                T**3 / 38710000.0)
+
+    # Normalize GMST to 0-360 degrees
+    GMST_deg = GMST_deg % 360.0
+    if GMST_deg < 0:
+        GMST_deg += 360.0
+
+    # Convert GMST from degrees to hours
+    GMST_hours = GMST_deg / 15.0
+
+    # Step 5: Calculate Local Mean Sidereal Time (LMST)
+    # Convert longitude from degrees to hours (15 degrees = 1 hour)
+    longitude_hours = longitude / 15.0
+
+    LMST_hours = GMST_hours + longitude_hours
+
+    # Step 6: Normalize the result to 0-24 hours
+    LMST_hours = LMST_hours % 24.0
+    if LMST_hours < 0:
+        LMST_hours += 24.0
+
+    return LMST_hours
+
+# Entry point: calculate_sidereal_time(dt_input: datetime, longitude: float) -> float
+```

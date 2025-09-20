@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with datetime objects.
+2. **Define a function**: Create a function that accepts a pendulum.DateTime object as input.
+3. **Extract the time information**: Get the hour, minute, and second components from the datetime.
+4. **Convert to 12-hour format**: Determine if it's AM or PM and convert the hour to 12-hour format (1-12 instead of 0-23).
+5. **Return the results**: Return both the converted time as a pendulum.Time object and a boolean indicating AM (True) or PM (False).
+
+```python
+import pendulum
+
+def convert_to_12_hour_format(dt: pendulum.DateTime) -> tuple[pendulum.Time, boolean]:
+    # Step 1: Extract hour, minute, second from the datetime
+    hour = dt.hour
+    minute = dt.minute
+    second = dt.second
+    
+    # Step 2: Determine AM/PM and convert hour to 12-hour format
+    is_am = hour < 12
+    
+    # Convert 24-hour to 12-hour format
+    if hour == 0:
+        hour_12 = 12  # Midnight becomes 12 AM
+    elif hour <= 12:
+        hour_12 = hour  # 1-12 stays the same
+    else:
+        hour_12 = hour - 12  # 13-23 becomes 1-11 PM
+    
+    # Step 3: Create the 12-hour format time
+    time_12_hour = pendulum.time(hour_12, minute, second)
+    
+    # Step 4: Return the time and AM/PM indicator
+    return time_12_hour, is_am
+
+# Entry point: convert_to_12_hour_format(dt: pendulum.DateTime) -> tuple[pendulum.Time, boolean]
+```

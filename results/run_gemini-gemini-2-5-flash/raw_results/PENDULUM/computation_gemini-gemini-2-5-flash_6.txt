@@ -1,71 +1,32 @@
 Let's think step by step to solve this problem.
 
-1.  **Import the necessary libraries**: We will use the `pendulum` library for date and time operations.
-2.  **Define a function**: Create a function `calculate_age_components` that accepts two `pendulum.DateTime` objects as input.
-3.  **Ensure correct order**: Determine the earlier and later date to ensure we are calculating a positive age difference. If `dt1` is later than `dt2`, we will swap them.
-4.  **Calculate years**: Iterate by incrementing the year of the start date until it becomes greater than the end date. The number of successful increments gives the number of full years.
-5.  **Calculate months**: After determining the full years, adjust the start date by those years. Then, iterate by incrementing the month of this adjusted start date until it becomes greater than the end date. The number of successful increments gives the number of full months.
-6.  **Calculate days**: After determining the full years and months, adjust the start date by those years and months. The remaining difference in days between this doubly-adjusted start date and the end date will be the number of days.
-7.  **Return the result**: Return the calculated years, months, and days as separate integers.
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts two `pendulum.DateTime` objects as input.
+3.  **Determine the order**: To get positive age components, we should ensure we subtract the earlier date from the later date. We can use `min()` and `max()` to establish this order.
+4.  **Calculate the difference**: Use the `diff()` method on the later `pendulum.DateTime` object, passing the earlier `pendulum.DateTime` object as an argument. This will return a `pendulum.Duration` object.
+5.  **Extract components**: From the resulting `pendulum.Duration` object, extract the `years`, `months`, and `days` attributes. Pendulum's `diff` method correctly handles the calculation of these components without needing manual date arithmetic for month/day rollovers.
+6.  **Return the result**: Return the extracted years, months, and days as three separate integers.
 
 ```python
 import pendulum
 
-def calculate_age_components(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> tuple[int, int, int]:
-    # Step 1: Ensure dt1 is the earlier date and dt2 is the later date
-    if dt1 > dt2:
-        start_date = dt2
-        end_date = dt1
-    else:
-        start_date = dt1
-        end_date = dt2
+def calculate_age_components(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> (int, int, int):
+    # Step 3: Determine the order to ensure positive age components
+    # Age is conventionally positive, so we calculate the difference from earlier to later.
+    earlier_date = min(dt1, dt2)
+    later_date = max(dt1, dt2)
 
-    years = 0
-    months = 0
-    days = 0
-
-    # Step 2: Calculate years
-    # Increment years until start_date + years would exceed end_date
-    current_date = start_date
-    while True:
-        try:
-            test_date = current_date.add(years=1)
-        except pendulum.exceptions.PendulumException:
-            # Handle cases where adding a year might fail (e.g., Feb 29 to Mar 1 in next non-leap year)
-            # This is specifically for edge cases like '2000-02-29'.add(years=1) which becomes '2001-02-28'
-            # For age calculation, we need to compare `2000-02-29` with `2001-02-29` effectively.
-            # Pendulum's add() correctly rolls over to the last day of the month if target day doesn't exist
-            # (e.g., Feb 29 + 1 year -> Feb 28). This is generally desired for calendar math.
-            pass # Keep test_date as is and let the comparison handle it.
-
-        if test_date <= end_date:
-            years += 1
-            current_date = test_date # Advance current_date for next iteration
-        else:
-            break
+    # Step 4: Calculate the difference using pendulum's diff() method
+    # This returns a pendulum.Duration object
+    duration = later_date.diff(earlier_date)
     
-    # Adjust the start_date by the calculated years
-    # current_date now holds start_date + years
+    # Step 5: Extract years, months, and days from the duration
+    years = duration.years
+    months = duration.months
+    days = duration.days
     
-    # Step 3: Calculate months
-    while True:
-        try:
-            test_date = current_date.add(months=1)
-        except pendulum.exceptions.PendulumException:
-            pass
-        
-        if test_date <= end_date:
-            months += 1
-            current_date = test_date # Advance current_date for next iteration
-        else:
-            break
-
-    # Step 4: Calculate days
-    # The remaining difference in days between the current_date (start_date + years + months) and end_date
-    days = (end_date - current_date).in_days()
-
-    # Step 5: Return the result
+    # Step 6: Return the components as integers
     return years, months, days
 
-# Entry point: calculate_age_components(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> tuple[int, int, int]
+# Entry point: calculate_age_components(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> (int, int, int)
 ```

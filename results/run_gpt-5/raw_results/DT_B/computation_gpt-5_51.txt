@@ -1,40 +1,27 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module: datetime, time, and timedelta.
-2. Define a function that accepts two time inputs representing the start and end times.
-3. Combine each time with a reference date to create datetime objects for arithmetic.
-4. If the end time is earlier than the start time, assume the period crosses midnight and add one day to the end datetime.
-5. Compute the timedelta between the two datetimes.
-6. Convert the timedelta to total minutes by dividing total seconds by 60.
-7. Return the result as a float representing total minutes.
+1. Import the datetime class from the datetime module to work with datetime objects.
+2. Define a function that accepts two datetime inputs representing the start and end of the period.
+3. Subtract the two datetimes to obtain a timedelta representing the duration.
+4. Convert the duration to total minutes using total_seconds divided by 60.
+5. Return the absolute value of the total minutes as a float.
 
 ```python
-from datetime import datetime, time, timedelta
+from datetime import datetime
 
-def total_minutes_between_times(t1: time, t2: time) -> float:
+def total_minutes_between(start: datetime, end: datetime) -> float:
     """
-    Calculate the total minutes in the time period between two times.
-    If t2 is earlier than t1, the period is assumed to cross midnight into the next day.
+    Calculate the total minutes in the period between two datetime values.
 
     Args:
-        t1 (time): Start time.
-        t2 (time): End time.
+        start (datetime): The starting datetime.
+        end (datetime): The ending datetime.
 
     Returns:
-        float: Total minutes between t1 and t2.
+        float: The absolute total minutes between the two datetimes, including fractional minutes.
     """
-    # Step 1: Use a reference date to combine with the times
-    ref_date = datetime(1900, 1, 1)
-    dt1 = datetime.combine(ref_date.date(), t1)
-    dt2 = datetime.combine(ref_date.date(), t2)
+    delta = end - start
+    minutes = abs(delta.total_seconds() / 60.0)
+    return minutes
 
-    # Step 2: Handle crossing midnight
-    if dt2 < dt1:
-        dt2 += timedelta(days=1)
-
-    # Step 3: Compute the difference and convert to minutes
-    delta = dt2 - dt1
-    minutes = delta.total_seconds() / 60.0
-    return float(minutes)
-
-# Entry point: total_minutes_between_times(t1: time, t2: time) -> float
+# Entry point: total_minutes_between(start: datetime, end: datetime) -> float
 ```

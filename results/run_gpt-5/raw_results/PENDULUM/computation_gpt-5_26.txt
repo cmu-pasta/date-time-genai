@@ -1,37 +1,20 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with DateTime and Duration types.
+1. Import the pendulum library to work with Pendulum DateTime objects.
 2. Define a function that accepts two pendulum.DateTime inputs.
-3. Order the inputs so we always add a positive half-difference to the earlier datetime.
-4. Compute the duration between the two datetimes and take half of it.
-5. Add the half-duration to the earlier datetime to get the midpoint as a pendulum.DateTime.
-6. Return the midpoint datetime.
+3. Compute the duration difference between the two datetimes.
+4. Add half of this duration to the first datetime to get the midpoint.
+5. Return the resulting pendulum.DateTime.
 
 ```python
 import pendulum
 
-def find_midpoint_datetime(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime:
+def midpoint_datetime(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime:
     """
-    Compute the midpoint datetime between two pendulum.DateTime instances.
-
-    Args:
-        dt1: A pendulum.DateTime instance.
-        dt2: A pendulum.DateTime instance.
-
-    Returns:
-        A pendulum.DateTime representing the midpoint between dt1 and dt2.
+    Compute the midpoint datetime between two pendulum.DateTime objects.
     """
-    # Ensure we work from the earlier instant forward
-    if dt1 <= dt2:
-        earlier, later = dt1, dt2
-    else:
-        earlier, later = dt2, dt1
-
-    # Compute half the duration between the two datetimes
-    half_delta: pendulum.Duration = later.diff(earlier, absolute=True) / 2
-
-    # Midpoint is earlier plus half the duration
-    midpoint: pendulum.DateTime = earlier + half_delta
+    delta = dt2 - dt1
+    midpoint = dt1 + (delta / 2)
     return midpoint
 
-# Entry point: find_midpoint_datetime(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime
+# Entry point: midpoint_datetime(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime
 ```

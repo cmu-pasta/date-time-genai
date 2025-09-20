@@ -1,49 +1,36 @@
 Let's think step by step to solve this problem.
 
-1.  **Import the necessary library**: We need the `pendulum` library to work with dates and determine leap years.
-2.  **Define the function signature**: Create a function `find_next_leap_year` that accepts a `pendulum.DateTime` object as input and returns an integer representing the year of the next leap year.
-3.  **Determine the starting year for the search**:
-    *   Get the year from the input `pendulum.DateTime` object.
-    *   If the current year of the input date is a leap year and the input date is on or before February 29th of that year, then the current year is the next leap year.
-    *   Otherwise (if the current year is not a leap year, or if it is a leap year but the date has already passed February 29th), we need to start searching from the next year.
-4.  **Iterate and check for leap years**: Starting from the determined year, increment the year one by one and use `pendulum.is_leap()` to check if it's a leap year.
-5.  **Return the first leap year found**: The first year that satisfies the leap year condition will be the result.
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and its utility functions.
+2.  **Define a function**: We will create a function `find_next_leap_year` that accepts a `pendulum.DateTime` object as input.
+3.  **Initialize the search**: Start checking from the year immediately following the year of the input date.
+4.  **Iterate and check**: Loop through subsequent years. For each year, construct a `pendulum.DateTime` object (e.g., for January 1st of that year) and use the `is_leap()` method provided by `pendulum` to determine if it's a leap year.
+5.  **Return the first occurrence**: The first year encountered that satisfies the `is_leap()` condition will be the next leap year. Return this year as an integer.
 
 ```python
 import pendulum
 
-def find_next_leap_year(dt: pendulum.DateTime) -> int:
-    # Step 1: Get the year from the input date
-    year = dt.year
+def find_next_leap_year(date: pendulum.DateTime) -> int:
+    """
+    Determines the next leap year after a given date.
 
-    # Step 2: Determine the starting year for the search
-    # If the current year is a leap year and the date is on or before Feb 29th of that year,
-    # then the current year is the next leap year.
-    # Otherwise, we need to search from the next year.
-    if pendulum.is_leap(year):
-        # Create a pendulum.DateTime for February 29th of the current year
-        # Note: If the year is not a leap year, pendulum.datetime(year, 2, 29) would raise an error.
-        # But we only enter this block if pendulum.is_leap(year) is True, so Feb 29th exists.
-        feb_29_current_year = pendulum.datetime(year, 2, 29, tz=dt.timezone)
-        
-        if dt <= feb_29_current_year:
-            # The current year is a leap year and the date has not passed Feb 29th,
-            # so the current year is the next leap year.
-            return year
-        else:
-            # The current year is a leap year, but the date has passed Feb 29th,
-            # so we need to find the next one starting from year + 1.
-            start_year = year + 1
-    else:
-        # The current year is not a leap year, so we start searching from the next year.
-        start_year = year + 1
-    
-    # Step 3: Iterate from start_year to find the next leap year
-    current_search_year = start_year
+    Args:
+        date: The reference date (pendulum.DateTime).
+
+    Returns:
+        An integer representing the year of the next leap year.
+    """
+    current_year = date.year
+    year_to_check = current_year + 1
+
     while True:
-        if pendulum.is_leap(current_search_year):
-            return current_search_year
-        current_search_year += 1
+        # Create a pendulum.DateTime object for the first day of the year_to_check
+        # This allows us to use the is_leap() method.
+        test_date = pendulum.datetime(year_to_check, 1, 1)
+        
+        if test_date.is_leap():
+            return year_to_check
+        
+        year_to_check += 1
 
-# Entry point: find_next_leap_year(dt: pendulum.DateTime) -> int
+# Entry point: find_next_leap_year(date: pendulum.DateTime) -> int
 ```

@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` modules from Python's standard library to work with dates and iterate through date ranges.
+
+2. **Define a function**: We will create a function that accepts two datetime objects as input parameters.
+
+3. **Determine the date range**: We need to ensure we handle the dates in chronological order and extract just the date parts for iteration.
+
+4. **Iterate through each date**: We'll loop through each date in the range from start to end (inclusive).
+
+5. **Check for weekend days**: For each date, we'll check if it's a Saturday (weekday 5) or Sunday (weekday 6) using the `weekday()` method.
+
+6. **Count and return**: We'll count all weekend days and return the total as an integer.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Ensure we have the correct date order and extract date parts
+    start_date = min(dt1, dt2).date()
+    end_date = max(dt1, dt2).date()
+    
+    # Step 2: Initialize weekend counter
+    weekend_count = 0
+    current_date = start_date
+    
+    # Step 3: Iterate through each date in the range (inclusive)
+    while current_date <= end_date:
+        # Step 4: Check if current date is a weekend day (Saturday=5, Sunday=6)
+        if current_date.weekday() in [5, 6]:
+            weekend_count += 1
+        current_date += timedelta(days=1)
+    
+    # Step 5: Return the total count of weekend days
+    return weekend_count
+
+# Entry point: calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int
+```

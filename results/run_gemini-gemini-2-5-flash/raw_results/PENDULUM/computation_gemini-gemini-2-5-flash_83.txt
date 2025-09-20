@@ -1,0 +1,62 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and timezones.
+2.  **Define the function signature**: The function will accept an integer representing the `year` and a `pendulum.Timezone` object for the `timezone`. It should return a `pendulum.Date` object representing the date when DST ends.
+3.  **Initialize a reference date**: Start with a `pendulum.DateTime` object at the beginning of the given year in the specified timezone. This will be our starting point for checking the UTC offset.
+4.  **Iterate through the year**: We need to find the point where the UTC offset changes from a Daylight Saving Time offset to a Standard Time offset. We can iterate day by day, checking the UTC offset at a consistent time (e.g., noon) to avoid issues with the exact hour of transition.
+5.  **Track offset changes**: Keep track of the `offset_minutes` from the previous day. When the `offset_minutes` of the current day is *less* than the previous day's `offset_minutes` (meaning the clock fell back), we have found the day DST ends.
+6.  **Return the date**: Once the transition is found, extract the date component and return it as a `pendulum.Date` object.
+
+```python
+import pendulum
+
+def find_dst_end_date(year: int, timezone: pendulum.Timezone) -> pendulum.Date:
+    # Step 1: Initialize a reference date at the beginning of the year in the given timezone.
+    # We use noon to ensure we are not on the edge of a day boundary which might affect offset calculations
+    # if the transition happens very early or late in the day.
+    current_dt = pendulum.datetime(year, 1, 1, 12, 0, 0, tz=timezone)
+    
+    # Step 2: Get the initial UTC offset in minutes.
+    # We will look for a decrease in this value to signify DST ending.
+    previous_offset_minutes = current_dt.offset_minutes
+
+    # Step 3: Iterate through the year, day by day, starting from January 1st.
+    # DST typically ends in autumn, so we iterate until we find the change.
+    # We can safely assume it will be found within the year.
+    for _ in range(366): # Iterate up to 366 days to cover leap years
+        # Move to the next day, keeping the same time of day (noon) and timezone.
+        current_dt = current_dt.add(days=1)
+        
+        # Get the UTC offset for the current day.
+        current_offset_minutes = current_dt.offset_minutes
+        
+        # Step 4: Check if the offset has decreased.
+        # A decrease in offset_minutes (e.g., from -240 (EDT) to -300 (EST)) indicates DST ending.
+        if current_offset_minutes < previous_offset_minutes:
+            # Step 5: If a decrease is found, this is the day DST ended.
+            # We need the date of the day *before* the offset changed to standard time
+            # if we are looking for the day the clock *falls back*.
+            # The `current_dt` already represents the day after the clock fell back,
+            # so we should return the date of the previous day, which is when the clock adjustment effectively happens.
+            # No, if `current_dt` has the *new, smaller* offset, it means the transition *happened* between `current_dt - 1 day` and `current_dt`.
+            # Typically, DST ends at 2 AM on a Sunday, so the day itself is the day the clock falls back.
+            # If current_dt is Monday 12PM, and its offset is smaller than Sunday 12PM, then DST ended on Sunday.
+            # Let's consider `current_dt` (e.g., Monday). If its offset is smaller than `current_dt - 1 day` (e.g., Sunday),
+            # then the DST end happened on Sunday.
+            # So, `current_dt - 1 day` is the day we need.
+            return current_dt.subtract(days=1).date()
+        
+        # Update the previous offset for the next iteration.
+        previous_offset_minutes = current_offset_minutes
+            
+    # If the loop finishes without finding a DST end (e.g., in a timezone that doesn't observe DST
+    # or for a year where DST is suspended, although pendulum handles standard transitions),
+    # this part will be reached. For the purpose of this problem, we assume DST will end.
+    # In a robust application, one might raise an error or return an optional type.
+    # For simplicity, returning a default or raising an error if no transition found.
+    # Assuming valid inputs will always lead to a transition for timezones that observe DST.
+    raise ValueError(f"Could not find DST end date for year {year} in timezone {timezone.name}")
+
+
+# Entry point: find_dst_end_date(year: int, timezone: pendulum.Timezone) -> pendulum.Date
+```

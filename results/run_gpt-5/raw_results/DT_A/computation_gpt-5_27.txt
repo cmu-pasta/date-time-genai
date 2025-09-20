@@ -1,52 +1,32 @@
 Let's think step by step to solve this problem.
-1. Import the necessary class from the datetime module to validate leap days.
-2. Define a helper that determines if a given year is a leap year by attempting to construct February 29 of that year.
-3. Define the main function that takes two integer years, normalizes their order, validates range, iterates inclusively, counts leap years using the helper, and returns the count.
-4. Ensure the function returns a positive integer count and handles any out-of-range years via a clear exception.
+1. Import the required class from the datetime library to work with calendar dates.
+2. Normalize the input years to determine the inclusive range [min_year, max_year].
+3. For each year in the range, attempt to construct February 29 using datetime.date; if successful, it's a leap year.
+4. Count how many years in the range successfully create February 29.
+5. Return the count as an integer.
 
 ```python
 from datetime import date
 
-def _is_leap_year(year: int) -> bool:
-    """
-    Determine if a given year is a leap year using the datetime library
-    by checking if February 29 exists for that year.
-
-    Raises:
-        ValueError: If year is outside the supported datetime range [1, 9999].
-    """
-    if not (1 <= year <= 9999):
-        raise ValueError("Year must be in the range 1..9999 for datetime.date.")
-    try:
-        date(year, 2, 29)
-        return True
-    except ValueError:
-        return False
-
 def count_leap_years_between(year1: int, year2: int) -> int:
     """
-    Calculate the number of leap years between two years (inclusive of both endpoints).
-
-    Args:
-        year1: An integer year in the range 1..9999.
-        year2: An integer year in the range 1..9999.
-
-    Returns:
-        An integer count of leap years between year1 and year2, inclusive.
-
-    Raises:
-        ValueError: If either year is outside the supported datetime range [1, 9999].
+    Count the number of leap years between two years, inclusive of both endpoints.
+    Uses datetime.date to determine if Feb 29 exists for a given year.
     """
-    start = min(year1, year2)
-    end = max(year1, year2)
-
-    if not (1 <= start <= 9999) or not (1 <= end <= 9999):
-        raise ValueError("Years must be in the range 1..9999 for datetime.date.")
+    # Normalize the range to be inclusive from the smaller to the larger year
+    start_year = year1 if year1 <= year2 else year2
+    end_year = year2 if year2 >= year1 else year1
 
     count = 0
-    for y in range(start, end + 1):
-        if _is_leap_year(y):
+    for y in range(start_year, end_year + 1):
+        try:
+            # If Feb 29 exists, it's a leap year
+            date(y, 2, 29)
             count += 1
+        except ValueError:
+            # Not a leap year
+            pass
+
     return count
 
 # Entry point: count_leap_years_between(year1: int, year2: int) -> int

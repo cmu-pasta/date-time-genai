@@ -7,24 +7,18 @@ from hypothesis import settings, seed, given
 
 import pendulum
 def calculate_exact_time_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration:
-    """
-    Calculates the exact time difference between two timezone-aware Pendulum DateTime objects,
-    considering Daylight Saving Time transitions.
+    # Ensure both datetimes are timezone-aware for correct DST handling.
+    # Pendulum's DateTime objects created with a timezone or parsed from a string
+    # with timezone info are timezone-aware by default.
+    # If they were naive, one would need to localize them first.
 
-    Args:
-        dt1: The first timezone-aware pendulum.DateTime object.
-        dt2: The second timezone-aware pendulum.DateTime object.
-
-    Returns:
-        A pendulum.Duration object representing the exact time difference.
-        The duration will be positive if dt2 is after dt1, and negative otherwise.
-    """
-    # Pendulum's diff() method automatically handles timezone and DST rules
-    # when applied to timezone-aware DateTime objects.
-    # The order dt2.diff(dt1) will yield a positive duration if dt2 is later than dt1.
-    time_difference = dt2.diff(dt1)
+    # Calculate the difference between the two DateTime objects.
+    # Pendulum automatically accounts for DST transitions when calculating
+    # the duration between two timezone-aware datetimes.
+    duration = dt2 - dt1
     
-    return time_difference
+    # Return the pendulum.Duration object which represents the exact time difference.
+    return duration
 
 # Entry point: calculate_exact_time_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration
 

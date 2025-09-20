@@ -2,14 +2,14 @@ Let's think step by step to solve this problem.
 
 1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with datetime objects.
 2. **Define a function**: We will create a function that accepts a datetime object as input.
-3. **Convert to ISO 8601 format**: Use the built-in `isoformat()` method of the datetime object to convert it to ISO 8601 format string.
+3. **Convert to ISO 8601 format**: Use the `isoformat()` method of the datetime object to convert it to ISO 8601 format string.
 4. **Return the result**: Return the ISO 8601 formatted string.
 
 ```python
 from datetime import datetime
 
 def convert_to_iso8601(dt: datetime) -> str:
-    # Step 1: Convert the datetime to ISO 8601 format string
+    # Step 1: Convert the datetime to ISO 8601 format using isoformat()
     iso_string = dt.isoformat()
     
     # Step 2: Return the ISO 8601 formatted string

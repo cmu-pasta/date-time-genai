@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+
+1.  **Determine the start and end dates of the year**: We need to define the first day (January 1st) and the last day (December 31st) of the given year as `datetime` objects.
+2.  **Calculate the total number of days in the year**: Find the difference in days between the first day of the *next* year and the first day of the *current* year. This gives us the exact number of days in the year, accounting for leap years.
+3.  **Divide by the length of a bi-weekly period**: A bi-weekly period is 14 days. Divide the total number of days in the year by 14.
+4.  **Return the result**: Since payroll periods are typically full cycles, we should return the integer part of this division. This gives the number of *full* 14-day intervals that fit into the year. It's important to note that this method counts 26 periods for both 365-day and 366-day years, as `365 // 14` is 26 and `366 // 14` is 26. This reflects the most common scenario where a year has 26 bi-weekly pay periods.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_biweekly_payroll_periods(year: int) -> int:
+    # Step 1: Determine the start and end dates of the year
+    # We use January 1st of the given year
+    start_of_year = datetime(year, 1, 1)
+    
+    # Step 2: Calculate the total number of days in the year.
+    # To accurately get the total number of days, we find the first day
+    # of the next year and subtract the first day of the current year.
+    # This automatically handles leap years.
+    start_of_next_year = datetime(year + 1, 1, 1)
+    total_days_in_year = (start_of_next_year - start_of_year).days
+    
+    # Step 3: Divide by the length of a bi-weekly period (14 days)
+    # Use integer division to count full periods.
+    number_of_periods = total_days_in_year // 14
+    
+    # Step 4: Return the result
+    return number_of_periods
+
+# Entry point: calculate_biweekly_payroll_periods(year: int) -> int
+```

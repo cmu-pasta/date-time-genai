@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need `datetime` and `timedelta` from Python's standard `datetime` module to perform date arithmetic.
+2.  **Define a function**: Create a function that accepts a single `datetime` object as input, which will be our "given date".
+3.  **Create a `timedelta`**: Instantiate a `timedelta` object representing 100 days.
+4.  **Perform subtraction**: Subtract this `timedelta` from the input `datetime` object to get the date 100 days prior.
+5.  **Return the result**: The function should return the resulting `datetime` object.
+
+```python
+from datetime import datetime, timedelta
+
+def find_date_100_days_before(given_date: datetime) -> datetime:
+    # Step 1: Create a timedelta object for 100 days
+    hundred_days = timedelta(days=100)
+    
+    # Step 2: Subtract the timedelta from the given_date
+    date_before = given_date - hundred_days
+    
+    # Step 3: Return the resulting datetime object
+    return date_before
+
+# Entry point: find_date_100_days_before(given_date: datetime) -> datetime
+```

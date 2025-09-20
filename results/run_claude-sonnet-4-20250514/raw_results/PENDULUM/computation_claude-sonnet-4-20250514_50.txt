@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a date as input. This date should be provided as a pendulum.DateTime object.
+3. **Calculate the date 100 days before**: Use pendulum's subtract method to subtract 100 days from the given date.
+4. **Return the result**: Return the resulting date as a pendulum.DateTime object.
+
+```python
+import pendulum
+
+def find_date_100_days_before(given_date: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Subtract 100 days from the given date
+    result_date = given_date.subtract(days=100)
+    
+    # Step 2: Return the resulting date
+    return result_date
+
+# Entry point: find_date_100_days_before(given_date: pendulum.DateTime) -> pendulum.DateTime
+```

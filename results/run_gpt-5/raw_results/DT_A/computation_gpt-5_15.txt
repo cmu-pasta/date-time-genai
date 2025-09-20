@@ -1,48 +1,36 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the standard datetime library (date, timedelta).
-2. Define a function that accepts two date objects: start_date and end_date.
-3. Normalize the order of dates so start_date <= end_date.
-4. Compute the inclusive total number of days between the two dates.
-5. Count weekend days contributed by full weeks (each full week has exactly 2 weekend days).
-6. Count weekend days in the remaining days by checking weekday positions relative to the start date.
-7. Return the total number of weekend days as an integer.
+1. Normalize the input order so the earlier date comes first.
+2. Compute the inclusive total number of days between the two dates.
+3. Count the number of full weeks and multiply by 2 to get the weekend days from full weeks.
+4. For the remaining days (less than a week), count how many fall on Saturday or Sunday based on the start date’s weekday.
+5. Return the total count of weekend days as an integer.
 
 ```python
-from datetime import date, timedelta
+from datetime import date
 
-def count_weekend_days(start_date: date, end_date: date) -> int:
-    """
-    Calculate the number of weekend days (Saturdays and Sundays) between two dates, inclusive.
+def calculate_weekend_days_between(d1: date, d2: date) -> int:
+    # Step 1: Normalize date order
+    start = d1 if d1 <= d2 else d2
+    end = d2 if d2 >= d1 else d1
 
-    Args:
-        start_date (date): The start date.
-        end_date (date): The end date.
+    # Step 2: Compute total days inclusive
+    total_days_inclusive = (end - start).days + 1
 
-    Returns:
-        int: The number of weekend days between start_date and end_date inclusive.
-    """
-    # Ensure chronological order
-    if start_date > end_date:
-        start_date, end_date = end_date, start_date
+    # Step 3: Weekend days from full weeks
+    full_weeks = total_days_inclusive // 7
+    weekend_days = full_weeks * 2  # Saturday and Sunday per full week
 
-    # Inclusive day count
-    total_days = (end_date - start_date).days + 1
-
-    # Weekend days from full weeks
-    full_weeks = total_days // 7
-    weekend_days = full_weeks * 2
-
-    # Remaining days after full weeks
-    remaining_days = total_days % 7
-    start_wd = start_date.weekday()  # 0=Mon, ..., 5=Sat, 6=Sun
-
-    # Count weekend days in the remaining segment
-    for i in range(remaining_days):
+    # Step 4: Count weekend days in the remaining partial week
+    remainder_days = total_days_inclusive % 7
+    start_wd = start.weekday()  # Monday=0 ... Sunday=6
+    extra_weekend_days = 0
+    for i in range(remainder_days):
         wd = (start_wd + i) % 7
-        if wd == 5 or wd == 6:  # Saturday or Sunday
-            weekend_days += 1
+        if wd >= 5:  # 5=Saturday, 6=Sunday
+            extra_weekend_days += 1
 
-    return weekend_days
+    # Step 5: Total weekend days
+    return weekend_days + extra_weekend_days
 
-# Entry point: count_weekend_days(start_date: date, end_date: date) -> int
+# Entry point: calculate_weekend_days_between(d1: date, d2: date) -> int
 ```

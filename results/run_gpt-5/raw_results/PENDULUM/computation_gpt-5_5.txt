@@ -1,23 +1,28 @@
 Let's think step by step to solve this problem.
 1. Import the pendulum library to work with dates.
-2. Define a function that accepts the year and month as integers.
-3. Create a pendulum.Date representing the first day of the given month and year.
-4. Determine the weekday of the first day (Monday=0, Sunday=6).
-5. Compute how many days to add to reach the first Monday.
-6. Return the resulting pendulum.Date.
+2. Create a date representing the first day of the given month and year using pendulum.date.
+3. Determine the weekday of this date (Monday=0, Sunday=6) using the weekday method.
+4. Compute the offset in days to reach the first Monday using modular arithmetic.
+5. Add the offset to the initial date to get the first Monday and return it as a pendulum.Date.
 
 ```python
 import pendulum
 
-def find_first_monday(year: int, month: int) -> pendulum.Date:
+def first_monday_of_month(year: int, month: int) -> pendulum.Date:
     """
-    Returns the first Monday of the specified month and year as a pendulum.Date.
+    Compute the first Monday for the specified month and year.
+    Inputs:
+      - year: integer year (e.g., 2025)
+      - month: integer month in 1..12
+    Output:
+      - pendulum.Date corresponding to the first Monday of that month
     """
-    first_day = pendulum.date(year, month, 1)  # pendulum.Date for the first day of the month
-    weekday = first_day.weekday()  # Monday = 0, Sunday = 6
-    days_to_add = (0 - weekday) % 7  # Offset to next Monday (or same day if already Monday)
-    first_monday = first_day.add(days=days_to_add)
-    return first_monday
+    first_day = pendulum.date(year, month, 1)
+    # Monday is 0, Sunday is 6
+    weekday_index = first_day.weekday()
+    # Days to add to reach the first Monday (0..6)
+    offset_days = (0 - weekday_index) % 7
+    return first_day.add(days=offset_days)
 
-# Entry point: find_first_monday(year: int, month: int) -> pendulum.Date
+# Entry point: first_monday_of_month(year: int, month: int) -> pendulum.Date
 ```

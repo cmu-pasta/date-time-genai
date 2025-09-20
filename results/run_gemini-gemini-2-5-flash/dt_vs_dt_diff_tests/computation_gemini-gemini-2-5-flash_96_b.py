@@ -1,0 +1,166 @@
+
+import os
+
+from datetime import date, datetime, time, timedelta, timezone
+from datetime_generators import *
+from hypothesis import given, seed, settings
+
+from datetime import datetime, timedelta
+import math
+def calculate_equation_of_time(dt: datetime) -> timedelta:
+    # Based on formulas from "Astronomical Algorithms" by Jean Meeus, Chapter 28, and other sources.
+    # These calculations are for approximate values and do not account for leap seconds or highly precise effects.
+
+    # 1. Convert datetime to Julian Day (JD)
+    # The datetime library does not provide a direct JD conversion.
+    # We calculate days since J2000.0 (January 1, 2000, 12:00 UTC).
+    # J2000.0 JD = 2451545.0
+    
+    # Ensure input datetime is UTC or handle timezone carefully.
+    # For simplicity, we assume the input `dt` represents a date for which EOT is desired,
+    # and calculations are based on its UTC components.
+    
+    # Calculate days since J2000.0 (January 1, 2000, 12:00 UT)
+    # Using a fixed reference datetime for J2000.0
+    j2000 = datetime(2000, 1, 1, 12, 0, 0) # UTC is implicitly assumed for astronomical calculations
+    
+    # Calculate the number of days (and fractions) since J2000.0
+    delta_t = dt - j2000
+    n = delta_t.total_seconds() / (24 * 3600)
+
+    # 2. Calculate Mean Anomaly (M) and Mean Longitude (L)
+    # M = 357.529 + 0.98560028 * n (degrees)
+    # L = 280.460 + 0.98564736 * n (degrees)
+    # Convert to radians for trigonometric functions
+    M_deg = 357.5291 + 0.98560028 * n
+    L_deg = 280.4606 + 0.98564736 * n
+    
+    # Normalize degrees to 0-360 range
+    M_rad = math.radians(M_deg % 360)
+    L_rad = math.radians(L_deg % 360)
+
+    # 3. Calculate Equation of Time (EOT) in minutes
+    # EOT = Y * sin(2L) - 2e * sin(M) + 4eY * sin(M)cos(2L) - 0.5 * Y*Y * sin(4L) - 1.25 * e*e * sin(2M)
+    # Simplified approximation for EOT (often used):
+    # EOT_minutes = 4 * (apparent_longitude - mean_longitude)
+    # Where apparent_longitude involves eccentricity and obliquity.
+
+    # Approximations (often sufficient for +/- 1 minute accuracy):
+    # e = eccentricity of Earth's orbit (approx 0.0167)
+    # y = tan^2(obliquity_of_ecliptic / 2)
+    # Obliquity of the ecliptic (epsilon)
+    epsilon_deg = 23.4393 - 0.000000356 * n
+    epsilon_rad = math.radians(epsilon_deg)
+    
+    y = math.tan(epsilon_rad / 2) ** 2
+    
+    # Sun's mean anomaly in radians
+    M = math.radians(M_deg)
+    
+    # Equation of time in minutes
+    # This formula is from various astronomical resources.
+    eot_minutes = (y * math.sin(2 * L_rad) - 
+                   2 * 0.016709 * math.sin(M_rad) + 
+                   4 * 0.016709 * y * math.sin(M_rad) * math.cos(2 * L_rad) - 
+                   0.5 * y * y * math.sin(4 * L_rad) - 
+                   1.25 * 0.016709 * 0.016709 * math.sin(2 * M_rad)) * (180 / math.pi) * 4 # Convert degrees to minutes
+
+    # A more common simplified approximation (easier to implement strictly):
+    # This simplified version captures the two main components (obliquity and eccentricity)
+    # Mean Longitude of the Sun (in degrees, normalized)
+    L = L_deg % 360
+    
+    # Mean Anomaly of the Sun (in degrees, normalized)
+    M = M_deg % 360
+
+    # Convert to radians
+    L_rad = math.radians(L)
+    M_rad = math.radians(M)
+
+    # Coefficients for EOT (approximate)
+    B = math.radians((L_deg % 360) - 0.0057 - (3.6823 * math.sin(M_rad)) - (0.0298 * math.sin(2 * M_rad)))
+    
+    # Equation of Time in minutes
+    # Formula based on common approximations (e.g., NREL's SAM, PVSyst, etc.)
+    # B0 = (360/365.242) * (n_day + 10) # B_deg (for n_day is day of year -1)
+    # B = math.radians(B0)
+    
+    # This specific formula is derived from various sources, aiming for reasonable accuracy:
+    eot_minutes = (2.2918 * (0.000075 + 0.001868 * math.cos(L_rad) - 0.032077 * math.sin(L_rad) - 
+                            0.014615 * math.cos(2 * L_rad) - 0.040849 * math.sin(2 * L_rad))) * 60 # In seconds, then to minutes.
+    
+    # Re-evaluating with a more direct and common Meeus-style formula:
+    # This calculation is for the difference between mean solar time and apparent solar time (sundial time).
+    # d = fractional_day_of_year + julian_century * 36525 (for better accuracy)
+    # Simpler: n = days since J2000.0 (as calculated above)
+
+    # C = 100.46 + 0.98564736 * n # Mean Longitude of Sun in degrees
+    # G = 357.528 + 0.98560028 * n # Mean Anomaly of Sun in degrees
+
+    # C_rad = math.radians(C)
+    # G_rad = math.radians(G)
+    # epsilon = math.radians(23.439 - 0.0000004 * n) # Obliquity in radians
+
+    # E_minutes = -7.655 * math.sin(G_rad) + 9.873 * math.sin(2 * C_rad)
+
+    # Let's use a simpler, widely adopted approximation (Spencer, 1971; commonly used in solar engineering):
+    # B = (dt.timetuple().tm_yday - 1) * 360 / 365.0 # B in degrees, day_of_year - 1 from 0-364
+    # Instead of day of year, let's use 'n' days from J2000 for consistency
+    # We need day number for the year, 1 to 366.
+    day_of_year = dt.timetuple().tm_yday
+    
+    # Equation of Time using simplified NOAA/NREL method
+    # Gamma (B) in radians
+    B_rad = math.radians((day_of_year - 1) * 360 / 365.0)
+
+    eot_minutes = (229.18 * (0.000075 + 0.001868 * math.cos(B_rad) - 0.032077 * math.sin(B_rad) -
+                            0.014615 * math.cos(2 * B_rad) - 0.040849 * math.sin(2 * B_rad))) / 60
+    # The above formula calculates in seconds, then converts to minutes.
+    # The 229.18 factor is to convert the result from radians-like values to seconds, then divided by 60 for minutes.
+
+    # Or directly in minutes:
+    eot_minutes = (4 * (0.004297 + 0.070257 * math.sin(B_rad) - 0.32512 * math.cos(B_rad) -
+                        0.2577 * math.sin(2 * B_rad) - 0.05795 * math.cos(2 * B_rad))) * (180 / math.pi) # Convert degrees to minutes
+    # This version is a bit confusing on units.
+
+    # Let's stick to the simplest, well-documented approach often seen for solar calculations (e.g., NOAA solar position algorithm simplified)
+    # Day angle in radians (B_rad)
+    # EOT = 9.87 * sin(2B) - 7.53 * cos(B) - 1.5 * sin(B) (minutes)
+
+    eot_minutes = (9.87 * math.sin(2 * B_rad) - 7.53 * math.cos(B_rad) - 1.5 * math.sin(B_rad))
+    
+    # 4. Return result as a timedelta
+    # The EOT can be positive or negative.
+    return timedelta(minutes=eot_minutes)
+
+# Entry point: calculate_equation_of_time(dt: datetime) -> timedelta
+
+def format_value_dt(*values):
+    formatted_values = []
+
+    for value in values:
+        if isinstance(value, datetime):
+            formatted_values.append(value.isoformat())
+        elif isinstance(value, date):
+            # Use strftime to format the date similar to to_date_string()
+            formatted_values.append(value.strftime("%Y-%m-%d"))
+        elif isinstance(value, time):
+            formatted_values.append(value.isoformat())
+        elif isinstance(value, timedelta):
+            formatted_values.append(str(value.total_seconds()))
+        else:
+            formatted_values.append(str(value))
+
+    return ", ".join(formatted_values)
+
+if not os.path.exists("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_dt_diff_test_logs"):
+    os.makedirs("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_dt_diff_test_logs")
+log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_dt_diff_test_logs", "log_computation_gemini-gemini-2-5-flash_96_b.txt"), "w")
+
+@seed(27)
+@settings(max_examples=10000, deadline=None, derandomize=True)
+@given(datetime_strategy())
+def test_calculate_equation_of_time(dt):
+    result = calculate_equation_of_time(dt)
+    formatted_result = format_value_dt(result, dt)
+    log_file.write(formatted_result + "\n")

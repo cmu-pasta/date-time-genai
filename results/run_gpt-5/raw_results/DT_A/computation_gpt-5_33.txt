@@ -1,28 +1,25 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module.
-2. Define a function that accepts two time inputs representing times on the same day.
-3. Convert each time to the total number of seconds since midnight (including microseconds).
-4. Compute the absolute difference in seconds between the two times.
-5. Convert the difference in seconds to whole minutes by flooring the result.
-6. Return the difference as an integer.
+1. Import the necessary classes (date, time, datetime) from the datetime module.
+2. Define a function that accepts a date and two times as inputs.
+3. Combine the date with each time to form two datetime objects on the same day.
+4. Subtract the datetime objects to get a timedelta representing the difference.
+5. Convert the timedelta to total minutes (as a non-negative integer).
+6. Return the integer number of minutes.
 
 ```python
-from datetime import time
+from datetime import date, time, datetime
 
-def calculate_minutes_difference(t1: time, t2: time) -> int:
-    # Convert a time to total seconds since midnight (including microseconds)
-    def seconds_since_midnight(t: time) -> float:
-        return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000
-
-    s1 = seconds_since_midnight(t1)
-    s2 = seconds_since_midnight(t2)
-
-    # Absolute difference in seconds
-    diff_seconds = abs(s2 - s1)
-
-    # Convert to whole minutes (floor)
-    minutes = int(diff_seconds // 60)
+def minutes_between_same_day(d: date, t1: time, t2: time) -> int:
+    # Combine the given date with each time to create datetime objects on the same day
+    dt1 = datetime.combine(d, t1)
+    dt2 = datetime.combine(d, t2)
+    
+    # Compute the difference as a timedelta
+    delta = dt2 - dt1
+    
+    # Convert the difference to a non-negative integer number of minutes
+    minutes = int(abs(delta.total_seconds()) // 60)
     return minutes
 
-# Entry point: calculate_minutes_difference(t1: time, t2: time) -> int
+# Entry point: minutes_between_same_day(d: date, t1: time, t2: time) -> int
 ```

@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary classes**: We need `date` to construct date objects and `timedelta` to perform date arithmetic (adding days/weeks).
+2.  **Define the function signature**: The function will accept an integer representing the `year` and return a `date` object.
+3.  **Determine the first day of October**: Create a `date` object for October 1st of the given year.
+4.  **Find the first Monday of October**:
+    *   Calculate the weekday of October 1st (Monday is 0, Sunday is 6).
+    *   Determine how many days to add to October 1st to reach the first Monday. If October 1st is already a Monday, add 0 days. Otherwise, calculate the difference to the next Monday. This can be done using the formula `(target_weekday - current_weekday + 7) % 7`. For Monday, `target_weekday` is 0.
+    *   Add this number of days to October 1st to get the date of the first Monday.
+5.  **Find the second Monday of October**: Since Indigenous Peoples' Day is the *second* Monday, add exactly one week (7 days) to the date of the first Monday.
+6.  **Return the resulting date**: The calculated date will be the Indigenous Peoples' Day.
+
+```python
+from datetime import date, timedelta
+
+def find_indigenous_peoples_day(year: int) -> date:
+    # Step 1: Start with the first day of October for the given year.
+    first_october = date(year, 10, 1)
+
+    # Step 2: Determine the weekday of October 1st.
+    # Monday is 0, Sunday is 6. We are looking for Monday (0).
+    current_weekday = first_october.weekday()
+
+    # Step 3: Calculate how many days to add to reach the first Monday.
+    # If first_october is already a Monday (current_weekday == 0), days_to_add will be 0.
+    # Otherwise, it will be the number of days until the next Monday.
+    # For example, if current_weekday is Tuesday (1), (0 - 1 + 7) % 7 = 6, so add 6 days.
+    # If current_weekday is Sunday (6), (0 - 6 + 7) % 7 = 1, so add 1 day.
+    days_to_add_for_first_monday = (0 - current_weekday + 7) % 7
+
+    # Step 4: Find the date of the first Monday of October.
+    first_monday_of_october = first_october + timedelta(days=days_to_add_for_first_monday)
+
+    # Step 5: Indigenous Peoples' Day is the second Monday of October.
+    # Add 7 days (one week) to the first Monday to get the second Monday.
+    indigenous_peoples_day = first_monday_of_october + timedelta(weeks=1)
+    
+    # Step 6: Return the calculated date.
+    return indigenous_peoples_day
+
+# Entry point: find_indigenous_peoples_day(year: int) -> date
+```

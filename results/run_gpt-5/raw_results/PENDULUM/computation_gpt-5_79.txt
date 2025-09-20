@@ -1,24 +1,26 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with date/time objects.
-2. Define a function that accepts a pendulum.DateTime as input.
-3. Extract the Gregorian year from the provided date.
-4. Compute the Buddhist Era year by adding 543 to the Gregorian year.
-5. Return the Buddhist Era year as an integer.
+1. Import the pendulum library to work with date objects.
+2. Accept a Gregorian date as a pendulum.Date input.
+3. Compute the Buddhist Era (BE) year by adding the standard offset of 543 to the Gregorian year.
+4. Return the resulting year as an integer.
 
 ```python
 import pendulum
 
-def buddhist_year(dt: pendulum.DateTime) -> int:
+def buddhist_calendar_year(gregorian_date: pendulum.Date) -> int:
     """
-    Determine the Buddhist calendar year (B.E.) for a given Gregorian date.
+    Determine the Buddhist calendar year (BE) for a given Gregorian date.
     
-    Parameters:
-        dt (pendulum.DateTime): The Gregorian date.
-        
-    Returns:
-        int: The Buddhist Era year (CE year + 543).
+    The Thai Buddhist Era year is computed as Gregorian year + 543.
     """
-    return dt.year + 543
+    # Step 1: Extract the Gregorian year from the pendulum.Date
+    gregorian_year: int = gregorian_date.year
 
-# Entry point: buddhist_year(dt: pendulum.DateTime) -> int
+    # Step 2: Apply the Buddhist Era offset
+    be_year: int = gregorian_year + 543
+
+    # Step 3: Return the Buddhist calendar year as an integer
+    return be_year
+
+# Entry point: buddhist_calendar_year(gregorian_date: pendulum.Date) -> int
 ```

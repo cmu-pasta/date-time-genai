@@ -1,22 +1,23 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module.
-2. Define a function that accepts two datetime inputs representing precise timestamps.
-3. Subtract the two datetimes to obtain a timedelta.
-4. Convert the timedelta into an integer count of nanoseconds using integer arithmetic to avoid floating-point precision loss.
-5. Return the absolute number of nanoseconds between the two timestamps as an integer.
+1. Import the datetime module from Python's standard library to work with datetime objects and timedeltas.
+2. Define a function that accepts two datetime objects representing precise timestamps.
+3. Subtract the two datetimes to obtain a timedelta representing the difference.
+4. Convert the absolute timedelta to a non-negative integer count of nanoseconds using its days, seconds, and microseconds components.
+5. Return the computed integer nanoseconds difference.
 
 ```python
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def calculate_nanoseconds_between(ts1: datetime, ts2: datetime) -> int:
-    """
-    Calculate the absolute number of nanoseconds between two datetime timestamps.
-    """
-    delta = ts2 - ts1  # type: ignore[arg-type]  # valid if both are datetime
-    # Convert timedelta to nanoseconds using integer arithmetic:
-    # total_ns = ((days * 86400) + seconds) * 1_000_000_000 + (microseconds * 1_000)
-    total_ns = ((delta.days * 86_400) + delta.seconds) * 1_000_000_000 + (delta.microseconds * 1_000)
-    return abs(total_ns)
+    # Compute the absolute time difference as a timedelta
+    delta: timedelta = abs(ts2 - ts1)
+    
+    # Convert the timedelta to nanoseconds:
+    # days and seconds -> seconds, then to nanoseconds; microseconds -> nanoseconds
+    total_seconds = delta.days * 24 * 3600 + delta.seconds
+    total_nanoseconds = total_seconds * 1_000_000_000 + delta.microseconds * 1_000
+    
+    return total_nanoseconds
 
 # Entry point: calculate_nanoseconds_between(ts1: datetime, ts2: datetime) -> int
 ```

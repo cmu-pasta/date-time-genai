@@ -1,8 +1,8 @@
 Let's think step by step to solve this problem.
-1. Accept a date input representing the reference day within a month.
-2. Determine the last day of that month by moving to the first day of the next month and subtracting one day.
-3. Iterate from the given date through the last day of the month (inclusive).
-4. Count days whose weekday is Monday through Friday (weekday 0–4).
+1. Import the necessary classes from the datetime library.
+2. Define a function that accepts a date as input.
+3. Compute the last day of the month by finding the first day of the next month and subtracting one day.
+4. Iterate from the given date through the last day of the month (inclusive) and count days that are Monday to Friday.
 5. Return the count as an integer.
 
 ```python
@@ -10,29 +10,29 @@ from datetime import date, timedelta
 
 def business_days_remaining_in_month(d: date) -> int:
     """
-    Calculate the number of business days (Monday-Friday) remaining in the current month
-    for the given date, inclusive of the given date if it is a business day.
+    Calculate the number of business days (Mon-Fri) remaining in the month,
+    including the given date if it is a business day.
     """
-    # Step 1: Find the first day of the next month
+    # Determine the first day of the next month
     if d.month == 12:
-        first_next_month = date(d.year + 1, 1, 1)
+        next_month_first = date(d.year + 1, 1, 1)
     else:
-        first_next_month = date(d.year, d.month + 1, 1)
+        next_month_first = date(d.year, d.month + 1, 1)
     
-    # Step 2: Compute the last day of the current month
-    last_day_current_month = first_next_month - timedelta(days=1)
+    # Last day of the current month
+    last_day = next_month_first - timedelta(days=1)
     
-    # Step 3: Iterate from given date to last day of month and count business days
+    # Count business days from d through last_day (inclusive)
+    count = 0
     current = d
-    business_days = 0
     one_day = timedelta(days=1)
-    while current <= last_day_current_month:
-        if current.weekday() < 5:  # 0=Monday, ..., 6=Sunday
-            business_days += 1
+    while current <= last_day:
+        # Monday=0 ... Sunday=6; business days are 0..4
+        if current.weekday() < 5:
+            count += 1
         current += one_day
     
-    # Step 4: Return the count
-    return business_days
+    return count
 
 # Entry point: business_days_remaining_in_month(d: date) -> int
 ```

@@ -1,0 +1,48 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define zodiac sign mappings**: Since we can only return allowed types, I'll use integers 1-12 to represent the 12 zodiac signs.
+3. **Define a function**: Create a function that accepts a pendulum.Date as input.
+4. **Extract month and day**: Get the month and day from the input date to determine the zodiac sign.
+5. **Implement zodiac logic**: Use conditional statements to check the date ranges for each zodiac sign.
+6. **Return the result**: Return an integer representing the zodiac sign (1=Aries, 2=Taurus, etc.).
+
+```python
+import pendulum
+
+def determine_zodiac_sign(birth_date: pendulum.Date) -> int:
+    # Extract month and day from the birth date
+    month = birth_date.month
+    day = birth_date.day
+    
+    # Determine zodiac sign based on month and day
+    # Returns: 1=Aries, 2=Taurus, 3=Gemini, 4=Cancer, 5=Leo, 6=Virgo,
+    #          7=Libra, 8=Scorpio, 9=Sagittarius, 10=Capricorn, 11=Aquarius, 12=Pisces
+    
+    if (month == 3 and day >= 21) or (month == 4 and day <= 19):
+        return 1  # Aries
+    elif (month == 4 and day >= 20) or (month == 5 and day <= 20):
+        return 2  # Taurus
+    elif (month == 5 and day >= 21) or (month == 6 and day <= 20):
+        return 3  # Gemini
+    elif (month == 6 and day >= 21) or (month == 7 and day <= 22):
+        return 4  # Cancer
+    elif (month == 7 and day >= 23) or (month == 8 and day <= 22):
+        return 5  # Leo
+    elif (month == 8 and day >= 23) or (month == 9 and day <= 22):
+        return 6  # Virgo
+    elif (month == 9 and day >= 23) or (month == 10 and day <= 22):
+        return 7  # Libra
+    elif (month == 10 and day >= 23) or (month == 11 and day <= 21):
+        return 8  # Scorpio
+    elif (month == 11 and day >= 22) or (month == 12 and day <= 21):
+        return 9  # Sagittarius
+    elif (month == 12 and day >= 22) or (month == 1 and day <= 19):
+        return 10  # Capricorn
+    elif (month == 1 and day >= 20) or (month == 2 and day <= 18):
+        return 11  # Aquarius
+    else:  # (month == 2 and day >= 19) or (month == 3 and day <= 20)
+        return 12  # Pisces
+
+# Entry point: determine_zodiac_sign(birth_date: pendulum.Date) -> int
+```

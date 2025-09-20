@@ -1,7 +1,7 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with date objects.
+1. Import the pendulum library to work with dates.
 2. Define a function that accepts a pendulum.Date input.
-3. Use the built-in day_of_year attribute to get the ordinal day (1-366).
+3. Use the built-in day_of_year property to obtain the ordinal day (1-366).
 4. Return the result as an integer.
 
 ```python
@@ -9,13 +9,7 @@ import pendulum
 
 def convert_to_day_of_year(d: pendulum.Date) -> int:
     """
-    Convert a pendulum.Date to its day of year (1-366).
-
-    Args:
-        d (pendulum.Date): The date to convert.
-
-    Returns:
-        int: The day of the year corresponding to the given date.
+    Convert a pendulum.Date to its corresponding day of the year (1-366).
     """
     return d.day_of_year
 

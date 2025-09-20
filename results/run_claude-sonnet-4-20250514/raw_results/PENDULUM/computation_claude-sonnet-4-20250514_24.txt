@@ -1,0 +1,58 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with datetimes.
+2. **Define a function**: Create a function that accepts two pendulum.DateTime objects as input.
+3. **Determine the time range**: Find the start and end datetimes, ensuring we work from earlier to later.
+4. **Iterate through the time period**: Go through each day in the range and check if it's a weekday.
+5. **Calculate working hours for each day**: For weekdays, calculate the hours that fall within our time range.
+6. **Handle partial days**: For the first and last days, account for partial hours if the datetime doesn't start/end at midnight.
+7. **Sum up total working hours**: Accumulate all working hours and return as a float.
+
+```python
+import pendulum
+
+def calculate_working_hours_excluding_weekends(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> float:
+    # Ensure dt1 is the earlier datetime
+    start_dt = min(dt1, dt2)
+    end_dt = max(dt1, dt2)
+    
+    if start_dt.date() == end_dt.date():
+        # Same day calculation
+        if start_dt.weekday() in [6, 7]:  # Weekend (Saturday=6, Sunday=7)
+            return 0.0
+        else:
+            return (end_dt - start_dt).total_seconds() / 3600.0  # Convert to hours
+    
+    total_working_hours = 0.0
+    current_date = start_dt.date()
+    
+    while current_date <= end_dt.date():
+        current_weekday = pendulum.parse(str(current_date)).weekday()
+        
+        # Skip weekends (Saturday=6, Sunday=7)
+        if current_weekday in [6, 7]:
+            current_date = current_date.add(days=1)
+            continue
+        
+        if current_date == start_dt.date():
+            # First day - from start_dt to end of day or end_dt if same day
+            if current_date == end_dt.date():
+                # Same day, already handled above
+                break
+            else:
+                end_of_day = pendulum.parse(str(current_date)).end_of('day')
+                total_working_hours += (end_of_day - start_dt).total_seconds() / 3600.0
+        elif current_date == end_dt.date():
+            # Last day - from start of day to end_dt
+            start_of_day = pendulum.parse(str(current_date)).start_of('day')
+            total_working_hours += (end_dt - start_of_day).total_seconds() / 3600.0
+        else:
+            # Full day - 24 hours
+            total_working_hours += 24.0
+        
+        current_date = current_date.add(days=1)
+    
+    return total_working_hours
+
+# Entry point: calculate_working_hours_excluding_weekends(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> float
+```

@@ -1,37 +1,39 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `date` and `timedelta` classes from Python's datetime module to work with dates and iterate through days.
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and the `timedelta` module for date arithmetic.
 
-2. **Define a function**: We will create a function that accepts a year as an integer input, since we need to calculate trading days for a specific year.
+2. **Define a function**: Create a function that accepts a year as an integer input.
 
-3. **Set up date range**: Create start and end dates for the given year (January 1st to December 31st).
+3. **Set up date range**: Create datetime objects for January 1st and December 31st of the given year to define the range.
 
-4. **Iterate through all days**: Loop through each day in the year using a timedelta to increment by one day.
+4. **Iterate through all days**: Loop through each day in the year using timedelta to increment by one day.
 
-5. **Count trading days**: For each day, check if it's a weekday (Monday through Friday) using the weekday() method. Monday=0 through Friday=4, so we count days where weekday() < 5.
+5. **Check if it's a trading day**: For each day, check if it's a weekday (Monday=0 through Friday=4) using the weekday() method.
 
-6. **Return the count**: Return the total number of trading days as an integer.
+6. **Count and return**: Count all the weekdays and return the total as an integer.
 
 ```python
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 
 def calculate_trading_days_in_year(year: int) -> int:
-    # Step 1: Set up the date range for the given year
-    start_date = date(year, 1, 1)
-    end_date = date(year, 12, 31)
+    # Step 1: Create start and end dates for the year
+    start_date = datetime(year, 1, 1)
+    end_date = datetime(year, 12, 31)
     
-    # Step 2: Initialize counter for trading days
+    # Step 2: Initialize trading days counter
     trading_days = 0
-    current_date = start_date
     
-    # Step 3: Iterate through all days in the year
+    # Step 3: Iterate through each day of the year
+    current_date = start_date
     while current_date <= end_date:
-        # Step 4: Check if it's a weekday (Monday=0 to Friday=4)
-        if current_date.weekday() < 5:
+        # Step 4: Check if current day is a weekday (Monday=0 to Friday=4)
+        if current_date.weekday() < 5:  # 0-4 are weekdays, 5-6 are weekend
             trading_days += 1
+        
+        # Move to next day
         current_date += timedelta(days=1)
     
-    # Step 5: Return the total number of trading days
+    # Step 5: Return the total count of trading days
     return trading_days
 
 # Entry point: calculate_trading_days_in_year(year: int) -> int

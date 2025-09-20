@@ -6,18 +6,18 @@ from datetime_generators import *
 from hypothesis import given, seed, settings
 
 from datetime import datetime
-from typing import Union
 def calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int:
-    # Step 1: Calculate the difference between the two datetime objects
+    # Step 1: Calculate the difference between the two datetime objects.
+    # This results in a timedelta object.
     time_difference = dt2 - dt1
     
-    # Step 2: Get the total number of seconds from the timedelta object
-    # total_seconds() returns a float, so we cast it to an integer.
-    # We use abs() to ensure a positive difference, regardless of the order of dt1 and dt2.
-    total_seconds = abs(int(time_difference.total_seconds()))
+    # Step 2: Get the total number of seconds from the timedelta object.
+    # total_seconds() returns a float, including microseconds if present.
+    total_seconds_float = time_difference.total_seconds()
     
-    # Step 3: Return the result as an integer
-    return total_seconds
+    # Step 3: Convert the float to an integer and ensure it's a positive value.
+    # Using abs() to get the magnitude of the difference.
+    return int(abs(total_seconds_float))
 
 # Entry point: calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int
 

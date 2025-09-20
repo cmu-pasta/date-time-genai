@@ -1,29 +1,20 @@
 Let's think step by step to solve this problem.
-1. Import the required class from the datetime library to validate dates.
-2. Define a function that takes an integer year as input.
-3. Attempt to construct a valid date for February 29 of the given year.
-4. If construction succeeds, it is a leap year; if it raises a ValueError, it is not a leap year.
-5. Return the result as a boolean.
+1. Import the required class from the datetime library.
+2. Define a function that accepts a year as an integer input.
+3. Attempt to construct February 29 of that year using datetime.date.
+4. If construction succeeds, the year is a leap year; if it raises ValueError, it is not.
+5. Return a boolean indicating whether the year is a leap year.
 
 ```python
 from datetime import date
 
 def is_leap_year(year: int) -> bool:
-    """
-    Determine if the given year is a leap year using the datetime library.
-    
-    Args:
-        year (int): The year to check.
-    
-    Returns:
-        bool: True if leap year, False otherwise.
-    """
+    # Attempt to create February 29 for the given year.
+    # If successful, it's a leap year; otherwise, it's not.
     try:
-        # If February 29 exists for the given year, it's a leap year.
         date(year, 2, 29)
         return True
     except ValueError:
-        # If creating Feb 29 raises an error, it's not a leap year.
         return False
 
 # Entry point: is_leap_year(year: int) -> bool

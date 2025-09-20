@@ -1,32 +1,21 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and leverage its built-in date validation.
-
-2. **Define a function**: We will create a function that accepts a year as an integer input and returns a boolean indicating whether it's a leap year.
-
-3. **Implement leap year detection**: We can use the datetime library's date validation feature. We'll try to create a date for February 29th of the given year. If the datetime constructor succeeds, it means February 29th exists in that year (making it a leap year). If it raises a ValueError, then February 29th doesn't exist (making it a non-leap year).
-
-4. **Return the result**: Return True if it's a leap year, False otherwise.
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input.
+3. **Determine leap year logic**: We can use the datetime library to check if February 29th exists in the given year. If we can successfully create a datetime object for February 29th of that year, it's a leap year. If it raises a ValueError, it's not a leap year.
+4. **Return the result**: Return a boolean value - True if it's a leap year, False otherwise.
 
 ```python
 from datetime import datetime
 
 def is_leap_year(year: int) -> bool:
-    """
-    Determine if a given year is a leap year.
-    
-    Args:
-        year: The year to check (integer)
-    
-    Returns:
-        bool: True if the year is a leap year, False otherwise
-    """
     try:
         # Try to create February 29th of the given year
+        # If this succeeds, the year is a leap year
         datetime(year, 2, 29)
         return True
     except ValueError:
-        # If February 29th doesn't exist, it's not a leap year
+        # If creating Feb 29th fails, it's not a leap year
         return False
 
 # Entry point: is_leap_year(year: int) -> bool

@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1.  **Define the function signature**: The function will accept an integer representing the year and should return an integer representing the number of bi-weekly payroll periods.
+2.  **Determine the start and end of the year**: We will create `pendulum.Date` objects for January 1st of the given year and December 31st of the given year.
+3.  **Calculate the number of days in the year**: Find the difference in days between the start and end of the year using `diff()`.
+4.  **Calculate the number of bi-weekly periods**: A bi-weekly period is 14 days. Divide the total number of days in the year by 14. Since payroll periods are discrete, we use floor division (`//`) to get the number of *full* bi-weekly periods. While some specific payroll calendars might have 27 periods in certain years depending on the cycle's starting point, without a reference start date for the cycle, the most robust and general interpretation is to count how many 14-day intervals fully fit within the year's duration.
+
+```python
+import pendulum
+
+def calculate_biweekly_periods_in_year(year: int) -> int:
+    # Step 1: Get the first day of the year
+    start_of_year = pendulum.date(year, 1, 1)
+
+    # Step 2: Get the last day of the year
+    # Using 'year + 1' and 'subtract(days=1)' ensures we handle leap years correctly
+    end_of_year = pendulum.date(year + 1, 1, 1).subtract(days=1)
+
+    # Step 3: Calculate the total number of days in the year.
+    # We add 1 because diff calculates the difference *between* dates.
+    # For example, Jan 1 to Jan 1 is 0 days, but it's 1 day inclusive.
+    # Alternatively, we can use the `day_of_year` for the last day, which correctly gives 365 or 366.
+    total_days_in_year = end_of_year.day_of_year
+
+    # Step 4: A bi-weekly period is 14 days.
+    # Calculate the number of full bi-weekly periods using floor division.
+    number_of_periods = total_days_in_year // 14
+    
+    return number_of_periods
+
+# Entry point: calculate_biweekly_periods_in_year(year: int) -> int
+```

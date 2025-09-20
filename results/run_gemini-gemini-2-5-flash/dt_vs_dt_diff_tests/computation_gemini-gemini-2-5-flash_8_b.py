@@ -6,28 +6,27 @@ from datetime_generators import *
 from hypothesis import given, seed, settings
 
 from datetime import datetime, timedelta
-def find_last_day_of_month(dt: datetime) -> datetime:
-    # Step 1 & 2: Determine the year and month for the first day of the next month
-    if dt.month == 12:
-        # If it's December, the next month is January of the next year
-        next_month_year = dt.year + 1
-        next_month = 1
+def find_last_day_of_month(input_date: datetime) -> datetime:
+    # Step 1: Determine the year and month of the input date
+    year = input_date.year
+    month = input_date.month
+
+    # Step 2: Calculate the first day of the next month
+    if month == 12:
+        # If the current month is December, the next month is January of the next year
+        next_month_first_day = datetime(year + 1, 1, 1)
     else:
-        # Otherwise, the next month is simply the current month + 1 in the same year
-        next_month_year = dt.year
-        next_month = dt.month + 1
+        # Otherwise, the next month is the current month + 1 in the same year
+        next_month_first_day = datetime(year, month + 1, 1)
     
-    # Step 3: Create a datetime object for the first day of the next month
-    # We set the day to 1 and the time components to 0 to ensure consistency.
-    first_day_of_next_month = datetime(next_month_year, next_month, 1)
+    # Step 3: Subtract one day from the first day of the next month
+    # This gives us the last day of the current month
+    last_day = next_month_first_day - timedelta(days=1)
     
-    # Step 4: Subtract one day to get the last day of the current month
-    last_day = first_day_of_next_month - timedelta(days=1)
-    
-    # Step 5: Return the result as a datetime object
+    # Step 4: Return the result
     return last_day
 
-# Entry point: find_last_day_of_month(dt: datetime) -> datetime
+# Entry point: find_last_day_of_month(input_date: datetime) -> datetime
 
 def format_value_dt(*values):
     formatted_values = []
@@ -54,7 +53,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(datetime_strategy())
-def test_find_last_day_of_month(dt):
-    result = find_last_day_of_month(dt)
-    formatted_result = format_value_dt(result, dt)
+def test_find_last_day_of_month(input_date):
+    result = find_last_day_of_month(input_date)
+    formatted_result = format_value_dt(result, input_date)
     log_file.write(formatted_result + "\n")

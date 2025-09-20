@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with date and time objects.
+2.  **Define a function**: Create a function that accepts four `pendulum.DateTime` objects as input. These represent the start and end of the two date ranges.
+3.  **Implement the overlap logic**: Two date ranges `[start1, end1]` and `[start2, end2]` overlap if and only if `start1 <= end2` and `start2 <= end1`. This covers cases where one range completely contains the other, they partially overlap, or they touch at the boundaries.
+4.  **Return the result**: The function will return a boolean value (`True` if they overlap, `False` otherwise).
+
+```python
+import pendulum
+
+def do_ranges_overlap(start1: pendulum.DateTime, end1: pendulum.DateTime, start2: pendulum.DateTime, end2: pendulum.DateTime) -> bool:
+    """
+    Determines if two date ranges overlap.
+
+    Args:
+        start1 (pendulum.DateTime): The start datetime of the first range.
+        end1 (pendulum.DateTime): The end datetime of the first range.
+        start2 (pendulum.DateTime): The start datetime of the second range.
+        end2 (pendulum.DateTime): The end datetime of the second range.
+
+    Returns:
+        bool: True if the two date ranges overlap, False otherwise.
+    """
+    # For ranges [start1, end1] and [start2, end2] to overlap,
+    # it must be true that the first range does not end before the second range starts,
+    # AND the second range does not end before the first range starts.
+    # This can be simplified to: start1 <= end2 AND start2 <= end1.
+    
+    # We assume valid ranges where start <= end for each range.
+    
+    # Check for overlap condition
+    overlap = (start1 <= end2) and (start2 <= end1)
+    
+    return overlap
+
+# Entry point: do_ranges_overlap(start1: pendulum.DateTime, end1: pendulum.DateTime, start2: pendulum.DateTime, end2: pendulum.DateTime) -> bool
+```

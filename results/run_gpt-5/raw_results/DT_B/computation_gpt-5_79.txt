@@ -1,27 +1,22 @@
 Let's think step by step to solve this problem.
-1. Import the required class from Python's standard datetime library.
-2. Define a function that accepts a Gregorian calendar date as input.
-3. Extract the Gregorian year from the input date.
-4. Add 543 to convert the Gregorian year to the Buddhist Era (BE) year.
+1. Import the necessary date/time classes from the datetime library.
+2. Define a function that accepts a Gregorian calendar date.
+3. Extract the Gregorian year from the provided date.
+4. Compute the Buddhist Era (BE) year by adding 543 to the Gregorian year.
 5. Return the BE year as an integer.
 
 ```python
 from datetime import date
 
-def buddhist_calendar_year(gregorian_date: date) -> int:
-    """
-    Determine the Buddhist calendar year (BE) for a given Gregorian date.
+def buddhist_year_from_gregorian(dt: date) -> int:
+    # Step 1: Extract the Gregorian year from the given date
+    gregorian_year = dt.year
     
-    The Buddhist Era used in Thailand is computed as:
-      BE = Gregorian year + 543
+    # Step 2: Convert to Buddhist Era year (BE = CE + 543)
+    buddhist_year = gregorian_year + 543
     
-    Parameters:
-        gregorian_date (date): A date in the Gregorian calendar.
-    
-    Returns:
-        int: The corresponding Buddhist Era year.
-    """
-    return gregorian_date.year + 543
+    # Step 3: Return the Buddhist year as an integer
+    return buddhist_year
 
-# Entry point: buddhist_calendar_year(gregorian_date: date) -> int
+# Entry point: buddhist_year_from_gregorian(dt: date) -> int
 ```

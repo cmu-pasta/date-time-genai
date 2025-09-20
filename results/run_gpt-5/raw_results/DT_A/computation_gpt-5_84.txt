@@ -1,104 +1,174 @@
 Let's think step by step to solve this problem.
-1. Accept the inputs: a calendar date, latitude, longitude, and a target time zone to return the local sunset time.
-2. Compute the day of year for the given date.
-3. Apply the NOAA solar calculation algorithm for sunset:
-   - Estimate the approximate time.
-   - Compute the Sun’s mean anomaly, true longitude, and right ascension.
-   - Compute the Sun’s declination.
-   - Compute the local hour angle for sunset.
-4. Convert the computed Universal Time (UT) for sunset to a UTC datetime on the given date.
-5. Convert the UTC datetime to the requested local timezone and return it.
-6. Handle edge cases where the sun does not set for the given date and location by raising a ValueError.
+1. Accept inputs: a calendar date, latitude in degrees, longitude in degrees (positive east), and a target time zone.
+2. Convert the date to day-of-year and compute the fractional year angle (in radians) used by standard solar position approximations.
+3. Implement sine and cosine using Taylor polynomials with range reduction to avoid importing math, keeping the solution within the datetime-only import constraint.
+4. Compute the equation of time (minutes) and the solar declination (radians) using established NOAA-style series.
+5. Compute the hour angle for sunset using the astronomical zenith for civil sunset (90.833 degrees). Implement arccos via bisection over [0, π] using the custom cosine.
+6. Compute solar noon time in minutes (UTC), then the sunset time in minutes (UTC) by adding the hour angle term.
+7. Convert minutes since UTC midnight on the given date into an aware UTC datetime, then convert to the provided ZoneInfo time zone and return it.
 
 ```python
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
-import math
 
-def _normalize_degrees(deg: float) -> float:
-    # Normalize an angle to [0, 360)
-    return deg % 360.0
+# Constants
+_PI = 3.141592653589793
+_TWO_PI = 2.0 * _PI
+_PI_OVER_2 = _PI / 2.0
+
+def _reduce_angle(x: float) -> float:
+    # Reduce x to [-pi, pi]
+    y = x % _TWO_PI
+    if y > _PI:
+        y -= _TWO_PI
+    return y
+
+def _sin_poly(y: float) -> float:
+    # Sine Taylor polynomial up to x^9 on small |y|
+    y2 = y * y
+    return y * (1
+                + y2 * (-1.0/6.0
+                + y2 * (1.0/120.0
+                + y2 * (-1.0/5040.0
+                + y2 * (1.0/362880.0)))))
+
+def _cos_poly(y: float) -> float:
+    # Cosine Taylor polynomial up to x^8 on small |y|
+    y2 = y * y
+    return (1
+            + y2 * (-1.0/2.0
+            + y2 * (1.0/24.0
+            + y2 * (-1.0/720.0
+            + y2 * (1.0/40320.0)))))
+
+def _sin_r(x: float) -> float:
+    # Range reduce to [-pi, pi], then to [-pi/2, pi/2] via symmetry and evaluate polynomial
+    y = _reduce_angle(x)
+    if y > _PI_OVER_2:
+        y = _PI - y
+    elif y < -_PI_OVER_2:
+        y = -_PI - y
+    return _sin_poly(y)
+
+def _cos_r(x: float) -> float:
+    # Range reduce and apply symmetry to evaluate cosine polynomial in [-pi/2, pi/2]
+    y = _reduce_angle(x)
+    if y > _PI_OVER_2:
+        y = _PI - y
+        return -_cos_poly(y)
+    if y < -_PI_OVER_2:
+        y = -_PI - y
+        return -_cos_poly(y)
+    return _cos_poly(y)
+
+def _arccos_via_bisection(x: float) -> float:
+    # Compute arccos(x) in [0, pi] by bisection using monotonicity of cos on that interval
+    if x <= -1.0:
+        return _PI
+    if x >= 1.0:
+        return 0.0
+    lo = 0.0
+    hi = _PI
+    for _ in range(50):
+        mid = 0.5 * (lo + hi)
+        c = _cos_r(mid)
+        if c > x:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+def _day_of_year(d: date) -> int:
+    # 1-based day of year
+    start = date(d.year, 1, 1)
+    return (d - start).days + 1
 
 def calculate_sunset(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime:
     """
-    Calculate the sunset time for a given date and geographic coordinates using NOAA's algorithm.
-    
+    Calculate the local sunset time for a given date and geographic coordinates.
+
     Inputs:
-      - d: date (calendar date for which to compute sunset)
-      - latitude: float (degrees, positive north, negative south)
-      - longitude: float (degrees, positive east, negative west)
-      - tz: ZoneInfo (target timezone for the returned datetime)
-    
-    Returns:
-      - datetime with tzinfo=tz representing the local sunset time on date d.
-    
-    Raises:
-      - ValueError if the sun does not set on the given date at the given location.
-      - ValueError if latitude or longitude are out of bounds.
+      - d: calendar date (naive date)
+      - latitude: degrees (positive north)
+      - longitude: degrees (positive east)
+      - tz: ZoneInfo time zone for the output time
+
+    Output:
+      - A timezone-aware datetime representing the sunset time on date d in the given time zone.
+
+    Notes:
+      - Uses civil sunset definition (zenith 90.833 degrees).
+      - Raises ValueError if the sun does not set on this date at this latitude (polar day) or does not rise (polar night).
     """
-    if not (-90.0 <= latitude <= 90.0):
-        raise ValueError("Latitude must be between -90 and 90 degrees.")
-    if not (-180.0 <= longitude <= 180.0):
-        raise ValueError("Longitude must be between -180 and 180 degrees.")
-    
-    # Constants
-    zenith = 90.833  # degrees, standard refraction + solar radius for official sunset
-    
-    # 1) Day of year
-    N = d.timetuple().tm_yday
-    
-    # 2) Longitude hour
-    lngHour = longitude / 15.0
-    
-    # 3) Approximate time (for sunset, use 18h local solar time)
-    t = N + ((18.0 - lngHour) / 24.0)
-    
-    # 4) Sun's mean anomaly
-    M = (0.9856 * t) - 3.289
-    
-    # 5) Sun's true longitude
-    L = M + (1.916 * math.sin(math.radians(M))) + (0.020 * math.sin(math.radians(2 * M))) + 282.634
-    L = _normalize_degrees(L)
-    
-    # 6) Sun's right ascension
-    RA = math.degrees(math.atan(0.91764 * math.tan(math.radians(L))))
-    RA = _normalize_degrees(RA)
-    
-    # Adjust RA to be in the same quadrant as L
-    L_quadrant = math.floor(L / 90.0) * 90.0
-    RA_quadrant = math.floor(RA / 90.0) * 90.0
-    RA = RA + (L_quadrant - RA_quadrant)
-    
-    # Convert RA to hours
-    RA /= 15.0
-    
-    # 7) Sun's declination
-    sinDec = 0.39782 * math.sin(math.radians(L))
-    cosDec = math.cos(math.asin(sinDec))
-    
-    # 8) Sun's local hour angle for sunset
-    cosH = (math.cos(math.radians(zenith)) - (sinDec * math.sin(math.radians(latitude)))) / (cosDec * math.cos(math.radians(latitude)))
-    
-    # If |cosH| > 1, the sun never sets or never rises on this date at this location
-    if cosH < -1.0 or cosH > 1.0:
-        raise ValueError("The sun does not set on this date at this location.")
-    
-    # For sunset, H = arccos(cosH)
-    H = math.degrees(math.acos(cosH))
-    H = H / 15.0  # convert to hours
-    
-    # 9) Local mean time of setting
-    T = H + RA - (0.06571 * t) - 6.622
-    
-    # 10) Convert to UT
-    UT = T - lngHour
-    UT = UT % 24.0  # normalize to [0, 24)
-    
-    # 11) Build UTC datetime for this date, then convert to target timezone
+    # Step 1: Day-of-year and fractional year angle (in radians)
+    N = _day_of_year(d)
+    gamma = _TWO_PI / 365.0 * (N - 1)  # fractional year angle (at 12:00)
+
+    # Step 2: Equation of Time (minutes) and Solar Declination (radians)
+    sin_g = _sin_r(gamma)
+    cos_g = _cos_r(gamma)
+    sin_2g = _sin_r(2.0 * gamma)
+    cos_2g = _cos_r(2.0 * gamma)
+    sin_3g = _sin_r(3.0 * gamma)
+    cos_3g = _cos_r(3.0 * gamma)
+
+    E_minutes = 229.18 * (
+        0.000075
+        + 0.001868 * cos_g
+        - 0.032077 * sin_g
+        - 0.014615 * cos_2g
+        - 0.040849 * sin_2g
+    )
+
+    decl = (
+        0.006918
+        - 0.399912 * cos_g
+        + 0.070257 * sin_g
+        - 0.006758 * cos_2g
+        + 0.000907 * sin_2g
+        - 0.002697 * cos_3g
+        + 0.001480 * sin_3g
+    )
+
+    # Step 3: Hour angle for sunset (radians)
+    zenith = (90.833 * _PI) / 180.0  # civil sunset
+    lat_rad = latitude * _PI / 180.0
+
+    sin_lat = _sin_r(lat_rad)
+    cos_lat = _cos_r(lat_rad)
+    cos_zen = _cos_r(zenith)
+
+    denom = cos_lat * _cos_r(decl)
+    # Avoid division by zero in extreme cases
+    if abs(denom) < 1e-12:
+        raise ValueError("Sunset is undefined at this latitude on the given date (denominator too small).")
+
+    cos_omega = (cos_zen - sin_lat * _sin_r(decl)) / denom
+    # Clamp numerical noise
+    if cos_omega > 1.0:
+        cos_omega = 1.0
+    if cos_omega < -1.0:
+        cos_omega = -1.0
+
+    # If no sunset or no sunrise occurs
+    if cos_omega < -1.0 + 1e-12:
+        # Sun above horizon all day (no sunset)
+        raise ValueError("No sunset occurs on this date at the given latitude (polar day).")
+    if cos_omega > 1.0 - 1e-12:
+        # Sun below horizon all day (no sunrise)
+        raise ValueError("No sunset occurs on this date at the given latitude (polar night).")
+
+    omega = _arccos_via_bisection(cos_omega)  # radians
+    omega_deg = omega * 180.0 / _PI
+
+    # Step 4: Solar noon (UTC minutes), then sunset (UTC minutes)
+    solar_noon_utc_min = 720.0 - 4.0 * longitude - E_minutes
+    sunset_utc_min = solar_noon_utc_min + 4.0 * omega_deg  # 4 minutes per degree
+
+    # Step 5: Build UTC datetime and convert to local timezone
     utc_midnight = datetime(d.year, d.month, d.day, tzinfo=timezone.utc)
-    sunset_utc = utc_midnight + timedelta(hours=UT)
-    sunset_local = sunset_utc.astimezone(tz)
-    
+    sunset_dt_utc = utc_midnight + timedelta(minutes=sunset_utc_min)
+    sunset_local = sunset_dt_utc.astimezone(tz)
     return sunset_local
 
 # Entry point: calculate_sunset(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime

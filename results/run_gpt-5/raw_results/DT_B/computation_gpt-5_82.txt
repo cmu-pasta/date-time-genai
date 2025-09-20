@@ -1,19 +1,17 @@
 Let's think step by step to solve this problem.
-1. Import the necessary class from the standard datetime library.
-2. Define a function that accepts a date as input.
-3. Use the ISO calendar system to compute the week number (1-53).
-4. Return the computed week number as an integer.
+1. Import the required class from the datetime module to work with date values.
+2. Define a function that accepts a date input.
+3. Use the ISO calendar week number (1-53) provided by the date object's isocalendar().week.
+4. Return the week number as an integer.
 
 ```python
 from datetime import date
 
 def convert_date_to_week_of_year(d: date) -> int:
-    """
-    Convert a date to its ISO week number (1-53).
-    """
-    # ISO calendar returns (ISO year, ISO week number, ISO weekday)
-    iso_week_number = d.isocalendar()[1]
-    return int(iso_week_number)
+    # Step 1: Use ISO calendar to get the week number (1-53)
+    week_number = d.isocalendar().week
+    # Step 2: Return the week number as an integer
+    return int(week_number)
 
 # Entry point: convert_date_to_week_of_year(d: date) -> int
 ```

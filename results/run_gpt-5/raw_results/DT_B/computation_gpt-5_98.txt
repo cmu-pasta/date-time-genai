@@ -1,34 +1,26 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the datetime module.
-2. Create a date object for October 1st of the given year.
-3. Compute the weekday of October 1st (Monday=0,...,Sunday=6).
-4. Compute the offset in days to the first Monday of October.
-5. Add 7 days to the first Monday to obtain the second Monday.
-6. Return the resulting date as the date of Indigenous Peoples' Day.
+1. Import the required classes (date, timedelta) from the datetime module.
+2. Accept the target year as an integer input.
+3. Construct a date for October 1st of the given year.
+4. Compute the weekday of October 1st (Monday=0,...,Sunday=6).
+5. Compute the offset in days to the first Monday of October.
+6. Add 7 days to the first Monday to get the second Monday.
+7. Return the resulting date.
 
 ```python
 from datetime import date, timedelta
 
-def calculate_indigenous_peoples_day(year: int) -> date:
-    """
-    Return the date of Indigenous Peoples' Day for the given year.
-    Indigenous Peoples' Day is observed on the second Monday of October.
-    """
-    # Step 1: Create a date for October 1st of the given year
+def indigenous_peoples_day(year: int) -> date:
+    # October 1st of the given year
     oct_first = date(year, 10, 1)
-    
-    # Step 2: Determine the weekday of October 1st (Monday=0, Sunday=6)
-    weekday_oct_first = oct_first.weekday()
-    
-    # Step 3: Calculate days to the first Monday in October
-    days_to_first_monday = (0 - weekday_oct_first) % 7  # 0 represents Monday
+    # Weekday: Monday=0 ... Sunday=6
+    w = oct_first.weekday()
+    # Days to first Monday in October
+    days_to_first_monday = (0 - w) % 7
     first_monday = oct_first + timedelta(days=days_to_first_monday)
-    
-    # Step 4: The second Monday is 7 days after the first Monday
+    # Second Monday is 7 days after the first Monday
     second_monday = first_monday + timedelta(days=7)
-    
-    # Step 5: Return the date of Indigenous Peoples' Day
     return second_monday
 
-# Entry point: calculate_indigenous_peoples_day(year: int) -> date
+# Entry point: indigenous_peoples_day(year: int) -> date
 ```

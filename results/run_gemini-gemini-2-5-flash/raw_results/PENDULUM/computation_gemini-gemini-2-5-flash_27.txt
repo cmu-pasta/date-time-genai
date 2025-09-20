@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library for its utility functions.
+2.  **Define a function**: Create a function that accepts two integers, `year1` and `year2`, representing the start and end years.
+3.  **Determine the range**: Identify the chronological start and end years to iterate through them effectively.
+4.  **Iterate and check for leap years**: Loop through each year within the determined range (inclusive). For each year, use `pendulum.is_leap()` to check if it is a leap year.
+5.  **Count leap years**: Maintain a counter and increment it whenever a leap year is found.
+6.  **Return the total count**: The function should return the accumulated count of leap years as an integer.
+
+```python
+import pendulum
+
+def calculate_leap_years_between(year1: int, year2: int) -> int:
+    # Step 1: Determine the chronological start and end years
+    start_year = min(year1, year2)
+    end_year = max(year1, year2)
+
+    leap_year_count = 0
+    # Step 2: Iterate through each year in the inclusive range
+    for year in range(start_year, end_year + 1):
+        # Step 3: Check if the current year is a leap year using pendulum.is_leap()
+        if pendulum.is_leap(year):
+            leap_year_count += 1
+            
+    # Step 4: Return the total count of leap years
+    return leap_year_count
+
+# Entry point: calculate_leap_years_between(year1: int, year2: int) -> int
+```

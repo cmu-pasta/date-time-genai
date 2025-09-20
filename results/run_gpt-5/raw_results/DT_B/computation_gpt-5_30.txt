@@ -1,35 +1,26 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard datetime library.
-2. Define a function that accepts a datetime input.
-3. Normalize the input timestamp to UTC (treat naive datetimes as UTC).
-4. Define the Unix epoch as 1970-01-01 00:00:00 UTC.
-5. Compute and return the timedelta between the UTC-normalized timestamp and the epoch.
+1. Import the necessary classes from the datetime module.
+2. Define the Unix epoch as a timezone-aware datetime in UTC.
+3. Accept a datetime input and ensure it is treated as UTC (assume UTC if naive, otherwise convert to UTC).
+4. Compute and return the timedelta representing the elapsed time since the epoch.
 
 ```python
 from datetime import datetime, timezone, timedelta
 
-def time_since_epoch(timestamp: datetime) -> timedelta:
-    """
-    Calculate the time elapsed since the Unix epoch (1970-01-01 00:00:00 UTC)
-    for a given timestamp.
-
-    - If the input datetime is naive (no tzinfo), it is treated as UTC.
-    - If the input datetime is aware, it is converted to UTC before computation.
-
-    Returns:
-        timedelta: The elapsed time relative to the epoch. Can be negative for pre-epoch timestamps.
-    """
-    # Step 1: Normalize input to an aware UTC datetime
-    if timestamp.tzinfo is None:
-        ts_utc = timestamp.replace(tzinfo=timezone.utc)
-    else:
-        ts_utc = timestamp.astimezone(timezone.utc)
-
-    # Step 2: Define the Unix epoch as an aware UTC datetime
+def time_elapsed_since_epoch(timestamp: datetime) -> timedelta:
+    # Define the Unix epoch as a timezone-aware datetime in UTC
     epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    
+    # Ensure the input timestamp is treated in UTC:
+    # - If naive (no tzinfo), assume it's UTC.
+    # - If aware, convert it to UTC.
+    if timestamp.tzinfo is None:
+        timestamp_utc = timestamp.replace(tzinfo=timezone.utc)
+    else:
+        timestamp_utc = timestamp.astimezone(timezone.utc)
+    
+    # Calculate and return the elapsed time since the epoch as a timedelta
+    return timestamp_utc - epoch
 
-    # Step 3: Compute and return the elapsed time as a timedelta
-    return ts_utc - epoch
-
-# Entry point: time_since_epoch(timestamp: datetime) -> timedelta
+# Entry point: time_elapsed_since_epoch(timestamp: datetime) -> timedelta
 ```

@@ -1,92 +1,91 @@
 Let's think step by step to solve this problem.
-1. Convert the input datetime to UTC to align with astronomical formulas.
-2. Compute the Julian Date (JD) corresponding to the UTC datetime.
-3. Compute the number of centuries since J2000.0 (T) using JD.
-4. Calculate the Greenwich Mean Sidereal Time (GMST) in degrees at the given JD.
-5. Add the observer’s longitude (east-positive) to get Local Sidereal Time (LST) in degrees.
-6. Normalize LST to the [0, 360) range and convert it to hours, minutes, seconds, and microseconds.
-7. Return a pendulum.Time representing the local sidereal time.
+1. Convert the provided datetime to UTC to ensure consistent astronomical calculations.
+2. Compute the Julian Date (JD) for the given UTC datetime with fractional day precision.
+3. Derive JD0 (the Julian Date at the previous 0h UT) and compute the hours since 0h UT.
+4. Compute the number of days since J2000.0 (D) and centuries (T) for precision terms.
+5. Calculate the Greenwich Mean Sidereal Time (GMST) in hours using a standard approximation.
+6. Convert the provided longitude from degrees to hours and add it to GMST to get Local Sidereal Time (LST).
+7. Normalize LST to the range [0, 24) hours.
+8. Convert the LST value in hours into a pendulum.Time object (hours, minutes, seconds, microseconds) and return it.
 
 ```python
+import math
 import pendulum
 
-def _normalize_degrees(deg: float) -> float:
-    # Normalize angle to [0, 360)
-    result = deg % 360.0
-    if result < 0.0:
-        result += 360.0
-    return result
-
-def _julian_date(dt_utc: pendulum.DateTime) -> float:
-    # Compute Julian Date from a UTC datetime
-    y = dt_utc.year
-    m = dt_utc.month
-    D = dt_utc.day
-    # Fractional day
-    frac_day = (dt_utc.hour + dt_utc.minute / 60.0 + dt_utc.second / 3600.0 + dt_utc.microsecond / 3_600_000_000.0) / 24.0
-
-    if m <= 2:
-        y -= 1
-        m += 12
-
-    A = int(y // 100)
-    B = 2 - A + int(A // 4)
-
-    jd = int(365.25 * (y + 4716)) + int(30.6001 * (m + 1)) + D + B - 1524.5 + frac_day
-    return float(jd)
-
 def calculate_sidereal_time(dt: pendulum.DateTime, longitude_degrees: float) -> pendulum.Time:
-    """
-    Calculate the local sidereal time for a given datetime and longitude.
+    # Ensure we are working in UTC for astronomical time calculations
+    utc_dt = dt.in_timezone(pendulum.timezone("UTC"))
 
-    Inputs:
-    - dt: pendulum.DateTime (any timezone; will be converted to UTC internally)
-    - longitude_degrees: float (east-positive, in degrees)
+    # Extract date-time components
+    year = utc_dt.year
+    month = utc_dt.month
+    day = utc_dt.day
+    hour = utc_dt.hour
+    minute = utc_dt.minute
+    second = utc_dt.second
+    microsecond = utc_dt.microsecond
 
-    Output:
-    - pendulum.Time representing the local sidereal time (LST)
-    """
-    # Step 1: Ensure UTC
-    dt_utc = dt.in_timezone("UTC")
+    # Convert to Julian Date (JD) with fractional day
+    # Algorithm accounts for Gregorian calendar
+    Y = year
+    M = month
+    D = float(day) + (hour + (minute + (second + microsecond / 1_000_000.0) / 60.0) / 60.0) / 24.0
+    if M <= 2:
+        Y -= 1
+        M += 12
+    A = math.floor(Y / 100)
+    B = 2 - A + math.floor(A / 4)
+    JD = math.floor(365.25 * (Y + 4716)) + math.floor(30.6001 * (M + 1)) + D + B - 1524.5
 
-    # Step 2: Julian Date
-    JD = _julian_date(dt_utc)
+    # JD at 0h UT (start of the current UTC day)
+    JD0 = math.floor(JD + 0.5) - 0.5
 
-    # Step 3: Centuries since J2000.0
-    T = (JD - 2451545.0) / 36525.0
+    # Hours since 0h UT
+    H = (JD - JD0) * 24.0
 
-    # Step 4: GMST in degrees (IAU 1982/2000-era approximation)
-    GMST_deg = 280.46061837 + 360.98564736629 * (JD - 2451545.0) + 0.000387933 * (T * T) - (T * T * T) / 38710000.0
-    GMST_deg = _normalize_degrees(GMST_deg)
+    # Days since J2000.0 and centuries for precision term
+    D_since_J2000 = JD - 2451545.0
+    D0_since_J2000 = JD0 - 2451545.0
+    T = D_since_J2000 / 36525.0
 
-    # Step 5: Local Sidereal Time in degrees
-    LST_deg = _normalize_degrees(GMST_deg + longitude_degrees)
+    # Compute GMST in hours using a standard approximation (Vallado)
+    GMST_hours = (
+        6.697374558
+        + 0.06570982441908 * D0_since_J2000
+        + 1.00273790935 * H
+        + 0.000026 * (T * T)
+    )
 
-    # Step 6: Convert degrees to time-of-day
-    total_sidereal_hours = LST_deg / 15.0  # 360 deg == 24 hours
-    hours = int(total_sidereal_hours)
-    rem_h = (total_sidereal_hours - hours) * 60.0
-    minutes = int(rem_h)
-    rem_m = (rem_h - minutes) * 60.0
-    seconds = int(rem_m)
-    rem_s = (rem_m - seconds)
-    microseconds = int(round(rem_s * 1_000_000.0))
+    # Normalize GMST to [0, 24)
+    GMST_hours = GMST_hours % 24.0
 
-    # Handle rounding overflow
-    if microseconds >= 1_000_000:
-        microseconds -= 1_000_000
-        seconds += 1
-    if seconds >= 60:
-        seconds -= 60
-        minutes += 1
-    if minutes >= 60:
-        minutes -= 60
-        hours += 1
-    if hours >= 24:
-        hours -= 24
+    # Convert longitude from degrees to hours and compute Local Sidereal Time
+    longitude_hours = longitude_degrees / 15.0
+    LST_hours = (GMST_hours + longitude_hours) % 24.0
 
-    # Step 7: Return pendulum.Time
-    return pendulum.Time(hours, minutes, seconds, microseconds)
+    # Convert fractional hours to h:m:s.us for pendulum.Time
+    h = int(math.floor(LST_hours))
+    rem_min = (LST_hours - h) * 60.0
+    m = int(math.floor(rem_min))
+    rem_sec = (rem_min - m) * 60.0
+    s = int(math.floor(rem_sec))
+    us = int(round((rem_sec - s) * 1_000_000.0))
+
+    # Handle possible rounding overflow
+    if us >= 1_000_000:
+        us -= 1_000_000
+        s += 1
+    if s >= 60:
+        s -= 60
+        m += 1
+    if m >= 60:
+        m -= 60
+        h += 1
+    if h >= 24:
+        h -= 24
+
+    # Return as pendulum.Time (UTC-neutral, as LST is a local sidereal angle)
+    return pendulum.time(hour=h, minute=m, second=s, microsecond=us)
 
 # Entry point: calculate_sidereal_time(dt: pendulum.DateTime, longitude_degrees: float) -> pendulum.Time
 ```

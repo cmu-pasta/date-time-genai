@@ -6,30 +6,19 @@ from datetime_generators import *
 from hypothesis import given, seed, settings
 
 from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo # Requires Python 3.9+ for ZoneInfo
+from zoneinfo import ZoneInfo
 def calculate_exact_time_difference(dt1: datetime, dt2: datetime) -> timedelta:
-    """
-    Calculates the exact time difference between two timezone-aware datetime objects,
-    considering daylight saving time.
-
-    Args:
-        dt1: The first timezone-aware datetime object.
-        dt2: The second timezone-aware datetime object.
-
-    Returns:
-        A timedelta object representing the exact time difference.
-        The result will be positive if dt2 is after dt1, and negative if dt2 is before dt1.
-    """
-    # Ensure both datetime objects are timezone-aware.
-    # If they are not, this function assumes they should be localized
-    # before calling, as naive datetimes cannot correctly account for DST.
+    # Precondition: Ensure both datetime objects are timezone-aware.
+    # If they are not timezone-aware, a ValueError might be raised by the subtraction,
+    # or the result might not correctly account for DST.
     if dt1.tzinfo is None or dt2.tzinfo is None:
-        raise ValueError("Both datetime objects must be timezone-aware to correctly handle DST.")
+        raise ValueError("Both input datetime objects must be timezone-aware to calculate exact time difference considering DST.")
 
-    # Direct subtraction of timezone-aware datetimes automatically accounts for
-    # differences in UTC offset, including those due to daylight saving time.
+    # Step 1: Calculate the difference between the two timezone-aware datetime objects.
+    # Python's datetime subtraction automatically handles timezone and DST transitions.
     time_difference = dt2 - dt1
     
+    # Step 2: Return the timedelta object representing the exact time difference.
     return time_difference
 
 # Entry point: calculate_exact_time_difference(dt1: datetime, dt2: datetime) -> timedelta

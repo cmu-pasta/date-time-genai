@@ -1,36 +1,28 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard datetime library.
+1. Import the required classes from the datetime module.
 2. Define a function that accepts two time objects as inputs.
-3. Combine each time with a fixed reference date to create comparable datetime objects.
-4. If the end time is earlier than the start time, assume the period crosses midnight and add one day to the end datetime.
-5. Compute the timedelta between the two datetimes.
-6. Convert the timedelta to total minutes and return it as an integer.
+3. Anchor both times to the same arbitrary date to create datetime objects.
+4. If the end time is earlier than the start time, assume it crosses midnight and add one day to the end datetime.
+5. Compute the timedelta difference between the two datetimes.
+6. Convert the difference to total minutes as an integer and return it.
 
 ```python
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, time, timedelta
 
-def total_minutes_between(start: time, end: time) -> int:
-    """
-    Calculate the total whole minutes in the time period between two times.
-    If end is earlier than start, the period is assumed to cross midnight into the next day.
-
-    Args:
-        start (time): The starting time.
-        end (time): The ending time.
-
-    Returns:
-        int: The total number of whole minutes between start and end.
-    """
-    reference_day = date(1900, 1, 1)
-    start_dt = datetime.combine(reference_day, start)
-    end_dt = datetime.combine(reference_day, end)
-
+def calculate_total_minutes_between_times(t1: time, t2: time) -> int:
+    # Anchor both times to the same arbitrary date
+    base_date = datetime(2000, 1, 1)
+    start_dt = datetime.combine(base_date.date(), t1)
+    end_dt = datetime.combine(base_date.date(), t2)
+    
+    # Handle crossing midnight: if end is earlier than start, add 1 day to end
     if end_dt < start_dt:
         end_dt += timedelta(days=1)
-
+    
+    # Calculate the difference and convert to total minutes
     delta = end_dt - start_dt
     total_minutes = int(delta.total_seconds() // 60)
     return total_minutes
 
-# Entry point: total_minutes_between(start: time, end: time) -> int
+# Entry point: calculate_total_minutes_between_times(t1: time, t2: time) -> int
 ```

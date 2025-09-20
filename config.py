@@ -37,7 +37,7 @@ SAMPLING_TEMPERATURE = 1.0
 MAX_TOKENS = 32896
 
 # Number of interesting datetime computation ideas to generate
-IDEAS = 10
+IDEAS = 100
 
 # Maximum number of retries for LLM sampling
 MAX_RETRIES = 3

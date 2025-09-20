@@ -6,34 +6,35 @@ from datetime_generators import *
 from hypothesis import given, seed, settings
 
 from datetime import datetime
-def find_next_leap_year(dt: datetime) -> int:
+def determine_next_leap_year(dt: datetime) -> int:
     """
     Determines the next leap year after a given date.
 
     Args:
-        dt: The input datetime object.
+        dt: The given date as a datetime object.
 
     Returns:
         An integer representing the next leap year after the given date.
     """
-    # Step 1: Start checking from the year immediately after the given date's year.
+    # Start checking from the year immediately after the given date's year.
+    # This ensures we always find a leap year strictly after the input date.
     current_year = dt.year + 1
 
-    # Step 2: Loop indefinitely until a leap year is found.
     while True:
-        # Step 3: Check if the current_year is a leap year using the standard rules.
+        # Step 1 & 2: Implement the leap year check
         # A year is a leap year if it is divisible by 4,
         # unless it is divisible by 100 but not by 400.
-        is_leap = (current_year % 4 == 0 and current_year % 100 != 0) or (current_year % 400 == 0)
+        is_leap_year = (current_year % 4 == 0 and current_year % 100 != 0) or \
+                       (current_year % 400 == 0)
 
-        if is_leap:
-            # Step 4: If it's a leap year, return it.
+        if is_leap_year:
+            # Step 3: Return the found leap year
             return current_year
         
-        # Step 5: If not a leap year, increment the year and check the next one.
+        # Move to the next year if the current_year is not a leap year
         current_year += 1
 
-# Entry point: find_next_leap_year(dt: datetime) -> integer
+# Entry point: determine_next_leap_year(dt: datetime) -> int
 
 def format_value_dt(*values):
     formatted_values = []
@@ -60,7 +61,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(datetime_strategy())
-def test_find_next_leap_year(dt):
-    result = find_next_leap_year(dt)
+def test_determine_next_leap_year(dt):
+    result = determine_next_leap_year(dt)
     formatted_result = format_value_dt(result, dt)
     log_file.write(formatted_result + "\n")

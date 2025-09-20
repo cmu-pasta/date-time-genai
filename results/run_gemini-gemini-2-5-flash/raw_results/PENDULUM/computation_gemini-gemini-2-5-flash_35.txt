@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and determine weekdays.
+2.  **Define the function signature**: Create a function that accepts a `pendulum.DateTime` object representing any day within the desired month and returns a `pendulum.Date` object for the last business day.
+3.  **Find the last day of the month**: Use the `end_of_month()` method on the input date to get the last day of that specific month.
+4.  **Iterate backwards**: Starting from the last day of the month, move backwards one day at a time.
+5.  **Check for business day**: In each step, check if the current day is a weekend (Saturday or Sunday). In `pendulum`, `weekday()` returns an integer from 0 (Monday) to 6 (Sunday). So, Saturday is 5 and Sunday is 6.
+6.  **Return the first business day found**: The first day encountered while moving backward that is not a Saturday or Sunday is the last business day of the month.
+
+```python
+import pendulum
+
+def find_last_business_day_of_month(date_in_month: pendulum.DateTime) -> pendulum.Date:
+    # Step 1: Get the last day of the month
+    current_day = date_in_month.end_of_month().date()
+
+    # Step 2: Iterate backwards until a business day is found
+    # A business day is Monday (0) to Friday (4). Weekend days are Saturday (5) and Sunday (6).
+    while current_day.weekday() >= 5:  # Check if it's Saturday or Sunday
+        current_day = current_day.subtract(days=1)
+    
+    # Step 3: Return the last business day
+    return current_day
+
+# Entry point: find_last_business_day_of_month(date_in_month: pendulum.DateTime) -> pendulum.Date
+```

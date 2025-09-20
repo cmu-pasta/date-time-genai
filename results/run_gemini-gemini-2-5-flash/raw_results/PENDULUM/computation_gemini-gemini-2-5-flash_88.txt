@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with durations.
+2.  **Define a function**: Create a function that accepts a `pendulum.Duration` object as input.
+3.  **Extract total hours**: Use the `total_hours()` method available on the `pendulum.Duration` object to get the total duration expressed in hours as a float.
+4.  **Return the result**: Return the calculated total hours.
+
+```python
+import pendulum
+
+def convert_duration_to_total_hours(duration: pendulum.Duration) -> float:
+    # Step 1: Use the total_hours() method of the pendulum.Duration object
+    # This method returns the total duration expressed in hours as a float.
+    total_hours = duration.total_hours()
+    
+    # Step 2: Return the result
+    return total_hours
+
+# Entry point: convert_duration_to_total_hours(duration: pendulum.Duration) -> float
+```

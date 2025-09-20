@@ -1,46 +1,37 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the datetime module to work with dates.
-2. Define a function that accepts two dates as input.
-3. Normalize the order of the dates to ensure start is not after end.
-4. Compute the total number of days in the inclusive range.
-5. Calculate the number of complete weeks and their weekend days.
-6. Account for remaining days and count how many fall on Saturday or Sunday.
-7. Return the total number of weekend days as an integer.
+1. Interpret the task as counting the number of weekend days (Saturdays and Sundays) between two dates, inclusive of both endpoints.
+2. Accept two date inputs. If the first is after the second, swap them to ensure ascending order.
+3. Compute the total number of days inclusively between the two dates.
+4. Count weekend days in complete weeks (each full week contributes exactly two weekend days).
+5. Count weekend days in the remaining days by iterating from the start date and checking the weekday for each remainder day.
+6. Return the total count as an integer.
 
 ```python
 from datetime import date, timedelta
 
-def count_weekend_days_between(start: date, end: date) -> int:
-    """
-    Calculate the number of weekend days (Saturdays and Sundays) between two dates, inclusive.
-    Inputs:
-      - start: date
-      - end: date
-    Output:
-      - integer count of weekend days within the inclusive range [start, end]
-    """
-    # Ensure start <= end
+def count_weekends_between(start: date, end: date) -> int:
+    # Ensure start is not after end
     if start > end:
         start, end = end, start
 
-    # Total days inclusive
+    # Inclusive total days
     total_days = (end - start).days + 1
 
-    # Number of complete weeks and base weekend days from those weeks
+    # Weekend days from full weeks
     full_weeks = total_days // 7
     weekend_days = full_weeks * 2
 
-    # Remaining days after full weeks
-    remaining_days = total_days % 7
-    start_wd = start.weekday()  # Monday=0, Sunday=6
+    # Remaining days
+    remainder = total_days % 7
+    start_weekday = start.weekday()  # Monday=0, Sunday=6
 
-    # Count weekend days within the remaining span
-    for i in range(remaining_days):
-        wd = (start_wd + i) % 7
-        if wd == 5 or wd == 6:  # Saturday or Sunday
+    # Count weekend days in the remainder span
+    for i in range(remainder):
+        day_idx = (start_weekday + i) % 7
+        if day_idx >= 5:  # 5=Saturday, 6=Sunday
             weekend_days += 1
 
-    return int(weekend_days)
+    return weekend_days
 
-# Entry point: count_weekend_days_between(start: date, end: date) -> int
+# Entry point: count_weekends_between(start: date, end: date) -> int
 ```

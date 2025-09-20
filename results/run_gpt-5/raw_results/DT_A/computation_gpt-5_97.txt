@@ -1,40 +1,15 @@
 Let's think step by step to solve this problem.
-1. Understand the Thai Buddhist calendar: it uses the same months and days as the Gregorian calendar, but the year is offset by +543.
-2. Decide on input and output types: we will accept a Gregorian date and return a date representing the Thai Buddhist calendar date.
-3. Compute the Buddhist Era (BE) year by adding 543 to the Gregorian year.
-4. Validate that the resulting year is within Python's supported range for dates (1 to 9999).
-5. Construct and return the new date with the same month and day, but the BE year.
+1. Import the necessary type (date) from the datetime module.
+2. Define a function that accepts a Gregorian date as input.
+3. Compute the Thai Buddhist calendar year by adding 543 to the Gregorian year.
+4. Construct and return a new date with the computed year and the same month and day.
 
 ```python
-from datetime import date, datetime
+from datetime import date
 
-def gregorian_to_thai_buddhist(gregorian_date: date) -> date:
-    """
-    Convert a Gregorian date to its Thai Buddhist calendar equivalent.
-    
-    The Thai Buddhist calendar is Gregorian with the year offset by +543.
-    Months and days are identical.
-    
-    Parameters:
-    - gregorian_date: date (or datetime; if datetime, its date component is used)
-    
-    Returns:
-    - date in the Thai Buddhist calendar (year = Gregorian year + 543)
-    
-    Raises:
-    - ValueError if the resulting year is outside Python's supported date range.
-    """
-    # If a datetime is inadvertently provided, use its date component
-    if isinstance(gregorian_date, datetime):
-        gregorian_date = gregorian_date.date()
-    
-    be_year = gregorian_date.year + 543
-    
-    # Ensure the result is within the valid range for datetime.date
-    if not (1 <= be_year <= 9999):
-        raise ValueError("Resulting Thai Buddhist year is out of supported range for datetime.date.")
-    
-    return date(be_year, gregorian_date.month, gregorian_date.day)
+def determine_thai_buddhist_date(gregorian_date: date) -> date:
+    buddhist_year = gregorian_date.year + 543
+    return date(buddhist_year, gregorian_date.month, gregorian_date.day)
 
-# Entry point: gregorian_to_thai_buddhist(gregorian_date: date) -> date
+# Entry point: determine_thai_buddhist_date(gregorian_date: date) -> date
 ```

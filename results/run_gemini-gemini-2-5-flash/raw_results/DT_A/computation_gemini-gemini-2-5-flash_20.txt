@@ -1,0 +1,50 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need `datetime` for date objects and `timedelta` for date arithmetic.
+2.  **Define the function**: Create a function that accepts a `datetime` object as input, representing the given date.
+3.  **Determine the current day of the week**: Use the `weekday()` method of the `datetime` object. This method returns an integer where Monday is 0 and Sunday is 6. Friday is 4.
+4.  **Calculate the number of days to subtract**:
+    *   We want to find the Friday that occurred *before* the given date.
+    *   If the given date is a Friday, the "previous" Friday is 7 days prior.
+    *   For any other day, we subtract the number of days that have passed since the last Friday. For example, if today is Saturday (weekday 5), Friday was 1 day ago (5 - 4 = 1). If today is Monday (weekday 0), Friday was 3 days ago (0 - 4 = -4, adjusted for modulo 7: (0 - 4 + 7) % 7 = 3).
+    *   A robust way to calculate `days_to_subtract` is `(dt.weekday() - 4 + 7) % 7`. This gives the number of days elapsed since the *last* Friday (inclusive of today if today is Friday).
+    *   If `days_to_subtract` is 0 (meaning the input `dt` is a Friday), we need to go back 7 days. Otherwise, we subtract `days_to_subtract`.
+5.  **Subtract the calculated `timedelta`**: Create a `timedelta` object with the calculated number of days and subtract it from the input `datetime` object.
+6.  **Return the result**: The result will be a `datetime` object representing the previous Friday.
+
+```python
+from datetime import datetime, timedelta
+
+def find_previous_friday(dt: datetime) -> datetime:
+    # Step 1: Get the current weekday (Monday is 0, Friday is 4, Sunday is 6)
+    current_weekday = dt.weekday()
+    
+    # Step 2: Define Friday's weekday index
+    FRIDAY = 4
+    
+    # Step 3: Calculate the number of days to subtract to get to the previous Friday.
+    # The expression (current_weekday - FRIDAY + 7) % 7 calculates how many days
+    # have passed since the *last* Friday (inclusive of today if today is Friday).
+    # For example:
+    # If dt is Friday (4): (4 - 4 + 7) % 7 = 0. This means 0 days ago was Friday.
+    # If dt is Saturday (5): (5 - 4 + 7) % 7 = 1. This means 1 day ago was Friday.
+    # If dt is Monday (0): (0 - 4 + 7) % 7 = 3. This means 3 days ago was Friday.
+    
+    days_since_last_friday = (current_weekday - FRIDAY + 7) % 7
+    
+    # If the current date is a Friday (days_since_last_friday == 0),
+    # we need to go back a full week to get the *previous* Friday.
+    # Otherwise, we go back the calculated number of days.
+    if days_since_last_friday == 0:
+        days_to_subtract = 7
+    else:
+        days_to_subtract = days_since_last_friday
+        
+    # Step 4: Subtract the timedelta from the given date
+    previous_friday = dt - timedelta(days=days_to_subtract)
+    
+    # Step 5: Return the resulting datetime object
+    return previous_friday
+
+# Entry point: find_previous_friday(dt: datetime) -> datetime
+```

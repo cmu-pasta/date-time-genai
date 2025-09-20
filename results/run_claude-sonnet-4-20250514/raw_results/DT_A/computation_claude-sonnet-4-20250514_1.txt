@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+
+1. **Import necessary libraries**: We need the `datetime` module and `ZoneInfo` for timezone handling to properly account for daylight saving time.
+
+2. **Define a function**: Create a function that accepts two timezone-aware datetime objects as input parameters.
+
+3. **Calculate the time difference**: Subtract the two datetime objects to get a timedelta. When working with timezone-aware datetime objects, Python automatically accounts for daylight saving time transitions.
+
+4. **Return the result**: Return the timedelta object which represents the exact time difference accounting for DST.
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def calculate_time_difference_with_dst(dt1: datetime, dt2: datetime) -> timedelta:
+    # Calculate the exact time difference between two timezone-aware timestamps
+    # The subtraction automatically handles daylight saving time transitions
+    time_difference = dt2 - dt1
+    
+    return time_difference
+
+# Entry point: calculate_time_difference_with_dst(dt1: datetime, dt2: datetime) -> timedelta
+```

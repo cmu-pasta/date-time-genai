@@ -1,30 +1,38 @@
 Let's think step by step to solve this problem.
-1. Determine the total number of days in the specified year using Pendulum dates.
-2. Compute how many full 14-day (bi-weekly) periods fit within those days using floor division.
-3. Return the result as an integer.
+1. Import the Pendulum library to work with dates and durations.
+2. Define a function that accepts a starting payroll period date (pendulum.Date) and a target year (integer).
+3. Determine the first bi-weekly period start date that falls on or after January 1 of the target year by aligning the start_date forward in 14-day increments.
+4. If this aligned start date exceeds December 31 of the target year, return 0. Otherwise, count how many 14-day periods start within the year by stepping from the aligned start date to year-end.
 
 ```python
 import pendulum
 
-def calculate_biweekly_periods_in_year(year: int) -> int:
+def count_biweekly_periods_in_year(start_date: pendulum.Date, year: int) -> int:
     """
-    Calculate the number of bi-weekly payroll periods that fully fit within a given calendar year.
-    
-    A bi-weekly period is exactly 14 days. This function counts how many full 14-day
-    periods are contained within the total number of days in the specified year.
+    Count the number of bi-weekly payroll periods (14-day cadence) that start within a given year.
+    The cadence is anchored at the provided start_date (the start of a payroll period).
     """
-    # Step 1: Define the start and end dates of the year
-    start_of_year: pendulum.Date = pendulum.date(year, 1, 1)
-    end_of_year: pendulum.Date = pendulum.date(year, 12, 31)
+    # Boundaries of the target year
+    jan1 = pendulum.date(year, 1, 1)
+    dec31 = pendulum.date(year, 12, 31)
 
-    # Step 2: Compute the total number of days in the year (inclusive)
-    total_days_in_year: int = end_of_year.diff(start_of_year, absolute=True).in_days() + 1
+    # Compute the minimal non-negative step n such that start_date + 14*n >= jan1
+    # Let d = days from start_date to jan1 (can be negative)
+    d = (jan1 - start_date).in_days()
+    # Ceiling integer division for n = ceil(d / 14)
+    n = -((-d) // 14)
 
-    # Step 3: Calculate the number of full 14-day (bi-weekly) periods
-    periods: int = total_days_in_year // 14
+    # First period start on or after Jan 1
+    first_start = start_date.add(days=14 * n)
 
-    # Step 4: Return the count as an integer
-    return periods
+    # If the first period start is beyond the year end, no periods start in this year
+    if first_start > dec31:
+        return 0
 
-# Entry point: calculate_biweekly_periods_in_year(year: int) -> int
+    # Count how many 14-day starts fit within the year, inclusive
+    remaining_days = (dec31 - first_start).in_days()
+    count = 1 + (remaining_days // 14)
+    return count
+
+# Entry point: count_biweekly_periods_in_year(start_date: pendulum.Date, year: int) -> int
 ```

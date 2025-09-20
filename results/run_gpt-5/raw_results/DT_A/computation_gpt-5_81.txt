@@ -1,24 +1,15 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime library.
-2. Define a function that accepts a timedelta representing the duration.
-3. Convert the duration to total seconds using total_seconds().
-4. Multiply by 1000 to get milliseconds and return the result.
+1. Import the required type from the datetime library to represent a time duration.
+2. Define a function that accepts a timedelta duration.
+3. Convert the duration to total seconds, multiply by 1000 to get milliseconds.
+4. Cast to int to return whole milliseconds.
 
 ```python
 from datetime import timedelta
 
-def calculate_milliseconds(duration: timedelta) -> float:
-    """
-    Calculate the number of milliseconds in a given time duration.
+def calculate_milliseconds(duration: timedelta) -> int:
+    # Convert the duration to milliseconds and return as an integer
+    return int(duration.total_seconds() * 1000)
 
-    Args:
-        duration (timedelta): The time duration to convert.
-
-    Returns:
-        float: The total number of milliseconds in the duration.
-    """
-    # Convert duration to total seconds and then to milliseconds
-    return duration.total_seconds() * 1000.0
-
-# Entry point: calculate_milliseconds(duration: timedelta) -> float
+# Entry point: calculate_milliseconds(duration: timedelta) -> int
 ```

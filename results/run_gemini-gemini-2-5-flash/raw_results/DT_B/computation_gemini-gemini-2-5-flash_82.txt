@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: Create a function that accepts a `datetime` object as input, representing the date we want to convert.
+3. **Calculate the week of the year**: The `datetime` object has a `isocalendar()` method, which returns a tuple containing the ISO year, ISO week number (1-53), and ISO weekday. We will access the `week` attribute of the `isocalendar()` result to get the week of the year.
+4. **Return the result**: The `week` attribute already provides an integer between 1 and 53, which is the desired output format.
+
+```python
+from datetime import datetime
+
+def get_week_of_year(dt: datetime) -> int:
+    # Step 1: Get the ISO calendar data for the given datetime object.
+    # The isocalendar() method returns a named tuple (year, week, weekday).
+    iso_calendar_data = dt.isocalendar()
+    
+    # Step 2: Extract the week number from the ISO calendar data.
+    # The 'week' attribute directly gives the ISO week number (1-53).
+    week_number = iso_calendar_data.week
+    
+    # Step 3: Return the week number as an integer.
+    return week_number
+
+# Entry point: get_week_of_year(dt: datetime) -> int
+```

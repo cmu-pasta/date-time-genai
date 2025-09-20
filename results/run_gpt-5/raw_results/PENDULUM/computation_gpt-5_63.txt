@@ -1,31 +1,24 @@
 Let's think step by step to solve this problem.
 1. Import the pendulum library to work with date and time objects.
 2. Define a function that accepts two pendulum.DateTime inputs.
-3. Compute the absolute difference in days between the two inputs using Pendulum's diff and in_days methods.
-4. Convert the day difference into fortnights by performing integer division by 14.
-5. Return the result as an integer.
+3. Compute the absolute difference between the two DateTime values as a pendulum.Duration.
+4. Convert the duration to days using in_days().
+5. Divide the day difference by 14 and use integer division to get the number of complete fortnights.
+6. Return the result as an integer.
 
 ```python
 import pendulum
 
 def calculate_fortnights_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
-    """
-    Calculate the number of complete fortnights (14-day periods) between two Pendulum DateTime objects.
+    # Compute absolute duration between the two DateTime values
+    duration: pendulum.Duration = dt2.diff(dt1)  # abs=True by default
     
-    Args:
-        dt1: A pendulum.DateTime object representing the first date/time.
-        dt2: A pendulum.DateTime object representing the second date/time.
+    # Convert duration to total whole days
+    total_days: int = duration.in_days()
     
-    Returns:
-        An integer representing the absolute number of complete fortnights between dt1 and dt2.
-    """
-    # Step 1: Compute absolute difference in days
-    days_difference: int = abs(dt2.diff(dt1).in_days())
+    # Calculate the number of complete fortnights (14 days each)
+    fortnights: int = total_days // 14
     
-    # Step 2: Convert days to complete fortnights (14-day periods)
-    fortnights: int = days_difference // 14
-    
-    # Step 3: Return the number of fortnights as an integer
     return fortnights
 
 # Entry point: calculate_fortnights_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int

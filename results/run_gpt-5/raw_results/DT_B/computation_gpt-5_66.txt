@@ -1,31 +1,38 @@
 Let's think step by step to solve this problem.
-1. Import the required classes (date, timedelta) from the standard datetime library.
-2. Define a function that accepts a year as an integer input.
-3. Iterate from January 1 to December 31 of that year, advancing one day at a time.
-4. For each date, count it if it is a weekday (Monday=0 to Friday=4).
-5. Return the total count as an integer representing the number of trading days (weekdays) in the year.
+1. Import the required classes from the datetime library.
+2. Define a function that accepts a year as an integer.
+3. Create date objects for the first and last day of the given year.
+4. Iterate from the start date to the end date, counting days that fall on weekdays (Monday to Friday).
+5. Return the total count as an integer.
 
 ```python
 from datetime import date, timedelta
 
-def trading_days_in_year(year: int) -> int:
+def calculate_trading_days_in_year(year: int) -> int:
     """
-    Calculate the number of trading days (weekdays: Monday-Friday) in a given year.
-    This implementation considers trading days as weekdays only and does not exclude market holidays.
+    Calculate the number of trading days (Monday through Friday) in a given year.
+    
+    Args:
+        year (int): The year for which to calculate trading days.
+    
+    Returns:
+        int: The count of trading days in the specified year.
     """
     start = date(year, 1, 1)
     end = date(year, 12, 31)
-    one_day = timedelta(days=1)
-
+    
     count = 0
     current = start
+    one_day = timedelta(days=1)
+    
     while current <= end:
-        # Monday=0 ... Sunday=6; count Monday-Friday
-        if current.weekday() < 5:
+        # weekday(): Monday=0, Sunday=6
+        wd = current.weekday()
+        if 0 <= wd <= 4:
             count += 1
         current += one_day
-
+    
     return count
 
-# Entry point: trading_days_in_year(year: int) -> int
+# Entry point: calculate_trading_days_in_year(year: int) -> int
 ```

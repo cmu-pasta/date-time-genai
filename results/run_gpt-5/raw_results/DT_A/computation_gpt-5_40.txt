@@ -1,23 +1,17 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module.
-2. Define a function that accepts a time object as input.
-3. Compute the timedelta between the given time and midnight using datetime.combine.
-4. Convert the timedelta to total seconds and cast it to an integer.
-5. Return the computed integer value as seconds since midnight.
+1. Import the necessary class from the datetime library to work with time objects.
+2. Define a function that accepts a time input.
+3. Compute total seconds since midnight as hour*3600 + minute*60 + second.
+4. Return the computed integer value.
 
 ```python
-from datetime import datetime, date, time
+from datetime import time
 
-def time_to_seconds_since_midnight(t: time) -> int:
+def seconds_since_midnight(t: time) -> int:
     """
-    Convert a time to the number of whole seconds since midnight.
-    Microseconds, if present, are truncated (floored).
+    Compute the number of whole seconds since midnight for a given time.
     """
-    # Combine with an arbitrary common date to form datetimes for subtraction
-    midnight = datetime.combine(date.min, time.min)
-    current = datetime.combine(date.min, t)
-    delta = current - midnight
-    return int(delta.total_seconds())
+    return t.hour * 3600 + t.minute * 60 + t.second
 
-# Entry point: time_to_seconds_since_midnight(t: time) -> int
+# Entry point: seconds_since_midnight(t: time) -> int
 ```

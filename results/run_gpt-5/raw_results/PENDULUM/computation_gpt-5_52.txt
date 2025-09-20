@@ -1,50 +1,35 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with date and time objects.
-2. Define a function that accepts a pendulum.Date or pendulum.DateTime and extracts its year.
-3. Implement a helper to convert an integer year to its Roman numeral representation using standard Roman numeral rules (supporting typical Gregorian years).
-4. Return the Roman numeral representation of the year.
+1. Import the pendulum library to work with Date and DateTime inputs.
+2. Define a helper function to convert an integer year to its Roman numeral representation.
+3. Define the main function that accepts a pendulum.Date or pendulum.DateTime, extracts the year, converts it to Roman numerals, and returns the result.
+4. Ensure no default arguments and specify the entry point.
 
 ```python
 import pendulum
 
 def _int_to_roman(year: int) -> str:
-    # Supports 1..3999 (standard Roman numerals)
     if year <= 0 or year > 3999:
-        # Roman numerals traditionally represent 1..3999
-        # You may adjust this behavior as needed.
-        raise ValueError("Year out of representable range for Roman numerals (1..3999)")
-
-    mapping = (
-        (1000, "M"),
-        (900,  "CM"),
-        (500,  "D"),
-        (400,  "CD"),
-        (100,  "C"),
-        (90,   "XC"),
-        (50,   "L"),
-        (40,   "XL"),
-        (10,   "X"),
-        (9,    "IX"),
-        (5,    "V"),
-        (4,    "IV"),
-        (1,    "I"),
-    )
-
+        raise ValueError("Year must be between 1 and 3999 for Roman numeral conversion.")
+    values = [1000, 900, 500, 400, 100, 90,  50,  40,  10,  9,   5,   4,   1]
+    numerals = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"]
     result = []
-    n = year
-    for value, symbol in mapping:
-        if n == 0:
-            break
-        count, n = divmod(n, value)
+    remaining = year
+    for v, n in zip(values, numerals):
+        count, remaining = divmod(remaining, v)
         if count:
-            result.append(symbol * count)
+            result.append(n * count)
+        if remaining == 0:
+            break
     return "".join(result)
 
-def date_year_to_roman(dt: pendulum.Date) -> str:
-    # Accepts pendulum.Date or pendulum.DateTime thanks to duck-typing of .year
-    # Extract the year and convert it to a Roman numeral string
-    year = dt.year
+def convert_year_to_roman(date_input) -> str:
+    """
+    Accepts a pendulum.Date or pendulum.DateTime and returns the Roman numeral representation of its year.
+    """
+    if not isinstance(date_input, (pendulum.Date, pendulum.DateTime)):
+        raise TypeError("Input must be a pendulum.Date or pendulum.DateTime.")
+    year = date_input.year
     return _int_to_roman(year)
 
-# Entry point: date_year_to_roman(dt: pendulum.Date) -> str
+# Entry point: convert_year_to_roman(date_input: pendulum.Date | pendulum.DateTime) -> str
 ```

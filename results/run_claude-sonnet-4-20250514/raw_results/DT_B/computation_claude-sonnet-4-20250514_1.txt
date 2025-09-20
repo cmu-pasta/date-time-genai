@@ -1,36 +1,25 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` module and `zoneinfo` module to work with timezone-aware dates and handle daylight saving time transitions.
+1. **Import the necessary libraries**: We need the `datetime` module and `zoneinfo` module to work with timezone-aware datetimes that can properly handle daylight saving time.
 
-2. **Define a function**: We will create a function that accepts two timezone-aware datetime objects as input. These must be timezone-aware to properly account for daylight saving time.
+2. **Define a function**: We will create a function that accepts two timezone-aware datetime objects as input to ensure DST is properly considered.
 
-3. **Calculate the time difference**: Use subtraction between the two datetime objects. Python automatically handles daylight saving time transitions when working with timezone-aware datetime objects.
+3. **Calculate the time difference**: Use subtraction between the two datetime objects. When both datetimes are timezone-aware, Python automatically accounts for daylight saving time transitions.
 
-4. **Return the result**: Return the difference as a timedelta object, which represents the exact duration between the two timestamps.
+4. **Return the result**: Return the timedelta object which represents the exact time difference considering DST.
 
 ```python
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 def calculate_time_difference_with_dst(dt1: datetime, dt2: datetime) -> timedelta:
-    """
-    Calculate the exact time difference between two timestamps considering daylight saving time.
+    # Step 1: Calculate the exact time difference
+    # When both datetime objects are timezone-aware, Python automatically
+    # handles daylight saving time transitions in the calculation
+    difference = dt2 - dt1
     
-    Args:
-        dt1: First timezone-aware datetime object
-        dt2: Second timezone-aware datetime object
-    
-    Returns:
-        timedelta: The exact time difference between the two timestamps
-    """
-    # Ensure both datetime objects are timezone-aware
-    if dt1.tzinfo is None or dt2.tzinfo is None:
-        raise ValueError("Both datetime objects must be timezone-aware to handle DST correctly")
-    
-    # Calculate the difference - Python automatically handles DST transitions
-    time_difference = dt2 - dt1
-    
-    return time_difference
+    # Step 2: Return the timedelta result
+    return difference
 
 # Entry point: calculate_time_difference_with_dst(dt1: datetime, dt2: datetime) -> timedelta
 ```

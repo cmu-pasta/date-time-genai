@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to create and return date objects.
+2.  **Define a function**: Create a function that accepts an integer representing the year.
+3.  **Implement the Easter Sunday calculation algorithm**: Use a standard algorithm to determine the month and day of Easter Sunday for the given year. A common algorithm for the Gregorian calendar (which is generally assumed for "Easter Sunday" in modern contexts) will be used. This algorithm calculates the month and day of Easter based on the year.
+4.  **Construct the `pendulum.Date` object**: Once the month and day are calculated, use `pendulum.date()` to create a `pendulum.Date` object for the Easter Sunday of the specified year.
+5.  **Return the `pendulum.Date`**: Return the constructed `pendulum.Date` object.
+
+```python
+import pendulum
+
+def find_easter_sunday(year: int) -> pendulum.Date:
+    """
+    Calculates the date of Easter Sunday for a given year using the Anonymous Gregorian algorithm.
+    This algorithm is valid for years after 1582.
+
+    Args:
+        year (int): The year for which to calculate Easter Sunday.
+
+    Returns:
+        pendulum.Date: A pendulum.Date object representing Easter Sunday for the given year.
+    """
+    # Step 1: Anonymous Gregorian algorithm to calculate Easter Sunday
+    a = year % 19
+    b = year // 100
+    c = year % 100
+    d = b // 4
+    e = b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i = c // 4
+    k = c % 4
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    
+    # Calculate month (1 = January, ..., 12 = December)
+    easter_month = (h + l - 7 * m + 114) // 31
+    
+    # Calculate day
+    easter_day = ((h + l - 7 * m + 114) % 31) + 1
+    
+    # Step 2: Construct and return the pendulum.Date object
+    return pendulum.date(year, easter_month, easter_day)
+
+# Entry point: find_easter_sunday(year: int) -> pendulum.Date
+```

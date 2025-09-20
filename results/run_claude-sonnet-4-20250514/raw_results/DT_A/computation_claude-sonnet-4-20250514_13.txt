@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a date as input. This date should be provided as a datetime object.
+3. **Extract the month**: From the datetime object, we need to get the month number (1-12).
+4. **Determine the quarter**: Based on the month, we need to calculate which quarter it falls into:
+   - Quarter 1: January (1), February (2), March (3)
+   - Quarter 2: April (4), May (5), June (6) 
+   - Quarter 3: July (7), August (8), September (9)
+   - Quarter 4: October (10), November (11), December (12)
+5. **Return the result**: Return the quarter number as an integer.
+
+```python
+from datetime import datetime
+
+def determine_quarter(dt: datetime) -> int:
+    # Step 1: Extract the month from the datetime object
+    month = dt.month
+    
+    # Step 2: Determine the quarter based on the month
+    if month in [1, 2, 3]:
+        quarter = 1
+    elif month in [4, 5, 6]:
+        quarter = 2
+    elif month in [7, 8, 9]:
+        quarter = 3
+    else:  # month in [10, 11, 12]
+        quarter = 4
+    
+    # Step 3: Return the quarter as an integer
+    return quarter
+
+# Entry point: determine_quarter(dt: datetime) -> int
+```

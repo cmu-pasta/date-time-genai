@@ -1,8 +1,9 @@
 Let's think step by step to solve this problem.
-1. Import the required class from the datetime module to work with date objects.
-2. Define a function that takes a birth date and a reference date as inputs (both as date objects).
-3. Compute the difference between the reference date and the birth date.
-4. Return the total number of days as an integer.
+1. Import the required classes from the datetime module.
+2. Accept two inputs: a birth date and a reference date.
+3. Compute the difference in days by subtracting the birth date from the reference date.
+4. Ensure the age in days is not negative by clamping at zero.
+5. Return the total number of days as an integer.
 
 ```python
 from datetime import date
@@ -10,20 +11,10 @@ from datetime import date
 def calculate_age_in_days(birth_date: date, reference_date: date) -> int:
     """
     Calculate the age in total days between a birth date and a reference date.
-
-    Parameters:
-    - birth_date (date): The date of birth.
-    - reference_date (date): The date on which to calculate the age.
-
-    Returns:
-    - int: Total number of days between the two dates. This value will be negative
-           if the reference_date is before the birth_date.
+    Returns a non-negative integer representing the number of days.
     """
-    # Compute the difference between the reference date and the birth date
-    delta = reference_date - birth_date
-
-    # Return the difference in days as an integer
-    return delta.days
+    delta_days = (reference_date - birth_date).days
+    return delta_days if delta_days >= 0 else 0
 
 # Entry point: calculate_age_in_days(birth_date: date, reference_date: date) -> int
 ```

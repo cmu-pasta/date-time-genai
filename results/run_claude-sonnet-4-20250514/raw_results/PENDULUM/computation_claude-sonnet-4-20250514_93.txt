@@ -1,0 +1,66 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and times, and math for trigonometric calculations.
+2. **Define a function**: Create a function that accepts a pendulum.DateTime object and a longitude (float) as input.
+3. **Convert to Julian Date**: Convert the given datetime to Julian Date which is needed for sidereal time calculations.
+4. **Calculate Greenwich Sidereal Time**: Use astronomical formulas to calculate GST based on the Julian Date.
+5. **Calculate Local Sidereal Time**: Add the longitude contribution (converted to time) to get the local sidereal time.
+6. **Normalize and return**: Ensure the result is within 0-24 hours and return as a float.
+
+```python
+import pendulum
+import math
+
+def calculate_sidereal_time(dt: pendulum.DateTime, longitude: float) -> float:
+    # Step 1: Convert datetime to UTC if not already
+    dt_utc = dt.in_timezone('UTC')
+    
+    # Step 2: Calculate Julian Date
+    # Julian Date calculation for the given datetime
+    year = dt_utc.year
+    month = dt_utc.month
+    day = dt_utc.day
+    hour = dt_utc.hour
+    minute = dt_utc.minute
+    second = dt_utc.second
+    
+    # Convert time to decimal hours
+    decimal_hours = hour + minute/60.0 + second/3600.0
+    
+    # Julian Date calculation
+    if month <= 2:
+        year -= 1
+        month += 12
+    
+    a = int(year / 100)
+    b = 2 - a + int(a / 4)
+    
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + b - 1524.5
+    jd += decimal_hours / 24.0
+    
+    # Step 3: Calculate Greenwich Sidereal Time
+    # Number of days since J2000.0
+    t = (jd - 2451545.0) / 36525.0
+    
+    # Greenwich Mean Sidereal Time at 0h UT
+    gmst_0h = 6.697374558 + 0.06570982441908 * (jd - 2451545.0) + 0.000026 * t * t
+    
+    # Add the contribution from the current time of day
+    gmst = gmst_0h + 1.00273790935 * decimal_hours
+    
+    # Step 4: Calculate Local Sidereal Time
+    # Convert longitude from degrees to hours (divide by 15)
+    longitude_hours = longitude / 15.0
+    
+    # Local Sidereal Time = Greenwich Sidereal Time + longitude in hours
+    lst = gmst + longitude_hours
+    
+    # Step 5: Normalize to 0-24 hours
+    lst = lst % 24.0
+    if lst < 0:
+        lst += 24.0
+    
+    return lst
+
+# Entry point: calculate_sidereal_time(dt: pendulum.DateTime, longitude: float) -> float
+```

@@ -1,44 +1,54 @@
 Let's think step by step to solve this problem.
 
-1. **Understanding the problem**: We need to convert a date from the Julian calendar system to the Gregorian calendar system. The Julian calendar was used before the Gregorian calendar was adopted in 1582.
+1. **Understand the conversion**: The Julian calendar differs from the Gregorian calendar due to different leap year rules. We need to convert a date interpreted as Julian to its equivalent Gregorian date.
 
-2. **Calculate the offset**: The difference between Julian and Gregorian calendars accumulates over time. The offset can be calculated using the formula that accounts for the different leap year rules between the two calendar systems.
+2. **Calculate Julian Day Number**: First, convert the Julian calendar date to a Julian Day Number (a continuous count of days since a reference point).
 
-3. **Import necessary libraries**: We need the `datetime` and `timedelta` modules to work with dates and perform date arithmetic.
+3. **Convert to Gregorian**: Then convert the Julian Day Number back to a Gregorian calendar date using the Gregorian calendar rules.
 
-4. **Define the conversion function**: Create a function that takes a Julian date (represented as a datetime object) and returns the corresponding Gregorian date.
+4. **Use datetime operations**: Since we must use only the datetime library, we'll implement the conversion algorithms using basic date arithmetic and the datetime constructor.
 
-5. **Apply the conversion formula**: The offset between Julian and Gregorian dates is calculated as: `(year // 100) - (year // 400) - 2` for years after 300 CE.
-
-6. **Return the result**: Add the calculated offset to the Julian date to get the Gregorian date.
+5. **Return the result**: Return the converted date as a datetime object representing the Gregorian equivalent.
 
 ```python
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def julian_to_gregorian(julian_date: datetime) -> datetime:
-    """
-    Convert a Julian calendar date to Gregorian calendar date.
-    
-    Args:
-        julian_date: A datetime object representing a date in the Julian calendar
-    
-    Returns:
-        A datetime object representing the equivalent date in the Gregorian calendar
-    """
-    
+    # Extract year, month, day from the Julian date
     year = julian_date.year
+    month = julian_date.month
+    day = julian_date.day
     
-    # Calculate the offset between Julian and Gregorian calendars
-    # Formula: (year // 100) - (year // 400) - 2
-    # This accounts for the different leap year rules
-    if year >= 300:
-        offset = (year // 100) - (year // 400) - 2
-    else:
-        # For years before 300 CE, use a simpler calculation
-        offset = 0
+    # Convert Julian date to Julian Day Number
+    # Julian Day Number calculation for Julian calendar
+    if month <= 2:
+        year -= 1
+        month += 12
     
-    # Convert Julian date to Gregorian by adding the offset
-    gregorian_date = julian_date + timedelta(days=offset)
+    # Julian calendar Julian Day Number calculation
+    a = year // 100
+    b = 2 - a + (a // 4)  # This is 0 for Julian calendar
+    b = 0  # For Julian calendar, we don't apply the Gregorian correction
+    
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + b - 1524
+    
+    # Convert Julian Day Number back to Gregorian date
+    # Gregorian calendar conversion from Julian Day Number
+    a = jd + 32044
+    b = (4 * a + 3) // 146097
+    c = a - (146097 * b) // 4
+    d = (4 * c + 3) // 1461
+    e = c - (1461 * d) // 4
+    m = (5 * e + 2) // 153
+    
+    greg_day = e - (153 * m + 2) // 5 + 1
+    greg_month = m + 3 - 12 * (m // 10)
+    greg_year = 100 * b + d - 4800 + m // 10
+    
+    # Create and return the Gregorian datetime object
+    gregorian_date = datetime(greg_year, greg_month, greg_day, 
+                            julian_date.hour, julian_date.minute, 
+                            julian_date.second, julian_date.microsecond)
     
     return gregorian_date
 

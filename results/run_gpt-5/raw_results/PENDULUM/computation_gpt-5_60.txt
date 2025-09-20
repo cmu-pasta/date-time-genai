@@ -1,57 +1,46 @@
 Let's think step by step to solve this problem.
-1. Accept the date (pendulum.Date), geographic coordinates (latitude and longitude as floats), and the desired local timezone (pendulum.Timezone).
-2. Compute the day of year from the given date to parameterize the Sun’s apparent motion.
-3. Compute the fractional year (gamma) in radians, which is used to approximate the equation of time.
-4. Compute the equation of time (in minutes) using NOAA’s approximation.
-5. Compute the solar noon time in UTC minutes from midnight using: 720 - 4*longitude - equation_of_time.
-6. Build a UTC datetime at midnight for the given date and add the computed minutes.
-7. Convert the UTC datetime to the provided local timezone and return the result as a pendulum.DateTime.
+1. Import pendulum for date/time handling and math for trigonometric calculations.
+2. Accept inputs: a pendulum.Date for the calendar date, floats for latitude and longitude (degrees, east positive), and a pendulum.Timezone for the local time zone.
+3. Compute the day of year N from the input date.
+4. Compute the fractional year angle gamma and the equation of time (EoT) in minutes.
+5. Determine the local UTC offset (including DST) for the given date in the provided timezone.
+6. Compute the solar noon time in minutes from local midnight using the standard approximation: SolarNoon = 720 - 4*longitude - EoT + tz_offset_minutes.
+7. Convert the minutes to a pendulum.DateTime anchored to the input date in the provided timezone.
+8. Return the resulting pendulum.DateTime.
 
 ```python
-import math
 import pendulum
+import math
 
-def calculate_solar_noon(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime:
-    """
-    Calculate the local solar noon time for a given date and location using NOAA's approximation.
+def calculate_solar_noon(d: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime:
+    # Step 1: Compute day of year
+    N = d.day_of_year
     
-    Inputs:
-      - date: pendulum.Date
-      - latitude: float (accepted for interface completeness; not required for solar noon time)
-      - longitude: float (degrees; East positive, West negative)
-      - tz: pendulum.Timezone (desired local timezone for the result)
-      
-    Output:
-      - pendulum.DateTime representing the local solar noon time in the provided timezone.
-    """
-    # Step 1: Day of year
-    N = date.day_of_year  # 1..366
-
-    # Step 2: Fractional year (radians) using a midday reference for stability
-    gamma = 2.0 * math.pi / 365.0 * (N - 1)
-
-    # Step 3: Equation of time (minutes), NOAA approximation
-    eq_time = 229.18 * (
+    # Step 2: Fractional year (radians), evaluated at local solar noon reference
+    gamma = (2.0 * math.pi / 365.0) * (N - 1)
+    
+    # Step 3: Equation of Time (minutes) using a common approximation
+    eot = 229.18 * (
         0.000075
         + 0.001868 * math.cos(gamma)
         - 0.032077 * math.sin(gamma)
         - 0.014615 * math.cos(2.0 * gamma)
         - 0.040849 * math.sin(2.0 * gamma)
     )
+    
+    # Step 4: Local timezone offset in minutes for the given date (includes DST if applicable)
+    local_noon_anchor = pendulum.datetime(d.year, d.month, d.day, 12, 0, 0, tz=tz)
+    tz_offset_minutes = int(local_noon_anchor.utcoffset().total_seconds() // 60)
+    
+    # Step 5: Solar noon minutes from local midnight
+    # Longitude in degrees, positive east of Greenwich (negative for west).
+    solar_noon_minutes = 720.0 - 4.0 * longitude - eot + tz_offset_minutes
+    
+    # Step 6: Build the solar noon DateTime in the given timezone
+    base_midnight = pendulum.datetime(d.year, d.month, d.day, 0, 0, 0, tz=tz)
+    solar_noon_dt = base_midnight + pendulum.duration(seconds=int(round(solar_noon_minutes * 60.0)))
+    
+    return solar_noon_dt
 
-    # Step 4: Solar noon time in UTC minutes from midnight
-    # 720 minutes = 12:00, longitude correction = 4 minutes per degree
-    solar_noon_utc_minutes = 720.0 - 4.0 * longitude - eq_time
-
-    # Step 5: Build UTC datetime for the given date and add the minutes
-    utc = pendulum.timezone("UTC")
-    midnight_utc = pendulum.datetime(date.year, date.month, date.day, tz=utc)
-    solar_noon_utc = midnight_utc.add(minutes=solar_noon_utc_minutes)
-
-    # Step 6: Convert to the provided local timezone
-    solar_noon_local = solar_noon_utc.in_timezone(tz)
-
-    return solar_noon_local
-
-# Entry point: calculate_solar_noon(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime
+# Entry point: calculate_solar_noon(d: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime
 ```

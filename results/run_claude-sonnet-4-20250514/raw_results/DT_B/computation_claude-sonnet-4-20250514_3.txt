@@ -1,33 +1,34 @@
 Let's think step by step to solve this problem.
 
 1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
-2. **Define a helper function**: Create a function to check if a given year is a leap year using the standard leap year rules (divisible by 4, but not by 100 unless also divisible by 400).
-3. **Define the main function**: Create a function that accepts a date as input and finds the next leap year after that date.
-4. **Extract the year**: Get the year from the input date and start checking from the following year.
-5. **Find the next leap year**: Iterate through years starting from the year after the input date until we find a leap year.
-6. **Return the result**: Return the leap year as an integer.
+
+2. **Define a leap year checker**: We need a helper function to determine if a given year is a leap year. A year is a leap year if it's divisible by 4, except for years divisible by 100 (unless they're also divisible by 400).
+
+3. **Define the main function**: Create a function that accepts a datetime object and finds the next leap year after the given date's year.
+
+4. **Find the next leap year**: Starting from the year after the input date's year, iterate through years until we find one that is a leap year.
+
+5. **Return the result**: Return a datetime object representing the first day of the next leap year.
 
 ```python
-from datetime import datetime, date
+from datetime import datetime
 
-def is_leap_year(year: int) -> bool:
-    """Check if a given year is a leap year."""
-    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+def next_leap_year(dt: datetime) -> datetime:
+    def is_leap_year(year: int) -> bool:
+        # A year is a leap year if:
+        # - It's divisible by 4, AND
+        # - If it's divisible by 100, it must also be divisible by 400
+        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    
+    # Start checking from the year after the given date's year
+    year = dt.year + 1
+    
+    # Find the next leap year
+    while not is_leap_year(year):
+        year += 1
+    
+    # Return datetime object for January 1st of the next leap year
+    return datetime(year, 1, 1)
 
-def next_leap_year_after_date(input_date: date) -> int:
-    """Determine the next leap year after a given date."""
-    # Step 1: Get the year from the input date
-    current_year = input_date.year
-    
-    # Step 2: Start checking from the next year
-    year_to_check = current_year + 1
-    
-    # Step 3: Find the next leap year
-    while not is_leap_year(year_to_check):
-        year_to_check += 1
-    
-    # Step 4: Return the leap year as an integer
-    return year_to_check
-
-# Entry point: next_leap_year_after_date(input_date: date) -> int
+# Entry point: next_leap_year(dt: datetime) -> datetime
 ```

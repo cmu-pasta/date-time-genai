@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with durations.
+2.  **Define a function**: Create a function that accepts a `pendulum.Duration` object as input.
+3.  **Extract milliseconds**: Use the `in_milliseconds()` method provided by the `pendulum.Duration` object to get the total number of milliseconds.
+4.  **Return the result**: The method `in_milliseconds()` returns an integer, which is the desired output.
+
+```python
+import pendulum
+
+def get_milliseconds_in_duration(duration: pendulum.Duration) -> int:
+    # Step 1: Use the in_milliseconds() method of the pendulum.Duration object
+    milliseconds = duration.in_milliseconds()
+    
+    # Step 2: Return the result as an integer
+    return milliseconds
+
+# Entry point: get_milliseconds_in_duration(duration: pendulum.Duration) -> int
+```

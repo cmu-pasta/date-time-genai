@@ -1,18 +1,18 @@
 Let's think step by step to solve this problem.
-1. Import the necessary class from the datetime module to work with dates.
+1. Import the required date type from the datetime module.
 2. Define a function that accepts a date input.
-3. Use the built-in isoweekday() method to get the day number within the week (Monday=1 to Sunday=7).
-4. Return the result as an integer.
+3. Use the isoweekday() method to get the day number where Monday is 1 and Sunday is 7.
+4. Return the day number as an integer.
 
 ```python
 from datetime import date
 
-def day_number_within_week(d: date) -> int:
+def day_number_in_week(d: date) -> int:
     """
     Determine the day number within the week (1-7) for a given date.
-    Monday=1, Sunday=7.
+    Monday=1, Sunday=7 as per ISO standard.
     """
     return d.isoweekday()
 
-# Entry point: day_number_within_week(d: date) -> int
+# Entry point: day_number_in_week(d: date) -> int
 ```

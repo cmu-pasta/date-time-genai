@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with date and time objects.
+2.  **Define a function**: Create a function that accepts an integer representing a Unix timestamp.
+3.  **Convert the timestamp**: Use `pendulum.from_timestamp()` to convert the Unix timestamp into a `pendulum.DateTime` object. This method inherently creates a human-readable datetime object.
+4.  **Return the result**: The function should return the `pendulum.DateTime` object.
+
+```python
+import pendulum
+
+def convert_unix_to_datetime(timestamp: int) -> pendulum.DateTime:
+    # Step 1: Use pendulum.from_timestamp to convert the Unix timestamp
+    # This function creates a pendulum.DateTime object directly from a Unix timestamp.
+    # The resulting DateTime object is inherently human-readable when printed or represented as a string.
+    datetime_obj = pendulum.from_timestamp(timestamp)
+    
+    # Step 2: Return the human-readable pendulum.DateTime object
+    return datetime_obj
+
+# Entry point: convert_unix_to_datetime(timestamp: int) -> pendulum.DateTime
+```

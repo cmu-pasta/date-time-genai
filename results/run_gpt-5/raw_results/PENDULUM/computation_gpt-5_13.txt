@@ -1,7 +1,7 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with Pendulum date-time objects.
-2. Define a function that accepts a pendulum.DateTime input representing the given date.
-3. Use the built-in quarter property of the pendulum.DateTime object to determine the quarter (1 through 4).
+1. Import the pendulum library to work with date and time objects.
+2. Define a function that accepts a pendulum.DateTime input.
+3. Use the built-in quarter attribute of the pendulum.DateTime object to determine the quarter.
 4. Return the quarter as an integer.
 
 ```python
@@ -9,13 +9,13 @@ import pendulum
 
 def determine_quarter(dt: pendulum.DateTime) -> int:
     """
-    Determine the quarter of the year for the given Pendulum DateTime.
+    Determine the quarter of the year for the given pendulum.DateTime.
     
     Args:
         dt (pendulum.DateTime): The date-time for which to determine the quarter.
     
     Returns:
-        int: The quarter of the year (1-4).
+        int: The quarter number (1 to 4).
     """
     return dt.quarter
 

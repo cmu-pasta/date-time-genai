@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `date` and `timedelta` classes from the `datetime` module to work with dates and calculate date differences.
+2.  **Define a function**: Create a function that accepts an integer representing the year for which we want to calculate trading days.
+3.  **Initialize date range**: Determine the start and end dates of the given year. This will be January 1st and December 31st of that year.
+4.  **Iterate through each day**: Loop through every day from the start date to the end date of the year.
+5.  **Check for weekdays**: For each day, determine if it's a weekday (Monday to Friday). The `weekday()` method of a `date` object returns an integer where Monday is 0 and Sunday is 6. Trading days are days where `weekday()` is between 0 and 4 (inclusive).
+6.  **Count trading days**: Maintain a counter for trading days and increment it only if the current day is a weekday.
+7.  **Return the result**: After iterating through all days of the year, return the total count of trading days as an integer.
+
+```python
+from datetime import date, timedelta
+
+def calculate_trading_days_in_year(year: int) -> int:
+    # Step 1: Initialize the start and end dates for the given year
+    start_date = date(year, 1, 1)
+    end_date = date(year, 12, 31)
+    
+    # Step 2: Initialize a counter for trading days
+    trading_days_count = 0
+    
+    # Step 3: Iterate through each day from the start to the end of the year
+    current_date = start_date
+    while current_date <= end_date:
+        # Step 4: Check if the current day is a weekday (Monday=0 to Friday=4)
+        # Saturday is 5, Sunday is 6. We want to exclude 5 and 6.
+        if current_date.weekday() < 5:  # 0, 1, 2, 3, 4 are weekdays
+            trading_days_count += 1
+        
+        # Move to the next day
+        current_date += timedelta(days=1)
+        
+    # Step 5: Return the total number of trading days
+    return trading_days_count
+
+# Entry point: calculate_trading_days_in_year(year: int) -> int
+```

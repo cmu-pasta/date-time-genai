@@ -1,37 +1,33 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard datetime library.
-2. Define a helper to normalize datetimes to UTC (treat naive datetimes as UTC).
-3. Implement a function that takes a timestamp (seconds since a source epoch) and two epoch datetimes (source and target) and returns the timestamp relative to the target epoch.
-4. Provide convenience wrapper to convert specifically between Unix and Windows epochs using the general function.
+1. Define the concept of an epoch as a reference datetime.
+2. Convert the input timestamp (seconds since the source epoch) into an absolute instant by adding it to the source epoch.
+3. Compute the difference in seconds between this instant and the target epoch.
+4. Ensure consistent timezone handling by treating naive datetimes as UTC and converting aware datetimes to UTC.
+5. Return the resulting timestamp as seconds since the target epoch.
 
 ```python
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
-def _to_utc(dt: datetime) -> datetime:
-    # Treat naive datetimes as UTC; convert aware datetimes to UTC
-    if dt.tzinfo is None:
-        return dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
+def convert_epoch(timestamp: float, from_epoch: datetime, to_epoch: datetime) -> float:
+    # Ensure both epochs are treated in UTC for consistent calculations
+    def _to_utc(dt: datetime) -> datetime:
+        # Treat naive datetimes as UTC; convert aware datetimes to UTC
+        return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt.astimezone(timezone.utc)
 
-def convert_timestamp_between_epochs(timestamp: float, source_epoch: datetime, target_epoch: datetime) -> float:
-    # Normalize epochs to UTC to avoid timezone inconsistencies
-    src_epoch_utc = _to_utc(source_epoch)
-    tgt_epoch_utc = _to_utc(target_epoch)
-    # Compute the absolute moment represented by the source timestamp
-    instant = src_epoch_utc + timedelta(seconds=timestamp)
-    # Return seconds relative to the target epoch
-    return (instant - tgt_epoch_utc).total_seconds()
+    fe = _to_utc(from_epoch)
+    te = _to_utc(to_epoch)
 
-def convert_unix_to_windows_seconds(unix_seconds: float) -> float:
-    # Unix epoch: 1970-01-01 UTC, Windows FILETIME epoch: 1601-01-01 UTC
-    unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
-    windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
-    return convert_timestamp_between_epochs(unix_seconds, unix_epoch, windows_epoch)
+    # Compute the absolute instant represented by the timestamp relative to from_epoch
+    instant = fe + timedelta(seconds=timestamp)
 
-def convert_windows_to_unix_seconds(windows_seconds: float) -> float:
-    windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
-    unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
-    return convert_timestamp_between_epochs(windows_seconds, windows_epoch, unix_epoch)
+    # Convert the instant to seconds relative to to_epoch
+    result = (instant - te).total_seconds()
+    return result
 
-# Entry point: convert_timestamp_between_epochs(timestamp: float, source_epoch: datetime, target_epoch: datetime) -> float
+# Example usage (Unix to Windows epoch seconds):
+# unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+# windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
+# windows_seconds = convert_epoch(0.0, unix_epoch, windows_epoch)  # 11644473600.0
+
+# Entry point: convert_epoch(timestamp: float, from_epoch: datetime, to_epoch: datetime) -> float
 ```

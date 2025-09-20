@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates, times, and timezones.
+2. **Define a function**: We will create a function that accepts a year (integer) and timezone (pendulum.Timezone) as input.
+3. **Find DST start date**: We need to iterate through the year and find the first date when daylight saving time becomes active.
+4. **Check DST status**: For each date, we'll check if DST is active by examining the timezone offset or DST property.
+5. **Return the result**: Return the pendulum.DateTime when DST starts.
+
+```python
+import pendulum
+
+def find_dst_start_date(year: int, timezone: pendulum.Timezone) -> pendulum.DateTime:
+    # Start from January 1st of the given year
+    current_date = pendulum.datetime(year, 1, 1, tz=timezone)
+    
+    # Check if DST is active at the start of the year
+    prev_dst_active = current_date.dst().total_seconds() > 0
+    
+    # Iterate through each day of the year
+    for day_offset in range(1, 366):  # Up to 365 days (366 for leap years)
+        try:
+            current_date = pendulum.datetime(year, 1, 1, tz=timezone).add(days=day_offset)
+            current_dst_active = current_date.dst().total_seconds() > 0
+            
+            # If DST just became active (transition from False to True)
+            if not prev_dst_active and current_dst_active:
+                return current_date
+            
+            prev_dst_active = current_dst_active
+            
+        except:
+            # Handle potential edge cases like invalid dates
+            continue
+    
+    # If no DST start found, return None as DateTime (this shouldn't happen for valid timezones with DST)
+    # For the constraint, we'll return the start of year if no DST transition is found
+    return pendulum.datetime(year, 1, 1, tz=timezone)
+
+# Entry point: find_dst_start_date(year: int, timezone: pendulum.Timezone) -> pendulum.DateTime
+```

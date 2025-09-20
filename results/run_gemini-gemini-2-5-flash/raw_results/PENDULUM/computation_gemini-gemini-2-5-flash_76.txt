@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and times.
+2.  **Define a function**: Create a function that accepts two `pendulum.DateTime` objects. One will be the date to convert (`target_dt`), and the other will be the `reference_dt`.
+3.  **Calculate the difference in days**: Use the `diff()` method between the `target_dt` and the `reference_dt` to get a `pendulum.Duration` object. Then, extract the total number of days from this duration using `in_days()`. The order of subtraction (target - reference) will correctly yield a positive number if the target date is after the reference date, and a negative number if it's before.
+4.  **Return the result**: The `in_days()` method returns an integer, which is the desired output.
+
+```python
+import pendulum
+
+def days_since_reference(target_dt: pendulum.DateTime, reference_dt: pendulum.DateTime) -> int:
+    # Step 1: Calculate the duration between the target date and the reference date.
+    # The diff() method returns a pendulum.Duration object.
+    duration = target_dt.diff(reference_dt)
+    
+    # Step 2: Extract the total number of days from the duration.
+    # in_days() returns an integer representing the total number of days,
+    # including negative values if target_dt is before reference_dt.
+    days_count = duration.in_days()
+    
+    # Step 3: Return the result as an integer.
+    return days_count
+
+# Entry point: days_since_reference(target_dt: pendulum.DateTime, reference_dt: pendulum.DateTime) -> int
+```

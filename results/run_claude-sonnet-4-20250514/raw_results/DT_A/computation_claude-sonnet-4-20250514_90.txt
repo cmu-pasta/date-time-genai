@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Understand lunar age**: Lunar age refers to the number of days that have passed since the last new moon. The lunar cycle is approximately 29.53 days long.
+
+2. **Choose a reference point**: We need a known new moon date as a reference. A commonly used reference is January 6, 2000, at 18:14 UTC, which was a new moon.
+
+3. **Calculate the difference**: Find the total number of days between the reference new moon and the given date.
+
+4. **Apply lunar cycle**: Use the modulo operation with the lunar cycle length to find the current position within the lunar cycle.
+
+5. **Return the result**: The result represents the number of days since the last new moon (lunar age).
+
+```python
+from datetime import datetime
+
+def calculate_lunar_age(date: datetime) -> float:
+    # Reference new moon: January 6, 2000, 18:14 UTC
+    reference_new_moon = datetime(2000, 1, 6, 18, 14)
+    
+    # Lunar cycle length in days (average synodic month)
+    lunar_cycle_days = 29.530588853
+    
+    # Calculate difference in total days (including fractional days)
+    difference = (date - reference_new_moon).total_seconds() / (24 * 3600)
+    
+    # Calculate lunar age (days since last new moon)
+    lunar_age = difference % lunar_cycle_days
+    
+    return lunar_age
+
+# Entry point: calculate_lunar_age(date: datetime) -> float
+```

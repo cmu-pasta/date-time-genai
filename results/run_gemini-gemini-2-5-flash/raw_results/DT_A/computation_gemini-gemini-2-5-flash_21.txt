@@ -1,0 +1,66 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need `datetime` from the `datetime` module to work with dates and `timedelta` to represent time differences.
+2.  **Define a function**: Create a function that accepts a `datetime` object representing the birth date.
+3.  **Get the current date**: Obtain today's date using `datetime.today().date()`. This will be used as the reference point for calculating the difference.
+4.  **Construct the current year's birthday**: Create a `datetime.date` object for the birth date in the current year. We extract the month and day from the provided `birth_date` and combine them with the current year.
+5.  **Determine the next birthday**:
+    *   Compare the current year's birthday with today's date.
+    *   If the current year's birthday has already passed (i.e., it's earlier than today), then the next birthday will be in the *next calendar year*.
+    *   Otherwise (if it's today or in the future this year), the next birthday is the current year's birthday.
+6.  **Handle February 29th (Leap Years)**: If the birth date is February 29th and the calculated "next birthday" year is not a leap year, we need to advance to the next available February 29th (which means skipping non-leap years). This can be done by using a loop to find the first year (starting from the initially determined year) that is a leap year and has February 29th.
+7.  **Calculate the difference**: Subtract today's date from the determined next birthday date. The `.days` attribute of the resulting `timedelta` object will give us the difference in days.
+8.  **Return the result**: Return the calculated number of days as an integer.
+
+```python
+from datetime import datetime, date, timedelta
+
+def calculate_days_until_next_birthday(birth_date: datetime) -> int:
+    # Step 1: Get today's date as a date object for comparison
+    today = date.today()
+
+    # Step 2: Extract birth month and day from the input birth_date
+    birth_month = birth_date.month
+    birth_day = birth_date.day
+
+    # Step 3: Determine the candidate next birthday for the current year
+    # We must handle February 29th carefully.
+    try:
+        current_year_birthday = date(today.year, birth_month, birth_day)
+    except ValueError:
+        # This occurs if birth_day is 29 and today.year is not a leap year.
+        # In this case, the birthday in the current year doesn't exist on Feb 29th,
+        # so we must assume the next birthday will be in a future leap year.
+        current_year_birthday = date(today.year, 3, 1) # Arbitrary valid date for comparison
+
+    # Step 4: Determine the actual next birthday
+    next_birthday_year = today.year
+    if current_year_birthday < today and not (birth_month == 2 and birth_day == 29 and current_year_birthday.day == 1):
+        # If current year's birthday already passed (and not a Feb 29th non-leap year case that implicitly passed)
+        next_birthday_year += 1
+
+    # Step 5: Construct the final next birthday date, handling Feb 29th explicitly
+    final_next_birthday = None
+    if birth_month == 2 and birth_day == 29:
+        # If the birth date is Feb 29th, we need to find the next leap year
+        # where Feb 29th actually exists.
+        current_check_year = next_birthday_year
+        while True:
+            try:
+                final_next_birthday = date(current_check_year, 2, 29)
+                break # Found a valid Feb 29th
+            except ValueError:
+                # current_check_year is not a leap year, try the next year
+                current_check_year += 1
+    else:
+        # For all other birth dates, it's straightforward
+        final_next_birthday = date(next_birthday_year, birth_month, birth_day)
+
+    # Step 6: Calculate the difference in days
+    days_difference = (final_next_birthday - today).days
+
+    # Step 7: Return the result
+    return days_difference
+
+# Entry point: calculate_days_until_next_birthday(birth_date: datetime) -> int
+```

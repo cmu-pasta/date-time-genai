@@ -71,38 +71,35 @@ class VariableType(Enum):
     DATETIME = "datetime"
     TIMEDELTA = "timedelta"
     TIMESTAMP = "int"
-    # TIMEZONE = "zoneinfo"
+    TIMEZONE = "ZoneInfo"
     TIME = "time"
     STRING = "str"
     BOOL = "bool"
     FLOAT = "float"
-    INT = "integer"
 
 
 type_mapping = {
     VariableType.DATETIME.value: VariableType.DATETIME,
     VariableType.STRING.value: VariableType.STRING,
     VariableType.TIMESTAMP.value: VariableType.TIMESTAMP,
-    # VariableType.TIMEZONE.value: VariableType.TIMEZONE,
+    VariableType.TIMEZONE.value: VariableType.TIMEZONE,
     VariableType.TIME.value: VariableType.TIME,
     VariableType.DATE.value: VariableType.DATE,
     VariableType.BOOL.value: VariableType.BOOL,
     VariableType.FLOAT.value: VariableType.FLOAT,
     VariableType.TIMEDELTA.value: VariableType.TIMEDELTA,
-    VariableType.INT.value: VariableType.INT,
 }
 
 generator_mapping = {
     VariableType.DATETIME: "datetime_strategy()",
     VariableType.STRING: "string_strategy()",
     VariableType.TIMESTAMP: "timestamp_strategy()",
-    # VariableType.TIMEZONE: "timezones()",
+    VariableType.TIMEZONE: "timezone_strategy()",
     VariableType.TIMEDELTA: "duration_strategy()",
     VariableType.TIME: "time_strategy()",
     VariableType.DATE: "date_strategy()",
     VariableType.BOOL: "bool_strategy()",
     VariableType.FLOAT: "float_strategy()",
-    VariableType.INT: "int_strategy()",
 }
 
 
@@ -115,7 +112,7 @@ class VariableTypePD(Enum):
     DATETIME = "pendulum.DateTime"
     TIMEDELTA = "pendulum.Duration"
     TIMESTAMP = "int"
-    # TIMEZONE = "pendulum.Timezone"
+    TIMEZONE = "pendulum.Timezone"
     TIME = "pendulum.Time"
     STRING = "str"
     BOOL = "bool"
@@ -129,7 +126,7 @@ type_mapping_pd = {
     VariableTypePD.BOOL.value: VariableTypePD.BOOL,
     VariableTypePD.FLOAT.value: VariableTypePD.FLOAT,
     VariableTypePD.DATE.value: VariableTypePD.DATE,
-    # VariableTypePD.TIMEZONE.value: VariableTypePD.TIMEZONE,
+    VariableTypePD.TIMEZONE.value: VariableTypePD.TIMEZONE,
     VariableTypePD.TIME.value: VariableTypePD.TIME,
     VariableTypePD.TIMEDELTA.value: VariableTypePD.TIMEDELTA,
 }
@@ -141,7 +138,7 @@ generator_mapping_pd = {
     VariableTypePD.BOOL: "bool_strategy()",
     VariableTypePD.FLOAT: "float_strategy()",
     VariableTypePD.DATE: "date_strategy()",
-    # VariableTypePD.TIMEZONE: "pendulum_timezones()",
+    VariableTypePD.TIMEZONE: "timezone_strategy()",
     VariableTypePD.TIME: "time_strategy()",
     VariableTypePD.TIMEDELTA: "duration_strategy()",
 }

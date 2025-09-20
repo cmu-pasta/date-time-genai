@@ -1,20 +1,31 @@
 Let's think step by step to solve this problem.
 1. Import the pendulum library to work with timestamps.
-2. Define a function that accepts two pendulum.DateTime timestamps.
-3. Subtract the two timestamps to obtain a pendulum.Duration.
-4. Convert the duration to milliseconds by using total_seconds() * 1000 and take the absolute value.
+2. Define a function that accepts two pendulum.DateTime timestamps as input.
+3. Compute the absolute duration between the timestamps using diff with absolute=True.
+4. Convert the duration to milliseconds using in_milliseconds().
 5. Return the result as an integer.
 
 ```python
 import pendulum
 
-def calculate_milliseconds_between(ts1: pendulum.DateTime, ts2: pendulum.DateTime) -> int:
+def duration_in_milliseconds(t1: pendulum.DateTime, t2: pendulum.DateTime) -> int:
     """
-    Calculate the absolute duration in milliseconds between two pendulum.DateTime timestamps.
+    Calculate the absolute duration between two pendulum.DateTime timestamps in milliseconds.
+
+    Args:
+        t1 (pendulum.DateTime): The first timestamp.
+        t2 (pendulum.DateTime): The second timestamp.
+
+    Returns:
+        int: The absolute duration between t1 and t2 in milliseconds.
     """
-    duration: pendulum.Duration = ts2 - ts1
-    milliseconds: int = int(abs(round(duration.total_seconds() * 1000)))
+    # Compute absolute duration between the timestamps
+    duration: pendulum.Duration = t2.diff(t1, absolute=True)
+    
+    # Convert the duration to milliseconds
+    milliseconds: int = duration.in_milliseconds()
+    
     return milliseconds
 
-# Entry point: calculate_milliseconds_between(ts1: pendulum.DateTime, ts2: pendulum.DateTime) -> int
+# Entry point: duration_in_milliseconds(t1: pendulum.DateTime, t2: pendulum.DateTime) -> int
 ```

@@ -1,25 +1,35 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module.
+1. Import the required classes from the datetime library.
 2. Define a function that accepts a datetime input.
-3. Use strftime with the "%I:%M:%S %p" format to convert the 24-hour time to 12-hour with AM/PM.
-4. Return the formatted string.
+3. Determine whether the time is AM or PM based on the 24-hour hour value.
+4. Convert the hour to 12-hour format (with 12 instead of 0).
+5. Return a time object with the converted hour and use the fold attribute to encode AM (0) or PM (1).
 
 ```python
-from datetime import datetime
+from datetime import datetime, time
 
-def convert_24h_to_12h_ampm(dt: datetime) -> str:
+def convert_datetime_to_12h(dt: datetime) -> time:
     """
-    Convert the time component of a datetime from 24-hour format to 12-hour format with AM/PM.
-
-    Args:
-        dt: A datetime object representing the 24-hour time.
-
-    Returns:
-        A string representing the time in 12-hour format with AM/PM (e.g., "03:45:00 PM").
+    Convert a datetime in 24-hour time to a 12-hour time with AM/PM indication.
+    The AM/PM information is encoded via the 'fold' attribute:
+      - fold == 0 represents AM
+      - fold == 1 represents PM
+    The returned object is a datetime.time instance.
     """
-    # Step 1: Format using 12-hour clock with AM/PM
-    formatted_time = dt.strftime("%I:%M:%S %p")
-    return formatted_time
+    hour_24 = dt.hour
+    is_pm = hour_24 >= 12
+    hour_12 = hour_24 % 12
+    if hour_12 == 0:
+        hour_12 = 12
 
-# Entry point: convert_24h_to_12h_ampm(dt: datetime) -> str
+    return time(
+        hour=hour_12,
+        minute=dt.minute,
+        second=dt.second,
+        microsecond=dt.microsecond,
+        tzinfo=dt.tzinfo,
+        fold=1 if is_pm else 0
+    )
+
+# Entry point: convert_datetime_to_12h(dt: datetime) -> time
 ```

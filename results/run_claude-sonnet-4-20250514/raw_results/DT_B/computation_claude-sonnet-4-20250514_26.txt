@@ -1,22 +1,20 @@
 Let's think step by step to solve this problem.
 
 1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with datetime objects.
-2. **Define a function**: We will create a function that accepts two datetime objects as input.
-3. **Calculate the midpoint**: To find the midpoint between two datetimes, we need to:
-   - Calculate the time difference between the two datetimes (this gives us a timedelta)
-   - Divide this difference by 2 to get half the duration
-   - Add this half-duration to the earlier datetime to get the midpoint
-4. **Return the result**: Return the calculated midpoint datetime.
+2. **Define a function**: We will create a function that accepts two datetime objects as input parameters.
+3. **Calculate the time difference**: Subtract the first datetime from the second datetime to get a timedelta representing the total time span.
+4. **Find the midpoint**: Divide the timedelta by 2 to get half the difference, then add this half-difference to the first datetime to get the midpoint.
+5. **Return the result**: Return the calculated midpoint as a datetime object.
 
 ```python
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def find_midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
     # Step 1: Calculate the difference between the two datetimes
-    time_difference = dt2 - dt1
+    difference = dt2 - dt1
     
-    # Step 2: Calculate half of the time difference
-    half_difference = time_difference / 2
+    # Step 2: Find half of the difference
+    half_difference = difference / 2
     
     # Step 3: Add half the difference to the first datetime to get the midpoint
     midpoint = dt1 + half_difference

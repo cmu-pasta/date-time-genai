@@ -6,15 +6,16 @@ from datetime_generators import *
 from hypothesis import given, seed, settings
 
 from datetime import datetime
-def get_day_name(dt: datetime) -> str:
-    # Step 1: Use the strftime method with the appropriate format code
-    # %A returns the full weekday name (e.g., 'Monday', 'Tuesday')
-    day_name = dt.strftime('%A')
+def get_day_of_week_as_integer(dt: datetime) -> int:
+    # Step 1: Use the weekday() method of the datetime object.
+    # This method returns the day of the week as an integer,
+    # where Monday is 0 and Sunday is 6.
+    day_of_week_number = dt.weekday()
     
-    # Step 2: Return the resulting string
-    return day_name
+    # Step 2: Return the integer result.
+    return day_of_week_number
 
-# Entry point: get_day_name(dt: datetime) -> str
+# Entry point: get_day_of_week_as_integer(dt: datetime) -> int
 
 def format_value_dt(*values):
     formatted_values = []
@@ -41,7 +42,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(datetime_strategy())
-def test_get_day_name(dt):
-    result = get_day_name(dt)
+def test_get_day_of_week_as_integer(dt):
+    result = get_day_of_week_as_integer(dt)
     formatted_result = format_value_dt(result, dt)
     log_file.write(formatted_result + "\n")

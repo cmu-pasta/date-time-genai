@@ -1,43 +1,47 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module to work with date objects.
-2. Define a function that accepts two dates as input.
-3. Normalize the order of dates so the earlier date is first.
-4. Compute the total number of days inclusive of both start and end dates.
-5. Calculate business days using whole weeks (each contributes 5 business days) and handle the remaining days by counting weekdays (Monday-Friday).
+1. Import the necessary types from the datetime standard library.
+2. Define a function that accepts two date-like inputs (date objects), representing the start and end dates.
+3. Normalize the order so the earlier date is first; compute the difference in days excluding the end date.
+4. Compute complete weeks within the range and convert them to business days (5 per week).
+5. Handle the remaining days by counting how many fall on weekdays (Monday–Friday).
 6. Return the total number of business days as an integer.
 
 ```python
-from datetime import date, timedelta
+from datetime import date
 
 def business_days_between(start: date, end: date) -> int:
     """
-    Calculate the number of business days (Monday-Friday) between two dates, inclusive.
-    If start > end, the dates are swapped.
-    No holidays are considered.
+    Calculate the number of business days (Monday-Friday) between two dates.
+    The calculation is exclusive of the end date and inclusive of the start date,
+    matching the behavior of (end - start).days for total days.
+    
+    Args:
+        start: The start date.
+        end: The end date.
+    Returns:
+        The number of business days as an integer.
     """
-    # Step 1: Normalize order so start <= end
+    if start == end:
+        return 0
+
+    # Ensure start <= end
     if start > end:
         start, end = end, start
 
-    # Step 2: Compute total span in days, inclusive of both endpoints
-    total_days_inclusive = (end - start).days + 1
-
-    # Step 3: Count full weeks and remaining days
-    full_weeks = total_days_inclusive // 7
-    remaining_days = total_days_inclusive % 7
-
-    # Each full week has 5 business days (Mon-Fri)
+    total_days = (end - start).days  # end is exclusive
+    full_weeks = total_days // 7
     business_days = full_weeks * 5
 
-    # Step 4: Count business days in the remaining partial week starting from 'start'
-    start_weekday = start.weekday()  # 0=Mon, ..., 6=Sun
-    extra = 0
-    for i in range(remaining_days):
-        weekday = (start_weekday + i) % 7
-        if weekday < 5:  # Monday-Friday
-            extra += 1
+    remainder = total_days % 7
+    start_weekday = start.weekday()  # 0=Mon, 6=Sun
 
-    return business_days + extra
+    # Count weekdays in the remaining days
+    for i in range(remainder):
+        wd = (start_weekday + i) % 7
+        if wd < 5:
+            business_days += 1
+
+    return business_days
 
 # Entry point: business_days_between(start: date, end: date) -> int
 ```

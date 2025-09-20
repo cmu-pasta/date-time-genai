@@ -1,30 +1,27 @@
 Let's think step by step to solve this problem.
 
 1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
-2. **Define a function**: We will create a function that accepts a date as input to find the next Valentine's Day after that date.
-3. **Determine Valentine's Day for the current year**: Valentine's Day is always February 14th, so we need to create a date object for February 14th of the given date's year.
-4. **Check if Valentine's Day has passed**: Compare the given date with Valentine's Day of the same year to determine if we need to look at the current year or next year.
-5. **Calculate the next Valentine's Day**: If the given date is before or on Valentine's Day of the current year, return that date. Otherwise, return Valentine's Day of the next year.
-6. **Return the result**: Return the next Valentine's Day as a date object.
+2. **Define a function**: We will create a function that accepts a date as input and returns the next Valentine's Day as a date object.
+3. **Determine Valentine's Day logic**: Valentine's Day is always February 14th. If the given date is before February 14th of the current year, return February 14th of the current year. Otherwise, return February 14th of the next year.
+4. **Calculate the next Valentine's Day**: Compare the given date with February 14th of the current year and determine which Valentine's Day to return.
+5. **Return the result**: Return the next Valentine's Day as a date object.
 
 ```python
 from datetime import date
 
-def find_next_valentines_day(given_date: date) -> date:
-    # Step 1: Get the year from the given date
+def find_next_valentine_day(given_date: date) -> date:
+    # Get the current year from the given date
     current_year = given_date.year
     
-    # Step 2: Create Valentine's Day for the current year (February 14th)
-    valentines_this_year = date(current_year, 2, 14)
+    # Create Valentine's Day for the current year (February 14)
+    valentine_this_year = date(current_year, 2, 14)
     
-    # Step 3: Check if the given date is before Valentine's Day of this year
-    if given_date < valentines_this_year:
-        # If before, return this year's Valentine's Day
-        return valentines_this_year
+    # If the given date is before Valentine's Day this year, return this year's Valentine's Day
+    if given_date < valentine_this_year:
+        return valentine_this_year
     else:
-        # If on or after, return next year's Valentine's Day
-        next_year = current_year + 1
-        return date(next_year, 2, 14)
+        # Otherwise, return next year's Valentine's Day
+        return date(current_year + 1, 2, 14)
 
-# Entry point: find_next_valentines_day(given_date: date) -> date
+# Entry point: find_next_valentine_day(given_date: date) -> date
 ```

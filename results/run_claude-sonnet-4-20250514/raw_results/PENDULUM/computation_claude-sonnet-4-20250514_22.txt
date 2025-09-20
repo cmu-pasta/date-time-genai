@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the requirement**: We need to convert a 12-hour time format to 24-hour time format using only Pendulum library types.
+2. **Identify inputs**: Since we can only use Pendulum types, we'll take hour (integer), minute (integer), second (integer), and a boolean to indicate AM/PM.
+3. **Handle the conversion logic**: For PM times, we add 12 to the hour (except for 12 PM). For AM times, we keep the hour as is (except 12 AM becomes 0).
+4. **Create and return the result**: Use pendulum.Time to create a time object in 24-hour format.
+
+```python
+import pendulum
+
+def convert_12_to_24_hour(hour: int, minute: int, second: int, is_pm: bool) -> pendulum.Time:
+    # Step 1: Convert 12-hour format to 24-hour format
+    if is_pm:
+        # PM case: add 12 to hour, except for 12 PM which stays 12
+        if hour == 12:
+            hour_24 = 12
+        else:
+            hour_24 = hour + 12
+    else:
+        # AM case: keep hour as is, except 12 AM becomes 0
+        if hour == 12:
+            hour_24 = 0
+        else:
+            hour_24 = hour
+    
+    # Step 2: Create and return pendulum.Time object in 24-hour format
+    return pendulum.Time(hour_24, minute, second)
+
+# Entry point: convert_12_to_24_hour(hour: int, minute: int, second: int, is_pm: bool) -> pendulum.Time
+```

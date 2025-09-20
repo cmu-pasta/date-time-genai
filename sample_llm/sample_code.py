@@ -11,7 +11,7 @@ You are an expert in the field of date and time computations.
 Your goal is to help successfully implement the given computation task.
 """
 
-DT_PROMPT_RULE = "Only use input and output types from this list of standard library types: [booleans, dates, datetimes, floats, integers, timedeltas, times, zoneinfo]."
+DT_PROMPT_RULE = "Only use input and output types from this list of standard library types: [booleans, dates, datetimes, floats, integers, timedeltas, times, ZoneInfo]."
 PENDULUM_PROMPT_RULE = "Only use input and output types from this list of pendulum library types: [booleans, pendulum.Date, pendulum.DateTime, floats, integers, pendulum.Duration, pendulum.Time, pendulum.Timezone]."
 
 # Task to generate random computations using the datetime libraries
@@ -34,6 +34,7 @@ d. Make sure that the method accepts the necessary inputs and returns the expect
 e. Do not input or output any complex data types like lists, tuples, sets, or dictionaries.
 f. Always specify the entry point of the code snippet.
 g. {rule}
+h. Avoid having default values for the arguments.
 
 OUTPUT FORMAT:
 Let's think step by step to solve this problem.

@@ -2,36 +2,37 @@ Let's think step by step to solve this problem.
 
 1. **Import the necessary libraries**: We need the `datetime` module to work with dates and calculate differences.
 
-2. **Define a reference new moon date**: We need a known new moon date as our starting point. I'll use January 6, 2000, which is a well-documented new moon date used in astronomical calculations.
+2. **Define a reference new moon date**: We need a known new moon date as a reference point. January 6, 2000 was a new moon, so we'll use this as our reference.
 
-3. **Calculate the lunar cycle length**: The average lunar cycle (synodic month) is approximately 29.53059 days.
+3. **Define the lunar cycle length**: The average lunar cycle (synodic month) is approximately 29.530588853 days.
 
-4. **Calculate days since reference**: Find the total number of days between the reference new moon and the given date.
+4. **Calculate days since reference**: Find the total number of days between the input date and our reference new moon date.
 
-5. **Apply modulo operation**: Use the modulo operator with the lunar cycle length to find how many days have passed since the most recent new moon.
+5. **Calculate lunar age**: Use modulo operation to find the remainder when dividing the total days by the lunar cycle length. This gives us the current position in the lunar cycle.
 
-6. **Return the result**: Return the lunar age as an integer representing days since the new moon.
+6. **Return the result**: Return the lunar age as a float representing days since the last new moon.
 
 ```python
 from datetime import datetime
 
-def calculate_lunar_age(given_date: datetime) -> int:
-    # Reference new moon: January 6, 2000, 18:14 UTC
-    # This is a well-documented new moon used in astronomical calculations
-    reference_new_moon = datetime(2000, 1, 6, 18, 14)
+def calculate_lunar_age(input_date: datetime) -> float:
+    # Reference new moon date: January 6, 2000
+    reference_new_moon = datetime(2000, 1, 6)
     
-    # Average lunar cycle length in days (synodic month)
-    lunar_cycle_days = 29.53059
+    # Lunar cycle length in days (synodic month)
+    lunar_cycle_days = 29.530588853
     
-    # Calculate the difference in days between given date and reference
-    days_since_reference = (given_date - reference_new_moon).total_seconds() / (24 * 3600)
+    # Calculate the difference in days between input date and reference
+    days_difference = (input_date - reference_new_moon).total_seconds() / (24 * 3600)
     
     # Calculate lunar age using modulo operation
-    # This gives us days since the most recent new moon
-    lunar_age = days_since_reference % lunar_cycle_days
+    lunar_age = days_difference % lunar_cycle_days
     
-    # Return as integer (rounded down)
-    return int(lunar_age)
+    # Ensure positive result
+    if lunar_age < 0:
+        lunar_age += lunar_cycle_days
+    
+    return lunar_age
 
-# Entry point: calculate_lunar_age(given_date: datetime) -> int
+# Entry point: calculate_lunar_age(input_date: datetime) -> float
 ```

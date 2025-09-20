@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts an integer `year` as input.
+3.  **Determine the first day of November**: Construct a `pendulum.DateTime` object for November 1st of the given year.
+4.  **Find the first Thursday of November**: Use `pendulum`'s `next()` method with `pendulum.THURSDAY` to find the first Thursday on or after November 1st. This effectively gives us the first Thursday of the month.
+5.  **Calculate the fourth Thursday**: Add three weeks (21 days) to the date of the first Thursday to arrive at the fourth Thursday of November.
+6.  **Return the result**: Return the resulting `pendulum.DateTime` object, converted to a `pendulum.Date` to represent just the date.
+
+```python
+import pendulum
+
+def find_thanksgiving_date(year: int) -> pendulum.Date:
+    # Step 1: Get the first day of November for the given year.
+    november_first = pendulum.datetime(year, 11, 1)
+
+    # Step 2: Find the first Thursday on or after November 1st.
+    # pendulum.next(pendulum.THURSDAY) will return november_first itself if it's a Thursday,
+    # or the next Thursday otherwise.
+    first_thursday_of_november = november_first.next(pendulum.THURSDAY)
+
+    # Step 3: Thanksgiving is the fourth Thursday. To get from the first to the fourth,
+    # we need to add 3 more weeks (3 * 7 = 21 days).
+    thanksgiving_date_time = first_thursday_of_november.add(days=21)
+
+    # Step 4: Return the result as a pendulum.Date object.
+    return thanksgiving_date_time.date()
+
+# Entry point: find_thanksgiving_date(year: int) -> pendulum.Date
+```

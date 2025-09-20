@@ -1,51 +1,44 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard library: datetime, timedelta, and ZoneInfo.
-2. Define a function that accepts two datetimes and their corresponding time zones (ZoneInfo).
-3. Ensure each datetime is timezone-aware in its given time zone (attach tz if naive, or convert if already aware).
-4. Normalize both datetimes to UTC to account for time zone offsets and DST.
-5. Subtract the normalized datetimes to get a timedelta representing the difference.
-6. Return the timedelta.
+1. Import the required classes: datetime and timedelta from datetime, and ZoneInfo for time zone handling.
+2. Define a function that accepts two datetimes and their respective ZoneInfo time zones.
+3. Ensure each datetime is timezone-aware in the intended zone:
+   - If naive, attach the provided ZoneInfo using replace.
+   - If already aware, convert to the provided ZoneInfo using astimezone.
+4. Compute the difference between the two instants as a timedelta.
+5. Return the timedelta result.
 
 ```python
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-def time_difference_across_timezones(dt1: datetime, tz1: ZoneInfo, dt2: datetime, tz2: ZoneInfo) -> timedelta:
+def calculate_timezone_difference(dt1: datetime, tz1: ZoneInfo, dt2: datetime, tz2: ZoneInfo) -> timedelta:
     """
-    Calculate the absolute time difference between two datetimes that occur in potentially different time zones.
+    Calculate the time difference between two datetimes, each associated with its own time zone.
+    The result accounts for time zone offsets and daylight saving transitions.
 
-    Parameters:
-    - dt1: A datetime representing the first local timestamp (naive or aware).
-    - tz1: The ZoneInfo time zone corresponding to dt1.
-    - dt2: A datetime representing the second local timestamp (naive or aware).
-    - tz2: The ZoneInfo time zone corresponding to dt2.
+    Args:
+        dt1: The first datetime (naive or aware).
+        tz1: The time zone for the first datetime.
+        dt2: The second datetime (naive or aware).
+        tz2: The time zone for the second datetime.
 
     Returns:
-    - A timedelta representing the absolute difference between the two instants in time.
+        A timedelta representing dt2 - dt1 as an instant difference, accounting for time zones.
     """
-
-    # Ensure dt1 is timezone-aware in tz1
+    # Normalize dt1 to be aware in tz1
     if dt1.tzinfo is None:
-        aware_dt1 = dt1.replace(tzinfo=tz1)
+        dt1_aware = dt1.replace(tzinfo=tz1)
     else:
-        aware_dt1 = dt1.astimezone(tz1)
+        dt1_aware = dt1.astimezone(tz1)
 
-    # Ensure dt2 is timezone-aware in tz2
+    # Normalize dt2 to be aware in tz2
     if dt2.tzinfo is None:
-        aware_dt2 = dt2.replace(tzinfo=tz2)
+        dt2_aware = dt2.replace(tzinfo=tz2)
     else:
-        aware_dt2 = dt2.astimezone(tz2)
+        dt2_aware = dt2.astimezone(tz2)
 
-    # Normalize both to UTC to account for time zone offsets and DST correctly
-    dt1_utc = aware_dt1.astimezone(timezone.utc)
-    dt2_utc = aware_dt2.astimezone(timezone.utc)
+    # Compute the difference as an instant difference (accounts for time zones)
+    return dt2_aware - dt1_aware
 
-    # Compute absolute difference
-    difference = dt2_utc - dt1_utc
-    if difference < timedelta(0):
-        difference = -difference
-
-    return difference
-
-# Entry point: time_difference_across_timezones(dt1: datetime, tz1: ZoneInfo, dt2: datetime, tz2: ZoneInfo) -> timedelta
+# Entry point: calculate_timezone_difference(dt1: datetime, tz1: ZoneInfo, dt2: datetime, tz2: ZoneInfo) -> timedelta
 ```

@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object as input.
+3.  **Check for weekend**: Pendulum's `DateTime` objects have a built-in method `is_weekend()` which directly returns `True` if the date falls on a Saturday or Sunday, and `False` otherwise.
+4.  **Return the result**: Return the boolean result from the `is_weekend()` method.
+
+```python
+import pendulum
+
+def is_date_on_weekend(date_time: pendulum.DateTime) -> bool:
+    # Step 1: Use the built-in is_weekend() method of pendulum.DateTime
+    # This method returns True if the date falls on a Saturday or Sunday, False otherwise.
+    is_weekend_day = date_time.is_weekend()
+    
+    # Step 2: Return the boolean result
+    return is_weekend_day
+
+# Entry point: is_date_on_weekend(date_time: pendulum.DateTime) -> bool
+```

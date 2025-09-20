@@ -7,14 +7,14 @@ from hypothesis import settings, seed, given
 
 import pendulum
 def calculate_seconds_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
-    # Step 1: Calculate the duration between the two DateTime objects
-    duration = dt2.diff(dt1)
+    # Calculate the difference between the two DateTime objects.
+    # The diff() method returns a pendulum.Duration object.
+    duration_difference = dt2.diff(dt1)
     
-    # Step 2: Get the total number of seconds from the duration
-    # We use abs() to ensure the result is a non-negative integer, regardless of input order
-    total_seconds = abs(duration.in_seconds())
+    # Get the total number of seconds from the duration.
+    # Use abs() to ensure the result is a positive integer, regardless of the order of dt1 and dt2.
+    total_seconds = abs(duration_difference.in_seconds())
     
-    # Step 3: Return the total seconds as an integer
     return total_seconds
 
 # Entry point: calculate_seconds_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int

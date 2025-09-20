@@ -1,68 +1,45 @@
 Let's think step by step to solve this problem.
 
-1. **Import necessary libraries**: We need `datetime` and `zoneinfo` modules to work with dates and timezone information.
+1. **Import necessary modules**: We need `datetime` and `zoneinfo` from Python's standard library to work with dates and timezones.
 
-2. **Define the function**: Create a function that accepts a year (integer) and a timezone (zoneinfo object) as parameters.
+2. **Define the function**: Create a function that accepts a year (integer) and timezone (ZoneInfo) as inputs.
 
-3. **Search for DST transition**: Iterate through dates in the typical DST period (March-April for most regions) and check when the UTC offset changes from standard time to daylight saving time.
+3. **Find DST transition**: We need to check when daylight saving time begins by examining timezone transitions throughout the year. We can do this by iterating through dates and checking when the DST offset changes from standard time to daylight time.
 
-4. **Detect the transition**: Compare UTC offsets between consecutive days. When the offset increases (becomes more positive), that indicates the start of daylight saving time.
+4. **Check DST status**: For each date, we'll check if DST is in effect and find the first transition from non-DST to DST.
 
-5. **Return the result**: Return the date object representing when DST starts for the given year and timezone.
+5. **Return the result**: Return the datetime object representing when DST starts.
 
 ```python
-from datetime import datetime, date
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-def find_dst_start_date(year: int, timezone: ZoneInfo) -> date:
-    # Start searching from March 1st, as DST typically begins in March for most regions
-    search_date = date(year, 3, 1)
+def find_dst_start_date(year: int, timezone: ZoneInfo) -> datetime:
+    # Start from January 1st of the given year
+    current_date = datetime(year, 1, 1, tzinfo=timezone)
     
-    # Search through March and April to find DST transition
-    for day_offset in range(62):  # 62 days covers March and April
-        current_date = date(year, 3, 1)
-        current_date = current_date.replace(day=1)
-        
-        # Calculate the actual date by adding the offset
-        days_to_add = day_offset
-        month = 3
-        day = 1 + day_offset
-        
-        # Handle month rollover
-        if day > 31:  # March has 31 days
-            month = 4
-            day = day - 31
-        if month == 4 and day > 30:  # April has 30 days
-            break
-            
-        current_date = date(year, month, day)
-        next_date = date(year, month, day + 1) if day < 30 or (month == 3 and day < 31) else date(year, month + 1, 1)
-        
-        # Handle month boundary
-        if month == 3 and day == 31:
-            next_date = date(year, 4, 1)
-        elif month == 4 and day == 30:
-            break
-            
-        # Create datetime objects at noon to avoid midnight edge cases
-        current_dt = datetime.combine(current_date, datetime.min.time().replace(hour=12))
-        next_dt = datetime.combine(next_date, datetime.min.time().replace(hour=12))
-        
-        # Localize to the given timezone
-        current_localized = current_dt.replace(tzinfo=timezone)
-        next_localized = next_dt.replace(tzinfo=timezone)
-        
-        # Get UTC offsets
-        current_offset = current_localized.utcoffset()
-        next_offset = next_localized.utcoffset()
-        
-        # If the offset increases, DST has started
-        if next_offset > current_offset:
-            return next_date
+    # Get the initial DST status
+    previous_dst = current_date.dst() != timedelta(0)
     
-    # If no DST transition found, return None (timezone might not observe DST)
-    # But since we need to return a date, return January 1st to indicate no DST
-    return date(year, 1, 1)
+    # Iterate through each day of the year
+    for day in range(1, 366):  # 366 to handle leap years
+        try:
+            current_date = datetime(year, 1, 1, tzinfo=timezone) + timedelta(days=day-1)
+            current_dst = current_date.dst() != timedelta(0)
+            
+            # If DST status changed from False to True, we found the start of DST
+            if not previous_dst and current_dst:
+                return current_date
+            
+            previous_dst = current_dst
+            
+        except ValueError:
+            # Handle case where date doesn't exist (e.g., Feb 29 in non-leap year)
+            continue
+    
+    # If no DST transition found, return None as datetime (this shouldn't happen in normal cases)
+    # But since we need to return a datetime, return Jan 1st if no DST found
+    return datetime(year, 1, 1, tzinfo=timezone)
 
-# Entry point: find_dst_start_date(year: int, timezone: ZoneInfo) -> date
+# Entry point: find_dst_start_date(year: int, timezone: ZoneInfo) -> datetime
 ```

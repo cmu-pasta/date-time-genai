@@ -1,21 +1,26 @@
 Let's think step by step to solve this problem.
-1. Import the required class (timedelta) from the datetime module.
-2. Define a function that accepts a timedelta duration as input.
-3. Compute the total number of milliseconds using the timedelta's components (days, seconds, microseconds) to maintain exact integer arithmetic and avoid floating-point precision issues.
-4. Return the computed integer number of milliseconds. Note: this truncates any remaining microseconds smaller than 1 millisecond.
+1. Import the timedelta type from the datetime module to represent the input duration.
+2. Define a function that takes a timedelta as input.
+3. Compute the total number of milliseconds using integer arithmetic to avoid floating-point inaccuracies:
+   - Convert days to milliseconds.
+   - Convert seconds to milliseconds.
+   - Convert microseconds to milliseconds using floor division.
+4. Return the total as an integer.
 
 ```python
 from datetime import timedelta
 
 def milliseconds_in_duration(duration: timedelta) -> int:
     """
-    Calculate the number of milliseconds in a given time duration.
-
-    This returns a signed integer count of whole milliseconds, truncating any
-    remaining microseconds smaller than one millisecond toward zero.
+    Calculate the total number of whole milliseconds in the given duration.
     """
-    # 1 day = 86_400_000 ms, 1 second = 1_000 ms, 1 microsecond = 0.001 ms
-    return (duration.days * 86_400_000) + (duration.seconds * 1_000) + (duration.microseconds // 1_000)
+    # Use integer arithmetic to avoid floating point inaccuracies
+    total_milliseconds = (
+        duration.days * 86_400_000 +      # days to milliseconds
+        duration.seconds * 1_000 +        # seconds to milliseconds
+        duration.microseconds // 1_000    # microseconds to milliseconds (truncated)
+    )
+    return total_milliseconds
 
 # Entry point: milliseconds_in_duration(duration: timedelta) -> int
 ```

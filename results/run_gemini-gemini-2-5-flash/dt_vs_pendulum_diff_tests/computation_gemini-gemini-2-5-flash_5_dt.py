@@ -7,24 +7,19 @@ from hypothesis import given, seed, settings
 
 from datetime import datetime, timedelta
 def find_first_monday(year: int, month: int) -> datetime:
-    # Step 1: Create a datetime object for the first day of the given month and year
+    # Step 3: Construct the first day of the given month and year
     first_day_of_month = datetime(year, month, 1)
     
-    # Step 2: Get the weekday of the first day of the month
+    # Step 4: Calculate days to add to reach the first Monday
     # Monday is 0, Tuesday is 1, ..., Sunday is 6
-    first_day_weekday = first_day_of_month.weekday()
+    # We want to find the difference to the target weekday (Monday = 0)
+    # The formula (target_weekday - current_weekday + 7) % 7 gives days to add
+    days_to_add = (0 - first_day_of_month.weekday() + 7) % 7
     
-    # Step 3: Calculate how many days to add to reach the first Monday
-    # (0 - first_day_weekday + 7) % 7 gives the number of days to add to get to the *next* Monday
-    # If first_day_weekday is 0 (Monday), days_to_add = (0 - 0 + 7) % 7 = 0
-    # If first_day_weekday is 1 (Tuesday), days_to_add = (0 - 1 + 7) % 7 = 6
-    # If first_day_weekday is 6 (Sunday), days_to_add = (0 - 6 + 7) % 7 = 1
-    days_to_add = (0 - first_day_weekday + 7) % 7
-    
-    # Step 4: Add the calculated days to the first day of the month
+    # Step 5: Add the calculated days to find the first Monday
     first_monday = first_day_of_month + timedelta(days=days_to_add)
     
-    # Step 5: Return the resulting datetime object
+    # Step 6: Return the resulting datetime object
     return first_monday
 
 # Entry point: find_first_monday(year: int, month: int) -> datetime

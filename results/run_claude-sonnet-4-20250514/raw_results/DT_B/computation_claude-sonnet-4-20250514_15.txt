@@ -1,42 +1,43 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` and `timedelta` modules from Python's standard library to work with dates and iterate through date ranges.
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` from Python's datetime module to work with dates and date arithmetic.
 
-2. **Define a function**: We will create a function that accepts two datetime objects as input representing the start and end dates.
+2. **Define the function**: Create a function that accepts two datetime objects as input and returns the count of weekends as an integer.
 
-3. **Determine the date range**: We need to establish which date is earlier and which is later to properly iterate through the range.
+3. **Ensure proper date ordering**: Make sure we work with the earlier date first to avoid negative calculations.
 
-4. **Count weekends**: We'll iterate through each date in the range and count complete weekends. A weekend is defined as a Saturday-Sunday pair. We can identify weekends by checking if a date is a Saturday (weekday() == 5) and the next day is Sunday.
+4. **Define weekend logic**: A weekend consists of Saturday and Sunday. We need to count complete weekends (Saturday-Sunday pairs) that fall between the two dates.
 
-5. **Return the result**: Return the count of complete weekends as an integer.
+5. **Calculate using date arithmetic**: Find the first Saturday on or after the start date, and the last Saturday on or before the end date, then count the number of weeks between them.
+
+6. **Return the result**: Return the count as an integer.
 
 ```python
 from datetime import datetime, timedelta
 
-def calculate_weekends_between_dates(start_date: datetime, end_date: datetime) -> int:
-    # Ensure start_date is before end_date
-    if start_date > end_date:
-        start_date, end_date = end_date, start_date
+def calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int:
+    # Ensure dt1 is the earlier date
+    if dt1 > dt2:
+        dt1, dt2 = dt2, dt1
     
-    # Convert to date objects for easier comparison (ignore time component)
-    current_date = start_date.date()
-    end_date_only = end_date.date()
+    # Find the first Saturday on or after dt1
+    # weekday() returns 0=Monday, 1=Tuesday, ..., 5=Saturday, 6=Sunday
+    days_to_first_saturday = (5 - dt1.weekday()) % 7
+    first_saturday = dt1 + timedelta(days=days_to_first_saturday)
     
-    weekend_count = 0
+    # Find the last Saturday on or before dt2
+    days_from_last_saturday = (dt2.weekday() - 5) % 7
+    last_saturday = dt2 - timedelta(days=days_from_last_saturday)
     
-    # Iterate through each date in the range
-    while current_date <= end_date_only:
-        # Check if current date is Saturday (weekday() == 5)
-        if current_date.weekday() == 5:
-            # Check if the next day (Sunday) is still within our range
-            next_day = current_date + timedelta(days=1)
-            if next_day <= end_date_only:
-                weekend_count += 1
-        
-        # Move to the next day
-        current_date += timedelta(days=1)
+    # If first Saturday is after last Saturday, no complete weekends exist
+    if first_saturday > last_saturday:
+        return 0
     
-    return weekend_count
+    # Calculate number of complete weekends
+    # Each weekend is 7 days apart
+    weekends = ((last_saturday - first_saturday).days // 7) + 1
+    
+    return weekends
 
-# Entry point: calculate_weekends_between_dates(start_date: datetime, end_date: datetime) -> int
+# Entry point: calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int
 ```

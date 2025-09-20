@@ -1,27 +1,20 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the datetime module.
-2. Define a function that accepts a time input.
-3. Compute total seconds since midnight, including microseconds for precision.
-4. Convert total seconds to decimal hours (hours as a floating-point number).
-5. Return the decimal time value as a float.
+1. Import the required type from the datetime library.
+2. Accept a time object representing the time of day.
+3. Convert the time components (hours, minutes, seconds, microseconds) into a decimal hour value.
+4. Return the decimal hour as a float.
 
 ```python
 from datetime import time
 
-def decimal_time_of_day(t: time) -> float:
-    """
-    Calculate the decimal time representation (in hours) for a given time of day.
-    For example, 01:30:00 -> 1.5, 12:00:00 -> 12.0
+def time_to_decimal_hours(t: time) -> float:
+    # Calculate decimal hours: hours + minutes/60 + seconds/3600 + microseconds/3_600_000_000
+    return (
+        t.hour
+        + t.minute / 60.0
+        + t.second / 3600.0
+        + t.microsecond / 3_600_000_000.0
+    )
 
-    Args:
-        t (time): A time object representing the time of day.
-
-    Returns:
-        float: Decimal hours since midnight.
-    """
-    total_seconds = t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000
-    decimal_hours = total_seconds / 3600.0
-    return decimal_hours
-
-# Entry point: decimal_time_of_day(t: time) -> float
+# Entry point: time_to_decimal_hours(t: time) -> float
 ```

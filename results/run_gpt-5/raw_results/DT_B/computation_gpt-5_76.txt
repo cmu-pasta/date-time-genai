@@ -1,33 +1,20 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard datetime library.
-2. Define a function that takes a datetime and a reference date as inputs.
-3. Convert the input datetime to a date to align units (days).
-4. Subtract the reference date from the converted date to get a timedelta.
-5. Return the number of days as an integer from the timedelta.
+1. Import the required classes from the datetime library.
+2. Accept a datetime representing the moment and a date representing the reference date.
+3. Convert the datetime to its date component to align with the "reference date".
+4. Subtract the reference date from the moment’s date to get a timedelta.
+5. Return the number of days as an integer.
 
 ```python
 from datetime import datetime, date
 
-def days_since_reference(dt: datetime, reference: date) -> int:
+def days_since_reference(moment: datetime, reference_date: date) -> int:
     """
-    Convert a datetime to the number of whole days since a reference date.
-
-    Parameters:
-    - dt: A datetime object representing the target moment.
-    - reference: A date object representing the reference (start) date.
-
-    Returns:
-    - An integer representing the number of days between dt's calendar date and the reference date.
-      The result can be negative if dt is before the reference.
+    Convert a datetime to the number of days since a reference date.
+    Returns a signed integer: positive if moment is after the reference_date,
+    negative if before, and zero if on the same calendar date.
     """
-    # Align to date granularity by taking the calendar date component of the datetime
-    dt_as_date: date = dt.date()
+    return (moment.date() - reference_date).days
 
-    # Compute the difference in days
-    delta = dt_as_date - reference
-
-    # Return the integer day count
-    return delta.days
-
-# Entry point: days_since_reference(dt: datetime, reference: date) -> int
+# Entry point: days_since_reference(moment: datetime, reference_date: date) -> int
 ```

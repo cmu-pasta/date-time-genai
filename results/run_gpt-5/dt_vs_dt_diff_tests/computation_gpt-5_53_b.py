@@ -1,0 +1,109 @@
+
+import os
+
+from datetime import date, datetime, time, timedelta, timezone
+from datetime_generators import *
+from hypothesis import given, seed, settings
+
+from datetime import date, datetime
+def _jd_to_datetime(jd: float) -> datetime:
+    # Convert Julian Day to Gregorian calendar datetime (UTC-like, ignoring ΔT)
+    # Algorithm adapted from Meeus, Astronomical Algorithms.
+    jd += 0.5
+    Z = int(jd)
+    F = jd - Z
+
+    if Z < 2299161:
+        A = Z
+    else:
+        alpha = int((Z - 1867216.25) / 36524.25)
+        A = Z + 1 + alpha - (alpha // 4)
+
+    B = A + 1524
+    C = int((B - 122.1) / 365.25)
+    D = int(365.25 * C)
+    E = int((B - D) / 30.6001)
+
+    day_float = B - D - int(30.6001 * E) + F
+    day = int(day_float)
+    frac = day_float - day
+
+    month = E - 1 if E < 14 else E - 13
+    year = C - 4716 if month > 2 else C - 4715
+
+    # Convert fractional day to time
+    total_seconds = round(frac * 86400)
+    if total_seconds >= 86400:
+        total_seconds -= 86400
+        day += 1
+        # Handle month/year rollover (rare here; equinox times won't push beyond next month boundary)
+        # Minimal rollover handling:
+        try:
+            dt_tmp = datetime(year, month, day)
+        except ValueError:
+            # Increment month/year if needed
+            month += 1
+            if month > 12:
+                month = 1
+                year += 1
+            day = 1
+
+    hour = total_seconds // 3600
+    minute = (total_seconds % 3600) // 60
+    second = total_seconds % 60
+
+    return datetime(year, month, day, hour, minute, second)
+
+def autumnal_equinox_date(year: int) -> date:
+    # Meeus polynomial for September equinox (valid for years roughly 1000–3000)
+    # T is in Julian millennia from J2000.0
+    T = (year - 2000) / 1000.0
+
+    # Polynomial for JDE of September equinox
+    # JDE0 = 2451810.21715 + 365242.01767*T - 0.11575*T^2 + 0.00337*T^3 + 0.00078*T^4
+    T2 = T * T
+    T3 = T2 * T
+    T4 = T3 * T
+    JDE0 = (
+        2451810.21715
+        + 365242.01767 * T
+        - 0.11575 * T2
+        + 0.00337 * T3
+        + 0.00078 * T4
+    )
+
+    # Convert JDE to calendar date (ignoring ΔT vs UTC difference; date is unaffected)
+    dt = _jd_to_datetime(JDE0)
+    return dt.date()
+
+# Entry point: autumnal_equinox_date(year: int) -> date
+
+def format_value_dt(*values):
+    formatted_values = []
+
+    for value in values:
+        if isinstance(value, datetime):
+            formatted_values.append(value.isoformat())
+        elif isinstance(value, date):
+            # Use strftime to format the date similar to to_date_string()
+            formatted_values.append(value.strftime("%Y-%m-%d"))
+        elif isinstance(value, time):
+            formatted_values.append(value.isoformat())
+        elif isinstance(value, timedelta):
+            formatted_values.append(str(value.total_seconds()))
+        else:
+            formatted_values.append(str(value))
+
+    return ", ".join(formatted_values)
+
+if not os.path.exists("./results/run_gpt-5/.logs/dt_vs_dt_diff_test_logs"):
+    os.makedirs("./results/run_gpt-5/.logs/dt_vs_dt_diff_test_logs")
+log_file = open(os.path.join("./results/run_gpt-5/.logs/dt_vs_dt_diff_test_logs", "log_computation_gpt-5_53_b.txt"), "w")
+
+@seed(27)
+@settings(max_examples=10000, deadline=None, derandomize=True)
+@given(timestamp_strategy())
+def test_autumnal_equinox_date(year):
+    result = autumnal_equinox_date(year)
+    formatted_result = format_value_dt(result, year)
+    log_file.write(formatted_result + "\n")

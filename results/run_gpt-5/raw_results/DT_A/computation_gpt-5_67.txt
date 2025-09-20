@@ -1,192 +1,176 @@
 Let's think step by step to solve this problem.
-1. We will accept a Gregorian date as input using the standard datetime.date type.
-2. Convert this Gregorian date to a fixed day count using date.toordinal(), which yields days since 0001-01-01 (proleptic Gregorian).
-3. Implement the Hebrew calendar core computations:
-   - Determine if a Hebrew year is a leap year.
-   - Compute the day (as a fixed day count) of Rosh Hashanah (1 Tishri) for a given Hebrew year using the molad and postponement rules.
-   - Compute the length of a given Hebrew year to determine Heshvan/Kislev lengths.
-4. Locate the Hebrew year containing the given fixed day.
-5. Compute the Hebrew month and day within that year by subtracting month lengths sequentially.
-6. Return the Hebrew date encoded as an integer in the form YYYYMMDD (year*10000 + month*100 + day), complying with the allowed return types.
+1. Accept a Gregorian calendar date as a datetime.date input.
+2. Convert that date to an absolute day count compatible with the proleptic Gregorian ordinal (date.toordinal()).
+3. Compute the absolute day of Rosh Hashanah (1 Tishri) for a given Hebrew year using the standard molad-based rules with postponements (dehiyyot).
+4. Determine the Hebrew year y such that Rosh Hashanah of y <= absolute day < Rosh Hashanah of y+1.
+5. Compute the length of the Hebrew year and derive the lengths of Heshvan and Kislev to classify the year as deficient, regular, or complete.
+6. Walk month-by-month from Tishri to find the Hebrew month and day corresponding to the absolute day.
+7. Return the Hebrew date as a single integer in the format YYYYMMDD, where month 1..13 corresponds to Tishri..Elul.
 
 ```python
 from datetime import date
-
-# Hebrew calendar computations based on classical algorithms (Dershowitz/Reingold style).
-# We use "fixed days" compatible with Python's date.toordinal():
-# RD (Rata Die) = days since 0001-01-01 Gregorian, where 0001-01-01 has RD = 1.
-#
-# HEBREW_EPOCH_RD is the RD of the day before 1 Tishri, AM 1, so that:
-# RD_of_RoshHashanah(year) = HEBREW_EPOCH_RD + hebrew_new_year_day_index(year)
-# and hebrew_new_year_day_index(1) == 1.
-
-HEBREW_EPOCH_RD = -1373427  # Fixed-day reference for Hebrew epoch (consistent with RD system)
+import math
 
 def _is_hebrew_leap(year: int) -> bool:
-    # Hebrew leap years are years 3, 6, 8, 11, 14, 17, 19 in the 19-year cycle
-    return ((year * 7) + 1) % 19 < 7
+    # Hebrew leap years are years 3, 6, 8, 11, 14, 17, 19 in a 19-year cycle.
+    # In modulo arithmetic, leap years have (year % 19) in {0, 3, 6, 8, 11, 14, 17}
+    r = year % 19
+    return (r == 0) or (r == 3) or (r == 6) or (r == 8) or (r == 11) or (r == 14) or (r == 17)
 
-def _hebrew_new_year_day_index(year: int) -> int:
-    """
-    Return the number of days elapsed (as an integer index) from the Hebrew epoch baseline
-    to Rosh Hashanah (1 Tishri) of the given Hebrew year.
-    This uses the molad Tishri and the postponement rules.
-    """
-    # Months elapsed up to Tishri of 'year' (relative to reference)
-    months = ((235 * year) - 234) // 19
-
-    # Parts per day = 25920 (24h * 1080 parts/hour). The constants below are standard.
-    parts = 12084 + 13753 * months
+def _rosh_hashanah_abs(year: int) -> int:
+    # Compute the absolute day number (compatible with date.toordinal())
+    # of 1 Tishri (Rosh Hashanah) for the given Hebrew year using
+    # the algorithm from "Calendrical Calculations" (Dershowitz & Reingold).
+    # Months elapsed since the epoch to Tishri of 'year'
+    months = (235 * year - 234) // 19
+    # Parts since epoch to molad of Tishri in 'year'
+    parts = 12084 + 13753 * months  # 1 hour = 1080 parts; 1 day = 24 hours
+    # Days since epoch to molad
     day = 29 * months + (parts // 25920)
-    parts = parts % 25920
+    parts_rem = parts % 25920
 
-    # Postponements
+    # Postponements (Dehiyyot)
+    # Rule 1: Molad at or after noon (>= 18 hours = 19440 parts) -> postpone 1 day
     postpone = False
-    if parts >= 19440:
+    if parts_rem >= 19440:
         postpone = True
-    elif (day % 7) == 2 and parts >= 9924 and not _is_hebrew_leap(year):
+    # Rule 2: If molad is on a Tuesday (day % 7 == 2) at or after 9h 204p (9924 parts), and the year is common -> postpone
+    if (day % 7) == 2 and (parts_rem >= 9924) and (not _is_hebrew_leap(year)):
         postpone = True
-    elif (day % 7) == 1 and parts >= 16789 and _is_hebrew_leap(year - 1):
+    # Rule 3: If molad is on a Monday (day % 7 == 1) at or after 15h 589p (16789 parts), and the previous year is leap -> postpone
+    if (day % 7) == 1 and (parts_rem >= 16789) and _is_hebrew_leap(year - 1):
         postpone = True
 
     if postpone:
         day += 1
 
-    # Additional postponement: Rosh Hashanah cannot be on Sunday(0), Wednesday(3), Friday(5)
-    if day % 7 in (0, 3, 5):
+    # Rule 4: Rosh Hashanah cannot be Sunday(0), Wednesday(3), or Friday(5)
+    if (day % 7) in (0, 3, 5):
         day += 1
 
+    # The absolute day count here is already aligned with the absolute day used by date.toordinal()
+    # because absolute day 1 in the proleptic Gregorian is Monday, Jan 1, Year 1.
     return day
 
-def _rosh_hashanah_rd(year: int) -> int:
-    # RD of Rosh Hashanah (1 Tishri) for given Hebrew year
-    return HEBREW_EPOCH_RD + _hebrew_new_year_day_index(year)
-
 def _hebrew_year_length(year: int) -> int:
-    return _rosh_hashanah_rd(year + 1) - _rosh_hashanah_rd(year)
+    return _rosh_hashanah_abs(year + 1) - _rosh_hashanah_abs(year)
 
-def _hebrew_month_length(year: int, month: int) -> int:
-    """
-    Month numbering:
-    1=Tishri, 2=Heshvan, 3=Kislev, 4=Tevet, 5=Shevat,
-    6=Adar I (in leap) or Adar (in common), 7=Adar II (in leap only),
-    8=Nisan, 9=Iyar, 10=Sivan, 11=Tammuz, 12=Av, 13=Elul
-    """
+def _month_length_in_year(year: int, month: int) -> int:
+    # month numbering: 1=Tishri, 2=Heshvan, 3=Kislev, 4=Tevet, 5=Shevat,
+    # 6=Adar (in common years) or Adar I (in leap years), 7=Adar II (leap only),
+    # 8=Nisan, 9=Iyar, 10=Sivan, 11=Tammuz, 12=Av, 13=Elul.
     leap = _is_hebrew_leap(year)
     year_len = _hebrew_year_length(year)
-
-    # Determine Heshvan/Kislev configuration
-    # deficient (353 or 383): Heshvan=29, Kislev=29
-    # regular  (354 or 384): Heshvan=29, Kislev=30
-    # complete (355 or 385): Heshvan=30, Kislev=30
-    mod10 = year_len % 10
-    if mod10 == 3:
-        heshvan = 29
-        kislev = 29
-    elif mod10 == 4:
-        heshvan = 29
-        kislev = 30
+    # Determine Heshvan/Kislev lengths
+    # Deficient: 353 (common) / 383 (leap) -> Heshvan 29, Kislev 29
+    # Regular:   354 (common) / 384 (leap) -> Heshvan 29, Kislev 30
+    # Complete:  355 (common) / 385 (leap) -> Heshvan 30, Kislev 30
+    if leap:
+        if year_len == 383:
+            heshvan_len = 29
+            kislev_len = 29
+        elif year_len == 384:
+            heshvan_len = 29
+            kislev_len = 30
+        else:  # 385
+            heshvan_len = 30
+            kislev_len = 30
     else:
-        # mod10 == 5
-        heshvan = 30
-        kislev = 30
+        if year_len == 353:
+            heshvan_len = 29
+            kislev_len = 29
+        elif year_len == 354:
+            heshvan_len = 29
+            kislev_len = 30
+        else:  # 355
+            heshvan_len = 30
+            kislev_len = 30
 
+    # Base month lengths
     if month == 1:   # Tishri
         return 30
     if month == 2:   # Heshvan
-        return heshvan
+        return heshvan_len
     if month == 3:   # Kislev
-        return kislev
+        return kislev_len
     if month == 4:   # Tevet
         return 29
     if month == 5:   # Shevat
         return 30
-    if leap:
-        if month == 6:   # Adar I
-            return 30
-        if month == 7:   # Adar II
-            return 29
-        if month == 8:   # Nisan
-            return 30
-        if month == 9:   # Iyar
-            return 29
-        if month == 10:  # Sivan
-            return 30
-        if month == 11:  # Tammuz
-            return 29
-        if month == 12:  # Av
-            return 30
-        if month == 13:  # Elul
-            return 29
-    else:
-        if month == 6:   # Adar (only one Adar)
-            return 29
-        if month == 7:   # Nisan
-            return 30
-        if month == 8:   # Iyar
-            return 29
-        if month == 9:   # Sivan
-            return 30
-        if month == 10:  # Tammuz
-            return 29
-        if month == 11:  # Av
-            return 30
-        if month == 12:  # Elul
-            return 29
+    if month == 6:
+        return 30 if leap else 29  # Adar I (30) in leap, Adar (29) in common
+    if month == 7:
+        if not leap:
+            # In common years there is no month 7 (Adar II), but guard just in case
+            return 0
+        return 29  # Adar II
+    if month == 8:   # Nisan
+        return 30
+    if month == 9:   # Iyar
+        return 29
+    if month == 10:  # Sivan
+        return 30
+    if month == 11:  # Tammuz
+        return 29
+    if month == 12:  # Av
+        return 30
+    if month == 13:  # Elul
+        return 29
+    return 0
 
-    # Should not reach here
-    raise ValueError("Invalid Hebrew month computation")
+def _gregorian_date_to_absolute(gd: date) -> int:
+    # Python's date.toordinal() is the absolute day count with 1 for 0001-01-01 (Monday)
+    return gd.toordinal()
 
-def _last_hebrew_month_of_year(year: int) -> int:
-    return 13 if _is_hebrew_leap(year) else 12
+def _absolute_to_hebrew_int(abs_day: int) -> int:
+    # Estimate Hebrew year around Gregorian year + 3760/3761
+    # Start with a rough estimate based on Gregorian year from absolute.
+    # Convert absolute back to a Gregorian year estimate:
+    # Jan 1, 1 CE is absolute 1; we'll derive year from a nominal 365-day average.
+    # A better estimate can be derived directly: use 3760 offset.
+    # We'll refine with while loops using Rosh Hashanah boundaries.
+    # Compute Gregorian year estimate from absolute day to improve initial guess
+    # but keep it simple: Python's proleptic year ~ abs_day // 366
+    # Instead, derive by mapping date.fromordinal
+    g_year = date.fromordinal(abs_day).year
+    y = g_year + 3760  # rough initial Hebrew year
 
-def _rd_to_hebrew(rd: int) -> (int, int, int):
-    """
-    Convert RD (date.toordinal()) to Hebrew (year, month, day).
-    Note: Returns a triple but the public interface will encode it as an integer.
-    """
-    # Initial rough guess to ensure not overshooting
-    # Using 366 prevents guessing too high in any case.
-    year = (rd - HEBREW_EPOCH_RD) // 366
-    if year < 1:
-        year = 1
+    # Adjust to find exact Hebrew year containing abs_day
+    rh_y = _rosh_hashanah_abs(y)
+    rh_next = _rosh_hashanah_abs(y + 1)
+    if abs_day < rh_y:
+        while abs_day < rh_y:
+            y -= 1
+            rh_next = rh_y
+            rh_y = _rosh_hashanah_abs(y)
+    elif abs_day >= rh_next:
+        while abs_day >= rh_next:
+            y += 1
+            rh_y = rh_next
+            rh_next = _rosh_hashanah_abs(y + 1)
 
-    # Adjust year to bracket the given RD
-    while rd >= _rosh_hashanah_rd(year + 1):
-        year += 1
-    while rd < _rosh_hashanah_rd(year):
-        year -= 1
+    # Day in Hebrew year (1-based)
+    day_in_year = abs_day - rh_y + 1
 
-    day_of_year = rd - _rosh_hashanah_rd(year) + 1  # 1-based day within Hebrew year
-
-    # Find month
-    month = 1
-    last_month = _last_hebrew_month_of_year(year)
+    # Walk through months to find month and day
+    leap = _is_hebrew_leap(y)
+    month = 1  # Tishri
     while True:
-        dim = _hebrew_month_length(year, month)
-        if day_of_year <= dim:
-            day = day_of_year
+        ml = _month_length_in_year(y, month)
+        if day_in_year <= ml:
+            day_in_month = day_in_year
             break
-        day_of_year -= dim
+        day_in_year -= ml
         month += 1
-        if month > last_month:
-            # Safety, shouldn't happen
-            month = last_month
-            day = max(1, day_of_year)
-            break
+        # In common years, there is no month 7 (Adar II); skip accordingly by zero length
 
-    return year, month, day
+    # Return as integer YYYYMMDD with Hebrew year/month/day
+    return y * 10000 + month * 100 + day_in_month
 
-def gregorian_to_hebrew(gregorian_date: date) -> int:
-    """
-    Convert a Gregorian date (datetime.date) to a Hebrew calendar date encoded as an integer.
-    Return format: YYYYMMDD (Hebrew year, Hebrew month [1..13], Hebrew day [1..30]).
-    For leap years, month 6 is Adar I and month 7 is Adar II; in common years, month 6 is Adar.
-    """
-    rd = gregorian_date.toordinal()
-    hy, hm, hd = _rd_to_hebrew(rd)
-    # Encode as integer YYYYMMDD
-    return hy * 10000 + hm * 100 + hd
+def gregorian_to_hebrew_yyyymmdd(greg_date: date) -> int:
+    # Convert a Gregorian date to a Hebrew date encoded as YYYYMMDD integer.
+    abs_day = _gregorian_date_to_absolute(greg_date)
+    return _absolute_to_hebrew_int(abs_day)
 
-# Entry point: gregorian_to_hebrew(gregorian_date: date) -> int
+# Entry point: gregorian_to_hebrew_yyyymmdd(greg_date: date) -> int
 ```

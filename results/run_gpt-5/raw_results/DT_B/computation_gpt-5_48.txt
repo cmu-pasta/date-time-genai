@@ -1,10 +1,9 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the standard library: datetime and ZoneInfo.
+1. Import the necessary classes: datetime from datetime and ZoneInfo from zoneinfo.
 2. Define a function that accepts a datetime and a ZoneInfo timezone.
-3. If the input datetime is timezone-aware, convert it to the given timezone using astimezone to represent the same instant in that timezone.
-4. If the input datetime is naive, attach the given timezone as its tzinfo to interpret it as local wall time in that timezone.
-5. Obtain the UTC offset via utcoffset() and convert it to hours as a float.
-6. Return the offset in hours.
+3. If the input datetime is timezone-aware, convert it to the given timezone; otherwise, attach the timezone to interpret the datetime as local wall time in that timezone.
+4. Obtain the UTC offset as a timedelta using utcoffset().
+5. Convert the offset to hours as a float and return it.
 
 ```python
 from datetime import datetime
@@ -12,26 +11,24 @@ from zoneinfo import ZoneInfo
 
 def calculate_timezone_offset_hours(dt: datetime, tz: ZoneInfo) -> float:
     """
-    Calculate the time zone offset in hours for a given datetime and timezone.
+    Calculate the time zone offset from UTC in hours for the given datetime and timezone.
 
-    - If 'dt' is timezone-aware, we compute the offset of 'tz' at the same instant.
-    - If 'dt' is naive, we interpret 'dt' as a wall time in 'tz' and compute that offset.
-
-    Returns:
-        float: UTC offset in hours (can be fractional, e.g., 5.5).
+    - If 'dt' is timezone-aware, it will be converted to 'tz'.
+    - If 'dt' is naive, it will be interpreted as local wall time in 'tz'.
     """
+    # Normalize the datetime to the provided timezone
     if dt.tzinfo is not None:
-        # Convert the instant represented by dt into the target timezone
         dt_in_tz = dt.astimezone(tz)
     else:
-        # Treat dt as a wall time in the target timezone
         dt_in_tz = dt.replace(tzinfo=tz)
 
-    offset = dt_in_tz.utcoffset()
-    if offset is None:
-        raise ValueError("Unable to determine UTC offset for the provided datetime and timezone.")
+    # Compute offset in hours
+    offset_td = dt_in_tz.utcoffset()
+    if offset_td is None:
+        # Fallback to zero if no offset information is available
+        return 0.0
 
-    return offset.total_seconds() / 3600.0
+    return offset_td.total_seconds() / 3600.0
 
 # Entry point: calculate_timezone_offset_hours(dt: datetime, tz: ZoneInfo) -> float
 ```

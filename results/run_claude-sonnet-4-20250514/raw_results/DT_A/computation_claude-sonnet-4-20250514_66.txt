@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and the `timedelta` for date arithmetic.
+2. **Define a function**: Create a function that accepts a year as an integer input.
+3. **Set up the year boundaries**: Create datetime objects for January 1st of the given year and January 1st of the next year.
+4. **Iterate through all days**: Loop through each day of the year using timedelta to increment by one day.
+5. **Check for trading days**: For each day, check if it's a weekday (Monday=0 through Friday=4 using weekday() method).
+6. **Count and return**: Count all trading days and return the total as an integer.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_trading_days_in_year(year: int) -> int:
+    # Step 1: Create start and end dates for the year
+    start_date = datetime(year, 1, 1)
+    end_date = datetime(year + 1, 1, 1)
+    
+    # Step 2: Initialize counter for trading days
+    trading_days_count = 0
+    
+    # Step 3: Iterate through each day of the year
+    current_date = start_date
+    while current_date < end_date:
+        # Step 4: Check if current day is a weekday (Monday=0 to Friday=4)
+        if current_date.weekday() < 5:  # 0-4 are Monday to Friday
+            trading_days_count += 1
+        
+        # Step 5: Move to next day
+        current_date += timedelta(days=1)
+    
+    # Step 6: Return the total count
+    return trading_days_count
+
+# Entry point: calculate_trading_days_in_year(year: int) -> int
+```

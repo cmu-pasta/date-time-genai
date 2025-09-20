@@ -1,33 +1,32 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with dates.
-2. Create a function that accepts a year as an integer input.
-3. Construct the date for November 1st of the given year using pendulum.date.
-4. Determine the weekday of November 1st and compute the offset to the first Thursday.
-5. Add 21 days (3 weeks) to the first Thursday to get the fourth Thursday.
-6. Return the resulting date as a pendulum.Date.
+1. Identify the first day of November for the given year as a pendulum.Date.
+2. Determine the weekday index of that date (Monday=0, ..., Sunday=6).
+3. Compute the offset in days to the first Thursday (weekday index 3).
+4. Add 3 weeks to the first Thursday to get the fourth Thursday.
+5. Return the resulting pendulum.Date as the Thanksgiving date.
 
 ```python
 import pendulum
 
 def thanksgiving_date(year: int) -> pendulum.Date:
     """
-    Compute the date of Thanksgiving (fourth Thursday of November) for a given year.
+    Compute the date of Thanksgiving (fourth Thursday of November) for the given year.
     Returns a pendulum.Date.
     """
-    # Step 1: November 1st of the given year
-    nov_first: pendulum.Date = pendulum.date(year, 11, 1)
-    
-    # Step 2: Compute offset to the first Thursday (Thursday = 4 with Monday=0)
-    thursday_dow = 4
-    offset = (thursday_dow - nov_first.day_of_week) % 7
-    
-    # Step 3: First Thursday in November
-    first_thursday: pendulum.Date = nov_first.add(days=offset)
-    
-    # Step 4: Fourth Thursday = first Thursday + 3 weeks (21 days)
-    fourth_thursday: pendulum.Date = first_thursday.add(days=21)
-    
-    return fourth_thursday
+    # Step 1: First day of November for the given year
+    first_nov = pendulum.date(year, 11, 1)  # pendulum.Date
+
+    # Step 2: Weekday of the first day (Monday=0 ... Sunday=6)
+    first_weekday = first_nov.day_of_week
+
+    # Step 3: Days to the first Thursday (Thursday=3)
+    days_to_first_thu = (3 - first_weekday) % 7
+
+    # Step 4: Fourth Thursday = first Thursday + 3 weeks
+    thanksgiving = first_nov.add(days=days_to_first_thu + 3 * 7)
+
+    # Step 5: Return the pendulum.Date
+    return thanksgiving
 
 # Entry point: thanksgiving_date(year: int) -> pendulum.Date
 ```

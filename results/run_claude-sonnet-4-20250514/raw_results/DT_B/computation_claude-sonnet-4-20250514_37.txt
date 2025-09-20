@@ -1,25 +1,25 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
-2. **Define a function**: We will create a function that accepts a birth date as input (datetime object).
-3. **Define zodiac date ranges**: Create logic to check which zodiac sign date range the birth date falls into.
-4. **Extract month and day**: Get the month and day from the birth date to compare against zodiac ranges.
-5. **Determine the zodiac sign**: Use conditional logic to determine which zodiac sign the date corresponds to.
-6. **Return the result**: Return an integer representation of the zodiac sign (1-12 for each sign).
+1. **Import the necessary libraries**: We need the `datetime` module to work with date objects.
 
-Here is the implementation of the above steps in code:
+2. **Define zodiac sign ranges**: Each zodiac sign corresponds to specific date ranges based on month and day. We'll need to map these ranges to integer representations (1-12) since we can only return basic data types.
+
+3. **Extract month and day**: From the input datetime object, we need to extract the month and day components to determine the zodiac sign.
+
+4. **Implement the logic**: Create conditional statements to check which date range the birth date falls into and return the corresponding integer (1 = Aries, 2 = Taurus, etc.).
+
+5. **Return the result**: Return an integer representing the zodiac sign.
 
 ```python
 from datetime import datetime
 
 def determine_zodiac_sign(birth_date: datetime) -> int:
-    # Extract month and day from the birth date
     month = birth_date.month
     day = birth_date.day
     
-    # Determine zodiac sign based on month and day
-    # Returns integer: 1=Aries, 2=Taurus, 3=Gemini, 4=Cancer, 5=Leo, 6=Virgo,
-    # 7=Libra, 8=Scorpio, 9=Sagittarius, 10=Capricorn, 11=Aquarius, 12=Pisces
+    # Zodiac sign determination based on month and day
+    # 1 = Aries, 2 = Taurus, 3 = Gemini, 4 = Cancer, 5 = Leo, 6 = Virgo
+    # 7 = Libra, 8 = Scorpio, 9 = Sagittarius, 10 = Capricorn, 11 = Aquarius, 12 = Pisces
     
     if (month == 3 and day >= 21) or (month == 4 and day <= 19):
         return 1  # Aries

@@ -6,21 +6,19 @@ from datetime_generators import *
 from hypothesis import given, seed, settings
 
 from datetime import datetime
-from datetime import timedelta # Although not explicitly created, timedelta is the result of datetime subtraction
-def calculate_seconds_difference(dt1: datetime, dt2: datetime) -> float:
-    # Step 1: Calculate the difference between the two datetime objects
-    # This subtraction results in a timedelta object.
-    difference_timedelta: timedelta = dt2 - dt1
+def calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Calculate the timedelta between the two datetime objects
+    time_difference = dt2 - dt1
     
-    # Step 2: Get the total number of seconds from the timedelta object.
-    # total_seconds() returns the duration in seconds as a float.
-    # We use abs() to ensure the result is always positive, regardless of the input order.
-    total_seconds_diff: float = abs(difference_timedelta.total_seconds())
+    # Step 2: Get the total number of seconds from the timedelta.
+    # total_seconds() returns a float, so we need to convert it to an integer.
+    # Using abs() to ensure a positive difference, similar to the example provided.
+    total_seconds = int(abs(time_difference.total_seconds()))
     
-    # Step 3: Return the result as a float.
-    return total_seconds_diff
+    # Step 3: Return the result as an integer
+    return total_seconds
 
-# Entry point: calculate_seconds_difference(dt1: datetime, dt2: datetime) -> float
+# Entry point: calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int
 
 def format_value_dt(*values):
     formatted_values = []

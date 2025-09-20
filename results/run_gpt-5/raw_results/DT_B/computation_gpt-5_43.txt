@@ -1,8 +1,8 @@
 Let's think step by step to solve this problem.
 1. Import the required type from the datetime library.
 2. Define a function that accepts a date input.
-3. Use the date.weekday() method where 0=Monday, ..., 5=Saturday, 6=Sunday.
-4. Determine if the weekday index corresponds to Saturday or Sunday (>= 5).
+3. Compute the weekday index using the date's weekday() method.
+4. Determine if the index corresponds to Saturday or Sunday.
 5. Return the result as a boolean.
 
 ```python
@@ -11,15 +11,10 @@ from datetime import date
 def is_weekend(d: date) -> bool:
     """
     Determine if the given date falls on a weekend.
-
-    Args:
-        d (date): The date to check.
-
-    Returns:
-        bool: True if the date is Saturday or Sunday, otherwise False.
+    Weekend days are Saturday (5) and Sunday (6) according to date.weekday().
     """
-    # weekday(): Monday=0, Tuesday=1, ..., Saturday=5, Sunday=6
-    return d.weekday() >= 5
+    weekday_index = d.weekday()  # Monday=0, Sunday=6
+    return weekday_index >= 5
 
 # Entry point: is_weekend(d: date) -> bool
 ```

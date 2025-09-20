@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with datetime objects.
+2. **Define a function**: We will create a function that accepts a birth datetime as input.
+3. **Get current time**: We need to get the current datetime to calculate the age.
+4. **Calculate the time difference**: Use subtraction to find the difference between the current datetime and the birth datetime.
+5. **Convert to seconds**: Extract the total seconds from the timedelta object.
+6. **Return the result**: Return the age in seconds as an integer.
+
+```python
+from datetime import datetime
+
+def calculate_age_in_seconds(birth_datetime: datetime) -> int:
+    # Step 1: Get the current datetime
+    current_datetime = datetime.now()
+    
+    # Step 2: Calculate the difference between current time and birth time
+    time_difference = current_datetime - birth_datetime
+    
+    # Step 3: Convert the difference to total seconds and return as integer
+    age_in_seconds = int(time_difference.total_seconds())
+    
+    return age_in_seconds
+
+# Entry point: calculate_age_in_seconds(birth_datetime: datetime) -> int
+```

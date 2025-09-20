@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary library**: We need the pendulum library to work with dates.
+2. **Define a function**: Create a function that accepts a year as an integer input.
+3. **Implement Easter calculation algorithm**: Use the standard mathematical algorithm for calculating Easter Sunday based on the Gregorian calendar.
+4. **Calculate intermediate values**: The algorithm involves several modular arithmetic operations to determine the correct month and day.
+5. **Create the date**: Use pendulum to create a Date object for the calculated Easter Sunday.
+6. **Return the result**: Return the Easter Sunday date as a pendulum.Date object.
+
+```python
+import pendulum
+
+def find_easter_sunday(year: int) -> pendulum.Date:
+    # Step 1: Calculate intermediate values using the standard Easter algorithm
+    a = year % 19
+    b = year // 100
+    c = year % 100
+    d = b // 4
+    e = b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i = c // 4
+    k = c % 4
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    
+    # Step 2: Calculate the month and day
+    month = (h + l - 7 * m + 114) // 31
+    day = ((h + l - 7 * m + 114) % 31) + 1
+    
+    # Step 3: Create and return the Easter Sunday date
+    easter_date = pendulum.date(year, month, day)
+    
+    return easter_date
+
+# Entry point: find_easter_sunday(year: int) -> pendulum.Date
+```

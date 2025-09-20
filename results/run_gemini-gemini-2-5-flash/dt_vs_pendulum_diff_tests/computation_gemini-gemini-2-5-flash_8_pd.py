@@ -6,15 +6,16 @@ from pendulum_generators import *
 from hypothesis import settings, seed, given
 
 import pendulum
-def get_last_day_of_month(date: pendulum.DateTime) -> pendulum.DateTime:
-    # Step 1: Use the end_of('month') method to get the last day of the month
-    # This method returns a new pendulum.DateTime object set to the last moment of the last day.
-    last_day_of_month = date.end_of('month')
+def find_last_day_of_month(dt: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Use the end_of_month() method on the input DateTime object.
+    # This method returns a new DateTime object representing the last moment
+    # of the last day of the month for the given date.
+    last_day = dt.end_of_month()
     
-    # Step 2: Return the resulting pendulum.DateTime object
-    return last_day_of_month
+    # Step 2: Return the resulting pendulum.DateTime object.
+    return last_day
 
-# Entry point: get_last_day_of_month(date: pendulum.DateTime) -> pendulum.DateTime
+# Entry point: find_last_day_of_month(dt: pendulum.DateTime) -> pendulum.DateTime
 
 def format_value_pd(*values):
     formatted_values = []
@@ -51,7 +52,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(datetime_strategy())
-def test_get_last_day_of_month(date):
-    result = get_last_day_of_month(date)
-    formatted_result = format_value_pd(result, date)
+def test_find_last_day_of_month(dt):
+    result = find_last_day_of_month(dt)
+    formatted_result = format_value_pd(result, dt)
     log_file.write(formatted_result + "\n")

@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` class from Python's `datetime` module to represent dates and times.
+2.  **Define a function**: Create a function that accepts four `datetime` objects representing the start and end of two date ranges. Let's call them `start_date1`, `end_date1`, `start_date2`, and `end_date2`.
+3.  **Determine overlap condition**: Two date ranges `[start1, end1]` and `[start2, end2]` overlap if and only if `start1 <= end2` AND `start2 <= end1`. This condition covers all cases, including one range fully containing another, partial overlaps, and ranges touching at their endpoints (assuming inclusive endpoints).
+4.  **Return the result**: The function will return a boolean value (`True` if they overlap, `False` otherwise).
+
+```python
+from datetime import datetime
+
+def do_date_ranges_overlap(start_date1: datetime, end_date1: datetime, start_date2: datetime, end_date2: datetime) -> bool:
+    """
+    Determines if two date ranges overlap.
+    A date range is defined by an inclusive start and end datetime.
+
+    Args:
+        start_date1: The start datetime of the first range.
+        end_date1: The end datetime of the first range.
+        start_date2: The start datetime of the second range.
+        end_date2: The end datetime of the second range.
+
+    Returns:
+        True if the two date ranges overlap, False otherwise.
+    """
+    # Two ranges [start1, end1] and [start2, end2] overlap if:
+    # the start of the first range is before or at the end of the second range AND
+    # the start of the second range is before or at the end of the first range.
+    # This correctly handles cases where ranges touch or one contains the other.
+    overlap = (start_date1 <= end_date2) and (start_date2 <= end_date1)
+    
+    return overlap
+
+# Entry point: do_date_ranges_overlap(start_date1: datetime, end_date1: datetime, start_date2: datetime, end_date2: datetime) -> bool
+```

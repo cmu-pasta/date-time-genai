@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need `datetime` for handling date and time objects and `timedelta` for working with time differences.
+2.  **Define a function**: Create a function that accepts two `datetime` objects as input.
+3.  **Calculate the total difference**: Subtract the earlier datetime from the later datetime to get a `timedelta` representing the total duration between them.
+4.  **Calculate half the difference**: Divide the total `timedelta` by 2 to find the duration from the start to the midpoint.
+5.  **Add half the difference to the first datetime**: Add this calculated half-difference `timedelta` to the first (earlier) datetime object to find the exact midpoint datetime.
+6.  **Return the result**: The result will be a `datetime` object.
+
+```python
+from datetime import datetime, timedelta
+
+def find_midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
+    # Ensure dt1 is the earlier datetime for consistent calculation,
+    # though subtraction works regardless of order, adding to the earlier is intuitive.
+    if dt1 > dt2:
+        dt1, dt2 = dt2, dt1
+
+    # Step 1: Calculate the total difference between the two datetimes
+    total_difference: timedelta = dt2 - dt1
+    
+    # Step 2: Calculate half of the total difference
+    half_difference: timedelta = total_difference / 2
+    
+    # Step 3: Add the half difference to the first datetime to find the midpoint
+    midpoint_dt: datetime = dt1 + half_difference
+    
+    # Step 4: Return the resulting midpoint datetime
+    return midpoint_dt
+
+# Entry point: find_midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime
+```

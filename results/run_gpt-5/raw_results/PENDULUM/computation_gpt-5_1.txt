@@ -1,23 +1,33 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with timezone-aware timestamps.
-2. Define a function that accepts two pendulum.DateTime objects as inputs.
-3. Use pendulum's diff method to compute the exact Duration between the two timestamps.
-4. Return the resulting pendulum.Duration, which correctly accounts for daylight saving time transitions.
+1. Import the pendulum library to work with timezone-aware datetimes and durations.
+2. Define a function that accepts two pendulum.DateTime inputs.
+3. Convert both inputs to a common timezone (UTC) to handle daylight saving time transitions unambiguously.
+4. Compute the signed duration between the two UTC timestamps using diff with absolute=False.
+5. Return the resulting pendulum.Duration.
 
 ```python
 import pendulum
 
-def calculate_exact_time_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration:
+def exact_time_difference(dt_start: pendulum.DateTime, dt_end: pendulum.DateTime) -> pendulum.Duration:
     """
-    Calculate the exact time difference between two pendulum.DateTime timestamps,
-    correctly accounting for timezone and daylight saving time transitions.
+    Calculate the exact signed time difference between two timestamps,
+    correctly accounting for daylight saving time by normalizing both
+    timestamps to UTC before computing the difference.
 
-    The result is a signed pendulum.Duration representing dt2 - dt1.
+    Args:
+        dt_start (pendulum.DateTime): The start timestamp.
+        dt_end (pendulum.DateTime): The end timestamp.
+
+    Returns:
+        pendulum.Duration: The signed duration representing dt_end - dt_start.
     """
-    # Compute the signed duration difference (dt2 - dt1).
-    # Pendulum's timezone-aware arithmetic respects DST transitions.
-    duration: pendulum.Duration = dt2.diff(dt1, absolute=False)
+    # Normalize both timestamps to UTC to ensure DST transitions are handled unambiguously
+    start_utc = dt_start.in_timezone("UTC")
+    end_utc = dt_end.in_timezone("UTC")
+
+    # Compute signed difference (end - start). Using absolute=False preserves the sign.
+    duration = end_utc.diff(start_utc, absolute=False)
     return duration
 
-# Entry point: calculate_exact_time_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration
+# Entry point: exact_time_difference(dt_start: pendulum.DateTime, dt_end: pendulum.DateTime) -> pendulum.Duration
 ```

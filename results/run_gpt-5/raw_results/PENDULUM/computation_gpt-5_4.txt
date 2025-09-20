@@ -1,29 +1,20 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with timezone-aware datetimes.
-2. Define a function that takes a pendulum.DateTime and a pendulum.Timezone as inputs.
-3. Ensure the input datetime is timezone-aware; if it's naive, assume UTC.
-4. Convert the datetime to the target timezone using in_timezone.
+1. Import the pendulum library to work with timezone-aware timestamps.
+2. Define a function that accepts a timestamp, a source timezone, and a target timezone as pendulum types.
+3. Attach the source timezone to the given timestamp without shifting the wall-clock time.
+4. Convert the localized timestamp to the target timezone.
 5. Return the converted pendulum.DateTime.
 
 ```python
 import pendulum
 
-def convert_timezone(dt: pendulum.DateTime, to_tz: pendulum.Timezone) -> pendulum.DateTime:
-    """
-    Convert a pendulum.DateTime from its current timezone to the specified pendulum.Timezone.
-
-    - If 'dt' is naive (no timezone), it is assumed to be in UTC before conversion.
-    - Returns a new pendulum.DateTime in the target timezone.
-    """
-    # Step 1: Ensure the datetime is timezone-aware; if naive, assume UTC
-    if dt.tz is None:
-        dt = dt.replace(tzinfo=pendulum.timezone("UTC"))
-
-    # Step 2: Convert to the target timezone
-    converted = dt.in_timezone(to_tz)
-
-    # Step 3: Return the converted datetime
+def convert_timestamp_timezone(ts: pendulum.DateTime, from_tz: pendulum.Timezone, to_tz: pendulum.Timezone) -> pendulum.DateTime:
+    # Step 1: Localize the timestamp to the source timezone without altering the wall-clock time
+    localized = ts.replace(tzinfo=from_tz)
+    # Step 2: Convert the localized timestamp to the target timezone
+    converted = localized.in_timezone(to_tz)
+    # Step 3: Return the converted timestamp
     return converted
 
-# Entry point: convert_timezone(dt: pendulum.DateTime, to_tz: pendulum.Timezone) -> pendulum.DateTime
+# Entry point: convert_timestamp_timezone(ts: pendulum.DateTime, from_tz: pendulum.Timezone, to_tz: pendulum.Timezone) -> pendulum.DateTime
 ```

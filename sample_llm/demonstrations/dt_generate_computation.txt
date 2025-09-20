@@ -17,12 +17,12 @@ Here is the implementation of the above steps in code:
 ```python
 from datetime import datetime
 
-def calculate_days_difference(dt1: datetime, dt2: datetime) -> integer:
+def calculate_days_difference(dt1: datetime, dt2: datetime) -> int:
     # Step 1: Calculate the difference in days
     difference = abs((dt2 - dt1).days)  # Using abs to ensure a positive difference
     
     # Step 2: Return the result as an integer in the specified format
     return difference
 
-# Entry point: calculate_days_difference(dt1: datetime, dt2: datetime) -> integer
+# Entry point: calculate_days_difference(dt1: datetime, dt2: datetime) -> int
 ```

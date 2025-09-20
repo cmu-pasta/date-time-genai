@@ -6,31 +6,27 @@ from datetime_generators import *
 from hypothesis import given, seed, settings
 
 from datetime import datetime
-def _is_leap_year(year: int) -> bool:
-    """
-    Helper function to determine if a given year is a leap year.
-    """
-    return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
-
 def find_next_leap_year(start_date: datetime) -> int:
-    """
-    Determines the next leap year from or after a given date.
+    # Step 1: Start checking from the year immediately after the given date.
+    # We add 1 to the current year to find the *next* leap year.
+    year_to_check = start_date.year + 1
 
-    Args:
-        start_date: The datetime object from which to start the search.
+    # Step 2: Loop indefinitely until a leap year is found.
+    while True:
+        # Step 3: Implement the leap year logic.
+        # A year is a leap year if:
+        # (it is divisible by 4 AND not divisible by 100)
+        # OR (it is divisible by 400)
+        is_leap = (year_to_check % 4 == 0 and year_to_check % 100 != 0) or (year_to_check % 400 == 0)
 
-    Returns:
-        An integer representing the year of the next leap year.
-    """
-    current_year = start_date.year
-    
-    # Iterate from the current_year until a leap year is found
-    while not _is_leap_year(current_year):
-        current_year += 1
-            
-    return current_year
+        # Step 4: If the current year_to_check is a leap year, return it.
+        if is_leap:
+            return year_to_check
+        
+        # Step 5: If not a leap year, move to the next year.
+        year_to_check += 1
 
-# Entry point: find_next_leap_year(start_date: datetime) -> integer
+# Entry point: find_next_leap_year(start_date: datetime) -> int
 
 def format_value_dt(*values):
     formatted_values = []

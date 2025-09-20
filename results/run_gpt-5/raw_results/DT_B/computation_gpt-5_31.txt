@@ -1,30 +1,19 @@
 Let's think step by step to solve this problem.
-1. Import the necessary class from the standard datetime library.
-2. Define a function that accepts a date (a datetime is also acceptable since it subclasses date).
-3. Determine whether the date falls in or after April; if so, the fiscal year is the calendar year plus one; otherwise, it is the calendar year.
-4. Return the fiscal year as an integer.
+1. Import the necessary classes from the datetime library.
+2. Define what “fiscal year” means for an April-start fiscal year: it runs from April 1 to March 31 and is labeled by the calendar year in which it ends.
+3. Implement a function that takes a date and returns the fiscal year as an integer: if the month is April (4) or later, the fiscal year is year + 1; otherwise, it is the current year.
+4. Return the computed integer.
 
 ```python
 from datetime import date
 
-def determine_fiscal_year(d: date) -> int:
+def fiscal_year_for_date(d: date) -> int:
     """
-    Determine the fiscal year for a given date assuming the fiscal year
-    starts on April 1 and ends on March 31.
-
-    Convention:
-    - FY N runs from April 1 of (N-1) through March 31 of N.
-    - For example, 2024-04-01 through 2025-03-31 is FY 2025.
-
-    Parameters:
-        d (date): The input date (datetime instances are also accepted since
-                  datetime is a subclass of date).
-
-    Returns:
-        int: The fiscal year as an integer (the ending calendar year).
+    Determine the fiscal year for an April-start fiscal year.
+    Fiscal year runs Apr 1 to Mar 31 and is labeled by the year it ends.
+    Example: 2024-04-01 to 2025-03-31 => fiscal year 2025.
     """
-    # If month is April (4) or later, fiscal year is the next calendar year; else current year
     return d.year + 1 if d.month >= 4 else d.year
 
-# Entry point: determine_fiscal_year(d: date) -> int
+# Entry point: fiscal_year_for_date(d: date) -> int
 ```

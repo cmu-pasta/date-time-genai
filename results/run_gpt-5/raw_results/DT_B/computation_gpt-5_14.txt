@@ -1,56 +1,29 @@
 Let's think step by step to solve this problem.
-1. Import required classes (date, timedelta) from the datetime module.
+1. Import the required types from the datetime module: date and timedelta.
 2. Define a function that accepts a start date and an integer N representing business days to add.
-3. Handle the case N == 0 by returning the start date as-is.
-4. For N > 0, if the start date falls on a weekend, move to the next Monday without consuming business days; then add whole business weeks and the remaining business days, skipping weekends.
-5. For N < 0, if the start date falls on a weekend, move to the previous Friday without consuming business days; then subtract whole business weeks and the remaining business days, skipping weekends.
+3. If N is zero, return the start date as no movement is needed.
+4. For N > 0, iterate day by day, skipping Saturdays and Sundays, until exactly N business days have been counted.
+5. Return the resulting date.
 
 ```python
 from datetime import date, timedelta
 
-def add_business_days(start: date, n: int) -> date:
-    """
-    Return the date that is exactly n business days after the given start date.
-    - Business days are Monday (0) through Friday (4); weekends are Saturday (5) and Sunday (6).
-    - If n == 0, the start date is returned unchanged, even if it is a weekend.
-    - Supports negative n to move backward by business days.
-    """
+def add_business_days(start_date: date, n: int) -> date:
+    if n < 0:
+        raise ValueError("n must be a non-negative integer representing business days to add.")
     if n == 0:
-        return start
+        return start_date
 
-    wd = start.weekday()  # Monday=0 ... Sunday=6
-    current = start
+    current = start_date
+    days_added = 0
+    one_day = timedelta(days=1)
 
-    if n > 0:
-        # If starting on a weekend, move forward to Monday without consuming a business day
-        if wd >= 5:
-            current += timedelta(days=(7 - wd))  # to Monday
-        # Add whole business weeks
-        weeks = n // 5
-        current += timedelta(days=weeks * 7)
-        rem = n % 5
-        if rem == 0:
-            return current
-        # Add remaining business days, skipping weekend if needed
-        w = current.weekday()  # should be 0..4
-        add_days = rem + (2 if w + rem > 4 else 0)
-        return current + timedelta(days=add_days)
+    while days_added < n:
+        current += one_day
+        if current.weekday() < 5:  # Monday=0, ..., Friday=4 are business days
+            days_added += 1
 
-    else:  # n < 0
-        k = -n
-        # If starting on a weekend, move backward to Friday without consuming a business day
-        if wd >= 5:
-            current -= timedelta(days=(wd - 4))  # to Friday
-        # Subtract whole business weeks
-        weeks = k // 5
-        current -= timedelta(days=weeks * 7)
-        rem = k % 5
-        if rem == 0:
-            return current
-        # Subtract remaining business days, skipping weekend if needed
-        w = current.weekday()  # 0..4
-        sub_days = rem + (2 if w - rem < 0 else 0)
-        return current - timedelta(days=sub_days)
+    return current
 
-# Entry point: add_business_days(start: date, n: int) -> date
+# Entry point: add_business_days(start_date: date, n: int) -> date
 ```

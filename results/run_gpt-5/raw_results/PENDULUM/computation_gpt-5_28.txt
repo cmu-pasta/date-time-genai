@@ -1,5 +1,5 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to handle datetime operations.
+1. Import the pendulum library to work with Pendulum DateTime objects.
 2. Define a function that accepts a pendulum.DateTime as input.
 3. Use Pendulum's built-in method to convert the datetime to an ISO 8601 formatted string.
 4. Return the resulting string.
@@ -7,19 +7,12 @@ Let's think step by step to solve this problem.
 ```python
 import pendulum
 
-def to_iso8601(dt: pendulum.DateTime) -> str:
+def to_iso8601_string(dt: pendulum.DateTime) -> str:
     """
     Convert a pendulum.DateTime to an ISO 8601 formatted string.
-
-    Args:
-        dt (pendulum.DateTime): The datetime to convert.
-
-    Returns:
-        str: The ISO 8601 formatted string representation of the datetime.
     """
-    # Pendulum provides a direct method to output ISO 8601 strings.
-    # This includes the timezone offset if the datetime is timezone-aware.
+    # Use Pendulum's ISO 8601 formatter
     return dt.to_iso8601_string()
 
-# Entry point: to_iso8601(dt: pendulum.DateTime) -> str
+# Entry point: to_iso8601_string(dt: pendulum.DateTime) -> str
 ```

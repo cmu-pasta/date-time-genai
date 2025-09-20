@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1.  **Import necessary classes**: We will need `datetime` and `timedelta` from the `datetime` module to handle date objects and perform date arithmetic.
+2.  **Define the function signature**: Create a function that accepts an `integer` representing the year and is expected to return a `datetime` object.
+3.  **Find the last day of May**: Construct a `datetime` object for May 31st of the given year. This serves as our starting point for finding the last Monday.
+4.  **Iterate backward to find the last Monday**: Start from May 31st and repeatedly subtract one day (using `timedelta(days=1)`) until the day's `weekday()` method returns 0, which corresponds to Monday.
+5.  **Return the found date**: Once a Monday is found, that `datetime` object represents Memorial Day for the given year.
+
+```python
+from datetime import datetime, timedelta
+
+def get_memorial_day_date(year: int) -> datetime:
+    # Step 1: Start with the last day of May for the given year.
+    # We use 1 for month (May) and 31 for day.
+    current_date = datetime(year, 5, 31)
+
+    # Step 2: Iterate backward until a Monday is found.
+    # Monday's weekday index is 0.
+    while current_date.weekday() != 0:  # 0 represents Monday
+        current_date -= timedelta(days=1)
+    
+    # Step 3: Return the date when the last Monday of May is found.
+    return current_date
+
+# Entry point: get_memorial_day_date(year: int) -> datetime
+```

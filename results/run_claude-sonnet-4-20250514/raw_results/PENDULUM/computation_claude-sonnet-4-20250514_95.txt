@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and times.
+2. **Define a function**: Create a function that accepts a location (latitude and longitude as floats) and a starting date (pendulum.DateTime) to search from.
+3. **Implement eclipse prediction logic**: Since accurate solar eclipse prediction requires complex astronomical calculations that go beyond what's available in Pendulum alone, we'll implement a simplified approximation based on known eclipse cycles.
+4. **Use the Saros cycle**: Solar eclipses follow an approximate 18-year, 11-day, 8-hour cycle called the Saros cycle. We can use this as a basis for our approximation.
+5. **Calculate approximate next eclipse date**: Add multiples of the Saros cycle to find potential eclipse dates and return the next one.
+6. **Return the result**: Return the calculated date as a pendulum.DateTime object.
+
+Note: This is a simplified approximation. Real solar eclipse prediction requires complex astronomical algorithms and precise orbital calculations that are not available through basic datetime libraries alone.
+
+```python
+import pendulum
+
+def find_next_solar_eclipse(latitude: float, longitude: float, start_date: pendulum.DateTime) -> pendulum.DateTime:
+    # Simplified approximation using the Saros cycle (18 years, 11 days, 8 hours)
+    # This is not accurate for real-world use and serves as a basic approximation
+    
+    # Known eclipse reference point (approximate)
+    reference_eclipse = pendulum.datetime(2024, 4, 8, 18, 0, 0, tz='UTC')
+    
+    # Saros cycle duration in days (approximately 6585.32 days)
+    saros_days = 6585
+    saros_hours = 8
+    
+    # Calculate how many Saros cycles have passed since reference
+    days_since_reference = start_date.diff(reference_eclipse).in_days()
+    
+    if days_since_reference < 0:
+        # Start date is before reference, use the reference eclipse
+        next_eclipse = reference_eclipse
+    else:
+        # Calculate next eclipse after start_date
+        cycles_passed = days_since_reference // saros_days
+        next_cycle = cycles_passed + 1
+        
+        # Calculate next eclipse date
+        next_eclipse = reference_eclipse.add(days=next_cycle * saros_days, hours=next_cycle * saros_hours)
+    
+    # Ensure we return a date after the start_date
+    while next_eclipse <= start_date:
+        next_eclipse = next_eclipse.add(days=saros_days, hours=saros_hours)
+    
+    return next_eclipse
+
+# Entry point: find_next_solar_eclipse(latitude: float, longitude: float, start_date: pendulum.DateTime) -> pendulum.DateTime
+```

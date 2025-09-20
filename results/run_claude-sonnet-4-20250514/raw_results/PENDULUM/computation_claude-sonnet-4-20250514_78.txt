@@ -1,0 +1,54 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library and math for trigonometric calculations.
+2. **Define a function**: We will create a function that accepts a date (pendulum.Date), latitude (float), and longitude (float) as inputs.
+3. **Calculate day of year**: Convert the date to day of year for solar calculations.
+4. **Calculate solar declination**: Use the astronomical formula to determine the sun's declination angle.
+5. **Calculate hour angle**: Determine when the sun rises based on latitude and declination.
+6. **Convert to local time**: Calculate the actual sunrise time accounting for longitude and convert to pendulum.DateTime.
+7. **Return the result**: Return the sunrise time as a pendulum.DateTime object.
+
+```python
+import pendulum
+import math
+
+def calculate_sunrise_time(date: pendulum.Date, latitude: float, longitude: float) -> pendulum.DateTime:
+    # Step 1: Calculate day of year
+    day_of_year = date.day_of_year
+    
+    # Step 2: Calculate solar declination (in radians)
+    solar_declination = math.radians(23.45) * math.sin(math.radians(360 * (284 + day_of_year) / 365))
+    
+    # Step 3: Convert latitude to radians
+    lat_radians = math.radians(latitude)
+    
+    # Step 4: Calculate hour angle for sunrise
+    try:
+        hour_angle_cos = -math.tan(lat_radians) * math.tan(solar_declination)
+        # Check if sun rises (polar regions might not have sunrise)
+        if hour_angle_cos > 1 or hour_angle_cos < -1:
+            # Sun doesn't rise or set, return noon as approximation
+            hour_angle = 0
+        else:
+            hour_angle = math.degrees(math.acos(hour_angle_cos))
+    except:
+        hour_angle = 0
+    
+    # Step 5: Calculate sunrise time in hours (solar time)
+    sunrise_solar_time = 12 - hour_angle / 15
+    
+    # Step 6: Adjust for longitude (4 minutes per degree)
+    longitude_correction = longitude / 15
+    sunrise_local_time = sunrise_solar_time - longitude_correction
+    
+    # Step 7: Convert hours to hours and minutes
+    sunrise_hours = int(sunrise_local_time)
+    sunrise_minutes = int((sunrise_local_time - sunrise_hours) * 60)
+    
+    # Step 8: Create pendulum.DateTime object
+    sunrise_datetime = date.at(sunrise_hours, sunrise_minutes, 0)
+    
+    return sunrise_datetime
+
+# Entry point: calculate_sunrise_time(date: pendulum.Date, latitude: float, longitude: float) -> pendulum.DateTime
+```

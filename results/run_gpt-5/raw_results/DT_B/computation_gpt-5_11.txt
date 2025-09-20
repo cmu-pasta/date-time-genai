@@ -1,23 +1,18 @@
 Let's think step by step to solve this problem.
-1. Import the required date class from Python's datetime standard library.
-2. Use the Meeus/Jones/Butcher algorithm to compute Easter Sunday for the Gregorian calendar.
-3. Compute intermediate values using integer arithmetic based on the given year.
-4. Derive the month and day from the algorithm, and construct a date object.
-5. Return the resulting date as the Easter Sunday date.
+1. Use the Gregorian computus (Anonymous Gregorian algorithm) to determine Easter Sunday.
+2. Accept the year as an integer input and validate it's within the Gregorian calendar period.
+3. Compute intermediary values using integer arithmetic as per the algorithm.
+4. Construct and return the resulting date using the datetime library.
 
 ```python
 from datetime import date
 
-def easter_sunday(year: int) -> date:
-    """
-    Compute the date of Easter Sunday for a given Gregorian year using the
-    Meeus/Jones/Butcher algorithm.
-    Accepts:
-      - year: integer year (1..9999, Gregorian rules typically apply from 1583)
-    Returns:
-      - date: the date of Easter Sunday in the given year
-    """
-    # Algorithm constants and computations
+def calculate_easter_sunday(year: int) -> date:
+    # Validate input for Gregorian calendar applicability
+    if year < 1583:
+        raise ValueError("Year must be >= 1583 for the Gregorian calendar computation of Easter Sunday.")
+    
+    # Anonymous Gregorian algorithm (Meeus/Jones/Butcher)
     a = year % 19
     b = year // 100
     c = year % 100
@@ -35,5 +30,5 @@ def easter_sunday(year: int) -> date:
 
     return date(year, month, day)
 
-# Entry point: easter_sunday(year: int) -> date
+# Entry point: calculate_easter_sunday(year: int) -> date
 ```

@@ -1,35 +1,30 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with datetime objects.
-2. Define a function that takes a pendulum.DateTime representing the birth datetime.
-3. Obtain the current time in the same timezone as the birth datetime to ensure accurate comparison.
-4. Compute the signed difference in seconds between now and the birth datetime.
-5. Clamp negative results to 0 to ensure chronological age is non-negative.
+1. Import the pendulum library to handle datetime computations.
+2. Define a function that accepts two pendulum.DateTime inputs: the birth datetime and the reference "current" datetime.
+3. Subtract the birth datetime from the reference datetime to obtain a pendulum.Duration.
+4. Convert the duration to seconds using in_seconds().
+5. Ensure the result is non-negative (chronological age cannot be negative) by clamping at zero.
 6. Return the age in seconds as an integer.
 
 ```python
 import pendulum
 
-def calculate_age_in_seconds(birth_dt: pendulum.DateTime) -> int:
+def calculate_age_in_seconds(birth_dt: pendulum.DateTime, as_of_dt: pendulum.DateTime) -> int:
     """
-    Calculate the chronological age in seconds for a given birth datetime.
-    
-    Parameters:
-        birth_dt (pendulum.DateTime): The birth datetime.
-        
-    Returns:
-        int: Age in seconds (non-negative).
+    Calculate the chronological age in seconds given a birth datetime and a reference datetime.
+    Both inputs must be pendulum.DateTime instances. Returns a non-negative integer number of seconds.
     """
-    if not isinstance(birth_dt, pendulum.DateTime):
-        raise TypeError("birth_dt must be a pendulum.DateTime")
+    # Compute the duration between the reference datetime and the birth datetime
+    duration: pendulum.Duration = as_of_dt - birth_dt
 
-    # Use the same timezone as the birth datetime for an accurate calculation
-    now = pendulum.now(tz=birth_dt.timezone)
+    # Convert the duration to total seconds (may be negative if as_of_dt < birth_dt)
+    seconds: int = duration.in_seconds()
 
-    # Signed difference: positive if now is after birth_dt, negative otherwise
-    seconds = now.diff(birth_dt, absolute=False).in_seconds()
+    # Chronological age should not be negative
+    if seconds < 0:
+        seconds = 0
 
-    # Chronological age cannot be negative
-    return seconds if seconds >= 0 else 0
+    return seconds
 
-# Entry point: calculate_age_in_seconds(birth_dt: pendulum.DateTime) -> int
+# Entry point: calculate_age_in_seconds(birth_dt: pendulum.DateTime, as_of_dt: pendulum.DateTime) -> int
 ```

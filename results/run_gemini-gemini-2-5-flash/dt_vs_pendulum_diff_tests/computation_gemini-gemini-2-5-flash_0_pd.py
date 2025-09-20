@@ -6,36 +6,29 @@ from pendulum_generators import *
 from hypothesis import settings, seed, given
 
 import pendulum
-def calculate_business_days_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
-    # Step 1 & 2: Determine the start and end dates to ensure correct iteration
-    if dt1 <= dt2:
-        start_date = dt1
-        end_date = dt2
-    else:
-        start_date = dt2
-        end_date = dt1
-    
+def calculate_business_days(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    # Step 1 & 2: Determine the start and end dates to ensure iteration goes forward
+    start_date = dt1.start_of('day') if dt1 <= dt2 else dt2.start_of('day')
+    end_date = dt2.start_of('day') if dt1 <= dt2 else dt1.start_of('day')
+
+    # Step 3: Initialize a counter for business days
     business_days_count = 0
-    
-    # Step 3: Iterate through each day in the period from start_date to end_date (exclusive of end_date)
-    # pendulum.period(start, end) iterates from 'start' up to, but not including, 'end'.
-    # For example, between Monday and Wednesday, it iterates Monday and Tuesday.
-    # If the user means to include the 'end_date' if it's a business day, then the iteration needs adjustment.
-    # As per typical "between" calculations, we iterate the days *strictly between* the two endpoints.
-    # If the problem implies an inclusive range for days, then we might need to adjust end_date by +1 day,
-    # or iterate 'start_date' to 'end_date' inclusive.
-    # Given the previous example calculated difference, it typically refers to the number of full days *between*
-    # or the count of specific days in the interval [start_date, end_date).
-    # Let's interpret "between two dates" as the days in the interval [start_date, end_date).
-    
-    for day in pendulum.period(start_date.start_of('day'), end_date.start_of('day')):
-        # Step 4: Check if the current day is a weekday (Monday to Friday)
-        if day.is_weekday():
-            business_days_count += 1
-            
+
+    # Step 4 & 5: Iterate through each day from start_date to end_date (inclusive)
+    current_date = start_date
+    while current_date <= end_date:
+        # Step 6: Check if the current day is a weekday (Monday to Friday)
+        # Pendulum's day_of_week: 1 (Monday) ... 7 (Sunday)
+        if 1 <= current_date.day_of_week <= 5:
+            business_days_count += 1 # Step 7: Increment if it's a business day
+        
+        # Move to the next day
+        current_date = current_date.add(days=1)
+        
+    # Step 8: Return the total count of business days
     return business_days_count
 
-# Entry point: calculate_business_days_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+# Entry point: calculate_business_days(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
 
 def format_value_pd(*values):
     formatted_values = []
@@ -72,7 +65,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(datetime_strategy(), datetime_strategy())
-def test_calculate_business_days_between(dt1, dt2):
-    result = calculate_business_days_between(dt1, dt2)
+def test_calculate_business_days(dt1, dt2):
+    result = calculate_business_days(dt1, dt2)
     formatted_result = format_value_pd(result, dt1, dt2)
     log_file.write(formatted_result + "\n")

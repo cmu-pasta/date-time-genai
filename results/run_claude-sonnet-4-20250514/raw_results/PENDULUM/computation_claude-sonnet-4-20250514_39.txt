@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a birth date and a reference date as input. These dates should be pendulum.Date objects.
+3. **Calculate the age difference**: Use subtraction or diff method to find the difference between the reference date and birth date.
+4. **Convert to total days**: Extract the total number of days from the difference.
+5. **Return the result**: Return the age in total days as an integer.
+
+```python
+import pendulum
+
+def calculate_age_in_days(birth_date: pendulum.Date, reference_date: pendulum.Date) -> int:
+    # Step 1: Calculate the difference between reference date and birth date
+    age_difference = reference_date.diff(birth_date)
+    
+    # Step 2: Extract the total days from the difference
+    total_days = age_difference.in_days()
+    
+    # Step 3: Return the result as an integer
+    return total_days
+
+# Entry point: calculate_age_in_days(birth_date: pendulum.Date, reference_date: pendulum.Date) -> int
+```

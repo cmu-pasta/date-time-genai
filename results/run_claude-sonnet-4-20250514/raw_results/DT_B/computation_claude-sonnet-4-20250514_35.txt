@@ -1,36 +1,35 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and the `timedelta` for date arithmetic.
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` classes from Python's datetime module to work with dates and perform date arithmetic.
 
-2. **Define a function**: We will create a function that accepts a date as input to identify the month and year we're working with.
+2. **Define a function**: Create a function that accepts a datetime object representing any day in the target month.
 
-3. **Find the last day of the month**: We can calculate the last day by finding the first day of the next month and subtracting one day.
+3. **Find the last day of the month**: To find the last day of a month, we can go to the first day of the next month and subtract one day.
 
-4. **Work backwards to find a business day**: Starting from the last day of the month, we check if it's a business day (Monday through Friday, where Monday=0 and Friday=4 in Python's weekday() method). If not, we go back one day at a time until we find a business day.
+4. **Work backwards to find a business day**: Starting from the last day of the month, work backwards until we find a weekday (Monday through Friday, which correspond to weekday() values 0-4).
 
-5. **Return the result**: Return the date object representing the last business day of the month.
+5. **Return the result**: Return the datetime object representing the last business day.
 
 ```python
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 
-def find_last_business_day_of_month(input_date: date) -> date:
-    # Get year and month from input date
-    year = input_date.year
-    month = input_date.month
-    
-    # Find the last day of the month by going to first day of next month and subtracting 1
-    if month == 12:
-        next_month = date(year + 1, 1, 1)
+def find_last_business_day(dt: datetime) -> datetime:
+    # Step 1: Find the last day of the month
+    # Go to the first day of the next month, then subtract 1 day
+    if dt.month == 12:
+        next_month = dt.replace(year=dt.year + 1, month=1, day=1)
     else:
-        next_month = date(year, month + 1, 1)
+        next_month = dt.replace(month=dt.month + 1, day=1)
     
-    last_date = next_month - timedelta(days=1)
+    last_day_of_month = next_month - timedelta(days=1)
     
-    # Work backwards until we find a business day (Monday=0 to Friday=4)
-    while last_date.weekday() > 4:  # Saturday=5, Sunday=6
-        last_date = last_date - timedelta(days=1)
+    # Step 2: Work backwards from the last day until we find a business day
+    current_date = last_day_of_month
+    while current_date.weekday() > 4:  # 0-4 are Mon-Fri (business days), 5-6 are Sat-Sun
+        current_date = current_date - timedelta(days=1)
     
-    return last_date
+    # Step 3: Return the last business day
+    return current_date
 
-# Entry point: find_last_business_day_of_month(input_date: date) -> date
+# Entry point: find_last_business_day(dt: datetime) -> datetime
 ```

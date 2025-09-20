@@ -1,27 +1,25 @@
 Let's think step by step to solve this problem.
 
 1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with timestamps.
-2.  **Define a function**: We will create a function that accepts two `datetime` objects as input, representing the two timestamps.
-3.  **Calculate the difference**: Subtract the two `datetime` objects to obtain a `timedelta` object, which represents the duration between them.
-4.  **Extract total seconds**: Use the `total_seconds()` method of the `timedelta` object to get the total number of seconds as a float. We'll use `abs()` to ensure the result is always positive.
-5.  **Return the result**: The function will return this float value.
+2.  **Define a function**: We will create a function that accepts two `datetime` objects as input.
+3.  **Calculate the difference**: Subtract one `datetime` object from the other. This operation yields a `timedelta` object.
+4.  **Extract total seconds**: From the resulting `timedelta` object, use the `total_seconds()` method to get the difference in seconds as a float.
+5.  **Convert to integer and return**: Convert the float result to an integer and take its absolute value to ensure a non-negative difference.
 
 ```python
 from datetime import datetime
-from datetime import timedelta # Although not explicitly created, timedelta is the result of datetime subtraction
 
-def calculate_seconds_difference(dt1: datetime, dt2: datetime) -> float:
-    # Step 1: Calculate the difference between the two datetime objects
-    # This subtraction results in a timedelta object.
-    difference_timedelta: timedelta = dt2 - dt1
+def calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Calculate the timedelta between the two datetime objects
+    time_difference = dt2 - dt1
     
-    # Step 2: Get the total number of seconds from the timedelta object.
-    # total_seconds() returns the duration in seconds as a float.
-    # We use abs() to ensure the result is always positive, regardless of the input order.
-    total_seconds_diff: float = abs(difference_timedelta.total_seconds())
+    # Step 2: Get the total number of seconds from the timedelta.
+    # total_seconds() returns a float, so we need to convert it to an integer.
+    # Using abs() to ensure a positive difference, similar to the example provided.
+    total_seconds = int(abs(time_difference.total_seconds()))
     
-    # Step 3: Return the result as a float.
-    return total_seconds_diff
+    # Step 3: Return the result as an integer
+    return total_seconds
 
-# Entry point: calculate_seconds_difference(dt1: datetime, dt2: datetime) -> float
+# Entry point: calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int
 ```

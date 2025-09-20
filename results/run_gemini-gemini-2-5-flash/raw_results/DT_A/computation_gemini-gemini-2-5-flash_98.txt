@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary classes**: We need `date` and `timedelta` from the `datetime` module to work with dates and calculate date differences.
+2.  **Define a function**: Create a function that accepts an `integer` representing the year.
+3.  **Determine the first day of October**: Construct a `date` object for October 1st of the given year.
+4.  **Find the first Monday of October**:
+    *   Calculate the weekday of October 1st (Monday is 0, Sunday is 6).
+    *   Determine how many days to add to October 1st to reach the first Monday. This can be done by calculating `(0 - october_first.weekday() + 7) % 7`.
+    *   Add this `timedelta` to October 1st to get the date of the first Monday.
+5.  **Find the second Monday of October**: Add exactly seven days (one week) to the date of the first Monday to arrive at the second Monday of October.
+6.  **Return the result**: The function should return a `date` object representing Indigenous Peoples' Day.
+
+```python
+from datetime import date, timedelta
+
+def find_indigenous_peoples_day(year: int) -> date:
+    # Step 1: Get the first day of October for the given year
+    october_first = date(year, 10, 1)
+
+    # Step 2: Calculate the number of days to add to reach the first Monday
+    # weekday() returns 0 for Monday, 1 for Tuesday, ..., 6 for Sunday
+    # We want to find the first Monday (weekday 0)
+    # The formula (target_weekday - current_weekday + 7) % 7 gives the days to add
+    days_until_first_monday = (0 - october_first.weekday() + 7) % 7
+
+    # Step 3: Find the date of the first Monday in October
+    first_monday_of_october = october_first + timedelta(days=days_until_first_monday)
+
+    # Step 4: Find the date of the second Monday in October by adding 7 days
+    indigenous_peoples_day = first_monday_of_october + timedelta(days=7)
+
+    # Step 5: Return the result as a date object
+    return indigenous_peoples_day
+
+# Entry point: find_indigenous_peoples_day(year: int) -> date
+```

@@ -1,33 +1,31 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes (date, timedelta) from the datetime module.
-2. Accept the input year as an integer.
-3. Create the date for February 1st of the given year.
-4. Compute the number of days to the first Monday in February using weekday() and modular arithmetic.
-5. Add 14 days to the first Monday to get the third Monday (Presidents' Day).
-6. Return the resulting date.
+1. Create a date representing February 1st of the given year.
+2. Determine the weekday of February 1st (Monday=0, Sunday=6).
+3. Compute the number of days to the first Monday in February.
+4. Add that offset to get the first Monday.
+5. Add 14 days (2 weeks) to reach the third Monday (Presidents' Day).
+6. Return the computed date.
 
 ```python
 from datetime import date, timedelta
 
 def presidents_day(year: int) -> date:
-    """
-    Compute the date of Presidents' Day (third Monday of February) for a given year.
-    
-    Parameters:
-    - year: int, the Gregorian calendar year
-    
-    Returns:
-    - date object representing Presidents' Day for the given year
-    """
-    # February 1st of the given year
+    # Step 1: Start from February 1st of the given year
     feb_first = date(year, 2, 1)
     
-    # Monday is 0 per date.weekday(); compute days to the first Monday
-    days_to_monday = (0 - feb_first.weekday()) % 7
-    first_monday = feb_first + timedelta(days=days_to_monday)
+    # Step 2: Determine the weekday of February 1st (Monday=0, Sunday=6)
+    wd = feb_first.weekday()
     
-    # Third Monday is 14 days after the first Monday
+    # Step 3: Compute days to the first Monday in February
+    days_to_first_monday = (0 - wd) % 7
+    
+    # Step 4: Get the first Monday of February
+    first_monday = feb_first + timedelta(days=days_to_first_monday)
+    
+    # Step 5: Add 14 days to get the third Monday (Presidents' Day)
     third_monday = first_monday + timedelta(days=14)
+    
+    # Step 6: Return the computed date
     return third_monday
 
 # Entry point: presidents_day(year: int) -> date

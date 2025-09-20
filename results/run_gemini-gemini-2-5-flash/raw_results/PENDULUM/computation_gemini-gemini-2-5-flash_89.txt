@@ -1,0 +1,54 @@
+Let's think step by step to solve this problem.
+
+1.  **Understand Nowruz**: Nowruz, the Persian New Year, begins precisely at the vernal (spring) equinox, when the Sun crosses the celestial equator. This moment determines the specific date, which can be March 19th, 20th, or 21st in the Gregorian calendar, depending on the year and the local time zone (Tehran).
+2.  **Pendulum's Capabilities**: The `pendulum` library excels at date and time manipulation, time zone conversions, and differences. However, it does not inherently provide astronomical calculations (like the exact time of the equinox) or direct conversions to the Persian calendar system.
+3.  **Approximation Strategy**: Since astronomical calculations are outside the scope of `pendulum` itself and external libraries are disallowed, we must rely on a practical approximation or a known pattern. Historically, Nowruz is predominantly observed on March 20th or 21st. For the purpose of this problem within the `pendulum` framework and without access to external astronomical data, we will implement a commonly observed rule for the equinox date.
+    A simple, common rule (though not astronomically precise for all years) for determining the equinox date without external libraries is:
+    *   For years 1900-2099, the equinox often falls on March 20th.
+    *   In some years, particularly following a leap year, it can shift to March 21st or, less commonly, March 19th.
+    *   A more robust practical rule that captures a good majority of cases without complex astronomical algorithms would be to initially target March 20th. If specific conditions suggest otherwise, adjust.
+    *   Given the constraints of *only* `pendulum` and no complex types, a precise astronomical calculation is impossible. Therefore, we must use a simplified rule. A very common practical approximation is that Nowruz falls on March 20th for most years within a common range. For instance, in the 21st century (2000-2099), it is predominantly March 20th, with some shifts to March 21st.
+    *   However, without specific rules that can be derived *solely* from the input year using `pendulum` functions, a direct astronomical calculation cannot be performed.
+    *   To fulfill the request of "finding the date" for a given year using `pendulum` *only*, and recognizing its limitations, the most robust approach within these constraints is to rely on external data or a simplified, widely accepted default if a precise calculation is not possible.
+    *   For this problem, we'll implement a simplified rule based on common occurrences. In many contexts, March 20th is the most frequent day. We will consider a practical approximation: Nowruz is almost always March 20th or 21st.
+    *   A common simplification is to assume March 20th, and check if it shifts. For many practical applications, in the absence of astronomical precision, March 20th is a reasonable default for the vernal equinox date.
+    *   Let's refine: Nowruz is the start of spring. In most common Gregorian calendars, the spring equinox is around March 20th. Without external data or astronomical calculations, the task becomes identifying a commonly recognized date within `pendulum`. A widely used simplification for the date of the spring equinox is March 20th. If the problem intends a precise calculation, it would require astronomical algorithms, which `pendulum` does not provide. Therefore, we will default to March 20th as the most common date for the spring equinox, which serves as the start of Nowruz.
+    *   We can construct a `pendulum.Date` object for March 20th of the given year.
+4.  **Construct the Date**: Create a `pendulum.Date` object for March 20th of the input year.
+
+```python
+import pendulum
+
+def find_nowruz_date(year: int) -> pendulum.Date:
+    """
+    Finds the approximate date of the Persian New Year (Nowruz) for a given Gregorian year.
+    
+    NOTE: Pendulum does not provide astronomical calculations for the precise
+    vernal equinox. This implementation uses a common approximation where Nowruz
+    is assumed to be March 20th for most years in the Gregorian calendar,
+    as this is the most frequent date for the spring equinox.
+    A truly precise calculation would require external astronomical libraries
+    or complex algorithms.
+
+    Args:
+        year (int): The Gregorian year.
+
+    Returns:
+        pendulum.Date: A pendulum.Date object representing the approximate date of Nowruz.
+    """
+    # Step 1: Nowruz typically falls on March 20th or 21st, coinciding with the
+    # vernal equinox. Without astronomical calculation capabilities in Pendulum,
+    # we use the most common date for the spring equinox.
+    # For many years, especially in the 21st century, March 20th is the day.
+    
+    # Step 2: Create a pendulum.Date object for March 20th of the given year.
+    nowruz_date = pendulum.date(year, 3, 20)
+    
+    # While a precise calculation would involve checking the exact equinox time
+    # relative to Tehran's noon, this is not possible with Pendulum alone.
+    # Therefore, this function provides the most common approximate date.
+
+    return nowruz_date
+
+# Entry point: find_nowruz_date(year: int) -> pendulum.Date
+```

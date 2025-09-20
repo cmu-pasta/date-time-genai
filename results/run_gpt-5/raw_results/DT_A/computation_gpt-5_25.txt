@@ -1,36 +1,36 @@
 Let's think step by step to solve this problem.
-1. Import the necessary type from the datetime standard library.
-2. Define a function that accepts four datetime inputs representing the start and end of each range.
-3. Normalize each range so that the start is less than or equal to the end.
-4. Determine overlap using the condition: range1_start <= range2_end and range2_start <= range1_end.
-5. Return the result as a boolean.
+1. Import the datetime module from Python's standard library.
+2. Define a function that accepts four datetime inputs: start and end for each of the two ranges.
+3. Normalize each range so that start is not after end by swapping if necessary.
+4. Compute the latest start and the earliest end.
+5. Determine overlap by checking if the latest start is less than or equal to the earliest end.
+6. Return the result as a boolean.
 
 ```python
 from datetime import datetime
 
 def ranges_overlap(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> bool:
     """
-    Determine if two datetime ranges overlap.
-    The ranges are considered closed intervals [start, end], so touching endpoints count as overlap.
-
-    Parameters:
-    - start1: datetime - Start of first range
-    - end1: datetime   - End of first range
-    - start2: datetime - Start of second range
-    - end2: datetime   - End of second range
-
-    Returns:
-    - bool: True if the ranges overlap, False otherwise.
+    Determine if two datetime ranges [start1, end1] and [start2, end2] overlap.
+    Overlap is inclusive: sharing a boundary instant counts as overlapping.
     """
 
-    # Normalize the ranges to ensure start <= end
+    # Normalize the ranges so that start <= end for each range
     if start1 > end1:
-        start1, end1 = end1, start1
-    if start2 > end2:
-        start2, end2 = end2, start2
+        tmp = start1
+        start1 = end1
+        end1 = tmp
 
-    # Overlap exists if the latest start is <= the earliest end
-    return (start1 <= end2) and (start2 <= end1)
+    if start2 > end2:
+        tmp = start2
+        start2 = end2
+        end2 = tmp
+
+    # Compute overlap
+    latest_start = start1 if start1 >= start2 else start2
+    earliest_end = end1 if end1 <= end2 else end2
+
+    return latest_start <= earliest_end
 
 # Entry point: ranges_overlap(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> bool
 ```

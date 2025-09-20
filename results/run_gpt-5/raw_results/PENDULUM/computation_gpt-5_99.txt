@@ -1,27 +1,24 @@
 Let's think step by step to solve this problem.
 1. Import the pendulum library to work with time objects.
 2. Define a function that accepts a pendulum.Time object as input.
-3. Extract the hour, minute, second, and microsecond components from the input time.
-4. Convert the time of day to its decimal hour representation using precise fractional calculations.
-5. Return the result as a float.
+3. Extract hours, minutes, seconds, and microseconds from the input time.
+4. Convert the time components into a decimal hour value: hours + minutes/60 + seconds/3600 + microseconds/3_600_000_000.
+5. Return the resulting float as the decimal time representation.
 
 ```python
 import pendulum
 
-def calculate_decimal_time(t: pendulum.Time) -> float:
+def to_decimal_time(t: pendulum.Time) -> float:
     """
-    Convert a given pendulum.Time to its decimal hour representation.
-
-    Example:
-    13:30:00 -> 13.5
-    01:15:30.500000 -> 1.258472222...
+    Convert a pendulum.Time to its decimal time representation in hours.
+    Example: 13:30:00 -> 13.5
     """
     hours = t.hour
     minutes = t.minute
     seconds = t.second
     microseconds = t.microsecond
 
-    # Convert to decimal hours with microsecond precision
+    # Convert the time to decimal hours
     decimal_hours = (
         hours
         + minutes / 60.0
@@ -30,5 +27,5 @@ def calculate_decimal_time(t: pendulum.Time) -> float:
     )
     return float(decimal_hours)
 
-# Entry point: calculate_decimal_time(t: pendulum.Time) -> float
+# Entry point: to_decimal_time(t: pendulum.Time) -> float
 ```

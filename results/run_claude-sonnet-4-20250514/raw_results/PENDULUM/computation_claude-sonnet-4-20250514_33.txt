@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with times.
+2. **Define a function**: We will create a function that accepts two time objects as input using pendulum.Time objects.
+3. **Convert times to datetime objects**: Since we need to calculate differences, we'll convert the Time objects to DateTime objects on the same reference day.
+4. **Calculate the difference**: Use the diff method to find the difference in minutes between the two datetime objects.
+5. **Return the result**: Return the absolute difference as an integer to ensure we get a positive number of minutes.
+
+```python
+import pendulum
+
+def calculate_minutes_between_times(time1: pendulum.Time, time2: pendulum.Time) -> int:
+    # Step 1: Get a reference date (today) to convert times to datetime objects
+    today = pendulum.today()
+    
+    # Step 2: Convert Time objects to DateTime objects on the same day
+    dt1 = today.replace(hour=time1.hour, minute=time1.minute, second=time1.second, microsecond=time1.microsecond)
+    dt2 = today.replace(hour=time2.hour, minute=time2.minute, second=time2.second, microsecond=time2.microsecond)
+    
+    # Step 3: Calculate the difference in minutes
+    difference = abs(dt2.diff(dt1).in_minutes())
+    
+    # Step 4: Return the result as an integer
+    return difference
+
+# Entry point: calculate_minutes_between_times(time1: pendulum.Time, time2: pendulum.Time) -> int
+```

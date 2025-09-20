@@ -79,13 +79,6 @@ def float_strategy(draw):
 
 
 @st.composite
-def int_strategy(draw):
-    # Generate an integer value.
-    i = draw(st.integers())
-    return i
-
-
-@st.composite
 def timezone_strategy(draw):
     # Generate a timezone
     tz = draw(st.timezones())

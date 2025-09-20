@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input.
+3. **Calculate year boundaries**: Get the first day (January 1st) and last day (December 31st) of the given year using pendulum.
+4. **Calculate total days**: Find the difference in days between the start and end of the year.
+5. **Calculate bi-weekly periods**: Divide the total days by 14 (since bi-weekly means every 2 weeks = 14 days) and use integer division to get complete periods.
+6. **Return the result**: Return the number of complete bi-weekly payroll periods as an integer.
+
+```python
+import pendulum
+
+def calculate_biweekly_payroll_periods(year: int) -> int:
+    # Step 1: Get the start of the year (January 1st)
+    year_start = pendulum.date(year, 1, 1)
+    
+    # Step 2: Get the end of the year (December 31st)
+    year_end = pendulum.date(year, 12, 31)
+    
+    # Step 3: Calculate the total days in the year
+    total_days = year_end.diff(year_start).in_days() + 1  # +1 to include both start and end dates
+    
+    # Step 4: Calculate the number of complete bi-weekly periods (14 days each)
+    biweekly_periods = total_days // 14
+    
+    # Step 5: Return the result as an integer
+    return biweekly_periods
+
+# Entry point: calculate_biweekly_payroll_periods(year: int) -> int
+```

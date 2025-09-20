@@ -1,41 +1,21 @@
 Let's think step by step to solve this problem.
 1. Import the necessary classes from the datetime module.
-2. Define a function that accepts two datetime objects.
-3. Validate that both datetimes are either naive or both timezone-aware; otherwise, raise a ValueError.
-4. If timezone-aware, convert both to UTC to compute on an absolute timeline.
-5. Compute the midpoint by adding half of the difference between the two datetimes to the earlier one.
-6. If timezone-aware, convert the midpoint back to the timezone of the first input; otherwise, keep it naive.
-7. Return the resulting midpoint datetime.
+2. Define a function that accepts two datetimes as inputs.
+3. Compute the time difference between the two datetimes.
+4. Add half of this difference to the first datetime to get the midpoint.
+5. Return the resulting midpoint datetime.
 
 ```python
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 
 def midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
     """
-    Find the midpoint datetime between two datetimes.
-
-    Rules:
-    - If both datetimes are naive, computes midpoint directly and returns a naive datetime.
-    - If both are timezone-aware (tzinfo not None), converts both to UTC for computation,
-      then returns the midpoint converted to dt1's original timezone.
-    - If one is naive and the other is aware, raises ValueError due to ambiguity.
+    Compute the midpoint datetime between two datetime instances.
+    The result lies exactly halfway between dt1 and dt2 along the timeline.
     """
-    if (dt1.tzinfo is None) != (dt2.tzinfo is None):
-        raise ValueError("Both datetimes must be either naive or timezone-aware.")
-
-    if dt1.tzinfo is not None:
-        # Aware datetimes: normalize to UTC for arithmetic
-        dt1_utc = dt1.astimezone(timezone.utc)
-        dt2_utc = dt2.astimezone(timezone.utc)
-        # Compute midpoint in UTC
-        half_delta = (dt2_utc - dt1_utc) / 2
-        midpoint_utc = dt1_utc + half_delta
-        # Convert back to the timezone of dt1
-        return midpoint_utc.astimezone(dt1.tzinfo)
-    else:
-        # Naive datetimes: compute directly
-        half_delta = (dt2 - dt1) / 2
-        return dt1 + half_delta
+    delta = dt2 - dt1
+    midpoint = dt1 + (delta / 2)
+    return midpoint
 
 # Entry point: midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime
 ```

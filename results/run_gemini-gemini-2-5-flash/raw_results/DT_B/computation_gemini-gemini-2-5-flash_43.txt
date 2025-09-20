@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need the `datetime` class from Python's standard `datetime` module.
+2.  **Define a function**: Create a function that accepts a `datetime` object as input, representing the date to be checked.
+3.  **Determine the day of the week**: Use the `weekday()` method of the `datetime` object. This method returns an integer where Monday is 0, Tuesday is 1, ..., Saturday is 5, and Sunday is 6.
+4.  **Check for weekend days**: A weekend is typically Saturday or Sunday. Therefore, if the `weekday()` result is 5 (Saturday) or 6 (Sunday), the date falls on a weekend.
+5.  **Return the result**: Return `True` if the date is a weekend, `False` otherwise.
+
+```python
+from datetime import datetime
+
+def is_weekend(date_to_check: datetime) -> bool:
+    # Step 1: Get the day of the week.
+    # weekday() returns an integer: Monday=0, Tuesday=1, ..., Saturday=5, Sunday=6.
+    day_of_week = date_to_check.weekday()
+    
+    # Step 2: Check if the day of the week corresponds to Saturday (5) or Sunday (6).
+    if day_of_week == 5 or day_of_week == 6:
+        return True
+    else:
+        return False
+
+# Entry point: is_weekend(date_to_check: datetime) -> bool
+```

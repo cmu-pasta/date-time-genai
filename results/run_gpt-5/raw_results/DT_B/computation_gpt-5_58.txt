@@ -1,49 +1,26 @@
 Let's think step by step to solve this problem.
-1. Import datetime classes needed to represent epochs and compute timedeltas.
-2. Define the Unix and Windows FILETIME epochs as timezone-aware UTC datetimes.
-3. Convert a Unix timestamp (seconds since 1970-01-01 UTC) to an absolute datetime by adding a timedelta to the Unix epoch.
-4. Compute the difference between that datetime and the Windows epoch.
-5. Convert that difference to Windows FILETIME units (100-nanosecond intervals) and return it as an integer.
-6. Optionally, provide a reverse conversion function for completeness.
+1. Define the source and target epochs using datetime (Unix: 1970-01-01, Windows: 1601-01-01).
+2. Build a datetime representing the Unix timestamp by adding seconds to the Unix epoch.
+3. Compute the timedelta between this datetime and the Windows epoch.
+4. Convert this timedelta to Windows FILETIME ticks (100-nanosecond intervals) and return as an integer.
 
 ```python
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone, timedelta
 
-# Define epoch constants (UTC)
-UNIX_EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
-WINDOWS_FILETIME_EPOCH = datetime(1601, 1, 1, tzinfo=timezone.utc)
-
-def unix_to_windows_filetime(unix_seconds: float) -> int:
-    """
-    Convert a Unix timestamp (seconds since 1970-01-01 UTC) to Windows FILETIME
-    (number of 100-nanosecond intervals since 1601-01-01 UTC).
+def convert_unix_to_windows_filetime(unix_seconds: float) -> int:
+    # Step 1: Define epochs in UTC
+    unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
     
-    Args:
-        unix_seconds: Seconds since Unix epoch. Can be negative or fractional.
-    Returns:
-        Integer count of 100-nanosecond intervals since Windows FILETIME epoch.
-    """
-    # Convert Unix seconds to an absolute UTC datetime
-    dt = UNIX_EPOCH + timedelta(seconds=unix_seconds)
-    # Find the difference from Windows epoch
-    delta = dt - WINDOWS_FILETIME_EPOCH
-    # FILETIME is in 100-nanosecond ticks
-    return int(delta.total_seconds() * 10_000_000)
-
-def windows_filetime_to_unix_seconds(filetime: int) -> float:
-    """
-    Convert a Windows FILETIME integer to a Unix timestamp in seconds.
+    # Step 2: Build datetime from Unix seconds
+    unix_dt = unix_epoch + timedelta(seconds=unix_seconds)
     
-    Args:
-        filetime: Integer number of 100-nanosecond intervals since 1601-01-01 UTC.
-    Returns:
-        Seconds since Unix epoch as a float.
-    """
-    # Convert FILETIME ticks to a datetime
-    seconds = filetime / 10_000_000.0
-    dt = WINDOWS_FILETIME_EPOCH + timedelta(seconds=seconds)
-    # Compute Unix seconds
-    return (dt - UNIX_EPOCH).total_seconds()
+    # Step 3: Compute timedelta relative to Windows epoch
+    delta = unix_dt - windows_epoch
+    
+    # Step 4: Convert to Windows FILETIME ticks (100-nanosecond units)
+    ticks = int(delta.total_seconds() * 10_000_000)
+    return ticks
 
-# Entry point: unix_to_windows_filetime(unix_seconds: float) -> int
+# Entry point: convert_unix_to_windows_filetime(unix_seconds: float) -> int
 ```

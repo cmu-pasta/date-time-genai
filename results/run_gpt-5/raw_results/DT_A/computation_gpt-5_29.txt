@@ -1,33 +1,29 @@
 Let's think step by step to solve this problem.
-1. Import the required types (date, timedelta) from the datetime module.
-2. Accept the input year as an integer and create a date object for November 1st of that year.
-3. Determine the weekday of November 1st (Monday=0, Thursday=3).
-4. Compute the offset to the first Thursday in November.
-5. Add three weeks to the first Thursday to get the fourth Thursday (Thanksgiving).
-6. Return the resulting date object.
+1. Import the required classes from the datetime module.
+2. Create a function that takes a year as an integer.
+3. Construct the date for November 1st of the given year.
+4. Determine the weekday of November 1st (Monday=0, Thursday=3).
+5. Compute the number of days to reach the first Thursday in November.
+6. Add 21 days (3 weeks) to the first Thursday to get the fourth Thursday.
+7. Return the resulting date.
 
 ```python
 from datetime import date, timedelta
 
 def thanksgiving_date(year: int) -> date:
-    """
-    Compute the date of Thanksgiving (fourth Thursday of November) for a given year.
-    """
-    # Step 1: Start at November 1st of the given year
+    # Step 1: Start from November 1st of the given year
     nov_first = date(year, 11, 1)
-
-    # Step 2: Compute the offset to the first Thursday (weekday(): Monday=0 ... Sunday=6, Thursday=3)
-    thursday_weekday = 3
-    offset = (thursday_weekday - nov_first.weekday()) % 7
-
-    # Step 3: First Thursday of November
-    first_thursday = nov_first + timedelta(days=offset)
-
-    # Step 4: Fourth Thursday (Thanksgiving) = first Thursday + 3 weeks
-    thanksgiving = first_thursday + timedelta(weeks=3)
-
-    # Step 5: Return the Thanksgiving date
-    return thanksgiving
+    
+    # Step 2: Compute offset to the first Thursday (Thursday is weekday 3)
+    weekday_nov_first = nov_first.weekday()  # Monday=0, Sunday=6
+    days_to_first_thursday = (3 - weekday_nov_first) % 7
+    first_thursday = nov_first + timedelta(days=days_to_first_thursday)
+    
+    # Step 3: The fourth Thursday is three weeks after the first Thursday
+    fourth_thursday = first_thursday + timedelta(days=21)
+    
+    # Step 4: Return the date of Thanksgiving
+    return fourth_thursday
 
 # Entry point: thanksgiving_date(year: int) -> date
 ```

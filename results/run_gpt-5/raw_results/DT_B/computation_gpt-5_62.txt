@@ -1,46 +1,70 @@
 Let's think step by step to solve this problem.
-1. Import datetime, date, timedelta from datetime and ZoneInfo from zoneinfo.
-2. Define a function that accepts a year (integer) and a timezone (zoneinfo.ZoneInfo).
-3. Iterate hour-by-hour from the start of the given year to the start of the next year in the given timezone.
-4. Detect the first moment where DST offset increases compared to the previous hour (this indicates DST start).
-5. Return the date of that transition. If no DST start occurs in that year for the timezone, return the minimal date (date.min), i.e., 0001-01-01.
+1. Accept a target year and a time zone as inputs, using standard library types.
+2. Define the search interval as the local time from the start of the given year to the start of the next year.
+3. Scan day by day (using a stable local time like 12:00) to detect the first increase in UTC offset, which indicates the DST start transition.
+4. Once a potential transition day pair is found, perform a binary search between the two adjacent datetimes to pinpoint the exact transition instant.
+5. Return the local calendar date of that transition. If no DST start occurs within the year, raise a ValueError.
 
 ```python
 from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 
-def find_dst_start_date(year: int, tz: ZoneInfo) -> date:
-    """
-    Find the calendar date on which DST starts in the given year and timezone.
-    If no DST start occurs in that year, returns date.min (0001-01-01).
-    """
+def find_dst_start(year: int, tz: ZoneInfo) -> date:
+    # Define the start and end of the interval to search (local time in given tz)
     start = datetime(year, 1, 1, 0, 0, tzinfo=tz)
     end = datetime(year + 1, 1, 1, 0, 0, tzinfo=tz)
 
-    prev = start
-    prev_dst = prev.dst() or timedelta(0)
+    # Use local noon to avoid ambiguous/non-existent local times around transitions
+    one_day = timedelta(days=1)
+    probe_time = timedelta(hours=12)
 
-    step = timedelta(hours=1)
-    current = prev
+    # Initialize previous probe
+    prev_dt = start + probe_time
+    if prev_dt >= end:
+        raise ValueError("Empty search interval for the given year.")
+    prev_off = prev_dt.utcoffset()
 
-    found_transition_dt = None
-
-    while current < end:
-        current = current + step
-        curr_dst = current.dst() or timedelta(0)
-
-        # DST "start" is characterized by an increase in DST offset
-        if curr_dst > prev_dst:
-            found_transition_dt = current
+    # Scan day-by-day to find the first increase in offset (DST start)
+    cur_day_start = start + one_day
+    while cur_day_start <= end:
+        cur_dt = cur_day_start + probe_time
+        if cur_dt >= end:
             break
+        cur_off = cur_dt.utcoffset()
 
-        prev_dst = curr_dst
+        # DST start: offset increases compared to previous day
+        if cur_off is not None and prev_off is not None and cur_off > prev_off:
+            # Binary search between previous day noon-window to locate the exact transition instant
+            low = cur_day_start - one_day  # previous day start
+            high = cur_day_start           # current day start
+            # Expand search window to 24 hours around the suspected boundary
+            low_dt = low
+            high_dt = high
 
-    if found_transition_dt is None:
-        # No DST start found for this year in this timezone
-        return date.min
+            # Ensure the transition is within [low_dt, high_dt)
+            # Binary search for the earliest datetime where offset equals the "increased" offset
+            target_off = cur_off
+            # Narrow down to second precision
+            while (high_dt - low_dt) > timedelta(seconds=1):
+                mid = low_dt + (high_dt - low_dt) / 2
+                # mid is aware due to arithmetic on aware datetimes
+                mid_off = mid.utcoffset()
+                if mid_off is not None and mid_off >= target_off:
+                    high_dt = mid
+                else:
+                    low_dt = mid
 
-    return found_transition_dt.date()
+            # The transition instant is approximately high_dt
+            transition_local_date = high_dt.date()
+            return transition_local_date
 
-# Entry point: find_dst_start_date(year: int, tz: zoneinfo.ZoneInfo) -> date
+        # Advance to next day
+        prev_dt = cur_dt
+        prev_off = cur_off
+        cur_day_start += one_day
+
+    # If we reach here, no DST start occurred within the year
+    raise ValueError("No DST start found for the given year and time zone.")
+
+# Entry point: find_dst_start(year: int, tz: ZoneInfo) -> date
 ```

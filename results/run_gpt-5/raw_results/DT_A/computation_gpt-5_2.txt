@@ -1,24 +1,18 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the standard library.
+1. Import the necessary types from the datetime library to work with dates.
 2. Define a function that accepts a date input.
-3. Compute the weekday name using strftime with the %A directive.
-4. Return the weekday name as a string.
+3. Use the date.weekday() method to determine the day-of-week index (Monday=0, Sunday=6).
+4. Return the result as an integer (allowed output type).
 
 ```python
 from datetime import date
 
-def determine_day_name(input_date: date) -> str:
+def determine_day_name(d: date) -> int:
     """
-    Determine the full day name (e.g., Monday, Tuesday) for a given date.
-
-    Parameters:
-    - input_date: date -> A Python date object.
-
-    Returns:
-    - str -> The full weekday name corresponding to the given date.
+    Determine the day of the week for the given date.
+    Returns an integer where Monday=0 and Sunday=6.
     """
-    # Compute and return the full weekday name using strftime
-    return input_date.strftime("%A")
+    return d.weekday()
 
-# Entry point: determine_day_name(input_date: date) -> str
+# Entry point: determine_day_name(d: date) -> int
 ```

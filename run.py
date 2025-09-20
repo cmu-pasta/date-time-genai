@@ -5,7 +5,10 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 import config
-from analyze.log_parser import generate_summary_report, parse_log_file
+from analyze.plot_diff_test_results import (
+    plot_models_divergence,
+    plot_models_reliability,
+)
 from genai.models import Model, ModelType
 from genai.utils import sanitize_model_name_for_path
 from sample_llm.sample_code import sample_dt_vs_dt_code_sets, sample_pendulum_code_sets
@@ -262,13 +265,8 @@ def main():
     if run_analyze:
         print("📊 Analyzing results...")
         try:
-            # Generate summary report
-            results = parse_log_file()
-            report_file = f"{config.ANALYSIS_OUTPUT_DIR}/summary_report.md"
-            generate_summary_report(results, report_file)
-            print(f"Summary report saved to {report_file}")
-        except FileNotFoundError as e:
-            print(f"Warning: Could not analyze results - {e}")
+            plot_models_reliability()
+            plot_models_divergence()
         except Exception as e:
             print(f"Error during results analysis: {e}")
         print("✅ Results analysis completed!")

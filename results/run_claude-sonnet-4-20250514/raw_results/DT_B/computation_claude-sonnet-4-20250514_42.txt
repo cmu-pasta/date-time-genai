@@ -1,39 +1,41 @@
 Let's think step by step to solve this problem.
 
-1. **Import necessary libraries**: We need the `datetime` module to work with dates and handle leap year calculations automatically.
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and calculate days in a month.
 
-2. **Define function inputs**: We need to know which month and year to calculate hours for. We can accept year and month as integers.
+2. **Define a function**: We will create a function that accepts a year and month as integers to determine the specific month we're calculating hours for.
 
-3. **Determine days in the month**: We can create a datetime object for the first day of the given month, then create another datetime object for the first day of the next month, and find the difference to get the exact number of days.
+3. **Calculate days in the month**: Use datetime to find the number of days in the given month, considering leap years automatically. We can do this by finding the first day of the next month and subtracting the first day of the current month.
 
-4. **Handle month/year transitions**: When the month is December (12), the next month should be January (1) of the following year.
+4. **Handle month/year overflow**: When the month is December (12), we need to increment the year and set month to 1 for January of the next year.
 
-5. **Calculate hours**: Multiply the number of days by 24 to get the total hours in that month.
+5. **Convert days to hours**: Multiply the number of days by 24 to get the total hours in that month.
 
-6. **Return the result**: Return the total hours as an integer.
+6. **Return the result**: Return the calculated hours as an integer.
 
 ```python
 from datetime import datetime
 
 def calculate_hours_in_month(year: int, month: int) -> int:
-    # Step 1: Create a datetime object for the first day of the given month
+    # Step 1: Create datetime object for the first day of the given month
     first_day_current_month = datetime(year, month, 1)
     
     # Step 2: Calculate the first day of the next month
     if month == 12:
-        # If December, next month is January of next year
-        first_day_next_month = datetime(year + 1, 1, 1)
+        next_month = 1
+        next_year = year + 1
     else:
-        # Otherwise, just increment the month
-        first_day_next_month = datetime(year, month + 1, 1)
+        next_month = month + 1
+        next_year = year
     
-    # Step 3: Calculate the difference to get number of days in the month
+    first_day_next_month = datetime(next_year, next_month, 1)
+    
+    # Step 3: Calculate the difference to get the number of days in the month
     days_in_month = (first_day_next_month - first_day_current_month).days
     
-    # Step 4: Calculate total hours (days * 24)
+    # Step 4: Convert days to hours (24 hours per day)
     hours_in_month = days_in_month * 24
     
-    # Step 5: Return the result as integer
+    # Step 5: Return the result as an integer
     return hours_in_month
 
 # Entry point: calculate_hours_in_month(year: int, month: int) -> int

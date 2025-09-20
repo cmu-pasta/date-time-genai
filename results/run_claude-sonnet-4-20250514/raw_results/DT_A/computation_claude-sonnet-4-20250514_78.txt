@@ -1,0 +1,61 @@
+Let's think step by step to solve this problem.
+
+1. **Import necessary libraries**: We need the `datetime` module for date/time operations and `math` for trigonometric calculations required for sunrise computation.
+
+2. **Define the function**: Create a function that accepts a date, latitude, and longitude as inputs.
+
+3. **Calculate day of year**: Determine which day of the year it is to account for Earth's orbital position.
+
+4. **Calculate solar declination**: Compute the sun's declination angle based on the day of year.
+
+5. **Calculate hour angle**: Use the sunrise equation to find the hour angle when the sun rises.
+
+6. **Calculate sunrise time**: Convert the hour angle to actual time and create a datetime object for the sunrise.
+
+7. **Return the result**: Return the sunrise time as a datetime object.
+
+```python
+from datetime import datetime, timedelta
+import math
+
+def calculate_sunrise_time(date: datetime, latitude: float, longitude: float) -> datetime:
+    # Step 1: Calculate day of year
+    day_of_year = date.timetuple().tm_yday
+    
+    # Step 2: Calculate solar declination angle (in radians)
+    solar_declination = math.radians(23.45) * math.sin(math.radians(360 * (284 + day_of_year) / 365))
+    
+    # Step 3: Convert latitude to radians
+    lat_rad = math.radians(latitude)
+    
+    # Step 4: Calculate hour angle for sunrise
+    # Using the sunrise equation: cos(hour_angle) = -tan(latitude) * tan(solar_declination)
+    hour_angle_cos = -math.tan(lat_rad) * math.tan(solar_declination)
+    
+    # Step 5: Handle extreme cases (polar day/night)
+    if hour_angle_cos > 1:
+        # No sunrise (polar night)
+        hour_angle = math.pi
+    elif hour_angle_cos < -1:
+        # Sun never sets (polar day)
+        hour_angle = 0
+    else:
+        hour_angle = math.acos(hour_angle_cos)
+    
+    # Step 6: Calculate sunrise time in hours
+    sunrise_hour = 12 - (math.degrees(hour_angle) / 15) - (longitude / 15)
+    
+    # Step 7: Convert to datetime
+    hours = int(sunrise_hour)
+    minutes = int((sunrise_hour - hours) * 60)
+    seconds = int(((sunrise_hour - hours) * 60 - minutes) * 60)
+    
+    # Step 8: Create the sunrise datetime
+    sunrise_time = date.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(
+        hours=hours, minutes=minutes, seconds=seconds
+    )
+    
+    return sunrise_time
+
+# Entry point: calculate_sunrise_time(date: datetime, latitude: float, longitude: float) -> datetime
+```

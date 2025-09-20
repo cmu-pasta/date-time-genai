@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need `datetime` for date objects and `timedelta` to iterate through dates.
+2.  **Define the function**: Create a function that accepts two `datetime` objects as input.
+3.  **Ensure correct date order**: Before iterating, ensure that the first date is chronologically earlier than or equal to the second date. If not, swap them.
+4.  **Initialize a counter**: Set up an integer variable to keep track of the number of weekend days encountered.
+5.  **Iterate through each day**: Loop from the earlier date up to and including the later date, one day at a time. To ensure accurate day-by-day iteration and `weekday()` calculation without being affected by time components, it's best to work with the `date` part of the `datetime` objects.
+6.  **Check for weekend**: Inside the loop, for each day, determine if it is a Saturday or a Sunday using the `weekday()` method. `weekday()` returns 5 for Saturday and 6 for Sunday (where Monday is 0).
+7.  **Increment counter**: If the day is a Saturday or Sunday, increment the weekend counter.
+8.  **Return the total**: After iterating through all days, return the final count of weekend days.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Ensure dt1 is the earlier date to simplify iteration
+    if dt1 > dt2:
+        dt1, dt2 = dt2, dt1
+
+    weekend_count = 0
+    
+    # Step 2: Extract the date part and initialize current_date for iteration
+    current_date = dt1.date()
+    end_date_limit = dt2.date()
+
+    # Step 3: Iterate through each day from the start_date to the end_date (inclusive)
+    while current_date <= end_date_limit:
+        # Step 4: Check if the current day is a Saturday (weekday 5) or a Sunday (weekday 6)
+        if current_date.weekday() == 5 or current_date.weekday() == 6:
+            weekend_count += 1
+        
+        # Step 5: Move to the next day
+        current_date += timedelta(days=1)
+            
+    # Step 6: Return the total count of weekend days
+    return weekend_count
+
+# Entry point: calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int
+```

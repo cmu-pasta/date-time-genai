@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the autumnal equinox**: The autumnal equinox occurs around September 22 or 23 each year when day and night are approximately equal in length worldwide.
+
+2. **Import the necessary library**: We need the `datetime` module to create date objects.
+
+3. **Create a function**: Define a function that takes a year as input and returns the date of the autumnal equinox as a datetime object.
+
+4. **Implement an approximation**: Since we can only use the datetime library, we'll use a simplified approximation. For most years in the modern era, the autumnal equinox falls on September 22, with some variation based on leap years and other factors.
+
+5. **Apply a rule-based approach**: Use a simple rule where the autumnal equinox typically falls on September 22 for most years, and September 23 for certain years (this is a simplified approximation).
+
+6. **Return the result**: Create and return a datetime object representing the autumnal equinox date.
+
+```python
+from datetime import datetime
+
+def find_autumnal_equinox(year: int) -> datetime:
+    # Simplified approximation for autumnal equinox date
+    # In the modern era, it typically falls on September 22 or 23
+    # This uses a basic rule: September 22 for most years, 
+    # September 23 for certain patterns
+    
+    # Simple approximation: for years where (year % 4) gives remainder 1 or 2,
+    # use September 23, otherwise use September 22
+    if (year % 4) in [1, 2]:
+        day = 23
+    else:
+        day = 22
+    
+    # Create datetime object for the autumnal equinox
+    equinox_date = datetime(year, 9, day)
+    
+    return equinox_date
+
+# Entry point: find_autumnal_equinox(year: int) -> datetime
+```

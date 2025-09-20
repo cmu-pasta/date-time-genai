@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates.
+2. **Define a function**: Create a function that accepts a year as input (integer) and returns the date of Martin Luther King Jr. Day.
+3. **Find January 1st**: Create a date object for January 1st of the given year.
+4. **Calculate the first Monday**: Determine what day of the week January 1st falls on, then calculate how many days to add to get to the first Monday.
+5. **Find the third Monday**: Add 14 days (2 weeks) to the first Monday to get the third Monday.
+6. **Return the result**: Return the date as a datetime.date object.
+
+```python
+from datetime import date, timedelta
+
+def find_mlk_day(year: int) -> date:
+    # Step 1: Get January 1st of the given year
+    jan_first = date(year, 1, 1)
+    
+    # Step 2: Find what day of the week January 1st is (0=Monday, 6=Sunday)
+    jan_first_weekday = jan_first.weekday()
+    
+    # Step 3: Calculate days to add to get to the first Monday
+    # If Jan 1st is Monday (0), we need 0 days
+    # If Jan 1st is Tuesday (1), we need 6 days
+    # If Jan 1st is Wednesday (2), we need 5 days, etc.
+    days_to_first_monday = (7 - jan_first_weekday) % 7
+    
+    # Step 4: Find the first Monday of January
+    first_monday = jan_first + timedelta(days=days_to_first_monday)
+    
+    # Step 5: Add 14 days (2 weeks) to get the third Monday
+    third_monday = first_monday + timedelta(days=14)
+    
+    return third_monday
+
+# Entry point: find_mlk_day(year: int) -> date
+```

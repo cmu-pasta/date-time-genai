@@ -1,40 +1,33 @@
 Let's think step by step to solve this problem.
-1. Understand the Thai Buddhist calendar: It uses the same months and days as the Gregorian calendar, but the year is offset by +543 (B.E. = C.E. + 543).
-2. Determine the mapping: For a given Gregorian date, the Thai Buddhist date has the same month and day, with the year increased by 543.
-3. Implement the conversion: Take a date input and construct a new date with year + 543, month, and day unchanged.
-4. Provide optional support for datetime: Extend the same logic to datetime inputs while preserving time and tzinfo.
-5. Return the result using only standard datetime types.
+1. Understand the Thai Buddhist calendar: The Buddhist Era (BE) year equals Gregorian year + 543, with the same month and day.
+2. Use only the datetime library: We will utilize datetime.date to construct the BE date.
+3. Implement conversion: Create a function that accepts a Gregorian date and returns the corresponding BE date by adding 543 to the year.
+4. Handle edge cases: Feb 29 in a Gregorian leap year maps to a BE year that may not be leap under the proleptic Gregorian rules used by datetime, which can make 29-Feb construction invalid. We will raise a clear error in such cases.
 
 ```python
-from datetime import date, datetime
+from datetime import date
 
-def to_thai_buddhist_date(gregorian: date) -> date:
+def to_thai_buddhist_date(g_date: date) -> date:
     """
-    Convert a Gregorian calendar date to the Thai Buddhist calendar date.
-    - Thai Buddhist Era (BE) year = Common Era (CE) year + 543
-    - Month and day remain the same.
+    Convert a Gregorian date to the Thai Buddhist calendar date.
+    BE year = AD year + 543; month and day remain the same.
 
     Note:
-    This returns a datetime.date object with the BE year. This is a representation
-    of the Thai Buddhist calendar date using the standard datetime date type.
+    - The datetime module uses the proleptic Gregorian calendar. Some BE years that
+      correspond to Gregorian leap days (e.g., 2016-02-29 -> 2559-02-29) are not
+      considered leap years under simple Gregorian divisibility rules when using the
+      BE year number. In such cases, constructing the BE date is not representable
+      and a ValueError is raised.
     """
-    return date(gregorian.year + 543, gregorian.month, gregorian.day)
+    year_be = g_date.year + 543
+    try:
+        return date(year_be, g_date.month, g_date.day)
+    except ValueError as e:
+        raise ValueError(
+            "The mapped Buddhist Era date is not representable with datetime.date "
+            "(e.g., 29 February in a BE year that is not a leap year under the "
+            "proleptic Gregorian rules)."
+        ) from e
 
-def to_thai_buddhist_datetime(gregorian: datetime) -> datetime:
-    """
-    Convert a Gregorian calendar datetime to the Thai Buddhist calendar datetime,
-    preserving time and tzinfo.
-    """
-    return datetime(
-        gregorian.year + 543,
-        gregorian.month,
-        gregorian.day,
-        gregorian.hour,
-        gregorian.minute,
-        gregorian.second,
-        gregorian.microsecond,
-        tzinfo=gregorian.tzinfo,
-    )
-
-# Entry point: to_thai_buddhist_date(gregorian: date) -> date
+# Entry point: to_thai_buddhist_date(g_date: date) -> date
 ```

@@ -1,30 +1,36 @@
 Let's think step by step to solve this problem.
 
-1.  **Import necessary libraries**: We need `datetime` from the `datetime` module for date and time objects, and `ZoneInfo` from the `zoneinfo` module to handle different timezones.
-2.  **Define a function**: Create a function that accepts three parameters: the original `datetime` object, the `ZoneInfo` object for the source timezone, and the `ZoneInfo` object for the target timezone.
-3.  **Localize the original datetime (if naive)**: If the input `datetime` object is "naive" (i.e., it has no timezone information), we need to make it "timezone-aware" by associating it with the `source_timezone`. We can use the `replace()` method for this, setting its `tzinfo` attribute. If it's already timezone-aware, we'll ensure it's correctly interpreted in the source timezone by converting it using `astimezone()`.
-4.  **Convert to the target timezone**: Once the `datetime` object is properly localized to the source timezone, we can use the `astimezone()` method to convert it to the `target_timezone`.
-5.  **Return the result**: The function will return the new `datetime` object, which is now in the `target_timezone`.
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with `datetime` objects, and `ZoneInfo` from the `zoneinfo` module to handle timezone information.
+2.  **Define a function**: We will create a function that accepts two inputs: a timezone-aware `datetime` object representing the timestamp in its current (source) timezone, and a `ZoneInfo` object representing the target timezone.
+3.  **Perform the conversion**: The `datetime` object's `astimezone()` method can be used to convert the `datetime` object from its current timezone to the specified target timezone. This method automatically handles any daylight saving time changes.
+4.  **Return the result**: The function will return the new timezone-aware `datetime` object.
 
 ```python
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-def convert_timezone(dt_original: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime:
-    # Step 1: Ensure the original datetime is timezone-aware in the source timezone.
-    # If dt_original is naive, replace its tzinfo.
-    # If dt_original is already timezone-aware, convert it to the source_tz first
-    # to handle cases where it might be aware in a different timezone initially.
-    if dt_original.tzinfo is None:
-        dt_localized_source = dt_original.replace(tzinfo=source_tz)
-    else:
-        dt_localized_source = dt_original.astimezone(source_tz)
-    
-    # Step 2: Convert the localized datetime from the source timezone to the target timezone.
-    dt_in_target_tz = dt_localized_source.astimezone(target_tz)
-    
-    # Step 3: Return the datetime object in the target timezone.
-    return dt_in_target_tz
+def convert_timezone(timestamp: datetime, target_timezone: ZoneInfo) -> datetime:
+    """
+    Converts a timezone-aware datetime object from its current timezone to a specified target timezone.
 
-# Entry point: convert_timezone(dt_original: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime
+    Args:
+        timestamp: A timezone-aware datetime object representing the timestamp in its source timezone.
+                   The datetime object must have a tzinfo attribute set.
+        target_timezone: A ZoneInfo object representing the desired target timezone.
+
+    Returns:
+        A new datetime object representing the same point in time, but adjusted to the target timezone.
+    """
+    if timestamp.tzinfo is None:
+        raise ValueError("Input 'timestamp' must be timezone-aware.")
+    
+    # Step 1: Use astimezone() to convert the datetime object to the target timezone.
+    # The astimezone() method correctly handles the conversion from the current timezone
+    # of the 'timestamp' to the 'target_timezone'.
+    converted_timestamp = timestamp.astimezone(target_timezone)
+    
+    # Step 2: Return the new timezone-aware datetime object.
+    return converted_timestamp
+
+# Entry point: convert_timezone(timestamp: datetime, target_timezone: ZoneInfo) -> datetime
 ```

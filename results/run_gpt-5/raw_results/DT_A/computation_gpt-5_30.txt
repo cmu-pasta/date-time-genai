@@ -1,37 +1,30 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module.
-2. Define a function that accepts a datetime input.
-3. Normalize the input timestamp to UTC (assume UTC if naive).
-4. Define the Unix epoch as 1970-01-01 00:00:00 UTC.
-5. Compute and return the timedelta elapsed since the epoch.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts a datetime object as input.
+3. Determine whether the input datetime is naive or timezone-aware.
+4. If timezone-aware, convert it to UTC and compute the difference from the UTC epoch.
+5. If naive, compute the difference from a naive epoch (assumed in the same naive context).
+6. Return the elapsed time as a timedelta.
 
 ```python
 from datetime import datetime, timezone, timedelta
 
 def time_since_epoch(ts: datetime) -> timedelta:
     """
-    Calculate the time elapsed since the Unix epoch (1970-01-01 00:00:00 UTC)
-    for a given timestamp.
+    Calculate the time elapsed since the Unix epoch for a given timestamp.
 
-    - If the input datetime is timezone-aware, it will be converted to UTC.
-    - If the input datetime is naive (no tzinfo), it is assumed to be in UTC.
-
-    Returns:
-        A timedelta representing the elapsed time since the epoch.
-        This value can be negative for timestamps before the epoch.
+    - If 'ts' is timezone-aware, it is converted to UTC before computation.
+    - If 'ts' is naive, it is compared against a naive epoch (1970-01-01 00:00:00).
     """
-    # Step 1: Normalize to UTC
-    if ts.tzinfo is None:
-        ts_utc = ts.replace(tzinfo=timezone.utc)
-    else:
+    # Case 1: Aware datetime -> compute against UTC epoch
+    if ts.tzinfo is not None and ts.tzinfo.utcoffset(ts) is not None:
+        epoch_utc = datetime(1970, 1, 1, tzinfo=timezone.utc)
         ts_utc = ts.astimezone(timezone.utc)
+        return ts_utc - epoch_utc
 
-    # Step 2: Define the Unix epoch in UTC
-    epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
-
-    # Step 3: Compute the elapsed time as a timedelta
-    elapsed = ts_utc - epoch
-    return elapsed
+    # Case 2: Naive datetime -> compute against naive epoch
+    epoch_naive = datetime(1970, 1, 1)
+    return ts - epoch_naive
 
 # Entry point: time_since_epoch(ts: datetime) -> timedelta
 ```

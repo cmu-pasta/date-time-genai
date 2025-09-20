@@ -1,0 +1,93 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` and `timedelta` objects from Python's standard library to work with dates and time differences.
+2.  **Define the function signature**: Create a function `calculate_working_hours` that accepts two `datetime` objects, `start_dt` and `end_dt`, and returns a `float` representing the total working hours.
+3.  **Handle input order**: Ensure `start_dt` is always less than or equal to `end_dt`. If `start_dt` is greater than `end_dt`, swap them to ensure a non-negative result.
+4.  **Initialize total working hours**: Create a variable, e.g., `total_hours`, and set it to `0.0`.
+5.  **Iterate through days**: We need to examine each day between `start_dt` and `end_dt`. We can start with `current_dt` initialized to `start_dt`.
+6.  **Calculate hours for the partial start day**:
+    *   If `start_dt` is a weekday (Monday=0 to Friday=4, using `weekday()`), calculate the hours from `start_dt` until the end of that day (23:59:59.999999). This can be done by taking the difference between `start_dt` and the start of the next day (`start_dt.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)`). If the `end_dt` is on the same day, we calculate hours only up to `end_dt`.
+7.  **Calculate hours for the partial end day**:
+    *   If `end_dt` is a weekday, and `end_dt` is not the same day as `start_dt`, calculate the hours from the beginning of `end_dt` (00:00:00) until `end_dt`.
+8.  **Calculate hours for full intermediate days**: Iterate through the full days between `start_dt` (after its partial contribution) and `end_dt` (before its partial contribution). For each full day, check if it's a weekday. If it is, add 24 hours to `total_hours`.
+9.  **Combine calculations for clarity and correctness**: A robust approach is to iterate day by day.
+    *   Set `current_day` to `start_dt.date()`.
+    *   Loop while `current_day <= end_dt.date()`:
+        *   Check if `current_day` is a weekday (`current_day.weekday() < 5`).
+        *   If it's a weekday:
+            *   Determine the effective start and end time for this specific `current_day`.
+            *   `day_start_time = max(start_dt, datetime.combine(current_day, datetime.min.time()))`
+            *   `day_end_time = min(end_dt, datetime.combine(current_day, datetime.max.time()))`
+            *   If `day_start_time < day_end_time`, add the duration `(day_end_time - day_start_time).total_seconds() / 3600.0` to `total_hours`.
+        *   Increment `current_day` by one day (`timedelta(days=1)`).
+10. **Return the total working hours**.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_working_hours(dt1: datetime, dt2: datetime) -> float:
+    # Step 1: Ensure dt1 is always the earlier datetime for consistent calculation
+    if dt1 > dt2:
+        dt1, dt2 = dt2, dt1
+
+    total_working_hours = 0.0
+    current_dt = dt1
+
+    # Loop through each day from dt1's date up to dt2's date
+    while current_dt < dt2:
+        # Check if the current day is a weekday (Monday=0 to Friday=4)
+        if current_dt.weekday() < 5:  # 0-4 are weekdays
+            # Determine the start and end of the relevant time window for the current day
+            
+            # This day's effective start time is the later of current_dt or the beginning of this calendar day
+            day_start_time = max(current_dt, datetime(current_dt.year, current_dt.month, current_dt.day, 0, 0, 0))
+            
+            # This day's effective end time is the earlier of dt2 or the end of this calendar day
+            day_end_time = min(dt2, datetime(current_dt.year, current_dt.month, current_dt.day, 23, 59, 59, 999999))
+            
+            # Only add hours if the start time is before the end time for this day
+            if day_start_time < day_end_time:
+                duration = day_end_time - day_start_time
+                total_working_hours += duration.total_seconds() / 3600.0
+
+        # Move to the next day, ensuring we don't skip over dt2
+        # If current_dt has passed into the next day already due to day_end_time calculation,
+        # we still need to make sure we advance correctly.
+        # A simple way to advance day-by-day is to get to the start of the next day.
+        next_day_start = datetime(current_dt.year, current_dt.month, current_dt.day) + timedelta(days=1)
+        current_dt = next_day_start
+
+    # The loop condition `current_dt < dt2` needs careful handling for the final segment.
+    # The current approach iterates full days and handles partial start/end.
+    # Let's refine the loop to ensure the span between dt1 and dt2 is fully covered.
+    
+    # Reset and use a simpler loop for day iteration
+    total_working_hours = 0.0
+    
+    # Iterate day by day, starting from the date of dt1
+    current_date = dt1.date()
+    end_date = dt2.date()
+
+    while current_date <= end_date:
+        # If it's a weekday
+        if current_date.weekday() < 5:
+            # Determine the specific datetime range for this weekday
+            day_start = datetime.combine(current_date, datetime.min.time())
+            day_end = datetime.combine(current_date, datetime.max.time())
+
+            # Clip the day's range by the overall dt1 and dt2
+            segment_start = max(dt1, day_start)
+            segment_end = min(dt2, day_end)
+            
+            # If there's an actual time segment on this day, add its duration
+            if segment_start < segment_end:
+                duration = segment_end - segment_start
+                total_working_hours += duration.total_seconds() / 3600.0
+        
+        # Move to the next calendar day
+        current_date += timedelta(days=1)
+        
+    return total_working_hours
+
+# Entry point: calculate_working_hours(dt1: datetime, dt2: datetime) -> float
+```

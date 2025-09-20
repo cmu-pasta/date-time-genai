@@ -1,22 +1,25 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `timedelta` class from Python's `datetime` module to work with time durations.
-2. **Define a function**: We will create a function that accepts a `timedelta` object as input, which represents the time duration.
-3. **Calculate milliseconds**: Use the `total_seconds()` method to get the total duration in seconds, then multiply by 1000 to convert to milliseconds.
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library, specifically the `timedelta` class to work with time durations.
+
+2. **Define a function**: We will create a function that accepts a `timedelta` object as input, which represents a time duration.
+
+3. **Calculate milliseconds**: Use the `total_seconds()` method of the timedelta object to get the total duration in seconds, then multiply by 1000 to convert to milliseconds.
+
 4. **Return the result**: Convert the result to an integer and return it.
 
 ```python
 from datetime import timedelta
 
-def calculate_milliseconds_in_duration(duration: timedelta) -> int:
-    # Step 1: Get the total duration in seconds
+def calculate_milliseconds(duration: timedelta) -> int:
+    # Step 1: Get the total seconds from the timedelta
     total_seconds = duration.total_seconds()
     
-    # Step 2: Convert seconds to milliseconds (multiply by 1000)
-    milliseconds = int(total_seconds * 1000)
+    # Step 2: Convert seconds to milliseconds by multiplying by 1000
+    milliseconds = total_seconds * 1000
     
-    # Step 3: Return the result as an integer
-    return milliseconds
+    # Step 3: Return as integer
+    return int(milliseconds)
 
-# Entry point: calculate_milliseconds_in_duration(duration: timedelta) -> int
+# Entry point: calculate_milliseconds(duration: timedelta) -> int
 ```

@@ -62,6 +62,7 @@ testing_framework_dir = os.path.join(parent_dir, "testing_framework")
 sys.path.append(testing_framework_dir)
 from common import find_most_recent_subdirectory
 from prompts import FEW_SHOT_PROMPT_TEMPLATE, SYSTEM_PROMPT_TEMPLATE, Languages
+
 from sample_llm import OpenAIModel
 
 
@@ -143,6 +144,8 @@ def create_standalone_executables(
             with open(log_file_dt, "r") as f_dt, open(log_file_pd, "r") as f_pd:
                 # Check these files and find lines that differ
                 for line_dt, line_pd in zip(f_dt, f_pd):
+                    line_dt = line_dt.lower()  # Convert to lowercase
+                    line_pd = line_pd.lower()  # Convert to lowercase
                     if line_dt != line_pd and len(differentiating_inputs) < 2:
                         print(f"  \\_ Different line in {subdir}")
 

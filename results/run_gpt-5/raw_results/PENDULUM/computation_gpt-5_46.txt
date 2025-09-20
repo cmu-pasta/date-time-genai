@@ -1,31 +1,27 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library for date and time handling.
-2. Define a function that accepts a pendulum.DateTime as input.
-3. Compute the 12-hour clock hour: map 0 to 12 (midnight) and 13–23 to 1–11; keep 12 as 12.
-4. Construct and return a pendulum.Time with the computed 12-hour value while preserving minutes, seconds, microseconds, and timezone.
+1. Import the pendulum library to work with date and time types.
+2. Accept a pendulum.DateTime input representing a 24-hour time.
+3. Compute the 12-hour clock hour: hour12 = ((hour24 + 11) % 12) + 1, keeping minutes, seconds, and microseconds unchanged.
+4. Construct and return a pendulum.Time object representing the 12-hour time. The AM/PM can be determined as dt.hour >= 12 when formatting if needed.
 
 ```python
 import pendulum
 
-def to_12_hour_time(dt: pendulum.DateTime) -> pendulum.Time:
+def convert_to_12h(dt: pendulum.DateTime) -> pendulum.Time:
     """
-    Convert a pendulum.DateTime (24-hour clock) to a pendulum.Time that reflects
-    the 12-hour clock representation (hour in 1..12). AM/PM can be inferred as:
-      - AM if dt.hour < 12
-      - PM if dt.hour >= 12
+    Convert a pendulum.DateTime from 24-hour format to a 12-hour clock Time.
+    The returned pendulum.Time holds the 12-hour clock hour (1-12) with the same minutes,
+    seconds, and microseconds as the input. AM/PM can be determined by dt.hour >= 12.
     """
-    # Step 1: Extract 24-hour components
-    hour24 = dt.hour
-    minute = dt.minute
-    second = dt.second
-    microsecond = dt.microsecond
-    tz = dt.timezone
+    h24 = dt.hour
+    m = dt.minute
+    s = dt.second
+    us = dt.microsecond
 
-    # Step 2: Convert to 12-hour clock hour
-    hour12 = 12 if (hour24 % 12) == 0 else (hour24 % 12)
+    # Map 24-hour to 12-hour clock: 0 -> 12 (AM), 13 -> 1 (PM), 12 -> 12 (PM)
+    h12 = ((h24 + 11) % 12) + 1
 
-    # Step 3: Build a pendulum.Time with hour in 1..12, preserving other components and timezone
-    return pendulum.time(hour12, minute, second, microsecond, tz=tz)
+    return pendulum.time(h12, m, s, us)
 
-# Entry point: to_12_hour_time(dt: pendulum.DateTime) -> pendulum.Time
+# Entry point: convert_to_12h(dt: pendulum.DateTime) -> pendulum.Time
 ```

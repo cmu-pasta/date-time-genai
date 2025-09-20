@@ -1,40 +1,42 @@
 Let's think step by step to solve this problem.
-1. Define “work weeks” as complete sets of 5 weekdays (Monday–Friday).
-2. Compute the number of days between the two dates, exclusive of the end date, ensuring the order is from earlier to later.
-3. Calculate the number of weekdays in that range using arithmetic: weekdays in full weeks plus weekdays in the remaining days.
-4. Divide the total weekdays by 5 (integer division) to get the number of complete work weeks.
-5. Return the result as an integer.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts two pendulum.Date inputs.
+3. Ensure the order is chronological by swapping if needed.
+4. Compute the total number of days between the dates inclusively.
+5. Calculate full weeks and remaining days.
+6. Count the number of weekdays in the remaining days based on the start weekday.
+7. Convert total weekdays to the number of work weeks (5 weekdays per work week) and return as an integer.
 
 ```python
 import pendulum
 
 def calculate_work_weeks_between(start: pendulum.Date, end: pendulum.Date) -> int:
-    """
-    Calculate the number of complete work weeks (Mon–Fri) between two dates.
-    The calculation considers days in the half-open interval [start, end),
-    i.e., it includes 'start' and excludes 'end'.
-    """
     # Ensure chronological order
-    if end < start:
+    if start > end:
         start, end = end, start
 
-    # Total days in the range [start, end)
-    total_days = end.diff(start).in_days()
+    # Total days inclusive
+    total_days_inclusive = start.diff(end).in_days() + 1
 
-    # Full weeks contribution
-    full_weeks = total_days // 7
+    # Compute full weeks and remaining days
+    full_weeks = total_days_inclusive // 7
+    remaining_days = total_days_inclusive % 7
+
+    # Weekdays from full weeks
     weekdays = full_weeks * 5
 
-    # Remaining days contribution
-    rem = total_days % 7
-    start_wd = start.day_of_week  # Monday=0 ... Sunday=6
+    # Count weekdays in the remaining span starting from start's weekday
+    # Pendulum: Monday=0 ... Sunday=6
+    start_dow = start.day_of_week
+    extra_weekdays = 0
+    for i in range(remaining_days):
+        dow = (start_dow + i) % 7
+        if dow < 5:  # Monday-Friday
+            extra_weekdays += 1
 
-    # Count weekdays in the remaining span (at most 6 iterations)
-    for i in range(rem):
-        if (start_wd + i) % 7 < 5:
-            weekdays += 1
+    weekdays += extra_weekdays
 
-    # Number of complete work weeks
+    # Convert weekdays to whole work weeks (5 weekdays per week)
     work_weeks = weekdays // 5
     return work_weeks
 

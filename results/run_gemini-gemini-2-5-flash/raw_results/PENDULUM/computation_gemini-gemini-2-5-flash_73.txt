@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with date and time objects.
+2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object as input, representing the time to check.
+3.  **Extract the hour**: From the input `pendulum.DateTime` object, get its hour component.
+4.  **Define business hour boundaries**: Business hours are from 9 AM (hour 9) to 5 PM (hour 17).
+5.  **Check the condition**: Determine if the extracted hour falls within the range [9, 17) (i.e., greater than or equal to 9 and less than 17).
+6.  **Return the result**: Return `True` if the time is within business hours, otherwise `False`.
+
+```python
+import pendulum
+
+def is_within_business_hours(dt: pendulum.DateTime) -> bool:
+    # Step 1: Extract the hour from the given pendulum.DateTime object
+    current_hour = dt.hour
+
+    # Step 2: Define business hour boundaries (9 AM to 5 PM)
+    business_start_hour = 9  # 9 AM
+    business_end_hour = 17   # 5 PM (exclusive, meaning up to 16:59:59)
+
+    # Step 3: Check if the current_hour falls within the business hours
+    # The time is within business hours if current_hour is 9, 10, ..., 16.
+    is_within = (current_hour >= business_start_hour) and (current_hour < business_end_hour)
+    
+    # Step 4: Return the boolean result
+    return is_within
+
+# Entry point: is_within_business_hours(dt: pendulum.DateTime) -> bool
+```

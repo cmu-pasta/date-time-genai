@@ -1,39 +1,33 @@
 Let's think step by step to solve this problem.
-1. Choose an astronomical approximation for the March (vernal) equinox. We use Meeus’ polynomial for the Julian Ephemeris Day (JDE0) of the March equinox, which is sufficiently accurate to determine the calendar date.
-2. Compute T = (year - 2000) / 1000 and evaluate the polynomial:
-   JDE0 = 2451623.80984 + 365242.37404*T + 0.05169*T^2 - 0.00411*T^3 - 0.00057*T^4
-3. Convert the resulting Julian Day to a Gregorian calendar date (UTC) using a standard JD-to-date conversion (accounting for the Gregorian reform).
-4. Return the resulting calendar date as a pendulum.Date.
+1. Accept a Gregorian calendar year as an integer input.
+2. Compute the approximate Julian Ephemeris Day (JDE) for the March (vernal) equinox using Meeus’ polynomial for the March equinox.
+3. Convert the resulting Julian Day to a UTC calendar date (ignoring small TT−UTC differences, which do not change the calendar date in most cases).
+4. Create a pendulum.DateTime in UTC from the computed components and return its date portion as a pendulum.Date.
 
 ```python
+import math
 import pendulum
 
-def _jde0_march_equinox(year: int) -> float:
-    """
-    Compute the approximate Julian Ephemeris Day (JDE0) for the March equinox
-    using the polynomial from Meeus' Astronomical Algorithms (valid for years
-    roughly between 1000 and 3000). This approximation is sufficient to obtain
-    the correct calendar date in most practical cases.
-    """
+def _march_equinox_jde(year: int) -> float:
+    # Meeus, Astronomical Algorithms (approximation for March equinox)
+    # Valid with good accuracy over many centuries; sufficient for date.
     T = (year - 2000) / 1000.0
-    # JDE0 for March equinox
-    return (
+    # Polynomial for the March equinox (JDE, Terrestrial Time)
+    jde = (
         2451623.80984
         + 365242.37404 * T
-        + 0.05169 * (T ** 2)
-        - 0.00411 * (T ** 3)
-        - 0.00057 * (T ** 4)
+        + 0.05169 * T * T
+        - 0.00411 * T * T * T
+        - 0.00057 * T * T * T * T
     )
+    return jde
 
-def _jd_to_gregorian_date(jd: float) -> pendulum.Date:
-    """
-    Convert Julian Day to a Gregorian calendar date (UTC date).
-    This uses the standard algorithm and returns only the calendar date
-    by effectively evaluating the civil date corresponding to JD.
-    """
-    # Shift because Julian Day starts at noon
-    Z = int(jd + 0.5)
-    F = (jd + 0.5) - Z
+def _jd_to_utc_datetime(jd: float) -> pendulum.DateTime:
+    # Convert Julian Day to Gregorian calendar date/time (UTC approximation).
+    # We ignore the small TT-UTC difference; for determining the date this is fine.
+    jd += 0.5
+    Z = int(jd)
+    F = jd - Z
 
     if Z >= 2299161:
         alpha = int((Z - 1867216.25) / 36524.25)
@@ -46,32 +40,40 @@ def _jd_to_gregorian_date(jd: float) -> pendulum.Date:
     D = int(365.25 * C)
     E = int((B - D) / 30.6001)
 
-    day_float = B - D - int(30.6001 * E) + F
-    # Integer calendar day
-    day = int(day_float)
+    day = B - D - int(30.6001 * E) + F
+    month = E - 1 if E < 14 else E - 13
+    year = C - 4716 if month > 2 else C - 4715
 
-    if E < 14:
-        month = E - 1
-    else:
-        month = E - 13
+    # Time of day from fractional part
+    day_int = int(day)
+    frac = day - day_int
+    total_seconds = frac * 86400.0
 
-    if month > 2:
-        year = C - 4716
-    else:
-        year = C - 4715
+    hour = int(total_seconds // 3600)
+    minute = int((total_seconds % 3600) // 60)
+    second = int(round(total_seconds % 60))
 
-    return pendulum.date(year, month, day)
+    # Normalize any rounding overflow
+    if second == 60:
+        second = 0
+        minute += 1
+    if minute == 60:
+        minute = 0
+        hour += 1
+    if hour == 24:
+        hour = 0
+        # Increment date by one day on overflow
+        # Use pendulum to handle month/year transitions cleanly
+        dt = pendulum.datetime(year, month, day_int, tz="UTC").add(days=1)
+        return dt
 
-def find_vernal_equinox(year: int) -> pendulum.Date:
-    """
-    Compute and return the UTC calendar date of the vernal (March) equinox
-    for the given Gregorian year using an approximate astronomical formula.
-    Output type is pendulum.Date.
-    """
-    jde0 = _jde0_march_equinox(year)
-    # Convert JDE to (UTC) civil date; for date purposes, TT vs UTC difference is negligible
-    date_utc = _jd_to_gregorian_date(jde0)
-    return date_utc
+    return pendulum.datetime(year, month, day_int, hour, minute, second, tz="UTC")
 
-# Entry point: find_vernal_equinox(year: int) -> pendulum.Date
+def vernal_equinox_date(year: int) -> pendulum.Date:
+    # Compute the March equinox for the given year and return the calendar date (UTC).
+    jde = _march_equinox_jde(year)
+    dt_utc = _jd_to_utc_datetime(jde)
+    return dt_utc.date()
+
+# Entry point: vernal_equinox_date(year: int) -> pendulum.Date
 ```

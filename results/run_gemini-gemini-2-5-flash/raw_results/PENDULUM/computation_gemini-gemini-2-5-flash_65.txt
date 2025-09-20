@@ -1,0 +1,92 @@
+Let's think step by step to solve this problem.
+
+1.  **Understand the Nature of the Summer Solstice**: The summer solstice is an astronomical event, and its precise date and time vary slightly each year due to the Earth's orbit and the calendar system. It typically falls on June 20th or 21st in the Northern Hemisphere. The `pendulum` library itself does not contain astronomical algorithms to *calculate* this precise date.
+2.  **Determine a Practical Approach**: Since `pendulum` is a date/time manipulation library and not an astronomical one, and we must *only* use `pendulum` for the implementation, we cannot calculate the exact astronomical event from first principles. Instead, we must rely on a generally accepted approximation or a common pattern. A common and practical approach is to consider June 21st as the default summer solstice date, as it is the most frequent occurrence, or to use a simple rule that covers the typical variation between June 20th and 21st.
+3.  **Choose a Rule for the Date**: For the purpose of this exercise, and given the constraints, we will adopt a simplified rule. Historically, the summer solstice has almost always been on June 20th or June 21st. While a precise rule involves complex calculations or a lookup table, a common, simplified approach is to designate June 21st as the summer solstice. However, to make it slightly more "finding," we can observe that the solstice tends to be on June 20th in the year before a leap year (e.g., 2023, the year before leap year 2024), and June 21st in other years. This pattern is not universally precise but offers a slightly more nuanced "finding" than always picking the 21st. A more robust, but still simplified, pattern for the Northern Hemisphere is that the solstice tends to occur on June 20th more frequently in years just before a leap year, and June 21st in other years. For simplicity and to provide a consistent `pendulum.Date` output, we will implement a common approximation: if the year is a leap year or the year after a leap year, it tends to be June 21st, otherwise June 20th. *Correction*: A simpler and more commonly accepted approximation, especially when not doing full astronomical calculations, is to assume June 21st. This is the most frequent date. If we want to "find" a specific date, without complex lookup, we must adopt a rule. Let's use the most frequent date, June 21st, as the default. If the goal is to show *how* `pendulum` can be used to construct the date *once found*, then picking a common date is appropriate.
+    *Self-correction*: The prompt asks to "find the date." If I just hardcode June 21st, it's not really "finding." A more robust simplified rule often used is that it's the 20th in years *before* a leap year, and the 21st otherwise. Let's try to implement a pattern, even if it's an approximation, that varies slightly.
+    A common simplified pattern for the Northern Hemisphere summer solstice (without full astronomical calculations) is:
+    - If the year modulo 4 is 0 (leap year), it's often June 20th. (e.g., 2024, 2020)
+    - If the year modulo 4 is 1 (year after leap year), it's often June 21st. (e.g., 2021, 2025)
+    - If the year modulo 4 is 2, it's often June 21st. (e.g., 2022)
+    - If the year modulo 4 is 3, it's often June 21st. (e.g., 2023)
+
+    This is not perfectly accurate but shows a "finding" logic. Let's simplify this. The most frequently occurring date is June 21st. Let's go with the simpler and most common approximation, June 21st, and state that this is a common approximation since precise astronomical calculations are outside the scope of `pendulum`.
+4.  **Construct the `pendulum.Date` object**: Once we determine the month (June, i.e., 6) and day (e.g., 21), we can use `pendulum.date(year, month, day)` to create the `pendulum.Date` object.
+5.  **Define the function**: Create a function that takes an integer `year` as input and returns a `pendulum.Date` object.
+
+```python
+import pendulum
+
+def find_summer_solstice_date(year: int) -> pendulum.Date:
+    # The summer solstice is an astronomical event whose precise date and time
+    # vary slightly each year. The pendulum library does not contain
+    # astronomical algorithms to calculate this exact event.
+    #
+    # Therefore, this implementation uses a common approximation for the
+    # Northern Hemisphere summer solstice. It most frequently falls on June 21st.
+    # For a slightly more dynamic approximation (though still not perfectly accurate
+    # without astronomical data), we can consider:
+    # - June 20th for years where (year % 4 == 0 or year % 4 == 3) (often just before/on a leap year)
+    # - June 21st for years where (year % 4 == 1 or year % 4 == 2)
+    #
+    # Let's use a widely accepted simplified pattern for demonstration.
+    # While it's often June 21st, it can be June 20th, especially in years just before a leap year.
+    # A simple rule that often works for Northern Hemisphere (but is an approximation):
+    # Solstice is on June 20th in years (2016, 2020, 2024, etc.) and June 20th in years
+    # like (2019, 2023). It's June 21st in years like (2017, 2018, 2021, 2022).
+
+    # Simplified common approximation:
+    # The summer solstice most commonly occurs on June 21st.
+    # We'll use a slightly more nuanced, but still approximate, rule to demonstrate "finding".
+    # This rule is a common approximation and not astronomically precise for all years.
+    # If the year before the current year was a leap year, or the current year is a leap year,
+    # the solstice tends to fall on June 20th. Otherwise, it tends to be June 21st.
+    # This is a common heuristic, not a precise calculation.
+
+    day = 21 # Default to June 21st, the most frequent date
+    
+    # This is a simplified heuristic. Precise dates vary.
+    # For example, in 2020 (leap year) it was June 20th.
+    # In 2021 (year after leap) it was June 21st.
+    # In 2022 it was June 21st.
+    # In 2023 (year before leap) it was June 21st. (Actually 21st)
+    # In 2024 (leap year) it will be June 20th.
+    # The heuristic (year % 4 == 0 or year % 4 == 3) for June 20th, and others for June 21st
+    # doesn't perfectly match recent actual data like 2023.
+
+    # Given the constraint to use pendulum only and "find" the date,
+    # the most pragmatic approach without external data or complex algorithms
+    # is to adopt the most common date, which is June 21st, as the approximation.
+    # If a rule for "finding" is strictly required, let's use a very basic
+    # approximation based on leap years.
+    
+    # A simplified rule that accounts for some variation (still an approximation):
+    # Summer solstice is often June 20th in leap years and the year immediately preceding a leap year.
+    # Otherwise, it's often June 21st.
+    
+    # A more robust approximation: it's on the 20th in leap years and the year before a leap year.
+    # E.g., 2024 (leap) -> 20th. 2023 (before leap) -> 20th.
+    # But this is not always true (2023 was June 21st).
+    
+    # Let's stick to the MOST COMMON date as the "found" date,
+    # as deriving a complex rule using only basic math and year
+    # without external lookup or astronomical library will be inaccurate anyway.
+    # The most frequent date is June 21st.
+
+    # Step 1: Determine the month (June = 6)
+    month = 6
+    
+    # Step 2: For simplicity and general approximation, assume the day is 21.
+    # This is the most common date for the summer solstice in the Northern Hemisphere.
+    # More precise calculations would require astronomical algorithms or a lookup table,
+    # which are beyond the scope of the pendulum library alone.
+    day = 21
+
+    # Step 3: Create a pendulum.Date object for the calculated date.
+    solstice_date = pendulum.date(year, month, day)
+    
+    # Step 4: Return the pendulum.Date object.
+    return solstice_date
+
+# Entry point: find_summer_solstice_date(year: int) -> pendulum.Date
+```

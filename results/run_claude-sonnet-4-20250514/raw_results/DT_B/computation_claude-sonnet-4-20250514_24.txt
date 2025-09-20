@@ -1,49 +1,50 @@
 Let's think step by step to solve this problem.
 
-1. **Import necessary libraries**: We need the `datetime` module to work with datetime objects and `timedelta` for time calculations.
-
-2. **Define the function**: Create a function that accepts two datetime objects as input parameters.
-
-3. **Determine the date range**: We need to iterate through each day between the start and end datetimes to check if they fall on weekdays.
-
-4. **Check for weekdays**: Use the `weekday()` method where Monday=0 and Sunday=6, so weekdays are 0-4 (Monday through Friday).
-
-5. **Calculate working hours**: For each weekday, calculate the hours that fall within that day and add them to the total.
-
-6. **Handle partial days**: The start and end datetimes might not align with full days, so we need to handle the partial hours on the first and last days.
-
-7. **Return the result**: Return the total working hours as a float.
+1. **Define working hours**: Establish standard business hours (typically 9 AM to 5 PM on weekdays).
+2. **Import necessary libraries**: We need the `datetime` and `timedelta` classes from Python's datetime module.
+3. **Create a function**: Define a function that accepts two datetime objects as input parameters.
+4. **Iterate through date range**: Loop through each day between the start and end datetimes.
+5. **Check for weekdays**: For each day, verify if it's a weekday (Monday through Friday, excluding weekends).
+6. **Calculate overlap**: For weekdays, find the overlap between the given datetime range and the standard working hours.
+7. **Sum working hours**: Accumulate the total working hours and return as a float.
 
 ```python
 from datetime import datetime, timedelta
 
 def calculate_working_hours(start_dt: datetime, end_dt: datetime) -> float:
-    # Ensure start is before end
+    # Define standard working hours (9 AM to 5 PM)
+    work_start_hour = 9
+    work_end_hour = 17
+    
+    # Ensure start_dt is before end_dt
     if start_dt > end_dt:
         start_dt, end_dt = end_dt, start_dt
     
-    total_hours = 0.0
-    current_dt = start_dt
+    total_working_hours = 0.0
+    current_date = start_dt.date()
+    end_date = end_dt.date()
     
-    while current_dt < end_dt:
-        # Check if current day is a weekday (Monday=0 to Friday=4)
-        if current_dt.weekday() < 5:  # 0-4 are weekdays, 5-6 are weekend
-            # Calculate end of current day
-            end_of_day = current_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
+    # Iterate through each day in the date range
+    while current_date <= end_date:
+        # Check if it's a weekday (Monday=0 to Friday=4)
+        if current_date.weekday() < 5:
+            # Create datetime objects for work start and end on this day
+            work_start = datetime.combine(current_date, datetime.min.time().replace(hour=work_start_hour))
+            work_end = datetime.combine(current_date, datetime.min.time().replace(hour=work_end_hour))
             
-            # Determine the end time for this day (either end of day or end_dt)
-            day_end = min(end_of_day, end_dt)
+            # Find the overlap between the given datetime range and working hours
+            overlap_start = max(start_dt, work_start)
+            overlap_end = min(end_dt, work_end)
             
-            # Calculate hours for this day
-            if current_dt < day_end:
-                day_hours = (day_end - current_dt).total_seconds() / 3600
-                total_hours += day_hours
+            # If there's an overlap, calculate the hours
+            if overlap_start < overlap_end:
+                overlap_duration = overlap_end - overlap_start
+                total_working_hours += overlap_duration.total_seconds() / 3600
         
-        # Move to the start of next day
-        next_day = (current_dt + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-        current_dt = next_day
+        # Move to the next day
+        current_date += timedelta(days=1)
     
-    return total_hours
+    return total_working_hours
 
 # Entry point: calculate_working_hours(start_dt: datetime, end_dt: datetime) -> float
 ```

@@ -1,36 +1,38 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library for date and time operations.
-2. Define a function that accepts a pendulum.DateTime as input.
-3. Compute the start and end instants of the input date's year using start_of('year') and end_of('year').
-4. Compute the elapsed duration since the start of the year and the total duration of the year using Duration objects from datetime subtraction.
-5. Convert both durations to microseconds to preserve precision and clamp the elapsed value between 0 and the total duration.
-6. Calculate the percentage: (elapsed / total) * 100, and return it as a float.
+1. Import the pendulum library to work with dates and times.
+2. Define a function that accepts a pendulum.DateTime representing the moment in the year.
+3. Compute the start of the year for the given datetime.
+4. Compute the start of the next year to establish the total duration of the year.
+5. Calculate the elapsed seconds from the start of the year to the given datetime.
+6. Calculate the total number of seconds in the year.
+7. Divide elapsed by total to get the fraction of the year passed and convert it to a percentage.
+8. Clamp the result between 0.0 and 100.0 to handle any out-of-range inputs.
 
 ```python
 import pendulum
 
-def calculate_year_progress(dt: pendulum.DateTime) -> float:
-    # Step 1: Determine the start and end of the year for the given datetime
+def percentage_of_year_passed(dt: pendulum.DateTime) -> float:
+    """
+    Calculate the percentage of the year that has passed for the given pendulum.DateTime.
+    Returns a float in the range [0.0, 100.0].
+    """
+    # Start of the current year in the same timezone as dt
     start_of_year = dt.start_of('year')
-    end_of_year = dt.end_of('year')
-    
-    # Step 2: Compute durations using pendulum.Duration via datetime subtraction
-    elapsed_duration = dt - start_of_year
-    total_duration = end_of_year - start_of_year
+    # Start of the next year (exclusive end boundary)
+    start_of_next_year = start_of_year.add(years=1)
 
-    # Step 3: Convert durations to microseconds for maximum precision
-    elapsed_us = elapsed_duration.in_microseconds()
-    total_us = total_duration.in_microseconds()
+    # Elapsed and total seconds as floats for precision
+    elapsed_seconds = (dt - start_of_year).total_seconds()
+    total_seconds = (start_of_next_year - start_of_year).total_seconds()
 
-    # Step 4: Clamp elapsed to [0, total] to handle out-of-year inputs robustly
-    if elapsed_us < 0:
-        elapsed_us = 0
-    if elapsed_us > total_us:
-        elapsed_us = total_us
+    # Compute ratio and clamp between 0 and 1
+    ratio = elapsed_seconds / total_seconds
+    if ratio < 0.0:
+        ratio = 0.0
+    elif ratio > 1.0:
+        ratio = 1.0
 
-    # Step 5: Compute percentage of the year that has passed
-    percentage = (elapsed_us / total_us) * 100.0 if total_us > 0 else 0.0
-    return float(percentage)
+    return ratio * 100.0
 
-# Entry point: calculate_year_progress(dt: pendulum.DateTime) -> float
+# Entry point: percentage_of_year_passed(dt: pendulum.DateTime) -> float
 ```

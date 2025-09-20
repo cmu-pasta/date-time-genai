@@ -1,0 +1,55 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and calculate differences.
+
+2. **Get the current date**: We need to know today's date to calculate how many days until the next birthday.
+
+3. **Extract birthday information**: From the birth date, we need to extract the month and day to determine when the birthday occurs each year.
+
+4. **Calculate this year's birthday**: Create a datetime object for the birthday in the current year.
+
+5. **Check if birthday has passed**: If this year's birthday has already occurred, we need to calculate for next year's birthday.
+
+6. **Handle leap year edge case**: If someone was born on February 29th and the current/next year is not a leap year, we need to handle this appropriately.
+
+7. **Calculate the difference**: Subtract today's date from the next birthday date to get the number of days.
+
+```python
+from datetime import datetime
+
+def calculate_days_until_next_birthday(birth_date: datetime) -> int:
+    # Get current date
+    today = datetime.now().date()
+    
+    # Extract birth month and day
+    birth_month = birth_date.month
+    birth_day = birth_date.day
+    
+    # Calculate this year's birthday
+    current_year = today.year
+    
+    # Handle leap year case for Feb 29 births
+    try:
+        this_year_birthday = datetime(current_year, birth_month, birth_day).date()
+    except ValueError:  # Feb 29 in non-leap year
+        # Move to Feb 28 in non-leap years
+        this_year_birthday = datetime(current_year, 2, 28).date()
+    
+    # Check if this year's birthday has already passed
+    if this_year_birthday >= today:
+        next_birthday = this_year_birthday
+    else:
+        # Birthday has passed this year, calculate for next year
+        next_year = current_year + 1
+        try:
+            next_birthday = datetime(next_year, birth_month, birth_day).date()
+        except ValueError:  # Feb 29 in non-leap year
+            next_birthday = datetime(next_year, 2, 28).date()
+    
+    # Calculate the difference in days
+    days_until_birthday = (next_birthday - today).days
+    
+    return days_until_birthday
+
+# Entry point: calculate_days_until_next_birthday(birth_date: datetime) -> int
+```

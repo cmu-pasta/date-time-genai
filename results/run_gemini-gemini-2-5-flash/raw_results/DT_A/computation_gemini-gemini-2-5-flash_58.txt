@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+1.  **Define Epoch Reference Points**: We need to define the `datetime` objects corresponding to the start of the Unix epoch (January 1, 1970, 00:00:00 UTC) and the Windows FileTime epoch (January 1, 1601, 00:00:00 UTC). These will be our reference points. We'll use UTC `datetime` objects to avoid time zone complications.
+2.  **Convert Input Timestamp to `datetime`**: The input `source_timestamp_value` (an `integer` or `float`) represents the number of seconds (or other units, but seconds is common) since the `source_epoch_datetime`. We need to convert this numerical timestamp into an absolute point in time represented by a `datetime` object. This can be done by adding a `timedelta` derived from the `source_timestamp_value` to the `source_epoch_datetime`.
+3.  **Calculate Difference from Target Epoch**: Once we have the absolute `datetime` object, we can find the duration between the `target_epoch_datetime` and this absolute `datetime` object. This duration will represent the new timestamp relative to the target epoch.
+4.  **Convert `timedelta` to Numerical Timestamp**: The difference will be a `timedelta` object. We need to extract the total number of seconds (or other desired units) from this `timedelta` to get the new numerical timestamp. The problem implies "timestamp" which is typically a `float` or `integer` representing seconds since epoch. We'll return it as a `float` for precision, as timestamps often include fractional seconds.
+
+```python
+from datetime import datetime, timedelta, timezone
+
+def convert_timestamp_to_new_epoch(
+    source_timestamp_value: float, 
+    source_epoch_datetime: datetime, 
+    target_epoch_datetime: datetime
+) -> float:
+    """
+    Converts a timestamp from its original epoch to a new target epoch.
+
+    Args:
+        source_timestamp_value: The numerical timestamp (e.g., seconds)
+                                relative to the source epoch.
+        source_epoch_datetime: A datetime object representing the start
+                               of the source epoch (e.g., Unix epoch: Jan 1, 1970 UTC).
+        target_epoch_datetime: A datetime object representing the start
+                               of the target epoch (e.g., Windows epoch: Jan 1, 1601 UTC).
+
+    Returns:
+        The numerical timestamp relative to the target epoch.
+    """
+    # Step 1: Convert the source timestamp value to an absolute datetime object.
+    # We assume source_timestamp_value is in seconds.
+    absolute_datetime = source_epoch_datetime + timedelta(seconds=source_timestamp_value)
+
+    # Step 2: Calculate the difference between the target epoch and the absolute datetime.
+    # This timedelta represents the duration from the target epoch to the point in time.
+    time_difference_from_target_epoch = absolute_datetime - target_epoch_datetime
+
+    # Step 3: Convert the timedelta to the numerical timestamp in seconds.
+    new_timestamp_value = time_difference_from_target_epoch.total_seconds()
+
+    return new_timestamp_value
+
+# Entry point: convert_timestamp_to_new_epoch(source_timestamp_value: float, source_epoch_datetime: datetime, target_epoch_datetime: datetime) -> float
+```

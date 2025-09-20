@@ -1,54 +1,41 @@
 Let's think step by step to solve this problem.
-1. Interpret "work weeks" as the number of full 5-day Monday–Friday blocks contained between two dates.
-2. Use a half-open interval [start, end) to align with typical date differences; if the inputs are reversed, swap them.
-3. Compute the total number of days n = (end - start).days.
-4. Split n into full calendar weeks and a remainder: full_weeks = n // 7, remainder_days = n % 7.
-5. Business days contributed by full weeks are full_weeks * 5.
-6. For the remainder days, count how many are weekdays based on the start weekday.
-7. Sum business days from full weeks and remainder, then divide by 5 using integer division to get full work weeks.
-8. Return the resulting integer.
+1. Import the necessary classes from the datetime module to work with dates.
+2. Define a function that accepts two date inputs representing the start and end.
+3. Ensure the dates are in chronological order by swapping if necessary.
+4. Compute the total number of days between the two dates (end exclusive).
+5. Calculate the total number of weekdays in that span by counting Mon–Fri only.
+6. Convert the total weekdays into the number of full work weeks by integer division by 5.
+7. Return the number of work weeks as an integer.
 
 ```python
-from datetime import date, timedelta
+from datetime import date
 
-def count_work_weeks_between(d1: date, d2: date) -> int:
-    """
-    Calculate the number of full work weeks (Mon-Fri, 5 days) between two dates.
-    The interval is treated as half-open: [start, end), i.e., start is included and end is excluded.
-    If d1 > d2, the dates are swapped.
-    
-    Args:
-        d1: The first date.
-        d2: The second date.
-    Returns:
-        The number of full work weeks (integer) between the two dates.
-    """
-    # Normalize order to ensure start <= end
-    start = d1 if d1 <= d2 else d2
-    end = d2 if d1 <= d2 else d1
+def calculate_work_weeks_between(start: date, end: date) -> int:
+    # Ensure chronological order
+    if end < start:
+        start, end = end, start
 
+    # Total days between dates, end-exclusive
     total_days = (end - start).days
-    if total_days <= 0:
-        return 0
 
-    full_calendar_weeks = total_days // 7
+    # Full weeks and remainder days
+    full_weeks = total_days // 7
     remainder_days = total_days % 7
 
-    # Business days from full calendar weeks
-    business_days = full_calendar_weeks * 5
+    # Weekdays contributed by full weeks
+    weekdays = full_weeks * 5
 
-    # Count weekday days in the remainder segment
-    start_wd = start.weekday()  # 0=Mon .. 6=Sun
-    extra_business = 0
-    for i in range(remainder_days):
-        if (start_wd + i) % 7 < 5:
-            extra_business += 1
+    # Add weekdays from the remainder span
+    start_wd = start.weekday()  # Monday=0 ... Sunday=6
+    i = 0
+    while i < remainder_days:
+        if (start_wd + i) % 7 < 5:  # Mon-Fri are < 5
+            weekdays += 1
+        i += 1
 
-    business_days += extra_business
-
-    # Number of full work weeks (5 business days per work week)
-    work_weeks = business_days // 5
+    # Number of full work weeks (each work week has 5 weekdays)
+    work_weeks = weekdays // 5
     return work_weeks
 
-# Entry point: count_work_weeks_between(d1: date, d2: date) -> int
+# Entry point: calculate_work_weeks_between(start: date, end: date) -> int
 ```

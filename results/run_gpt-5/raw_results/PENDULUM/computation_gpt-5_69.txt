@@ -1,37 +1,28 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with timezone-aware DateTime and Duration types.
-2. Define a function that accepts two pendulum.DateTime instances (potentially in different time zones) and an optional boolean to control absolute/signed difference.
-3. Convert both DateTime inputs to their Unix timestamps (int_timestamp), which are in UTC, ensuring time zones are properly accounted for.
-4. Compute the difference in seconds between the two timestamps.
-5. If requested, take the absolute value to get a non-negative duration.
-6. Build and return a pendulum.Duration from the computed seconds.
+1. Import the pendulum library to work with timezone-aware datetimes.
+2. Define a function that accepts two pendulum.DateTime objects, which may be in different time zones.
+3. Convert both datetimes to a common reference timezone (UTC) to accurately account for timezone differences.
+4. Subtract the normalized datetimes to obtain a pendulum.Duration representing the time difference.
+5. Return the resulting pendulum.Duration.
 
 ```python
 import pendulum
 
-def timezone_aware_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime, absolute: bool = True) -> pendulum.Duration:
+def timezone_aware_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration:
     """
-    Calculate the time difference between two timezone-aware pendulum.DateTime objects.
-    The computation accounts for their respective time zones by comparing their Unix timestamps.
-    
-    Parameters:
-        dt1 (pendulum.DateTime): The first datetime.
-        dt2 (pendulum.DateTime): The second datetime.
-        absolute (bool): If True, returns the absolute difference; if False, returns a signed duration
-                         (positive if dt2 occurs after dt1, negative otherwise).
-    
-    Returns:
-        pendulum.Duration: The time difference as a Duration.
+    Calculate the time difference between two pendulum.DateTime values while
+    accounting for their respective time zones. The result preserves the sign
+    (dt2 - dt1) and is returned as a pendulum.Duration.
     """
-    # Convert both datetimes to their UTC-based Unix timestamps to account for time zones
-    seconds_diff = dt2.int_timestamp - dt1.int_timestamp
+    # Step 1: Normalize both datetimes to UTC to account for timezone offsets and DST
+    dt1_utc: pendulum.DateTime = dt1.in_timezone("UTC")
+    dt2_utc: pendulum.DateTime = dt2.in_timezone("UTC")
+    
+    # Step 2: Compute the difference as a pendulum.Duration (signed)
+    difference: pendulum.Duration = dt2_utc - dt1_utc
+    
+    # Step 3: Return the duration
+    return difference
 
-    # Apply absolute value if requested
-    if absolute:
-        seconds_diff = abs(seconds_diff)
-
-    # Construct a Duration representing the difference
-    return pendulum.duration(seconds=seconds_diff)
-
-# Entry point: timezone_aware_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime, absolute: bool = True) -> pendulum.Duration
+# Entry point: timezone_aware_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration
 ```

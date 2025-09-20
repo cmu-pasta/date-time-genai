@@ -1,23 +1,17 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module.
-2. Define business hours: start at 9:00 (inclusive) and end at 17:00 (exclusive).
-3. Accept a time input and align the business hour bounds to the same tzinfo as the input to ensure valid comparisons.
-4. Return True if the time falls within the business hours window; otherwise, return False.
+1. Import the required class from the datetime module to work with time values.
+2. Define a function that accepts a time object as input.
+3. Extract the hour, minute, second, and microsecond components from the input time.
+4. Compare these components against the business hours range: inclusive of 09:00:00.000000 and exclusive of 17:00:00.000000.
+5. Return a boolean indicating whether the input time falls within business hours.
 
 ```python
 from datetime import time
 
 def is_within_business_hours(t: time) -> bool:
-    """
-    Determine if a given time falls within business hours: 09:00:00 (inclusive) to 17:00:00 (exclusive).
-    The comparison respects tzinfo: if the input time has tzinfo, the bounds are created with the same tzinfo.
-    """
-    # Define business hour bounds, aligned with the input time's tzinfo if present
-    start = time(9, 0, 0, tzinfo=t.tzinfo) if t.tzinfo else time(9, 0, 0)
-    end = time(17, 0, 0, tzinfo=t.tzinfo) if t.tzinfo else time(17, 0, 0)
-    
-    # Check if the time is within [09:00:00, 17:00:00)
-    return start <= t < end
+    # Business hours are from 09:00:00 (inclusive) to 17:00:00 (exclusive)
+    hmsu = (t.hour, t.minute, t.second, t.microsecond)
+    return (9, 0, 0, 0) <= hmsu and hmsu < (17, 0, 0, 0)
 
 # Entry point: is_within_business_hours(t: time) -> bool
 ```

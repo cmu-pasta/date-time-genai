@@ -1,0 +1,54 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need the `datetime` module from Python's standard library to work with dates and `timedelta` for date arithmetic.
+2.  **Define the function**: Create a function that accepts one `datetime` object as input, representing the given date.
+3.  **Determine the last day of the current month**: To find the end of the month, we can go to the first day of the *next* month and then subtract one day. Special handling is needed for December to roll over the year correctly.
+4.  **Initialize a counter**: A variable to keep track of the number of business days.
+5.  **Iterate through the days**: Loop from the given input date up to and including the last day of the current month.
+6.  **Check for business days**: Inside the loop, for each day, determine if it's a business day. A business day is typically Monday through Friday. The `weekday()` method of a `datetime` object returns 0 for Monday and 6 for Sunday. So, a day is a business day if its `weekday()` value is less than 5 (i.e., 0, 1, 2, 3, or 4).
+7.  **Increment the counter**: If the current day in the loop is a business day, increment the business day counter.
+8.  **Return the total**: After iterating through all relevant days, return the final count as an integer.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_business_days_remaining(dt_current: datetime) -> int:
+    # Step 1: Determine the last day of the current month
+    # To get the first day of the next month:
+    # If it's December, the next month is January of the next year.
+    if dt_current.month == 12:
+        next_month_year = dt_current.year + 1
+        next_month = 1
+    else:
+        next_month_year = dt_current.year
+        next_month = dt_current.month + 1
+    
+    # Create a datetime object for the first day of the next month
+    first_day_of_next_month = datetime(next_month_year, next_month, 1)
+    
+    # Subtract one day to get the last day of the current month
+    last_day_of_month = first_day_of_next_month - timedelta(days=1)
+    
+    # Step 2: Initialize a counter for business days
+    business_days_count = 0
+    
+    # Step 3: Iterate from the current date up to and including the last day of the month
+    current_day_iterator = dt_current
+    while current_day_iterator <= last_day_of_month:
+        # Step 4: Check if the current day is a business day (Monday to Friday)
+        # weekday() returns 0 for Monday, 1 for Tuesday, ..., 4 for Friday, 5 for Saturday, 6 for Sunday.
+        if current_day_iterator.weekday() < 5:  # Monday (0) to Friday (4)
+            business_days_count += 1
+        
+        # Move to the next day
+        current_day_iterator += timedelta(days=1)
+        # Ensure we only compare dates, not times when incrementing across midnight
+        # Or, just ensure the iterator is a date-only object if only dates matter.
+        # For simplicity and sticking to datetime, we just add timedelta.
+        # The time component won't affect weekday() or date comparisons here.
+            
+    # Step 5: Return the total count
+    return business_days_count
+
+# Entry point: calculate_business_days_remaining(dt_current: datetime) -> int
+```

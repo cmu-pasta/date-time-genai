@@ -1,28 +1,20 @@
 Let's think step by step to solve this problem.
-1. Use a well-known astronomical polynomial approximation (Meeus) to compute the Terrestrial Time (TT) Julian Ephemeris Date (JDE) of the June (Northern Hemisphere) solstice for a given year.
-2. Convert the computed JDE to a UTC-based datetime by approximating UTC ≈ TT for the purpose of determining the calendar date (the difference is on the order of a couple of minutes and does not affect the date in practice).
-3. Convert the Julian Date to a Python datetime using the relation JD(UTC) = 2440587.5 at Unix epoch 1970-01-01 00:00:00 UTC.
-4. Return only the date component as the summer solstice date.
+1. Model the June (northern-hemisphere summer) solstice using a well-known astronomical approximation (Meeus): compute its Julian Ephemeris Day (JDE) from the year via a polynomial in T = (year - 2000) / 1000.
+2. Treat JDE approximately as JD (difference to UTC is about a minute and does not affect the calendar date for this purpose).
+3. Convert the resulting Julian Day to a proleptic Gregorian calendar datetime using a standard JD-to-Gregorian algorithm.
+4. Return only the calendar date component as the solstice date.
 
 ```python
 from datetime import datetime, timedelta, date
 
-def summer_solstice_date(year: int) -> date:
+def _jde_june_solstice(year: int) -> float:
     """
-    Compute the approximate date of the June (Northern Hemisphere) summer solstice for a given Gregorian year.
-    The computation uses a Meeus-style polynomial for the June solstice JDE (TT) and converts to a UTC date.
-    Returns a date object representing the solstice date in UTC.
-    
-    Valid for years reasonably close to the modern era (e.g., within a few millennia of year 2000).
+    Approximate JDE for the June (northern summer) solstice for a given year.
+    Source: Jean Meeus, Astronomical Algorithms (polynomial approximation).
     """
-    # Step 1: Compute T in thousands of years from J2000.0
-    # T = (year - 2000) / 1000 per Meeus for solstice/equinox polynomials
     T = (year - 2000) / 1000.0
-
-    # Step 2: Polynomial approximation for June solstice JDE (Terrestrial Time)
-    # Source: Meeus-style polynomial (approximation for -1000 to +3000)
-    # JDE0 = 2451716.56767 + 365241.62603*T + 0.00325*T^2 + 0.00888*T^3 - 0.00030*T^4
-    JDE0 = (
+    # JDE0 for June solstice
+    return (
         2451716.56767
         + 365241.62603 * T
         + 0.00325 * (T ** 2)
@@ -30,16 +22,63 @@ def summer_solstice_date(year: int) -> date:
         - 0.00030 * (T ** 4)
     )
 
-    # Step 3: Convert JDE (TT) to an approximate UTC datetime.
-    # For date determination, we approximate UTC ≈ TT (differences are minutes and won't change the date).
-    JD_UTC_approx = JDE0
+def _jd_to_datetime_utc(jd: float) -> datetime:
+    """
+    Convert Julian Day (JD) to a proleptic Gregorian datetime (UTC-approx).
+    JD day starts at noon; this function returns a naive datetime representing UTC.
+    """
+    # Algorithm adapted from Meeus; uses integer operations only (no external libs).
+    jd += 0.5
+    Z = int(jd)
+    F = jd - Z
 
-    # Convert Julian Date to datetime: JD(UTC) = 2440587.5 at 1970-01-01 00:00:00 UTC
-    days_since_unix_epoch = JD_UTC_approx - 2440587.5
-    dt_utc = datetime(1970, 1, 1) + timedelta(days=days_since_unix_epoch)
+    if Z < 2299161:
+        A = Z
+    else:
+        alpha = int((Z - 1867216.25) / 36524.25)
+        A = Z + 1 + alpha - int(alpha / 4)
 
-    # Step 4: Return only the date component
+    B = A + 1524
+    C = int((B - 122.1) / 365.25)
+    D = int(365.25 * C)
+    E = int((B - D) / 30.6001)
+
+    day_float = B - D - int(30.6001 * E) + F
+    day = int(day_float)
+    frac = day_float - day
+
+    if E < 14:
+        month = E - 1
+    else:
+        month = E - 13
+
+    if month > 2:
+        year = C - 4716
+    else:
+        year = C - 4715
+
+    # Convert fractional day to time
+    total_seconds = int(round(frac * 86400.0))
+
+    # Handle rounding up to next day
+    carry = 0
+    if total_seconds >= 86400:
+        total_seconds -= 86400
+        carry = 1
+
+    # Build datetime and add seconds
+    dt = datetime(year, month, day) + timedelta(days=carry, seconds=total_seconds)
+    return dt
+
+def find_summer_solstice_date(year: int) -> date:
+    """
+    Find the date of the northern-hemisphere summer (June) solstice for a given year.
+    Returns the calendar date (UTC) on which the solstice occurs.
+    """
+    jde = _jde_june_solstice(year)
+    # Approximate TT ~ UTC for date purposes (difference ~ minutes, not affecting date normally)
+    dt_utc = _jd_to_datetime_utc(jde)
     return dt_utc.date()
 
-# Entry point: summer_solstice_date(year: int) -> date
+# Entry point: find_summer_solstice_date(year: int) -> date
 ```

@@ -1,22 +1,20 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with date and time objects.
-2. Define a function that accepts two pendulum.DateTime inputs representing the start and end times.
-3. Compute the absolute difference between the two DateTime values as a pendulum.Duration.
-4. Convert that duration to total minutes and return it as an integer.
+1. Import the pendulum library to work with date and time.
+2. Define a function that accepts two pendulum.DateTime inputs representing the start and end of the period.
+3. Compute the time difference using pendulum's diff method and convert it to total minutes.
+4. Ensure the result is non-negative by taking the absolute value.
+5. Return the total minutes as an integer.
 
 ```python
 import pendulum
 
-def total_minutes_between(start: pendulum.DateTime, end: pendulum.DateTime) -> int:
-    """
-    Calculate the total minutes between two pendulum.DateTime instances.
-    The result is always non-negative.
-    """
-    # Get the absolute duration between the two datetimes
-    duration: pendulum.Duration = end.diff(start, absolute=True)
-    # Convert the duration to total minutes
-    minutes: int = duration.in_minutes()
-    return minutes
+def calculate_total_minutes(start: pendulum.DateTime, end: pendulum.DateTime) -> int:
+    # Compute the duration between the two DateTime objects
+    duration = end.diff(start)
+    # Convert the duration to total minutes and ensure it's non-negative
+    total_minutes = abs(duration.in_minutes())
+    # Return the total minutes as an integer
+    return total_minutes
 
-# Entry point: total_minutes_between(start: pendulum.DateTime, end: pendulum.DateTime) -> int
+# Entry point: calculate_total_minutes(start: pendulum.DateTime, end: pendulum.DateTime) -> int
 ```

@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts an integer `year` as input.
+3.  **Initialize a counter**: Set `sunday_count` to 0. This variable will store the number of Sundays found.
+4.  **Determine the first day of February**: Create a `pendulum.Date` object for February 1st of the given year.
+5.  **Iterate through February**: Loop day by day, starting from February 1st, as long as the current date remains in February of the given year.
+6.  **Check for Sunday**: Inside the loop, for each day, check if its `day_of_week` is 7 (which represents Sunday in `pendulum`, where 1 is Monday and 7 is Sunday).
+7.  **Increment counter**: If the day is a Sunday, increment `sunday_count`.
+8.  **Advance to the next day**: Move to the next day in the iteration.
+9.  **Return the count**: After the loop finishes (i.e., we've gone past February), return the total `sunday_count`.
+
+```python
+import pendulum
+
+def count_february_sundays(year: int) -> int:
+    # Step 3: Initialize a counter for Sundays
+    sunday_count = 0
+
+    # Step 4: Determine the first day of February
+    # pendulum automatically handles leap years for the last day of February
+    current_date = pendulum.date(year, 2, 1)
+
+    # Step 5: Loop through February
+    # Continue as long as the current_date is still in February of the given year
+    while current_date.month == 2:
+        # Step 6: Check if the current day is a Sunday (day_of_week 7)
+        if current_date.day_of_week == pendulum.SUNDAY: # pendulum.SUNDAY is a constant for 7
+            # Step 7: Increment the counter if it's a Sunday
+            sunday_count += 1
+        
+        # Step 8: Advance to the next day
+        current_date = current_date.add(days=1)
+    
+    # Step 9: Return the total count of Sundays in February
+    return sunday_count
+
+# Entry point: count_february_sundays(year: int) -> int
+```

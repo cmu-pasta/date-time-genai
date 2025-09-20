@@ -1,57 +1,61 @@
 Let's think step by step to solve this problem.
 
-1. **Import necessary libraries**: We need the `datetime` module for date handling and the `math` module for astronomical calculations involving trigonometric functions.
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and times, and basic math operations for astronomical calculations.
 
-2. **Define the function**: Create a function that accepts a date and geographic coordinates (latitude and longitude) as input parameters.
+2. **Define the function**: Create a function that accepts a date, latitude, and longitude as inputs.
 
-3. **Calculate day of year**: Determine which day of the year the given date represents, as this affects the sun's position.
+3. **Implement sunrise calculation**: Use simplified astronomical formulas to calculate sunrise time:
+   - Calculate the day of year
+   - Compute solar declination angle
+   - Calculate hour angle for sunrise
+   - Convert to local solar time
+   - Adjust for longitude offset
 
-4. **Calculate solar declination**: Compute the angle between the sun's rays and the Earth's equatorial plane for the given day.
-
-5. **Calculate hour angle**: Determine the angle that corresponds to sunrise for the given latitude and solar declination.
-
-6. **Calculate sunrise time**: Convert the hour angle to actual time and combine it with the input date to create the final datetime object.
-
-7. **Return the result**: Return the sunrise time as a datetime object.
+4. **Return the result**: Return the sunrise time as a datetime object.
 
 ```python
-from datetime import datetime, time
+from datetime import datetime, timedelta
 import math
 
 def calculate_sunrise_time(date: datetime, latitude: float, longitude: float) -> datetime:
     # Step 1: Extract day of year
     day_of_year = date.timetuple().tm_yday
     
-    # Step 2: Calculate solar declination (in radians)
-    # Approximate formula for solar declination
-    declination = math.radians(23.45 * math.sin(math.radians(360 * (284 + day_of_year) / 365)))
+    # Step 2: Calculate solar declination (simplified formula)
+    # Solar declination = 23.45 * sin(360 * (284 + day_of_year) / 365)
+    declination_angle = 23.45 * math.sin(math.radians(360 * (284 + day_of_year) / 365))
     
     # Step 3: Convert latitude to radians
-    lat_rad = math.radians(latitude)
+    lat_radians = math.radians(latitude)
+    decl_radians = math.radians(declination_angle)
     
     # Step 4: Calculate hour angle for sunrise
     # cos(hour_angle) = -tan(latitude) * tan(declination)
-    cos_hour_angle = -math.tan(lat_rad) * math.tan(declination)
+    cos_hour_angle = -math.tan(lat_radians) * math.tan(decl_radians)
     
-    # Check if sun rises (polar regions might not have sunrise)
-    if cos_hour_angle < -1 or cos_hour_angle > 1:
-        # Handle polar day/night cases - return noon as approximation
-        sunrise_hour = 12.0
-    else:
-        hour_angle = math.acos(cos_hour_angle)
-        # Convert hour angle to hours (sunrise occurs when hour angle is negative)
-        sunrise_hour = 12.0 - (hour_angle * 12.0 / math.pi)
+    # Check if sun rises (polar day/night conditions)
+    if cos_hour_angle > 1:
+        cos_hour_angle = 1  # No sunrise (polar night)
+    elif cos_hour_angle < -1:
+        cos_hour_angle = -1  # Midnight sun (polar day)
     
-    # Step 5: Apply longitude correction (4 minutes per degree)
-    longitude_correction = longitude / 15.0  # 15 degrees = 1 hour
+    # Hour angle in radians
+    hour_angle = math.acos(cos_hour_angle)
+    
+    # Step 5: Convert hour angle to hours
+    sunrise_hour = 12 - (hour_angle * 180 / math.pi) / 15
+    
+    # Step 6: Adjust for longitude (4 minutes per degree)
+    longitude_correction = longitude / 15
     local_sunrise_hour = sunrise_hour - longitude_correction
     
-    # Step 6: Convert to hours and minutes
+    # Step 7: Convert to datetime
     hours = int(local_sunrise_hour)
     minutes = int((local_sunrise_hour - hours) * 60)
+    seconds = int(((local_sunrise_hour - hours) * 60 - minutes) * 60)
     
-    # Step 7: Create and return datetime object
-    sunrise_time = datetime(date.year, date.month, date.day, hours, minutes)
+    # Create sunrise datetime
+    sunrise_time = datetime(date.year, date.month, date.day, hours, minutes, seconds)
     
     return sunrise_time
 

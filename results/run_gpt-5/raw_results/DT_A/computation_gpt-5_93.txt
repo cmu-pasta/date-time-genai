@@ -1,79 +1,105 @@
 Let's think step by step to solve this problem.
-1. Normalize the input datetime to UTC. If the datetime is naive (no tzinfo), treat it as UTC.
-2. Convert the UTC datetime to Julian Date (JD) using the Unix epoch relationship: JD = seconds_since_unix_epoch / 86400 + 2440587.5.
-3. Compute Julian centuries since J2000.0: T = (JD - 2451545.0) / 36525.
-4. Compute the Greenwich Mean Sidereal Time (GMST) in degrees using the IAU 2006 approximation: GMST = 280.46061837 + 360.98564736629*(JD - 2451545.0) + 0.000387933*T^2 - (T^3)/38710000.
-5. Normalize GMST degrees to the [0, 360) range.
-6. Compute Local Sidereal Time (LST) in degrees by adding the observer’s longitude in degrees (east positive) to GMST and normalize to [0, 360).
-7. Convert LST degrees to sidereal hours by dividing by 15 and return the result in the [0, 24) range.
+1. Normalize the input datetime to UTC. If the datetime is timezone-aware, convert it to UTC; if naive, assume it is already in UTC.
+2. Compute the Julian Date (JD) corresponding to the UTC datetime, including the fractional day contribution from time-of-day.
+3. Compute the number of days (including fraction) since the J2000.0 epoch: D = JD - 2451545.0.
+4. Compute the Greenwich Mean Sidereal Time (GMST) in hours using the standard approximation: GMST = 18.697374558 + 24.06570982441908 * D.
+5. Convert GMST to Local Sidereal Time (LST) by adding the longitude in hours: LST = GMST + longitude_degrees / 15.0.
+6. Normalize LST to the range [0, 24) hours using modulo arithmetic.
+7. Convert the LST hours into a datetime.time object (hours, minutes, seconds, microseconds) and return it.
 
 ```python
-from datetime import datetime, timezone
+from datetime import datetime, timezone, time
 
-def _normalize_angle_deg(angle: float) -> float:
-    """
-    Normalize an angle in degrees to the [0, 360) interval.
-    """
-    angle_mod = angle % 360.0
-    # Handle potential negative modulo results explicitly (though % handles it in Python)
-    if angle_mod < 0:
-        angle_mod += 360.0
-    return angle_mod
+def _to_utc(dt: datetime) -> datetime:
+    # Convert to UTC; if naive, assume it's already UTC
+    if dt.tzinfo is not None:
+        return dt.astimezone(timezone.utc)
+    return dt
 
-def _julian_date_from_datetime_utc(dt_utc: datetime) -> float:
-    """
-    Compute the Julian Date from a UTC datetime using the Unix epoch relation.
-    JD = (seconds since 1970-01-01T00:00:00Z)/86400 + 2440587.5
-    """
-    # dt_utc must be timezone-aware in UTC
-    unix_seconds = dt_utc.timestamp()
-    jd = (unix_seconds / 86400.0) + 2440587.5
-    return jd
+def _julian_date(dt_utc: datetime) -> float:
+    # Compute Julian Date for a UTC datetime (including fractional day)
+    year = dt_utc.year
+    month = dt_utc.month
+    day = dt_utc.day
 
-def calculate_sidereal_time(dt: datetime, longitude_degrees: float) -> float:
-    """
-    Calculate the Local Sidereal Time (LST) for a given datetime and longitude.
+    hour = dt_utc.hour
+    minute = dt_utc.minute
+    second = dt_utc.second
+    microsecond = dt_utc.microsecond
 
-    Inputs:
-    - dt: datetime (naive treated as UTC; aware will be converted to UTC)
-    - longitude_degrees: float, geographic longitude in degrees (east positive, west negative)
-
-    Output:
-    - float: Local Sidereal Time in sidereal hours within [0, 24)
-    """
-    # Step 1: Ensure the datetime is in UTC
-    if dt.tzinfo is None:
-        # Treat naive datetime as UTC by assumption
-        dt_utc = dt.replace(tzinfo=timezone.utc)
-    else:
-        dt_utc = dt.astimezone(timezone.utc)
-
-    # Step 2: Compute Julian Date
-    jd = _julian_date_from_datetime_utc(dt_utc)
-
-    # Step 3: Julian centuries since J2000.0
-    T = (jd - 2451545.0) / 36525.0
-
-    # Step 4: Compute GMST in degrees using IAU approximation
-    gmst_deg = (
-        280.46061837
-        + 360.98564736629 * (jd - 2451545.0)
-        + 0.000387933 * (T ** 2)
-        - (T ** 3) / 38710000.0
+    # Fractional day
+    day_fraction = (
+        (hour / 24.0)
+        + (minute / 1440.0)
+        + ((second + microsecond / 1_000_000.0) / 86400.0)
     )
-    gmst_deg = _normalize_angle_deg(gmst_deg)
 
-    # Step 5: Local Sidereal Time in degrees (east longitudes positive)
-    lst_deg = _normalize_angle_deg(gmst_deg + longitude_degrees)
+    # Shift months so that March = 3 ... January = 13, February = 14 of previous year
+    if month <= 2:
+        year_adj = year - 1
+        month_adj = month + 12
+    else:
+        year_adj = year
+        month_adj = month
 
-    # Step 6: Convert degrees to sidereal hours
-    lst_hours = lst_deg / 15.0
-    if lst_hours >= 24.0:
-        lst_hours -= 24.0
-    elif lst_hours < 0.0:
-        lst_hours += 24.0
+    A = int(year_adj / 100)
+    B = 2 - A + int(A / 4)
 
-    return lst_hours
+    # Note: int(x) truncates toward zero; here all terms are positive, so it acts as floor
+    jd_integer = (
+        int(365.25 * (year_adj + 4716))
+        + int(30.6001 * (month_adj + 1))
+        + day
+        + B
+        - 1524
+    )
 
-# Entry point: calculate_sidereal_time(dt: datetime, longitude_degrees: float) -> float
+    # The standard JD uses .5 offset to begin days at noon UT
+    JD = jd_integer - 0.5 + day_fraction
+    return JD
+
+def calculate_sidereal_time(dt: datetime, longitude_degrees: float) -> time:
+    """
+    Calculate Local Sidereal Time for the given datetime and longitude.
+    - dt: datetime (timezone-aware will be converted to UTC; naive assumed UTC)
+    - longitude_degrees: float (east positive, west negative)
+    Returns: datetime.time representing LST (in sidereal hours/minutes/seconds)
+    """
+    dt_utc = _to_utc(dt)
+    JD = _julian_date(dt_utc)
+    D = JD - 2451545.0  # Days since J2000.0
+
+    # GMST in hours (approximation suitable for many applications)
+    GMST_hours = 18.697374558 + 24.06570982441908 * D
+
+    # Local Sidereal Time (in hours), longitude east positive
+    LST_hours = GMST_hours + (longitude_degrees / 15.0)
+
+    # Normalize to [0, 24)
+    LST_hours = LST_hours % 24.0
+
+    # Convert fractional hours to time components
+    h = int(LST_hours)
+    rem_min = (LST_hours - h) * 60.0
+    m = int(rem_min)
+    rem_sec = (rem_min - m) * 60.0
+    s = int(rem_sec)
+    us = int(round((rem_sec - s) * 1_000_000))
+
+    # Handle rounding overflow (e.g., 59.999999 -> 60.000000)
+    if us >= 1_000_000:
+        us -= 1_000_000
+        s += 1
+    if s >= 60:
+        s -= 60
+        m += 1
+    if m >= 60:
+        m -= 60
+        h += 1
+    if h >= 24:
+        h -= 24
+
+    return time(hour=h, minute=m, second=s, microsecond=us)
+
+# Entry point: calculate_sidereal_time(dt: datetime, longitude_degrees: float) -> time
 ```

@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need `pendulum` to work with dates.
+2.  **Define the function signature**: The function will accept an integer `year` and return a `pendulum.Date` object.
+3.  **Determine the starting point**: Columbus Day is in October, so we'll start by creating a `pendulum.Date` object for October 1st of the given year.
+4.  **Find the first Monday of October**: We can do this by checking the weekday of October 1st.
+    *   If October 1st is a Monday, that's our first Monday.
+    *   If October 1st is not a Monday, we calculate how many days to add to reach the first Monday. For example, if October 1st is Tuesday (day of week 1), we need to add 6 days to get to the first Monday (Monday is day of week 0). We can use the formula `(pendulum.MONDAY - day_of_week + 7) % 7` to get the days to add.
+5.  **Calculate the second Monday**: Once we have the date of the first Monday of October, we add one week (7 days) to it to get the date of the second Monday.
+6.  **Return the result**: The calculated date will be Columbus Day.
+
+```python
+import pendulum
+
+def find_columbus_day(year: int) -> pendulum.Date:
+    # Step 1: Create a pendulum.Date object for October 1st of the given year.
+    october_first = pendulum.date(year, 10, 1)
+
+    # Step 2: Find the first Monday of October.
+    # We calculate the difference in days from October 1st to the next (or current) Monday.
+    # pendulum.MONDAY is 0, Tuesday is 1, ..., Sunday is 6.
+    # (0 - current_day_of_week + 7) % 7 gives days to add to reach the *next* Monday,
+    # or 0 if current day is Monday.
+    
+    # Calculate days to add to get to the first Monday on or after october_first
+    # Example: If october_first.day_of_week (e.g., Tuesday=1), then (0 - 1 + 7) % 7 = 6 days.
+    # If october_first.day_of_week (e.g., Monday=0), then (0 - 0 + 7) % 7 = 0 days.
+    days_to_add_for_first_monday = (pendulum.MONDAY - october_first.day_of_week + 7) % 7
+    first_monday_of_october = october_first.add(days=days_to_add_for_first_monday)
+
+    # Step 3: Add one week (7 days) to get the second Monday of October.
+    columbus_day = first_monday_of_october.add(weeks=1)
+
+    # Step 4: Return the result as a pendulum.Date object.
+    return columbus_day
+
+# Entry point: find_columbus_day(year: int) -> pendulum.Date
+```

@@ -1,9 +1,10 @@
 Let's think step by step to solve this problem.
-1. Understand MJD: Modified Julian Date (MJD) is defined as JD - 2400000.5.
-2. Use a reliable reference: The Unix epoch (1970-01-01 00:00:00 UTC) corresponds to JD 2440587.5, hence MJD at Unix epoch is 40587.0.
-3. Convert the input datetime to UTC to ensure consistent results. If naive (no tzinfo), assume UTC.
-4. Compute the total seconds since the Unix epoch and convert seconds to days by dividing by 86400.
-5. Add 40587.0 to get the MJD and return it as a float.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts a datetime input.
+3. Normalize the input to UTC: if timezone-aware, convert to UTC; if naive, assume UTC.
+4. Compute the total seconds since the Unix epoch (1970-01-01 00:00:00 UTC) using datetime arithmetic.
+5. Convert seconds to days and add the MJD offset (40587.0) to obtain the Modified Julian Date.
+6. Return the MJD as a float.
 
 ```python
 from datetime import datetime, timezone
@@ -11,27 +12,26 @@ from datetime import datetime, timezone
 def datetime_to_mjd(dt: datetime) -> float:
     """
     Convert a datetime to Modified Julian Date (MJD).
-    
-    Assumptions:
-    - If `dt` is naive (no tzinfo), it is interpreted as UTC.
-    - Leap seconds are ignored (standard civil time handling).
-    
-    Returns:
-    - MJD as a float.
+    - If dt is timezone-aware, it is converted to UTC.
+    - If dt is naive, it is assumed to be in UTC.
+    Returns a float MJD.
     """
-    # Step 1: Normalize to UTC (assume naive datetimes are UTC)
+    # Step 1: Normalize to UTC
     if dt.tzinfo is None:
         dt_utc = dt.replace(tzinfo=timezone.utc)
     else:
         dt_utc = dt.astimezone(timezone.utc)
 
-    # Step 2: Compute seconds since Unix epoch (1970-01-01T00:00:00Z)
-    epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
-    seconds_since_epoch = (dt_utc - epoch).total_seconds()
+    # Step 2: Compute seconds since Unix epoch in UTC using datetime arithmetic
+    unix_epoch_utc = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    seconds_since_epoch = (dt_utc - unix_epoch_utc).total_seconds()
 
-    # Step 3: Convert seconds to days and add MJD at Unix epoch (40587.0)
-    mjd = seconds_since_epoch / 86400.0 + 40587.0
-    return mjd
+    # Step 3: Convert to Modified Julian Date
+    # MJD = 40587.0 + (seconds since epoch)/86400
+    mjd = 40587.0 + (seconds_since_epoch / 86400.0)
+
+    # Step 4: Return the result as a float
+    return float(mjd)
 
 # Entry point: datetime_to_mjd(dt: datetime) -> float
 ```

@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary types**: We will need `date` and `timedelta` from the `datetime` module.
+2.  **Define the function**: Create a function that accepts an integer representing the `year`.
+3.  **Find January 1st**: Create a `date` object for January 1st of the given year.
+4.  **Calculate the first Monday of January**: Determine the day of the week for January 1st. Then, calculate how many days need to be added to reach the first Monday.
+    *   `weekday()` returns an integer where Monday is 0 and Sunday is 6.
+    *   To find the first Monday: `days_until_first_monday = (0 - jan_1_date.weekday() + 7) % 7`. This formula ensures we get to the first Monday on or after Jan 1.
+    *   Add this `timedelta` to January 1st to get the date of the first Monday.
+5.  **Calculate the third Monday**: Since the first Monday is identified, the third Monday will be exactly two weeks (14 days) after the first Monday. Add a `timedelta` of 14 days to the first Monday's date.
+6.  **Return the result**: The function should return the calculated `date` object.
+
+```python
+from datetime import date, timedelta
+
+def find_mlk_day(year: int) -> date:
+    # Step 1: Create a date object for January 1st of the given year.
+    jan_1_date = date(year, 1, 1)
+    
+    # Step 2: Determine the day of the week for January 1st.
+    # Monday is 0, Sunday is 6. We are looking for the 0 (Monday).
+    jan_1_weekday = jan_1_date.weekday()
+    
+    # Step 3: Calculate how many days to add to jan_1_date to get the first Monday.
+    # If jan_1_weekday is 0 (Monday), days_to_add will be 0.
+    # If jan_1_weekday is 1 (Tuesday), days_to_add will be 6.
+    # (0 - 1 + 7) % 7 = 6
+    # If jan_1_weekday is 6 (Sunday), days_to_add will be 1.
+    # (0 - 6 + 7) % 7 = 1
+    days_to_add_for_first_monday = (0 - jan_1_weekday + 7) % 7
+    
+    # Step 4: Calculate the date of the first Monday in January.
+    first_monday = jan_1_date + timedelta(days=days_to_add_for_first_monday)
+    
+    # Step 5: Martin Luther King Jr. Day is the third Monday of January.
+    # This is exactly two weeks (14 days) after the first Monday.
+    mlk_day = first_monday + timedelta(weeks=2)
+    
+    # Step 6: Return the date of MLK Day.
+    return mlk_day
+
+# Entry point: find_mlk_day(year: int) -> date
+```

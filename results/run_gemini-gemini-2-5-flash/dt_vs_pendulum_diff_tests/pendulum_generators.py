@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from zoneinfo import available_timezones
 
 import pendulum
 from hypothesis import strategies as st
@@ -89,3 +90,14 @@ def float_strategy(draw):
         )
     )
     return f
+
+
+@st.composite
+def timezone_strategy(draw):
+    """
+    Hypothesis strategy that yields pendulum.Timezone instances
+    from the full set of IANA timezones available in zoneinfo.
+    """
+    tz_names = sorted(available_timezones())
+    tz_name = draw(st.sampled_from(tz_names))
+    return pendulum.timezone(tz_name)

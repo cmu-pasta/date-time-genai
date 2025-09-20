@@ -1,40 +1,51 @@
 Let's think step by step to solve this problem.
-1. Normalize the order of inputs so start <= end to handle any order of datetimes.
-2. Iterate from the start datetime to the end datetime in day-sized chunks: [cursor, start_of_next_day) intersected with [start, end).
-3. For each chunk, if the day is a weekday (not weekend), add the duration of that chunk to the total; otherwise, skip it.
-4. Return the accumulated working time as a pendulum.Duration.
+1. Import the pendulum library to work with DateTime and Duration types.
+2. Define a function that accepts two pendulum.DateTime inputs.
+3. Normalize the order of inputs so the start is not after the end.
+4. If both datetimes fall on the same calendar day, return their difference only if it’s a weekday; otherwise, return zero duration.
+5. For different days, add:
+   - The remaining time on the first day if it’s a weekday.
+   - One full day for each intermediate weekday.
+   - The elapsed time on the last day if it’s a weekday.
+6. Return the accumulated pendulum.Duration as the total working hours excluding weekends.
 
 ```python
 import pendulum
 
 def working_hours_between(start: pendulum.DateTime, end: pendulum.DateTime) -> pendulum.Duration:
     """
-    Calculate the working time between two datetimes excluding weekends.
-    Working time includes all elapsed time on weekdays (Monday-Friday) within the interval.
-    
-    Inputs:
-      - start: pendulum.DateTime
-      - end: pendulum.DateTime
-    Output:
-      - pendulum.Duration representing total working time
+    Calculate the working time between two datetimes, counting only weekday hours (Mon-Fri),
+    and excluding all weekend time. Returns a pendulum.Duration.
     """
     # Ensure chronological order
-    if end < start:
+    if start > end:
         start, end = end, start
 
-    cursor = start
-    total = pendulum.duration(seconds=0)
+    total = pendulum.duration()  # zero duration
 
-    # Process in [cursor, start_of_next_day) slices until reaching 'end'
-    while cursor < end:
-        start_of_next_day = cursor.start_of_day().add(days=1)
-        next_boundary = end if end < start_of_next_day else start_of_next_day
+    # If same calendar day
+    if start.date() == end.date():
+        if start.weekday() <= 4:  # Mon-Fri -> 0..4
+            total = total + (end - start)
+        return total
 
-        # Only count time on weekdays
-        if not cursor.is_weekend():
-            total += (next_boundary - cursor)
+    # First day portion (from start to midnight next day) if it's a weekday
+    if start.weekday() <= 4:
+        end_of_first = start.start_of('day').add(days=1)
+        chunk_end = end if end < end_of_first else end_of_first
+        total = total + (chunk_end - start)
 
-        cursor = next_boundary
+    # Full intermediate days (from the day after start's day up to the day before end's day)
+    day_cursor = start.start_of('day').add(days=1)
+    last_midnight = end.start_of('day')
+    while day_cursor < last_midnight:
+        if day_cursor.weekday() <= 4:
+            total = total + pendulum.duration(days=1)
+        day_cursor = day_cursor.add(days=1)
+
+    # Last day portion (from midnight to end) if it's a weekday
+    if end.weekday() <= 4 and end.start_of('day') < end:
+        total = total + (end - end.start_of('day'))
 
     return total
 

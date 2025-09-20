@@ -1,28 +1,27 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with Pendulum datetime objects.
-2. Define a function that accepts a birth date-time and a reference date-time as pendulum.DateTime inputs.
-3. Compute the signed difference in days using the diff method with absolute=False to preserve sign.
-4. Clamp negative results to 0, since age cannot be negative.
-5. Return the total number of days as an integer.
+1. Import the pendulum library to handle date computations.
+2. Define a function that accepts two pendulum.Date objects: a birth date and a reference date.
+3. Subtract the birth date from the reference date to get a pendulum.Duration.
+4. Convert the duration to total days and take the absolute value to ensure a non-negative age.
+5. Return the result as an integer.
 
 ```python
 import pendulum
 
-def calculate_age_in_total_days(birth_dt: pendulum.DateTime, reference_dt: pendulum.DateTime) -> int:
+def calculate_age_in_days(birth_date: pendulum.Date, reference_date: pendulum.Date) -> int:
     """
-    Calculate the age in total days between a birth datetime and a reference datetime.
+    Calculate the total age in days between a birth date and a reference date.
 
     Args:
-        birth_dt (pendulum.DateTime): The birth date and time.
-        reference_dt (pendulum.DateTime): The reference date and time.
+        birth_date (pendulum.Date): The birth date.
+        reference_date (pendulum.Date): The reference date.
 
     Returns:
-        int: The non-negative total number of days between the two datetimes.
+        int: The total number of days between the two dates (non-negative).
     """
-    # Compute signed difference in days (negative if reference is before birth)
-    days = reference_dt.diff(birth_dt, absolute=False).in_days()
-    # Age cannot be negative
-    return max(0, days)
+    duration: pendulum.Duration = reference_date - birth_date
+    total_days: int = abs(duration.in_days())
+    return total_days
 
-# Entry point: calculate_age_in_total_days(birth_dt: pendulum.DateTime, reference_dt: pendulum.DateTime) -> int
+# Entry point: calculate_age_in_days(birth_date: pendulum.Date, reference_date: pendulum.Date) -> int
 ```

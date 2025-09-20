@@ -1,32 +1,36 @@
 Let's think step by step to solve this problem.
-1. Import the required type(s) from the standard datetime library.
-2. Define a function that accepts a date input.
-3. Determine the month of the given date.
-4. Map the month to a season using meteorological seasons for the Northern Hemisphere.
-5. Return the season as an integer code (1=spring, 2=summer, 3=autumn, 4=winter).
+1. Import the necessary type from the datetime library to represent calendar dates.
+2. Define a function that accepts a single date input (date or datetime).
+3. Extract the month from the provided date.
+4. Map the month to a season using meteorological definitions:
+   - Spring: March–May
+   - Summer: June–August
+   - Autumn: September–November
+   - Winter: December–February
+5. Return an integer code representing the season:
+   - 1 = Spring, 2 = Summer, 3 = Autumn, 4 = Winter.
 
 ```python
 from datetime import date
 
-def determine_season(input_date: date) -> int:
+def determine_season(d: date) -> int:
     """
-    Determine the meteorological season (Northern Hemisphere) for a given date.
-    Returns an integer code:
-      1 = spring (Mar 1 - May 31)
-      2 = summer (Jun 1 - Aug 31)
-      3 = autumn (Sep 1 - Nov 30)
-      4 = winter (Dec 1 - Feb 28/29)
+    Determine the meteorological season for a given date.
+    Returns:
+      1 = Spring (Mar-May)
+      2 = Summer (Jun-Aug)
+      3 = Autumn (Sep-Nov)
+      4 = Winter (Dec-Feb)
     """
-    month = input_date.month
-
-    if month in (3, 4, 5):
-        return 1  # spring
-    elif month in (6, 7, 8):
-        return 2  # summer
-    elif month in (9, 10, 11):
-        return 3  # autumn
+    m = d.month
+    if m == 3 or m == 4 or m == 5:
+        return 1  # Spring
+    elif m == 6 or m == 7 or m == 8:
+        return 2  # Summer
+    elif m == 9 or m == 10 or m == 11:
+        return 3  # Autumn
     else:
-        return 4  # winter
+        return 4  # Winter (Dec, Jan, Feb)
 
-# Entry point: determine_season(input_date: date) -> int
+# Entry point: determine_season(d: date) -> int
 ```

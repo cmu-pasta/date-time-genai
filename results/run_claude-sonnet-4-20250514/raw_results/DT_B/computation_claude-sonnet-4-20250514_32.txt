@@ -1,33 +1,40 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and times.
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
 
-2. **Define a function**: We will create a function that accepts two datetime objects as input parameters.
+2. **Define a function**: We will create a function that accepts two datetime objects as input.
 
-3. **Determine the order**: We need to identify which date comes first to ensure proper calculation.
+3. **Determine the order**: Find which date is earlier and which is later to ensure we calculate the middle correctly.
 
-4. **Calculate the middle point**: Find the difference between the two dates, divide it by 2, and add this half-difference to the earlier date.
+4. **Calculate the time difference**: Use subtraction to find the difference between the two `datetime` objects, which will give us a `timedelta`.
 
-5. **Return the result**: Return the calculated middle date as a datetime object.
+5. **Find the middle point**: Divide the timedelta difference by 2 to get the halfway point.
+
+6. **Calculate the middle date**: Add the half-difference to the earlier date to get the exact middle date.
+
+7. **Return the result**: Return the middle date as a datetime object.
 
 ```python
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def find_middle_date(dt1: datetime, dt2: datetime) -> datetime:
     # Step 1: Determine which date is earlier and which is later
-    earlier_date = min(dt1, dt2)
-    later_date = max(dt1, dt2)
+    if dt1 < dt2:
+        earlier = dt1
+        later = dt2
+    else:
+        earlier = dt2
+        later = dt1
     
     # Step 2: Calculate the difference between the two dates
-    date_difference = later_date - earlier_date
+    difference = later - earlier
     
     # Step 3: Find the middle point by dividing the difference by 2
-    half_difference = date_difference / 2
+    middle_difference = difference / 2
     
-    # Step 4: Add the half difference to the earlier date to get the middle date
-    middle_date = earlier_date + half_difference
+    # Step 4: Add the middle difference to the earlier date
+    middle_date = earlier + middle_difference
     
-    # Step 5: Return the middle date
     return middle_date
 
 # Entry point: find_middle_date(dt1: datetime, dt2: datetime) -> datetime

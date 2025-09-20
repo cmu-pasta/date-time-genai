@@ -1,0 +1,66 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module and `ZoneInfo` from the `zoneinfo` module to work with dates and timezones.
+
+2. **Define a function**: We will create a function that accepts a year (integer) and a timezone (ZoneInfo object) as inputs.
+
+3. **Search for DST transition**: We need to iterate through the year and find when the UTC offset changes from standard time to daylight saving time. This typically involves checking the timezone offset for consecutive dates.
+
+4. **Detect the transition**: When DST starts, the UTC offset typically becomes more negative (in terms of hours behind UTC) or less positive, indicating the "spring forward" transition.
+
+5. **Return the result**: Return the datetime object representing when DST starts for that year and timezone.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def find_dst_start(year: int, timezone: ZoneInfo) -> datetime:
+    # Start checking from January 1st of the given year
+    current_date = datetime(year, 1, 1, tzinfo=timezone)
+    
+    # Get the initial UTC offset for the year
+    previous_offset = current_date.utcoffset()
+    
+    # Check each day of the year for DST transition
+    for day in range(1, 367):  # 366 days to handle leap years
+        try:
+            current_date = datetime(year, 1, 1, tzinfo=timezone).replace(day=1) + (datetime(year, 1, day, tzinfo=timezone) - datetime(year, 1, 1, tzinfo=timezone))
+            current_date = datetime(year, 1, 1, tzinfo=timezone)
+            
+            # Calculate the current date by adding days
+            days_to_add = day - 1
+            month = 1
+            day_of_month = 1 + days_to_add
+            
+            # Handle month/day calculation manually
+            days_in_months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+            if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):
+                days_in_months[1] = 29  # Leap year
+            
+            while day_of_month > days_in_months[month - 1]:
+                day_of_month -= days_in_months[month - 1]
+                month += 1
+                if month > 12:
+                    break
+            
+            if month > 12:
+                break
+                
+            current_date = datetime(year, month, day_of_month, tzinfo=timezone)
+            current_offset = current_date.utcoffset()
+            
+            # DST typically starts when offset becomes more negative (spring forward)
+            if current_offset != previous_offset and current_offset < previous_offset:
+                return current_date
+                
+            previous_offset = current_offset
+            
+        except ValueError:
+            # Handle invalid dates (like Feb 30)
+            continue
+    
+    # If no DST transition found, return January 1st (timezone doesn't observe DST)
+    return datetime(year, 1, 1, tzinfo=timezone)
+
+# Entry point: find_dst_start(year: int, timezone: ZoneInfo) -> datetime
+```

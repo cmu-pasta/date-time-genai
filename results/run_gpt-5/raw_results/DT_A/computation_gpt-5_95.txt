@@ -1,84 +1,65 @@
 Let's think step by step to solve this problem.
-1. Define the problem scope: precisely predicting eclipse visibility requires astronomical ephemerides. We implement a practical approximation using a curated set of upcoming eclipses and coarse geographic visibility regions.
-2. Choose inputs and outputs: accept latitude and longitude as floats and a start date as a date. Return the date of the next eclipse visible from that location.
-3. Model eclipse data: encode a few upcoming eclipses (dates after 2025) with approximate bounding boxes for visibility regions.
-4. Implement visibility checks: determine if the given location falls within any of the boxes for each eclipse.
-5. Iterate chronologically from the start date to find and return the first matching eclipse date. If none match within the known dataset, return date.max.
+1. Interpret “visible from a given location” using simplified geographic bounding boxes for known upcoming solar eclipses.
+2. Normalize the provided longitude to the conventional range [-180, 180] to handle wrap-around consistency.
+3. Define a small curated set of future solar eclipses with approximate visibility regions (as latitude/longitude rectangles).
+4. Iterate chronologically over eclipses that occur on or after the provided start date.
+5. For each eclipse, check whether the input latitude and longitude fall inside any of the eclipse’s visibility rectangles.
+6. Return the date of the first eclipse that matches; if none match, raise a ValueError indicating no known visibility match.
 
 ```python
 from datetime import date
 
-def next_visible_solar_eclipse(latitude: float, longitude: float, start_from: date) -> date:
-    """
-    Returns the date of the next solar eclipse approximately visible from the given location
-    on or after the provided start date.
+def next_visible_solar_eclipse(start: date, latitude: float, longitude: float) -> date:
+    # Normalize longitude to [-180, 180]
+    lon = ((longitude + 180.0) % 360.0) - 180.0
+    lat = latitude
 
-    Notes:
-    - This implementation uses coarse geographic bounding boxes for visibility approximation.
-    - The dataset includes a subset of upcoming eclipses with broad visibility regions.
-    - If no eclipse in the dataset is visible from the location after start_from, returns date.max.
-    """
+    # Simplified dataset of upcoming solar eclipses and approximate visibility bounding boxes.
+    # Each entry: (eclipse_date, [(min_lat, max_lat, min_lon, max_lon), ...])
+    # Note: These are coarse approximations intended for demonstration, not precise predictions.
+    eclipses = [
+        # 2026-08-12 Total: Greenland, Iceland, northern Spain (approx)
+        (date(2026, 8, 12), [
+            (35.0, 45.0, -10.0,   5.0),   # Spain/Portugal area (coarse)
+            (63.0, 67.0, -25.0, -13.0),   # Iceland (coarse)
+            (60.0, 85.0, -60.0, -20.0),   # Greenland (coarse)
+        ]),
+        # 2027-08-02 Total: North Africa, Egypt, Arabian Peninsula (approx)
+        (date(2027, 8, 2), [
+            (5.0, 35.0, -20.0,  55.0),    # North Africa to Arabian Peninsula (coarse)
+        ]),
+        # 2028-07-22 Total: Australia (approx)
+        (date(2028, 7, 22), [
+            (-45.0, -10.0, 110.0, 160.0), # Australia region (coarse)
+        ]),
+        # 2033-03-30 Total: Alaska / Far East Russia (approx; includes wrap-around near dateline)
+        (date(2033, 3, 30), [
+            (55.0, 75.0, -170.0, -140.0), # Alaska
+            (55.0, 75.0,  160.0,  180.0), # Far East Russia near 180E
+        ]),
+        # 2035-09-02 Total: China / Japan (approx)
+        (date(2035, 9, 2), [
+            (25.0, 45.0, 110.0, 145.0),   # Eastern China to Japan (coarse)
+        ]),
+    ]
 
-    # Helper: check if a point is inside a latitude/longitude box
-    def _in_box(lat: float, lon: float, lat_min: float, lat_max: float, lon_min: float, lon_max: float) -> bool:
-        return (lat_min <= lat <= lat_max) and (lon_min <= lon <= lon_max)
+    # Ensure we consider eclipses on or after the start date
+    for e_date, regions in eclipses:
+        if e_date < start:
+            continue
+        # Check if location falls within any bounding box
+        for (min_lat, max_lat, min_lon, max_lon) in regions:
+            # Handle standard box
+            if min_lon <= max_lon:
+                if (lat >= min_lat and lat <= max_lat and lon >= min_lon and lon <= max_lon):
+                    return e_date
+            else:
+                # Handle wrap-around boxes (not used above, but kept for completeness)
+                in_lon = (lon >= min_lon) or (lon <= max_lon)
+                if (lat >= min_lat and lat <= max_lat and in_lon):
+                    return e_date
 
-    # Helper: check if a point is within any of a collection of boxes
-    def _visible_in_any_box(lat: float, lon: float, boxes: tuple) -> bool:
-        # boxes is a tuple of (lat_min, lat_max, lon_min, lon_max)
-        for b in boxes:
-            if _in_box(lat, lon, b[0], b[1], b[2], b[3]):
-                return True
-        return False
+    raise ValueError("No known upcoming solar eclipse visible from the given location in the dataset.")
 
-    # Coarse visibility regions for selected upcoming eclipses (post-2025).
-    # Dates are in ISO (YYYY, M, D). Boxes are broad approximations for partial/total visibility.
-    # Sources: public eclipse path summaries; regions intentionally generous to capture likely visibility.
-    eclipses = (
-        # 2026-08-12 Total (Greenland, Iceland, Spain); partial across much of Europe and N Africa.
-        # Broad region: Europe and North Africa
-        (date(2026, 8, 12), (
-            # Europe (broad)
-            (35.0, 71.0, -25.0, 40.0),
-            # Iceland
-            (63.0, 67.0, -25.0, -12.0),
-            # Greenland (south to mid)
-            (60.0, 75.0, -74.0, -10.0),
-            # Iberian Peninsula emphasis
-            (36.0, 44.0, -9.8, 3.8),
-        )),
-        # 2027-08-02 Total (North Africa, Middle East); partial across N Africa, S Europe, Arabian Peninsula.
-        (date(2027, 8, 2), (
-            # North Africa and Middle East broad band
-            (10.0, 36.0, -17.0, 55.0),
-            # Southern Europe fringe
-            (35.0, 47.0, -10.0, 30.0),
-        )),
-        # 2028-07-22 Total (Australia, New Zealand); partial across Australia/NZ and nearby regions.
-        (date(2028, 7, 22), (
-            # Australia
-            (-44.0, -11.0, 113.0, 154.0),
-            # New Zealand
-            (-47.0, -34.0, 166.0, 179.9),
-            # Nearby Indonesia/Timor-Leste fringe
-            (-11.0, 6.0, 115.0, 141.0),
-        )),
-    )
-
-    # Ensure longitude is within [-180, 180] for box comparisons
-    lon = longitude
-    if lon > 180.0:
-        lon = ((lon + 180.0) % 360.0) - 180.0
-    elif lon < -180.0:
-        lon = ((lon - 180.0) % 360.0) + 180.0
-
-    # Iterate chronologically and return the first eclipse visible from the location
-    for e_date, e_boxes in eclipses:
-        if e_date >= start_from and _visible_in_any_box(latitude, lon, e_boxes):
-            return e_date
-
-    # If none found in our dataset, return a sentinel extreme date
-    return date.max
-
-# Entry point: next_visible_solar_eclipse(latitude: float, longitude: float, start_from: date) -> date
+# Entry point: next_visible_solar_eclipse(start: date, latitude: float, longitude: float) -> date
 ```

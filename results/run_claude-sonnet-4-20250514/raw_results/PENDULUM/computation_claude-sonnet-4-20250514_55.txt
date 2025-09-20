@@ -1,0 +1,57 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: Create a function that accepts a Gregorian date as a pendulum.Date object.
+3. **Implement Islamic calendar conversion**: Use the mathematical algorithm to convert Gregorian date to Islamic date. This involves converting to Julian Day Number first, then to Islamic calendar.
+4. **Calculate Islamic date components**: Extract the Islamic year, month, and day from the conversion.
+5. **Return the result**: Return the Islamic date as a pendulum.Date object (though this will be interpreted as Gregorian internally, the numeric values will represent the Islamic date).
+
+Here is the implementation of the above steps in code:
+
+```python
+import pendulum
+
+def gregorian_to_islamic(gregorian_date: pendulum.Date) -> pendulum.Date:
+    # Step 1: Convert Gregorian date to Julian Day Number
+    # Using Pendulum's built-in Julian day calculation
+    julian_day = gregorian_date.to_date_string()
+    
+    # Manual conversion using the standard algorithm
+    year = gregorian_date.year
+    month = gregorian_date.month
+    day = gregorian_date.day
+    
+    # Calculate Julian Day Number
+    if month <= 2:
+        year -= 1
+        month += 12
+    
+    a = year // 100
+    b = 2 - a + (a // 4)
+    
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + b - 1524
+    
+    # Step 2: Convert Julian Day to Islamic date
+    # Islamic epoch is July 16, 622 CE (Julian Day 1948441)
+    islamic_epoch = 1948441
+    days_since_epoch = jd - islamic_epoch
+    
+    # Islamic year calculation (approximately 354.367 days per Islamic year)
+    islamic_year = int(days_since_epoch / 354.367) + 1
+    
+    # Calculate remaining days for month and day
+    days_in_islamic_year = days_since_epoch - int((islamic_year - 1) * 354.367)
+    
+    # Approximate Islamic month (29.53 days per month on average)
+    islamic_month = min(12, max(1, int(days_in_islamic_year / 29.53) + 1))
+    
+    # Calculate Islamic day
+    days_in_months = int((islamic_month - 1) * 29.53)
+    islamic_day = max(1, min(30, int(days_in_islamic_year - days_in_months) + 1))
+    
+    # Step 3: Return as pendulum.Date (values represent Islamic date)
+    # Note: This creates a Gregorian date object with Islamic date values
+    return pendulum.Date(islamic_year, islamic_month, islamic_day)
+
+# Entry point: gregorian_to_islamic(gregorian_date: pendulum.Date) -> pendulum.Date
+```

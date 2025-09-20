@@ -1,45 +1,66 @@
 Let's think step by step to solve this problem.
-1. Understand the concept: The Equation of Time (EoT) quantifies the difference between apparent solar time (sundial) and mean solar time (clock). A positive EoT means the sundial is ahead of the clock.
-2. Choose a standard approximation: Use the widely accepted Spencer/NOAA approximation: EoT (minutes) = 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B), where B = 2π*(n - 81)/364 and n is the day of year.
-3. Determine inputs and outputs: Accept a standard datetime.date as input and return a datetime.timedelta representing the EoT offset, which can be positive or negative.
-4. Compute day-of-year: Use the date’s tm_yday to get n in [1, 365] (366 in leap years).
-5. Compute B in radians: B = 2π*(n - 81)/364.
-6. Compute EoT in minutes using the formula, then convert to a timedelta for output.
-7. Document the sign convention in comments and ensure no non-standard types are used.
+1. Accept a calendar date and compute its day-of-year index N.
+2. Compute the auxiliary angle B in radians as B = 2π*(N - 81)/364.
+3. Implement sine and cosine using polynomial (Taylor) approximations with argument reduction, avoiding external libraries.
+4. Compute the equation of time in minutes: E = 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B).
+5. Return the correction as a timedelta representing E minutes.
 
 ```python
 from datetime import date, timedelta
-import math
+
+def _wrap_to_pi(x: float) -> float:
+    # Reduce angle to [-pi, pi] to improve series accuracy
+    pi = 3.141592653589793
+    two_pi = 2.0 * pi
+    # Python's modulo handles floats; ensure value is in [-pi, pi]
+    y = (x + pi) % two_pi
+    if y < 0.0:
+        y += two_pi
+    return y - pi
+
+def _sin(x: float) -> float:
+    # Sine via Taylor series around 0 with argument reduction
+    x = _wrap_to_pi(x)
+    x2 = x * x
+    # x - x^3/3! + x^5/5! - x^7/7! + x^9/9!
+    return x * (
+        1.0
+        - x2 / 6.0
+        + x2 * x2 / 120.0
+        - x2 * x2 * x2 / 5040.0
+        + x2 * x2 * x2 * x2 / 362880.0
+    )
+
+def _cos(x: float) -> float:
+    # Cosine via Taylor series around 0 with argument reduction
+    x = _wrap_to_pi(x)
+    x2 = x * x
+    # 1 - x^2/2! + x^4/4! - x^6/6! + x^8/8!
+    return (
+        1.0
+        - x2 / 2.0
+        + x2 * x2 / 24.0
+        - x2 * x2 * x2 / 720.0
+        + x2 * x2 * x2 * x2 / 40320.0
+    )
 
 def equation_of_time(d: date) -> timedelta:
     """
-    Calculate the Equation of Time (EoT) for a given date.
-
-    Definition and sign:
-    - EoT = apparent solar time - mean solar time.
-    - A positive EoT means a sundial (apparent solar time) is ahead of a clock (mean solar time).
-    
-    Approximation used (Spencer/NOAA):
-    EoT(minutes) = 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B),
-    where B = 2π*(n - 81)/364 and n is the day of year (1-based).
-
-    Parameters:
-    - d: datetime.date for which to compute the EoT.
-
-    Returns:
-    - datetime.timedelta representing the EoT (can be negative).
+    Compute the equation of time for a given date.
+    Returns the correction as a timedelta (positive means apparent sun is ahead).
     """
-    # Day of year (1..365/366)
-    n = d.timetuple().tm_yday
+    # Day of year N (1..366)
+    N = d.timetuple().tm_yday
 
-    # Compute B in radians using the NOAA convention
-    B = 2 * math.pi * (n - 81) / 364.0
+    # Compute B in radians: B = 2π*(N - 81)/364 (NOAA approximation)
+    pi = 3.141592653589793
+    B = 2.0 * pi * (N - 81.0) / 364.0
 
-    # Equation of Time in minutes (float, can be negative)
-    eot_minutes = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+    # Equation of time in minutes
+    eot_minutes = 9.87 * _sin(2.0 * B) - 7.53 * _cos(B) - 1.5 * _sin(B)
 
-    # Convert minutes to a timedelta
-    return timedelta(seconds=eot_minutes * 60.0)
+    # Return as timedelta
+    return timedelta(minutes=eot_minutes)
 
 # Entry point: equation_of_time(d: date) -> timedelta
 ```

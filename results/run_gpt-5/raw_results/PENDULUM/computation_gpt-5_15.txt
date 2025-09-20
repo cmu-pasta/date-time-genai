@@ -1,43 +1,48 @@
 Let's think step by step to solve this problem.
 1. Import the pendulum library to work with dates.
-2. Define a function that accepts two pendulum.Date objects representing the start and end dates.
-3. Ensure the range is in chronological order by swapping if start is after end.
-4. Compute the total number of days in the inclusive range.
-5. Calculate the number of complete weeks in the range; each complete week contributes exactly two weekend days (Saturday and Sunday).
-6. For the remaining days beyond complete weeks, iterate from the start day-of-week to count additional weekend days.
-7. Return the total count of weekend days as an integer.
+2. Define a function that accepts two pendulum.Date inputs: start and end.
+3. Ensure the date order by swapping if start is after end.
+4. Find the first Saturday on or after the start date.
+5. Find the last Saturday whose corresponding Sunday is not after the end date (i.e., last Saturday on or before end - 1 day).
+6. If no such range exists, return 0. Otherwise, compute how many Saturdays (spaced by 7 days) are between these two Saturdays inclusive; that count equals the number of complete weekends.
+7. Return the count as an integer.
 
 ```python
 import pendulum
 
 def count_weekends_between(start: pendulum.Date, end: pendulum.Date) -> int:
-    """
-    Counts the number of weekend days (Saturdays and Sundays) between two dates, inclusive.
-    Inputs: start, end - pendulum.Date
-    Output: int - number of weekend days
-    """
-    # Normalize order to ensure start <= end
+    # Ensure start <= end by swapping if necessary
     if start > end:
         start, end = end, start
 
-    # Total days inclusive
-    total_days = end.diff(start).in_days() + 1  # inclusive of both endpoints
+    # Day-of-week mapping in Pendulum: Monday=0 ... Saturday=5, Sunday=6
+    SATURDAY_DOW = 5
 
-    # Count weekend days from complete weeks
-    full_weeks = total_days // 7
-    weekend_days = full_weeks * 2  # Each full week has Saturday and Sunday
+    # Compute the first Saturday on or after 'start'
+    start_dow = start.day_of_week
+    to_first_saturday = (SATURDAY_DOW - start_dow) % 7
+    first_saturday = start.add(days=to_first_saturday)
 
-    # Count weekend days in the remaining partial week
-    remaining_days = total_days % 7
-    start_dow = start.day_of_week  # Monday=0, ..., Sunday=6
+    # The last valid Saturday must have its Sunday within the end date.
+    # Therefore, consider the latest allowed Saturday as (end - 1 day).
+    latest_allowed_saturday = end.add(days=-1)
+    if latest_allowed_saturday < start:
+        return 0
 
-    # Iterate up to 6 days for the remainder
-    for i in range(remaining_days):
-        dow = (start_dow + i) % 7
-        if dow == 5 or dow == 6:  # Saturday=5, Sunday=6
-            weekend_days += 1
+    # Compute the last Saturday on or before 'latest_allowed_saturday'
+    las_dow = latest_allowed_saturday.day_of_week
+    back_to_saturday = (las_dow - SATURDAY_DOW) % 7
+    last_saturday = latest_allowed_saturday.add(days=-back_to_saturday)
 
-    return weekend_days
+    # If the range doesn't include any full weekend (Sat+Sun), return 0
+    if first_saturday > last_saturday:
+        return 0
+
+    # Count Saturdays spaced 7 days apart, inclusive
+    total_days = (last_saturday - first_saturday).in_days()
+    weekends = (total_days // 7) + 1
+
+    return int(weekends)
 
 # Entry point: count_weekends_between(start: pendulum.Date, end: pendulum.Date) -> int
 ```

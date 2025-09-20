@@ -1,33 +1,21 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the standard library: datetime and ZoneInfo.
-2. Define a function that accepts a datetime, a source timezone, and a target timezone.
-3. If the input datetime is naive (no tzinfo), attach the source timezone.
-4. Convert the datetime to the target timezone using astimezone.
-5. Return the converted datetime.
+1. Import the required classes from the standard library.
+2. Define a function that accepts a datetime, a source ZoneInfo, and a target ZoneInfo.
+3. If the input datetime is naive, attach the source timezone. If it is aware, normalize it to the source timezone.
+4. Convert the datetime to the target timezone and return it.
 
 ```python
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-def convert_timezone(timestamp: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime:
-    """
-    Convert a timestamp from one timezone to another.
-
-    Parameters:
-    - timestamp: datetime (naive or timezone-aware)
-    - source_tz: ZoneInfo representing the source timezone
-    - target_tz: ZoneInfo representing the target timezone
-
-    Returns:
-    - datetime: The timestamp converted to the target timezone
-    """
-    # If the timestamp is naive, assume it is in the source timezone
-    if timestamp.tzinfo is None:
-        timestamp = timestamp.replace(tzinfo=source_tz)
-
+def convert_timezone(ts: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime:
+    # Ensure the datetime is associated with the source timezone
+    if ts.tzinfo is None:
+        ts = ts.replace(tzinfo=source_tz)
+    else:
+        ts = ts.astimezone(source_tz)
     # Convert to the target timezone
-    converted = timestamp.astimezone(target_tz)
-    return converted
+    return ts.astimezone(target_tz)
 
-# Entry point: convert_timezone(timestamp: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime
+# Entry point: convert_timezone(ts: datetime, source_tz: ZoneInfo, target_tz: ZoneInfo) -> datetime
 ```

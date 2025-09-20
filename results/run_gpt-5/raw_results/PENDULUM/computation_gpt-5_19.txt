@@ -1,34 +1,28 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with Pendulum date/time types.
-2. Define a function that accepts a pendulum.DateTime as input.
-3. Determine the meteorological season for the Northern Hemisphere based on the month:
-   - Spring: March (3) to May (5)
-   - Summer: June (6) to August (8)
-   - Autumn: September (9) to November (11)
-   - Winter: December (12), January (1), February (2)
-4. Return an integer code for the season to comply with allowed output types:
-   - 1 for Spring, 2 for Summer, 3 for Autumn, 4 for Winter.
+1. Import the pendulum library to work with date types.
+2. Define a function that accepts a pendulum.Date as input.
+3. Use the month (and optionally day) of the given date to determine the meteorological season in the Northern Hemisphere.
+4. Return an integer representing the season, avoiding complex data types:
+   - 1 = Spring (Mar 1–May 31)
+   - 2 = Summer (Jun 1–Aug 31)
+   - 3 = Autumn (Sep 1–Nov 30)
+   - 4 = Winter (Dec 1–Feb 28/29)
 
 ```python
 import pendulum
 
-def determine_season(dt: pendulum.DateTime) -> int:
+def determine_season(date: pendulum.Date) -> int:
     """
     Determine the meteorological season (Northern Hemisphere) for a given date.
 
-    Season codes:
-      1 -> Spring  (Mar-May)
-      2 -> Summer  (Jun-Aug)
-      3 -> Autumn  (Sep-Nov)
-      4 -> Winter  (Dec-Feb)
-
-    Parameters:
-      dt (pendulum.DateTime): The date/time to evaluate.
-
-    Returns:
-      int: The season code as defined above.
+    Returns an integer code to avoid complex return types:
+      1 = Spring  (Mar 1 – May 31)
+      2 = Summer  (Jun 1 – Aug 31)
+      3 = Autumn  (Sep 1 – Nov 30)
+      4 = Winter  (Dec 1 – Feb 28/29)
     """
-    month = dt.month
+    month = date.month
+
     if 3 <= month <= 5:
         return 1  # Spring
     elif 6 <= month <= 8:
@@ -36,7 +30,7 @@ def determine_season(dt: pendulum.DateTime) -> int:
     elif 9 <= month <= 11:
         return 3  # Autumn
     else:
-        return 4  # Winter
+        return 4  # Winter (Dec, Jan, Feb)
 
-# Entry point: determine_season(dt: pendulum.DateTime) -> int
+# Entry point: determine_season(date: pendulum.Date) -> int
 ```

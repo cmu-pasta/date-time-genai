@@ -6,15 +6,15 @@ from pendulum_generators import *
 from hypothesis import settings, seed, given
 
 import pendulum
-def get_day_of_week_number(dt: pendulum.DateTime) -> int:
-    # Step 1: Use the isoweekday() property to get the day of the week as an integer.
-    # ISO 8601 standard: 1 for Monday, 7 for Sunday.
-    day_number = dt.isoweekday()
+def get_day_of_week_as_integer(dt: pendulum.DateTime) -> int:
+    # Step 1: Access the day_of_week property of the pendulum.DateTime object.
+    # This property returns an integer (1 for Monday, 7 for Sunday).
+    day_of_week_int = dt.day_of_week
     
-    # Step 2: Return the integer representing the day of the week.
-    return day_number
+    # Step 2: Return the integer representation of the day of the week.
+    return day_of_week_int
 
-# Entry point: get_day_of_week_number(dt: pendulum.DateTime) -> int
+# Entry point: get_day_of_week_as_integer(dt: pendulum.DateTime) -> int
 
 def format_value_pd(*values):
     formatted_values = []
@@ -51,7 +51,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(datetime_strategy())
-def test_get_day_of_week_number(dt):
-    result = get_day_of_week_number(dt)
+def test_get_day_of_week_as_integer(dt):
+    result = get_day_of_week_as_integer(dt)
     formatted_result = format_value_pd(result, dt)
     log_file.write(formatted_result + "\n")

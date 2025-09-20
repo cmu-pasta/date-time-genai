@@ -1,29 +1,28 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with dates.
-2. Define a function that takes a pendulum.DateTime as input.
-3. Start from the year immediately after the date’s year.
-4. For each year, construct a pendulum.DateTime and check if it is a leap year using pendulum’s is_leap_year.
+1. Import the pendulum library to work with date objects and leap year properties.
+2. Define a function that accepts a pendulum.Date as input.
+3. Start from the year immediately after the given date's year.
+4. For each year, create a pendulum.Date and check its is_leap_year property.
 5. Return the first year that satisfies the leap year condition as an integer.
 
 ```python
 import pendulum
 
-def next_leap_year_after(dt: pendulum.DateTime) -> int:
+def next_leap_year_after(d: pendulum.Date) -> int:
     """
     Determine the next leap year strictly after the given date.
     
     Args:
-        dt: A pendulum.DateTime representing the reference date.
-        
+        d (pendulum.Date): The reference date.
+    
     Returns:
-        An integer representing the next leap year after the given date.
+        int: The next leap year after the year of the given date.
     """
-    year = dt.year + 1
+    year = d.year + 1
     while True:
-        # Use Pendulum to construct a date and check if that year is a leap year
-        if pendulum.datetime(year, 1, 1).is_leap_year():
+        if pendulum.date(year, 1, 1).is_leap_year:
             return year
         year += 1
 
-# Entry point: next_leap_year_after(dt: pendulum.DateTime) -> int
+# Entry point: next_leap_year_after(d: pendulum.Date) -> int
 ```

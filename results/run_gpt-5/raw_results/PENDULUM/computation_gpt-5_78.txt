@@ -1,100 +1,98 @@
 Let's think step by step to solve this problem.
-1. Normalize the given date to 00:00 UTC and compute its Julian Day (JD) number.
-2. Compute the solar parameters for the given date and longitude: mean anomaly (M), equation of center (C), ecliptic longitude (λ), solar declination (δ), and the solar transit (Jtransit).
-3. Compute the hour angle (H) for sunrise using the standard altitude of the solar center at sunrise: -0.833 degrees (includes refraction and solar radius).
-4. Compute the Julian Day of sunrise (Jrise) from the solar transit and hour angle.
-5. Convert the Julian Day of sunrise to a pendulum.DateTime in UTC, then convert to the requested timezone and return it.
+1. Import pendulum and math for astronomical calculations.
+2. Accept inputs: a pendulum.Date (calendar date), latitude (float), longitude (float), and a pendulum.Timezone (desired output zone).
+3. Compute the day-of-year from the given date to feed the NOAA sunrise algorithm.
+4. Apply the NOAA algorithm to compute the UTC time of sunrise for the given coordinates and date.
+5. If the sun does not rise on that date at that latitude (polar day/night), raise a ValueError.
+6. Build a UTC pendulum.DateTime for the computed sunrise moment and convert it to the requested timezone.
+7. Return the resulting pendulum.DateTime.
 
 ```python
 import math
 import pendulum
 
-def _julian_day_from_date(d: pendulum.Date) -> float:
-    # Julian Day at 00:00 UTC for a Gregorian calendar date
-    y = d.year
-    m = d.month
-    day = d.day
-    a = (14 - m) // 12
-    y_prime = y + 4800 - a
-    m_prime = m + 12 * a - 3
-    jd = day + ((153 * m_prime + 2) // 5) + 365 * y_prime + y_prime // 4 - y_prime // 100 + y_prime // 400 - 32045
-    return float(jd)
+def _normalize_degrees(angle: float) -> float:
+    a = angle % 360.0
+    if a < 0:
+        a += 360.0
+    return a
 
-def _sin_deg(x: float) -> float:
-    return math.sin(math.radians(x))
+def _deg_to_rad(deg: float) -> float:
+    return deg * math.pi / 180.0
 
-def _cos_deg(x: float) -> float:
-    return math.cos(math.radians(x))
-
-def _tan_deg(x: float) -> float:
-    return math.tan(math.radians(x))
-
-def _asin_deg(x: float) -> float:
-    return math.degrees(math.asin(x))
-
-def _acos_deg(x: float) -> float:
-    # Clamp to handle numerical issues near the domain boundaries
-    if x < -1.0:
-        x = -1.0
-    elif x > 1.0:
-        x = 1.0
-    return math.degrees(math.acos(x))
-
-def _normalize_angle_deg(x: float) -> float:
-    return x % 360.0
-
-def _julian_to_datetime_utc(jd: float) -> pendulum.DateTime:
-    # Convert Julian Day to Unix timestamp, then to pendulum.DateTime in UTC
-    unix_seconds = (jd - 2440587.5) * 86400.0
-    return pendulum.from_timestamp(unix_seconds, tz="UTC")
+def _rad_to_deg(rad: float) -> float:
+    return rad * 180.0 / math.pi
 
 def calculate_sunrise(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime:
-    # Constants
-    J2000 = 2451545.0
-    # Earth's obliquity (approx)
-    epsilon = 23.4397
-    # Standard solar altitude at sunrise (degrees): -0.833 (refraction + solar radius)
-    h0 = -0.833
+    # NOAA Sunrise Algorithm
+    N = date.day_of_year  # day of year
 
-    # Step 1: Julian day at 00:00 UTC for the given date
-    jd0 = _julian_day_from_date(date)
+    lngHour = longitude / 15.0
 
-    # Longitude convention: positive east, negative west.
-    # In formulas, Lw = -longitude (degrees)
-    Lw = -longitude
+    # Approximate time for sunrise (6h local solar time)
+    t = N + ((6.0 - lngHour) / 24.0)
 
-    # Estimate solar transit
-    n = round(jd0 - J2000 - 0.0009 - (Lw / 360.0))
-    J_star = J2000 + 0.0009 + (Lw / 360.0) + n
+    # Sun's mean anomaly
+    M = (0.9856 * t) - 3.289
 
-    # Solar mean anomaly
-    M = _normalize_angle_deg(357.5291 + 0.98560028 * (J_star - J2000))
+    # Sun's true longitude
+    L = M + (1.916 * math.sin(_deg_to_rad(M))) + (0.020 * math.sin(_deg_to_rad(2 * M))) + 282.634
+    L = _normalize_degrees(L)
 
-    # Equation of center
-    C = 1.9148 * _sin_deg(M) + 0.0200 * _sin_deg(2 * M) + 0.0003 * _sin_deg(3 * M)
+    # Sun's right ascension
+    RA = _rad_to_deg(math.atan(0.91764 * math.tan(_deg_to_rad(L))))
+    RA = _normalize_degrees(RA)
 
-    # Ecliptic longitude of the sun
-    lam = _normalize_angle_deg(M + C + 102.9372 + 180.0)
+    # Adjust RA to be in the same quadrant as L
+    Lquadrant  = math.floor(L / 90.0) * 90.0
+    RAquadrant = math.floor(RA / 90.0) * 90.0
+    RA = RA + (Lquadrant - RAquadrant)
 
-    # Solar transit (refined)
-    J_transit = J_star + 0.0053 * _sin_deg(M) - 0.0069 * _sin_deg(2 * lam)
+    # Convert RA into hours
+    RA /= 15.0
 
-    # Solar declination
-    delta = _asin_deg(_sin_deg(lam) * _sin_deg(epsilon))
+    # Sun's declination
+    sinDec = 0.39782 * math.sin(_deg_to_rad(L))
+    cosDec = math.cos(math.asin(sinDec))
 
-    # Hour angle for sunrise
-    phi = latitude
-    cos_omega = (_sin_deg(h0) - _sin_deg(phi) * _sin_deg(delta)) / (_cos_deg(phi) * _cos_deg(delta))
-    omega = _acos_deg(cos_omega)
+    # Sun's local hour angle
+    cosH = (math.cos(_deg_to_rad(90.833)) - (sinDec * math.sin(_deg_to_rad(latitude)))) / (cosDec * math.cos(_deg_to_rad(latitude)))
 
-    # Julian day of sunrise
-    J_rise = J_transit - (omega / 360.0)
+    if cosH > 1.0:
+        raise ValueError("Sun never rises on this date at this latitude.")
+    if cosH < -1.0:
+        raise ValueError("Sun never sets on this date at this latitude; sunrise does not occur.")
 
-    # Convert to timezone-aware pendulum.DateTime
-    dt_utc = _julian_to_datetime_utc(J_rise)
-    dt_local = dt_utc.in_timezone(tz)
+    # For sunrise, H = 360 - arccos(cosH)
+    H = 360.0 - _rad_to_deg(math.acos(cosH))
+    H /= 15.0  # convert to hours
 
-    return dt_local
+    # Local mean time of rising
+    T = H + RA - (0.06571 * t) - 6.622
+
+    # Convert to UTC
+    UT = T - lngHour
+    UT = (UT + 24.0) % 24.0  # normalize to [0,24)
+
+    # Build a UTC datetime for the given date at UT hours
+    hour = int(UT)
+    minute = int((UT - hour) * 60.0)
+    second = int(round((((UT - hour) * 60.0) - minute) * 60.0))
+
+    # Normalize possible rounding overflow
+    total_seconds = hour * 3600 + minute * 60 + second
+    if total_seconds >= 86400:
+        total_seconds -= 86400
+    hour = total_seconds // 3600
+    minute = (total_seconds % 3600) // 60
+    second = total_seconds % 60
+
+    sunrise_utc = pendulum.datetime(date.year, date.month, date.day, hour, minute, second, tz="UTC")
+
+    # Convert to requested timezone
+    sunrise_local = sunrise_utc.in_timezone(tz)
+
+    return sunrise_local
 
 # Entry point: calculate_sunrise(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime
 ```

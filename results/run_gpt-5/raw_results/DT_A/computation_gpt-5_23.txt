@@ -1,43 +1,38 @@
 Let's think step by step to solve this problem.
-1. Choose a well-known reference full moon datetime (in UTC).
-2. Use the mean synodic month length (29.530588853 days) as the lunar cycle.
-3. Convert the input datetime to UTC (assuming UTC if naive).
-4. Compute how many full lunar cycles have elapsed since the reference.
-5. Take the next integer cycle strictly after the input datetime.
-6. Return the reference plus that many cycles as the next full moon datetime (UTC).
+1. Choose a known reference full moon datetime (epoch).
+2. Represent the synodic month (time between full moons) as a timedelta.
+3. Align the epoch's timezone-awareness to match the input datetime to allow valid arithmetic.
+4. Compute how many full-moon periods have elapsed since the epoch using timedelta division.
+5. Construct the candidate full moon and increment by periods until it is strictly after the given datetime.
+6. Return the resulting datetime as the next full moon time.
 
 ```python
 from datetime import datetime, timedelta, timezone
-import math
-
-# Constants for lunar calculations
-# Reference full moon (UTC): 2000-01-21 16:41:00 UTC (commonly used epoch)
-_REF_FULL_MOON_UTC = datetime(2000, 1, 21, 16, 41, 0, tzinfo=timezone.utc)
-# Mean synodic month length in days
-_SYNODIC_MONTH = timedelta(days=29.530588853)
 
 def next_full_moon(after: datetime) -> datetime:
-    """
-    Compute the datetime of the next full moon strictly after the given datetime.
-    The result is returned as a timezone-aware UTC datetime.
-
-    Note: This uses the mean synodic month and a fixed epoch for an approximate result.
-    """
-    # Normalize input to UTC (assume UTC if naive)
-    if after.tzinfo is None:
-        after_utc = after.replace(tzinfo=timezone.utc)
+    # Step 1: Known full moon reference (NASA): 2000-01-21 16:41 UTC
+    epoch_naive = datetime(2000, 1, 21, 16, 41)
+    epoch_utc = datetime(2000, 1, 21, 16, 41, tzinfo=timezone.utc)
+    
+    # Step 2: Synodic month length (mean time between full moons)
+    synodic_period = timedelta(days=29.530588853)
+    
+    # Step 3: Match epoch's timezone-awareness to input
+    if after.tzinfo is None or after.tzinfo.utcoffset(after) is None:
+        epoch = epoch_naive
     else:
-        after_utc = after.astimezone(timezone.utc)
-
-    # Compute number of elapsed lunar cycles since the reference full moon
-    cycles_elapsed = (after_utc - _REF_FULL_MOON_UTC) / _SYNODIC_MONTH
-
-    # Find the index of the next full moon strictly after 'after'
-    next_index = math.floor(cycles_elapsed) + 1
-
-    # Compute the next full moon datetime in UTC
-    next_full_moon_utc = _REF_FULL_MOON_UTC + next_index * _SYNODIC_MONTH
-    return next_full_moon_utc
+        epoch = epoch_utc.astimezone(after.tzinfo)
+    
+    # Step 4: Compute elapsed periods (use truncation toward zero, then adjust)
+    elapsed = (after - epoch) / synodic_period  # float
+    base_n = int(elapsed)  # truncates toward zero
+    
+    # Step 5: Build candidate and advance until strictly after input
+    candidate = epoch + synodic_period * base_n
+    while candidate <= after:
+        candidate = candidate + synodic_period
+    
+    return candidate
 
 # Entry point: next_full_moon(after: datetime) -> datetime
 ```

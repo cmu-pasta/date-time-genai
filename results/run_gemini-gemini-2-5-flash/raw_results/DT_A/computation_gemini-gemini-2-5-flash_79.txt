@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need the `datetime` class from the `datetime` module.
+2.  **Define a function**: Create a function that takes a `datetime` object representing the Gregorian date as input.
+3.  **Extract the Gregorian year**: From the input `datetime` object, retrieve its year component.
+4.  **Calculate the Buddhist year**: The Buddhist calendar year is 543 years ahead of the Gregorian calendar year. Add 543 to the extracted Gregorian year.
+5.  **Return the result**: The calculated Buddhist year will be an integer, which should be returned.
+
+```python
+from datetime import datetime
+
+def get_buddhist_year(gregorian_date: datetime) -> int:
+    # Step 1: Extract the Gregorian year from the input datetime object
+    gregorian_year = gregorian_date.year
+    
+    # Step 2: Calculate the Buddhist year by adding 543 to the Gregorian year
+    # The Buddhist calendar (B.E.) is generally 543 years ahead of the Gregorian calendar (A.D.).
+    buddhist_year = gregorian_year + 543
+    
+    # Step 3: Return the calculated Buddhist year as an integer
+    return buddhist_year
+
+# Entry point: get_buddhist_year(gregorian_date: datetime) -> int
+```

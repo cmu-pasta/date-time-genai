@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will use the `date` class from the `datetime` module.
+2.  **Define a function**: Create a function that accepts two integer arguments, `year1` and `year2`, representing the start and end years for the calculation.
+3.  **Ensure correct order of years**: To simplify iteration, ensure that `year1` is less than or equal to `year2`. If not, swap them.
+4.  **Iterate through the years**: Loop through each year from `year1` to `year2` (inclusive).
+5.  **Check for leap year**: For each year, determine if it is a leap year. A year is a leap year if it has 366 days. We can check this by calculating the difference in days between January 1st of the next year and January 1st of the current year. If this difference is 366, the year is a leap year. This check uses only `datetime.date` objects and their subtraction, which is part of the `datetime` library.
+    *   `datetime.date(current_year + 1, 1, 1) - datetime.date(current_year, 1, 1)` will yield a `timedelta` object.
+    *   The `.days` attribute of this `timedelta` will be 366 for a leap year and 365 for a common year.
+6.  **Count leap years**: Maintain a counter for the number of leap years found. Increment it whenever a leap year is identified.
+7.  **Return the result**: Return the final count as an integer.
+
+```python
+from datetime import date
+
+def calculate_number_of_leap_years(year1: int, year2: int) -> int:
+    # Step 1: Ensure year1 is the earlier year for consistent iteration
+    if year1 > year2:
+        year1, year2 = year2, year1
+    
+    leap_year_count = 0
+    
+    # Step 2: Iterate through each year in the given range (inclusive)
+    for year in range(year1, year2 + 1):
+        # Step 3: Check if the current year is a leap year using datetime.date
+        # A year is a leap year if it has 366 days.
+        # We can determine the number of days in a year by subtracting
+        # Jan 1st of the next year from Jan 1st of the current year.
+        try:
+            days_in_year = (date(year + 1, 1, 1) - date(year, 1, 1)).days
+            if days_in_year == 366:
+                leap_year_count += 1
+        except ValueError:
+            # Handle potential ValueError if year is out of supported range (e.g., year 0)
+            # For standard year ranges (1 to 9999), this should not occur.
+            pass # Or log an error, depending on desired behavior for invalid years
+            
+    # Step 4: Return the total count of leap years
+    return leap_year_count
+
+# Entry point: calculate_number_of_leap_years(year1: int, year2: int) -> int
+```

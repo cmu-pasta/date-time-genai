@@ -5,18 +5,18 @@ from datetime import date, datetime, time, timedelta, timezone
 from datetime_generators import *
 from hypothesis import given, seed, settings
 
-from datetime import datetime
+from datetime import date, timedelta
 def is_leap_year(year: int) -> bool:
-    # Step 3: Construct datetime objects for the beginning of the given year and the next year.
-    start_of_year = datetime(year, 1, 1)
-    start_of_next_year = datetime(year + 1, 1, 1)
+    # Step 1: Create a date object for March 1st of the given year.
+    # We use 3 for March and 1 for the day.
+    march_first = date(year, 3, 1)
     
-    # Step 4: Calculate the difference between these two dates.
-    # The .days attribute of the timedelta object gives the total number of days.
-    number_of_days = (start_of_next_year - start_of_year).days
+    # Step 2: Subtract one day to get the last day of February for that year.
+    last_day_of_february = march_first - timedelta(days=1)
     
-    # Step 5 & 6: A leap year has 366 days. Return True if the calculated number of days is 366, else False.
-    return number_of_days == 366
+    # Step 3: Check the day component of the resulting date.
+    # If it's 29, it's a leap year. Otherwise, it's 28 for a common year.
+    return last_day_of_february.day == 29
 
 # Entry point: is_leap_year(year: int) -> bool
 

@@ -1,29 +1,31 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with dates.
-2. Define a function that accepts two pendulum.Date inputs.
-3. Convert both dates to pendulum.DateTime at midnight UTC to create comparable instants.
-4. Compute the midpoint by averaging their float timestamps.
-5. Create a DateTime from the midpoint timestamp in UTC.
-6. Return the date component as a pendulum.Date.
+1. Accept two pendulum.DateTime inputs.
+2. Determine which input is earlier and which is later to ensure a positive interval.
+3. Compute the absolute duration between them in microseconds using pendulum's diff method.
+4. Add half of that duration (in microseconds) to the earlier DateTime to get the exact midpoint.
+5. Return the resulting pendulum.DateTime.
 
 ```python
 import pendulum
 
-def find_middle_date(d1: pendulum.Date, d2: pendulum.Date) -> pendulum.Date:
-    """
-    Find the date that falls exactly in the middle of two given pendulum.Date values.
-    The midpoint is computed in UTC by averaging the midnight timestamps of both dates.
-    """
-    # Step 1: Normalize dates to DateTime at midnight UTC
-    dt1 = pendulum.datetime(d1.year, d1.month, d1.day, tz="UTC")
-    dt2 = pendulum.datetime(d2.year, d2.month, d2.day, tz="UTC")
+def midpoint_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Order the datetimes to identify the earlier and later moments
+    if dt1 <= dt2:
+        earlier = dt1
+        later = dt2
+    else:
+        earlier = dt2
+        later = dt1
 
-    # Step 2: Compute the midpoint timestamp
-    mid_ts = (dt1.float_timestamp + dt2.float_timestamp) / 2.0
+    # Step 2: Compute absolute duration between them in microseconds
+    total_us = later.diff(earlier).in_microseconds()
 
-    # Step 3: Reconstruct the midpoint DateTime and return its date component
-    midpoint_dt = pendulum.from_timestamp(mid_ts, tz="UTC")
-    return midpoint_dt.date()
+    # Step 3: Add half of the duration to the earlier datetime to find the midpoint
+    half_us = total_us // 2
+    midpoint = earlier.add(microseconds=half_us)
 
-# Entry point: find_middle_date(d1: pendulum.Date, d2: pendulum.Date) -> pendulum.Date
+    # Step 4: Return the midpoint as a pendulum.DateTime
+    return midpoint
+
+# Entry point: midpoint_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime
 ```

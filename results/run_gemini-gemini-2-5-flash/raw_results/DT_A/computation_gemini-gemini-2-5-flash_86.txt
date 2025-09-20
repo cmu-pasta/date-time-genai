@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need `datetime` for date objects and `timedelta` for date calculations.
+2.  **Define a function**: Create a function that accepts an integer representing the year.
+3.  **Establish the base date**: Start by creating a `datetime` object for February 1st of the given year.
+4.  **Calculate days to the first Monday**: Determine the weekday of February 1st. The `weekday()` method returns an integer where Monday is 0 and Sunday is 6. Calculate how many days need to be added to reach the first Monday of February. If February 1st is already a Monday, 0 days are added. Otherwise, we calculate the offset.
+5.  **Calculate the third Monday**: Once the date of the first Monday of February is found, add two weeks (14 days) to it to get the date of the third Monday, which is Presidents' Day.
+6.  **Return the result**: The function should return a `datetime` object representing Presidents' Day for the specified year.
+
+```python
+from datetime import datetime, timedelta
+
+def find_presidents_day(year: int) -> datetime:
+    # Step 1: Establish the base date as February 1st of the given year.
+    feb_1st = datetime(year, 2, 1)
+    
+    # Step 2: Calculate the number of days to add to reach the first Monday of February.
+    # weekday() returns 0 for Monday, 1 for Tuesday, ..., 6 for Sunday.
+    # To find the next Monday (or current day if it's Monday): (7 - current_weekday) % 7
+    days_to_first_monday = (7 - feb_1st.weekday()) % 7
+    
+    # Step 3: Get the date of the first Monday in February.
+    first_monday = feb_1st + timedelta(days=days_to_first_monday)
+    
+    # Step 4: Presidents' Day is the third Monday in February.
+    # This is exactly two weeks (14 days) after the first Monday.
+    presidents_day = first_monday + timedelta(weeks=2)
+    
+    # Step 5: Return the calculated date.
+    return presidents_day
+
+# Entry point: find_presidents_day(year: int) -> datetime
+```

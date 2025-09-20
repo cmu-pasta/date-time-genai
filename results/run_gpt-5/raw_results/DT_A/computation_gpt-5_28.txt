@@ -1,38 +1,21 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the datetime module.
-2. Define a function that accepts a datetime input and an optional flag to normalize to UTC.
-3. If normalization is requested, convert the datetime to UTC (assuming naive datetimes are UTC).
-4. Use datetime.isoformat() to get the ISO 8601 formatted string.
-5. Optionally replace the +00:00 suffix with Z to conform to the common UTC notation.
+1. Import the required class from the datetime module.
+2. Define a function that accepts a datetime object as input.
+3. Use the built-in isoformat method to convert the datetime to an ISO 8601 formatted string.
+4. Return the resulting string.
 
 ```python
-from datetime import datetime, timezone
+from datetime import datetime
 
-def datetime_to_iso8601(dt: datetime, normalize_to_utc: bool = False) -> str:
+def datetime_to_iso8601(dt: datetime) -> str:
     """
-    Convert a datetime to an ISO 8601 format string.
-    
-    Args:
-        dt (datetime): The datetime to format.
-        normalize_to_utc (bool): If True, convert to UTC and use 'Z' suffix.
-        
-    Returns:
-        str: The ISO 8601 formatted string.
+    Convert a datetime to an ISO 8601 formatted string.
     """
-    # Normalize to UTC if requested
-    if normalize_to_utc:
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        else:
-            dt = dt.astimezone(timezone.utc)
+    # Step 1: Use the built-in isoformat method for ISO 8601 representation
+    iso_string = dt.isoformat()
     
-    iso_str = dt.isoformat()
-    
-    # If normalized to UTC, prefer 'Z' suffix over '+00:00'
-    if normalize_to_utc and iso_str.endswith("+00:00"):
-        iso_str = iso_str[:-6] + "Z"
-    
-    return iso_str
+    # Step 2: Return the ISO 8601 string
+    return iso_string
 
-# Entry point: datetime_to_iso8601(dt: datetime, normalize_to_utc: bool = False) -> str
+# Entry point: datetime_to_iso8601(dt: datetime) -> str
 ```

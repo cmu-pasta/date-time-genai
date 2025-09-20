@@ -1,45 +1,63 @@
 Let's think step by step to solve this problem.
-1. Import the required type from the standard library (datetime.date).
-2. Convert the input Gregorian date to a Julian Day Number (JDN) using an integer arithmetic formula.
-3. Convert the JDN to the Islamic (Hijri) date using the tabular (civil) Islamic calendar algorithm.
-4. Return the Islamic date encoded as an integer in the format YYYYMMDD to comply with allowed output types.
+1. Interpret the task as converting a Gregorian calendar date to its corresponding Islamic (Hijri) civil calendar date using arithmetic (tabular) rules.
+2. Use only the datetime library for types (date) and implement the calendar math manually.
+3. Convert the Gregorian date to an integer Julian Day Number (JDN) using a standard algorithm.
+4. Convert the JDN to an Islamic year using the closed-form expression for the civil Islamic calendar.
+5. Determine the Islamic month by estimating with the average month length and adjusting via the Islamic-to-JDN function.
+6. Determine the Islamic day by subtracting the JDN of the first day of the month.
+7. Return the Islamic date as a datetime.date constructed with the Hijri year, month, and day.
 
 ```python
 from datetime import date
 
-def _gregorian_to_jdn(g_date: date) -> int:
-    # Convert a Gregorian date to Julian Day Number (JDN)
-    y = g_date.year
-    m = g_date.month
-    d = g_date.day
+# Julian Day Number (JDN) from Gregorian date (valid for proleptic Gregorian calendar)
+def _gregorian_to_jdn(y: int, m: int, d: int) -> int:
     a = (14 - m) // 12
-    y_prime = y + 4800 - a
-    m_prime = m + 12 * a - 3
-    jdn = d + (153 * m_prime + 2) // 5 + 365 * y_prime + y_prime // 4 - y_prime // 100 + y_prime // 400 - 32045
-    return jdn
+    y2 = y + 4800 - a
+    m2 = m + 12 * a - 3
+    # Integer JDN (days start at noon; this standard formula yields an integer JDN)
+    return d + ((153 * m2 + 2) // 5) + 365 * y2 + (y2 // 4) - (y2 // 100) + (y2 // 400) - 32045
 
-def _jdn_to_islamic_ymd(jdn: int) -> (int, int, int):
-    # Convert JDN to Islamic (Hijri) date using the tabular Islamic calendar (civil)
-    # This is a well-known integer arithmetic algorithm.
-    l = jdn - 1948440 + 10632
-    n = (l - 1) // 10631
-    l = l - 10631 * n + 354
-    j = ((10985 - l) // 5316) * ((50 * l) // 17719) + (l // 5670) * ((43 * l) // 15238)
-    l = l - ((30 - j) // 15) * ((17719 * j) // 50) - (j // 16) * ((15238 * j) // 43) + 29
-    m = (24 * l) // 709
-    d = l - (709 * m) // 24
-    y = 30 * n + j - 30
-    return y, m, d
+# Islamic (civil/tabular) calendar constants and conversions
+_ISLAMIC_EPOCH_JDN = 1948439  # JDN of 1 Muharram, year 1 (civil Islamic epoch), integer-based
 
-def gregorian_to_islamic_yyyymmdd(gregorian_date: date) -> int:
+def _islamic_to_jdn(y: int, m: int, d: int) -> int:
+    # Arithmetic Islamic calendar: 354-day common years, leap in 11 of every 30 years
+    # Month lengths alternate 30/29 with Dhul-Hijjah 30 in leap years.
+    # Using standard tabular formula with average month length 29.5 via ceil.
+    # ceil(29.5 * (m - 1)) = ceil((59 * (m - 1)) / 2) = ((59 * (m - 1)) + 1) // 2
+    months_elapsed_ceiling = ((59 * (m - 1)) + 1) // 2
+    leap_days = (3 + 11 * y) // 30
+    return d + months_elapsed_ceiling + (y - 1) * 354 + leap_days + _ISLAMIC_EPOCH_JDN - 1
+
+def _jdn_to_islamic(jdn: int) -> date:
+    # Compute Islamic year using closed-form approximation
+    y = (30 * (jdn - _ISLAMIC_EPOCH_JDN) + 10646) // 10631
+
+    # Estimate month: m = min(12, ceil((jdn - 29 - islamic_to_jdn(y,1,1)) / 29.5) + 1)
+    # Implement ceil division by 29.5 as ceil(2*x / 59) = (2*x + 58) // 59
+    jdn_y1m1 = _islamic_to_jdn(y, 1, 1)
+    t = jdn - 29 - jdn_y1m1
+    m = (2 * t + 58) // 59 + 1
+    if m > 12:
+        m = 12
+    if m < 1:
+        m = 1
+
+    # Day is the offset from the first day of the month
+    d = jdn - _islamic_to_jdn(y, m, 1) + 1
+
+    # Construct a date object with Islamic Y-M-D values
+    return date(y, m, d)
+
+def gregorian_to_islamic(gregorian_day: date) -> date:
     """
-    Convert a Gregorian date to an Islamic (Hijri) date and return it as an integer YYYYMMDD.
-    Uses the tabular (civil) Islamic calendar.
+    Convert a Gregorian date to its Islamic (Hijri) civil calendar date.
+    Inputs and outputs are datetime.date instances.
+    The returned date's year, month, and day correspond to Islamic calendar values.
     """
-    jdn = _gregorian_to_jdn(gregorian_date)
-    y, m, d = _jdn_to_islamic_ymd(jdn)
-    # Encode as a single integer to satisfy allowed output types
-    return y * 10000 + m * 100 + d
+    jdn = _gregorian_to_jdn(gregorian_day.year, gregorian_day.month, gregorian_day.day)
+    return _jdn_to_islamic(jdn)
 
-# Entry point: gregorian_to_islamic_yyyymmdd(gregorian_date: date) -> int
+# Entry point: gregorian_to_islamic(gregorian_day: date) -> date
 ```

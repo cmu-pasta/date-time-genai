@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and times.
+2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object as input.
+3.  **Calculate the time elapsed since epoch**: The `pendulum.DateTime` object has an `int_timestamp` property that returns the Unix timestamp (seconds since epoch) as an integer.
+4.  **Return the result**: Return this integer value.
+
+```python
+import pendulum
+
+def get_seconds_since_epoch(dt: pendulum.DateTime) -> int:
+    # Step 1: Use the int_timestamp property to get the Unix timestamp
+    # This property returns the number of seconds that have elapsed since the Unix epoch (January 1, 1970, 00:00:00 UTC)
+    # as an integer.
+    elapsed_seconds = dt.int_timestamp
+    
+    # Step 2: Return the result as an integer
+    return elapsed_seconds
+
+# Entry point: get_seconds_since_epoch(dt: pendulum.DateTime) -> int
+```

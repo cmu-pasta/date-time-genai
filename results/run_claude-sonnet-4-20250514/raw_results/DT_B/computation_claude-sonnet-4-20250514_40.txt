@@ -1,34 +1,23 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `time` class from Python's datetime module to work with time objects.
+1. **Import the necessary libraries**: We need the `time` class from the `datetime` module to work with time objects.
 2. **Define a function**: We will create a function that accepts a time object as input.
-3. **Calculate seconds since midnight**: We need to convert the hours, minutes, seconds, and microseconds to total seconds since midnight (00:00:00).
-4. **Return the result**: Return the total seconds as a float to maintain precision for microseconds.
+3. **Calculate seconds since midnight**: Extract the hour, minute, and second components from the time object and convert them to total seconds since 00:00:00.
+4. **Return the result**: Return the total seconds as an integer.
 
-Here is the implementation of the above steps:
+The calculation involves:
+- Hours × 3600 (seconds per hour)
+- Minutes × 60 (seconds per minute) 
+- Seconds (already in seconds)
 
 ```python
 from datetime import time
 
-def convert_time_to_seconds_since_midnight(t: time) -> float:
-    # Step 1: Calculate total seconds since midnight
-    # Convert hours to seconds (1 hour = 3600 seconds)
-    hours_in_seconds = t.hour * 3600
+def time_to_seconds_since_midnight(t: time) -> int:
+    # Calculate total seconds since midnight (00:00:00)
+    total_seconds = t.hour * 3600 + t.minute * 60 + t.second
     
-    # Convert minutes to seconds (1 minute = 60 seconds) 
-    minutes_in_seconds = t.minute * 60
-    
-    # Get seconds directly
-    seconds = t.second
-    
-    # Convert microseconds to seconds (1 second = 1,000,000 microseconds)
-    microseconds_in_seconds = t.microsecond / 1000000
-    
-    # Step 2: Sum all components to get total seconds since midnight
-    total_seconds = hours_in_seconds + minutes_in_seconds + seconds + microseconds_in_seconds
-    
-    # Step 3: Return the result as a float
     return total_seconds
 
-# Entry point: convert_time_to_seconds_since_midnight(t: time) -> float
+# Entry point: time_to_seconds_since_midnight(t: time) -> int
 ```

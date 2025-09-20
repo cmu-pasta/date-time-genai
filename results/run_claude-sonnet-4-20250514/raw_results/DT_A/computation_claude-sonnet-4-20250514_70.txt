@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the calendars**: The Julian calendar was used before the Gregorian calendar. The Gregorian calendar was introduced in 1582 to correct the drift in the Julian calendar due to different leap year rules.
+
+2. **Calculate the offset**: The offset between Julian and Gregorian calendars changes over time. For dates after 1582, we need to calculate how many days the Julian calendar is behind the Gregorian calendar.
+
+3. **Determine the conversion formula**: The offset can be calculated based on the century. The formula is: offset = century - century//4 - 2, where century is (year//100).
+
+4. **Add the offset**: To convert from Julian to Gregorian, we need to add the calculated offset to the Julian date.
+
+5. **Handle the datetime objects**: Use timedelta to add the calculated days to the input datetime object.
+
+```python
+from datetime import datetime, timedelta
+
+def convert_julian_to_gregorian(julian_date: datetime) -> datetime:
+    # Extract the year from the Julian date
+    year = julian_date.year
+    
+    # Calculate the century
+    century = year // 100
+    
+    # Calculate the offset between Julian and Gregorian calendars
+    # This formula gives the number of days Julian is behind Gregorian
+    if year >= 1582:  # Gregorian calendar was introduced in 1582
+        offset = century - century // 4 - 2
+    else:
+        offset = 0  # Before 1582, no adjustment needed as both would be Julian
+    
+    # Add the offset to convert Julian to Gregorian
+    gregorian_date = julian_date + timedelta(days=offset)
+    
+    return gregorian_date
+
+# Entry point: convert_julian_to_gregorian(julian_date: datetime) -> datetime
+```

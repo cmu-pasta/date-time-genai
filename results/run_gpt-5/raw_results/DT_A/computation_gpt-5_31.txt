@@ -1,35 +1,23 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard datetime library.
-2. Accept a date or datetime as input; if a datetime is provided, convert it to a date.
-3. Determine if the month is April (4) or later; if so, the fiscal year is the calendar year of the date; otherwise, it is the previous calendar year.
-4. Return the fiscal year as an integer.
+1. Import the required class from the datetime library to handle date inputs.
+2. Define a function that accepts a date.
+3. Determine if the date falls between April and December (inclusive). If yes, the fiscal year ends the next calendar year; otherwise, it ends in the current year.
+4. Return the fiscal year as an integer (commonly labeled by its ending year).
 
 ```python
-from datetime import date, datetime
+from datetime import date
 
-def fiscal_year_april_start(given_date) -> int:
+def determine_fiscal_year(given_date: date) -> int:
     """
-    Determine the fiscal year for a given date assuming fiscal year starts on April 1.
-    Fiscal year label is the calendar year in which the fiscal year starts.
-    Example: 2025-04-01 to 2026-03-31 => fiscal year 2025.
-    
-    Accepts:
-      - datetime.date
-      - datetime.datetime
-    Returns:
-      - int: the fiscal year label
+    Determine the fiscal year for a given date, assuming the fiscal year starts on April 1.
+    Fiscal year is labeled by its ending calendar year.
+    Example: Dates from 2023-04-01 to 2024-03-31 return 2024.
     """
-    # Normalize to a date if a datetime is provided
-    if isinstance(given_date, datetime):
-        d = given_date.date()
-    elif isinstance(given_date, date):
-        d = given_date
-    else:
-        raise TypeError("given_date must be a datetime.date or datetime.datetime")
+    # If month is April (4) or later, fiscal year ends next calendar year
+    if given_date.month >= 4:
+        return given_date.year + 1
+    # Otherwise (Jan–Mar), fiscal year ends in the current calendar year
+    return given_date.year
 
-    # Compute fiscal year assuming April (4) start
-    fiscal_year = d.year if d.month >= 4 else d.year - 1
-    return fiscal_year
-
-# Entry point: fiscal_year_april_start(given_date) -> int
+# Entry point: determine_fiscal_year(given_date: date) -> int
 ```

@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with timestamps and durations.
+2. **Define the epoch**: The epoch is typically January 1, 1970, 00:00:00 UTC. We can create this using pendulum.
+3. **Define a function**: Create a function that accepts a pendulum.DateTime timestamp as input.
+4. **Calculate the elapsed time**: Subtract the epoch datetime from the given timestamp to get the elapsed time.
+5. **Return the result**: Return the elapsed time as a pendulum.Duration object.
+
+```python
+import pendulum
+
+def calculate_time_since_epoch(timestamp: pendulum.DateTime) -> pendulum.Duration:
+    # Step 1: Create the epoch datetime (January 1, 1970, 00:00:00 UTC)
+    epoch = pendulum.parse('1970-01-01T00:00:00Z')
+    
+    # Step 2: Calculate the time elapsed since epoch
+    elapsed_time = timestamp - epoch
+    
+    # Step 3: Return the elapsed time as a Duration
+    return elapsed_time
+
+# Entry point: calculate_time_since_epoch(timestamp: pendulum.DateTime) -> pendulum.Duration
+```

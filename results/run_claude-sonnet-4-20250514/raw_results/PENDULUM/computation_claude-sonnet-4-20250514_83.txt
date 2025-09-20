@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates, times, and timezones.
+2. **Define a function**: Create a function that accepts a year (integer) and a timezone (pendulum.Timezone) as input parameters.
+3. **Find DST transitions**: Use pendulum's timezone functionality to get the transitions for the given year and timezone.
+4. **Identify the DST end transition**: Look for the transition where daylight saving time ends (typically when the offset becomes smaller, going from daylight time back to standard time).
+5. **Return the result**: Return the pendulum.DateTime object representing when DST ends.
+
+```python
+import pendulum
+
+def find_dst_end_date(year: int, timezone: pendulum.Timezone) -> pendulum.DateTime:
+    # Create a datetime at the beginning of the year in the given timezone
+    start_of_year = pendulum.datetime(year, 1, 1, tz=timezone)
+    end_of_year = pendulum.datetime(year, 12, 31, 23, 59, 59, tz=timezone)
+    
+    # Get timezone transitions for the year
+    transitions = timezone.transitions(start_of_year, end_of_year)
+    
+    # Find the DST end transition (when offset decreases - fall back)
+    for transition in transitions:
+        # Check if this is a "fall back" transition (DST ending)
+        # This happens when the UTC offset decreases
+        before_transition = transition.at.subtract(hours=1)
+        after_transition = transition.at.add(hours=1)
+        
+        if before_transition.utc_offset() > after_transition.utc_offset():
+            return transition.at
+    
+    # If no DST end transition found, return None converted to start of year
+    # (This handles timezones that don't observe DST)
+    return start_of_year
+
+# Entry point: find_dst_end_date(year: int, timezone: pendulum.Timezone) -> pendulum.DateTime
+```

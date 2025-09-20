@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` class from Python's standard `datetime` module to work with dates.
+2.  **Define a function**: Create a function that accepts two `datetime` objects: one for the birth date and one for the reference date.
+3.  **Calculate the difference**: Subtract the `birth_date` from the `reference_date`. This operation results in a `timedelta` object.
+4.  **Extract total days**: Access the `.days` attribute of the `timedelta` object to get the total number of days.
+5.  **Ensure non-negative age**: Since "age" is generally considered a non-negative value, we should ensure the result is 0 if the `reference_date` is earlier than the `birth_date`. We can achieve this using `max(0, ...)` with the calculated difference in days.
+6.  **Return the result**: Return the total number of days as an integer.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_age_in_days(birth_date: datetime, reference_date: datetime) -> int:
+    # Step 1: Calculate the difference between the reference date and the birth date.
+    # This results in a timedelta object.
+    time_difference: timedelta = reference_date - birth_date
+    
+    # Step 2: Extract the total number of days from the timedelta object.
+    # The .days attribute gives the number of days, which can be negative if
+    # reference_date is earlier than birth_date.
+    total_days: int = time_difference.days
+    
+    # Step 3: Ensure the age is non-negative.
+    # If the reference_date is before the birth_date, the age should be 0.
+    return max(0, total_days)
+
+# Entry point: calculate_age_in_days(birth_date: datetime, reference_date: datetime) -> int
+```

@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+1.  **Import necessary classes**: We need `date` and `timedelta` from the `datetime` module to work with dates and time differences.
+2.  **Define a function**: Create a function that accepts an integer representing the year.
+3.  **Find the last day of May**: Construct a `date` object for May 31st of the given year.
+4.  **Calculate the offset to the last Monday**: The `weekday()` method returns an integer where Monday is 0 and Sunday is 6. We need to find the number of days to subtract from May 31st to reach the most recent Monday (inclusive). The formula `(last_day_of_may.weekday() - 0 + 7) % 7` will give us this offset.
+5.  **Subtract the offset**: Use `timedelta` to subtract the calculated number of days from May 31st to get the date of Memorial Day.
+6.  **Return the result**: Return the resulting `date` object.
+
+```python
+from datetime import date, timedelta
+
+def find_memorial_day(year: int) -> date:
+    # Step 1: Get the date for May 31st of the given year.
+    # This is the latest possible day in May.
+    last_day_of_may = date(year, 5, 31)
+    
+    # Step 2: Calculate the number of days to subtract to get to the preceding or current Monday.
+    # weekday() returns 0 for Monday, 1 for Tuesday, ..., 6 for Sunday.
+    # We want to find the Monday (weekday 0).
+    # The formula (current_weekday - target_weekday + 7) % 7 gives the number of days
+    # to subtract to reach the target_weekday.
+    days_to_subtract = (last_day_of_may.weekday() - 0 + 7) % 7
+    
+    # Step 3: Subtract these days from May 31st to find the last Monday of May.
+    memorial_day = last_day_of_may - timedelta(days=days_to_subtract)
+    
+    # Step 4: Return the calculated date.
+    return memorial_day
+
+# Entry point: find_memorial_day(year: int) -> date
+```

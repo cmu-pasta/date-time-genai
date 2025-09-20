@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts two dates as input. These dates should be pendulum.DateTime objects.
+3. **Determine the date range**: We need to establish the start and end dates, ensuring we handle the range correctly regardless of input order.
+4. **Count weekends**: Iterate through the date range and count complete weekends. A weekend consists of Saturday and Sunday, so we can count the number of Saturdays as each represents the start of a weekend.
+5. **Return the result**: Return the count as an integer.
+
+```python
+import pendulum
+
+def calculate_weekends_between_dates(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    # Ensure we have the correct start and end dates
+    start_date = min(dt1, dt2).date()
+    end_date = max(dt1, dt2).date()
+    
+    weekend_count = 0
+    current_date = start_date
+    
+    # Iterate through each date in the range
+    while current_date <= end_date:
+        # Check if current date is Saturday (weekday 5 in pendulum, where Monday = 0)
+        if current_date.weekday() == 5:  # Saturday marks the start of a weekend
+            weekend_count += 1
+        current_date = current_date.add(days=1)
+    
+    return weekend_count
+
+# Entry point: calculate_weekends_between_dates(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+```

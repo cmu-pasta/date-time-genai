@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts an integer representing the year.
+3.  **Identify the last day of May**: Construct a `pendulum.Date` object for May 31st of the given year.
+4.  **Calculate the number of days to backtrack**: Determine the `day_of_week` for May 31st. Memorial Day is the last Monday, so we need to find the number of days to subtract from May 31st to reach the most recent Monday on or before May 31st. The difference between the current day of the week and Monday (where Monday is 1) gives us this number.
+5.  **Subtract the days**: Use the `subtract` method of the `pendulum.Date` object to go back the calculated number of days.
+6.  **Return the result**: The resulting `pendulum.Date` object is Memorial Day for that year.
+
+```python
+import pendulum
+
+def find_memorial_day(year: int) -> pendulum.Date:
+    # Step 1: Create a pendulum.Date object for May 31st of the given year.
+    # We use pendulum.date() to ensure the return type is pendulum.Date as specified.
+    may_31st = pendulum.date(year, 5, 31)
+
+    # Step 2: Determine the day of the week for May 31st.
+    # pendulum.MONDAY is 1, TUESDAY is 2, ..., SUNDAY is 7.
+    day_of_week_31st = may_31st.day_of_week
+
+    # Step 3: Calculate how many days to subtract to get to the last Monday.
+    # If May 31st is a Monday (1), subtract 0 days (1 - 1 = 0).
+    # If May 31st is a Tuesday (2), subtract 1 day (2 - 1 = 1) to get Monday.
+    # If May 31st is a Sunday (7), subtract 6 days (7 - 1 = 6) to get Monday.
+    days_to_subtract = day_of_week_31st - pendulum.MONDAY
+
+    # Step 4: Subtract these days from May 31st to find Memorial Day.
+    memorial_day = may_31st.subtract(days=days_to_subtract)
+
+    # Step 5: Return the resulting pendulum.Date object.
+    return memorial_day
+
+# Entry point: find_memorial_day(year: int) -> pendulum.Date
+```

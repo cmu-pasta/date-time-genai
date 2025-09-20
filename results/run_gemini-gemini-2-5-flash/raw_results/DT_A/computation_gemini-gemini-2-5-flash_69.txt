@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We will need `datetime` and `timedelta` from the `datetime` module. For robust time zone handling, we'll use `ZoneInfo` from the `zoneinfo` module (available in Python 3.9+).
+2.  **Define a function**: Create a function that accepts two `datetime` objects as input. For the function to correctly account for time zones, both input `datetime` objects must be timezone-aware.
+3.  **Calculate the difference**: Subtract the first `datetime` object from the second. When both `datetime` objects are timezone-aware, Python's `datetime` subtraction inherently handles the time zone differences, effectively converting them to a common reference point (like UTC) before computing the difference.
+4.  **Return the result**: The subtraction of two `datetime` objects results in a `timedelta` object, which is the expected output type.
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo # Requires Python 3.9+ for ZoneInfo
+
+def calculate_timezone_aware_difference(dt1: datetime, dt2: datetime) -> timedelta:
+    """
+    Calculates the time difference between two timezone-aware datetime objects.
+
+    Args:
+        dt1: The first datetime object. Must be timezone-aware.
+        dt2: The second datetime object. Must be timezone-aware.
+
+    Returns:
+        A timedelta object representing the difference (dt2 - dt1).
+    """
+    # It is crucial that both dt1 and dt2 are timezone-aware for this
+    # calculation to correctly account for different time zones.
+    # If they are naive, this function will still work but will not
+    # "account" for time zones beyond simple clock time difference.
+    # If one is naive and the other aware, a TypeError will be raised.
+
+    # Perform the subtraction. Python's datetime subtraction correctly
+    # handles timezone-aware objects, giving the actual elapsed time.
+    time_difference = dt2 - dt1
+    
+    return time_difference
+
+# Entry point: calculate_timezone_aware_difference(dt1: datetime, dt2: datetime) -> timedelta
+```

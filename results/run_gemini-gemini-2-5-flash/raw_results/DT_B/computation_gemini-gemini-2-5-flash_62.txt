@@ -1,0 +1,70 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need `datetime` for date and time objects, `timedelta` for time differences, and `ZoneInfo` from `zoneinfo` to handle timezones.
+2.  **Define the function signature**: The function will accept an `integer` for the year and a `ZoneInfo` object for the timezone. It should return a `datetime` object representing the DST start.
+3.  **Establish a search range**: Daylight Saving Time (DST) typically starts in the Northern Hemisphere in March or April. We will iterate through days within this range to find the transition. A safe range would be from March 1st to the end of April.
+4.  **Iterate and check for DST change**: For each day in the search range, we will construct a `datetime` object for that day at a specific local time (e.g., 1 AM). We then localize this `datetime` object to the given `ZoneInfo`.
+5.  **Detect DST start**: The `datetime.dst()` method returns a `timedelta` representing the DST offset for that specific `datetime` object.
+    *   Standard time typically has a `dst()` of `timedelta(0)`.
+    *   DST typically has a `dst()` of `timedelta(hours=1)`.
+    We will compare the `dst()` value of the current day's `datetime` object with that of the previous day. If the previous day had no DST (`timedelta(0)`) and the current day *does* have DST (non-zero `timedelta`), then the current day is the start of DST.
+6.  **Return the result**: Once the DST start date is found, we extract the date component (or return the `datetime` object at midnight of that date) and return it. If no DST start is found within the range, it implies no DST for that year/timezone, or the range was insufficient, in which case we might raise an error or return a specific value (for this problem, we assume DST *will* be found).
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def find_dst_start_date(year: int, tz: ZoneInfo) -> datetime:
+    """
+    Finds the date when daylight saving time starts for a given year and timezone.
+    This function searches from March 1st to April 30th to find the transition.
+    
+    Args:
+        year: The year for which to find the DST start date.
+        tz: The ZoneInfo object representing the timezone.
+        
+    Returns:
+        A datetime object representing the start date of DST at midnight local time.
+        Raises ValueError if DST start is not found within the typical search range.
+    """
+    
+    # DST typically starts in March or April in the Northern Hemisphere.
+    # We'll check from March 1st until end of April.
+    
+    # Start checking from March 1st
+    current_date = datetime(year, 3, 1, 0, 0, 0)
+    
+    # Previous day's DST status, initialized to assume standard time before March 1st
+    # This also handles cases where DST doesn't apply to the timezone or year.
+    previous_dst_status = timedelta(0) 
+
+    # Loop through days up to April 30th
+    while current_date.month <= 4: # Check up to the end of April
+        # Localize the current datetime (e.g., 1 AM local time to check DST status)
+        # We choose 1 AM because the transition usually happens at 2 AM or 3 AM,
+        # so 1 AM on the day of transition would still be standard time (or previous DST state).
+        # We then check 1 AM on the *next* day to see if DST has applied.
+        dt_at_1am_local = datetime(current_date.year, current_date.month, current_date.day, 1, 0, 0, tzinfo=tz)
+        
+        # Get the DST status for this specific localized datetime
+        current_dst_status = dt_at_1am_local.dst()
+
+        # Check for a transition from no DST to DST
+        # If previous_dst_status was 0 (standard time) and current_dst_status is > 0 (DST is active)
+        # This means the transition happened *between* the previous day's 1 AM and current day's 1 AM.
+        if previous_dst_status == timedelta(0) and current_dst_status > timedelta(0):
+            # The DST transition happened on 'current_date'.
+            # We return a datetime object representing midnight of that date.
+            return datetime(current_date.year, current_date.month, current_date.day, 0, 0, 0, tzinfo=tz)
+        
+        # Update previous status for the next iteration
+        previous_dst_status = current_dst_status
+        
+        # Move to the next day
+        current_date += timedelta(days=1)
+        
+    # If we reach here, DST start was not found within the search range
+    raise ValueError(f"DST start not found for year {year} in timezone {tz.key} within March-April range.")
+
+# Entry point: find_dst_start_date(year: int, tz: ZoneInfo) -> datetime
+```

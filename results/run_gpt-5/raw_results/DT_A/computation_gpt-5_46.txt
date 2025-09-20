@@ -1,30 +1,25 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the standard datetime library.
-2. Define a function that accepts a datetime input.
-3. Compute the 12-hour clock hour: 1-12, mapping 0->12 and 13-23->1-11.
-4. Determine AM/PM: PM if hour >= 12, otherwise AM.
-5. Return a time object in 12-hour form. Since strings are not allowed, encode AM/PM using the time.fold attribute (0 for AM, 1 for PM), and preserve minutes, seconds, microseconds, and tzinfo.
+1. Import the datetime library components needed to work with datetimes and times.
+2. Define a function that accepts a datetime as input.
+3. Determine whether the time is AM or PM based on the hour component (>= 12 indicates PM).
+4. Convert the 24-hour hour value to its 12-hour equivalent (with 12 representing midnight/noon).
+5. Construct and return a time object representing the 12-hour time. Use the fold attribute to encode AM (fold=0) or PM (fold=1).
 
 ```python
 from datetime import datetime, time
 
-def to_12h_with_ampm(dt: datetime) -> time:
-    """
-    Convert a datetime (24-hour) to a 12-hour time with AM/PM encoded in time.fold.
-    - Returns a time object with hour in 1..12.
-    - AM/PM is indicated via fold: 0 = AM, 1 = PM.
-    - tzinfo, minute, second, microsecond are preserved from the input datetime.
-    """
-    if not isinstance(dt, datetime):
-        raise TypeError("Input must be a datetime instance")
-
-    # Determine if PM
+def convert_datetime_to_12h(dt: datetime) -> time:
+    # Determine if the time is PM
     is_pm = dt.hour >= 12
-
-    # Convert to 12-hour clock: 0->12, 13->1, ..., 23->11, 12->12
-    hour_12 = ((dt.hour + 11) % 12) + 1
-
-    # Build time with fold indicating AM(0)/PM(1)
+    
+    # Convert 24-hour hour to 12-hour hour
+    hour_12 = dt.hour % 12
+    if hour_12 == 0:
+        hour_12 = 12
+    
+    # Build a time object in 12-hour representation.
+    # Use fold to encode AM/PM: fold=0 for AM, fold=1 for PM.
+    # This keeps input/output within datetime library types.
     t12 = time(
         hour=hour_12,
         minute=dt.minute,
@@ -35,5 +30,5 @@ def to_12h_with_ampm(dt: datetime) -> time:
     )
     return t12
 
-# Entry point: to_12h_with_ampm(dt: datetime) -> time
+# Entry point: convert_datetime_to_12h(dt: datetime) -> time
 ```

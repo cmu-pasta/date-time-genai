@@ -1,27 +1,23 @@
 Let's think step by step to solve this problem.
-1. Create a pendulum.Date representing May 31st of the given year.
-2. Determine the weekday of May 31st.
-3. Compute the offset in days back to the most recent Monday (0-6).
-4. Subtract the offset from May 31st to get the last Monday in May.
-5. Return the result as a pendulum.Date.
+1. Receive the target year as an integer input.
+2. Create a pendulum.Date representing May 31st of that year.
+3. Determine the weekday of May 31st (0=Monday, ..., 6=Sunday).
+4. Subtract that many days to get the last Monday in May.
+5. Return the resulting pendulum.Date.
 
 ```python
 import pendulum
 
 def memorial_day(year: int) -> pendulum.Date:
     """
-    Compute the date of Memorial Day for a given year (last Monday of May).
-    
-    Args:
-        year (int): The target year.
-        
-    Returns:
-        pendulum.Date: The date of Memorial Day in the given year.
+    Compute Memorial Day (last Monday of May) for the given year.
+    Returns a pendulum.Date.
     """
     may_31 = pendulum.date(year, 5, 31)
-    weekday = may_31.weekday()  # Monday=0 ... Sunday=6
-    offset = (weekday - pendulum.MONDAY) % 7  # days to step back to Monday
-    return may_31.subtract(days=offset)
+    # weekday(): 0=Monday, ..., 6=Sunday
+    offset = may_31.weekday()
+    last_monday = may_31.subtract(days=offset)
+    return last_monday
 
 # Entry point: memorial_day(year: int) -> pendulum.Date
 ```

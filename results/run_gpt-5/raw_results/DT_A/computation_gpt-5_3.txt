@@ -1,26 +1,29 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module to work with dates.
-2. Define a helper function to check if a year is a leap year using Gregorian calendar rules.
-3. Define the main function that takes a date (or datetime) as input, starts from the following year, and iterates forward to find the next leap year.
-4. Return the year of the next leap year as an integer.
+1. Import the required type(s) from the datetime module.
+2. Accept a date-like input and extract its year.
+3. Starting from the following year, iterate upward to find the first leap year using the leap-year rule.
+4. If found within the supported range (1..9999), return February 29 of that leap year as a date object.
+5. If no valid leap year exists within range, raise a ValueError.
 
 ```python
-from datetime import date, datetime
+from datetime import date
 
-def _is_leap_year(year: int) -> bool:
-    """Return True if the given Gregorian year is a leap year."""
-    return (year % 4 == 0) and (year % 100 != 0 or year % 400 == 0)
-
-def next_leap_year_after(given_date: date) -> int:
+def next_leap_year_date(given_date: date) -> date:
     """
-    Determine the next leap year strictly after the given date.
-    Accepts a datetime.date (a datetime.datetime is also acceptable since it subclasses date).
-    Returns the year as an integer.
+    Determine the next leap year after the given date and return the date of Feb 29 of that year.
+    Raises ValueError if no such date exists within the supported datetime range.
     """
     year = given_date.year + 1
-    while not _is_leap_year(year):
-        year += 1
-    return year
 
-# Entry point: next_leap_year_after(given_date: date) -> int
+    # Python's datetime supports years in the range 1..9999
+    while year <= 9999:
+        # Leap year rule: divisible by 4 and (not divisible by 100 unless divisible by 400)
+        if (year % 4 == 0) and ((year % 100 != 0) or (year % 400 == 0)):
+            return date(year, 2, 29)
+        year += 1
+
+    # If we exceed 9999, we cannot represent the date in datetime.date
+    raise ValueError("No representable next leap year exists after the given date.")
+
+# Entry point: next_leap_year_date(given_date: date) -> date
 ```

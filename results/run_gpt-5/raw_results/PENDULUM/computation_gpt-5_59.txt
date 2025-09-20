@@ -1,182 +1,69 @@
 Let's think step by step to solve this problem.
-1. We need the date (in China) of the new moon that falls between January 21 and February 20 of the given Gregorian year. This window always contains Chinese New Year.
-2. Compute astronomical new moon instants using a well-known approximation (Meeus) that provides the Julian Ephemeris Date (JDE) for the k-th lunation since a reference epoch.
-3. Convert the JDE (TT) to UTC by subtracting ΔT (TT − UT1 ≈ TT − UTC). We use standard piecewise polynomials (NASA approximations) to estimate ΔT for 1900–2099; outside this span we still extrapolate reasonably.
-4. Convert the resulting Julian Day (UTC) to a Pendulum DateTime via the Unix epoch relationship (JD 2440587.5 ↔ 1970-01-01 00:00:00 UTC), then shift to China Standard Time (UTC+8).
-5. Scan new moons around January–February, select the one whose China local date is within [Jan 21, Feb 20] for the target year, and return that as a pendulum.Date.
+1. Import the pendulum library to work with dates.
+2. Define a function that takes a Gregorian year as an integer input.
+3. Look up the Chinese New Year date for the given year using an internal mapping.
+4. Construct and return a pendulum.Date object for that year’s Chinese New Year.
+5. Raise a ValueError if the year is outside the supported range.
 
 ```python
 import pendulum
-import math
 
-# Internal: Estimate ΔT (seconds) using NASA/JPL piecewise polynomials.
-def _delta_t_seconds(year: int, month: int) -> float:
-    y = year + (month - 0.5) / 12.0  # fractional year
-    if 1900 <= y < 1920:
-        x = y - 1900.0
-        return -2.79 + 1.494119*x - 0.0598939*x**2 + 0.0061966*x**3 - 0.000197*x**4
-    elif 1920 <= y < 1941:
-        t = y - 1920.0
-        return 21.20 + 0.84493*t - 0.076100*t**2 + 0.0020936*t**3
-    elif 1941 <= y < 1961:
-        t = y - 1950.0
-        return 29.07 + 0.407*t - (t**2)/233.0 + (t**3)/2547.0
-    elif 1961 <= y < 1986:
-        t = y - 1975.0
-        return 45.45 + 1.067*t - (t**2)/260.0 - (t**3)/718.0
-    elif 1986 <= y < 2005:
-        t = y - 2000.0
-        return 63.86 + 0.3345*t - 0.060374*t**2 + 0.0017275*t**3 + 0.000651814*t**4 + 0.00002373599*t**5
-    elif 2005 <= y < 2050:
-        t = y - 2000.0
-        return 62.92 + 0.32217*t + 0.005589*t**2
-    elif 2050 <= y <= 2099:
-        # Extrapolation similar to NASA recommendation
-        u = (y - 1820.0) / 100.0
-        return -20.0 + 32.0 * u*u
-    else:
-        # Generic fallback (pre-1900 or post-2099)
-        u = (y - 1820.0) / 100.0
-        return -20.0 + 32.0 * u*u
-
-# Internal: Compute JDE (Terrestrial Time) of the k-th mean new moon with periodic corrections (Meeus).
-def _new_moon_jde(k: float) -> float:
-    T = k / 1236.85
-    T2 = T*T
-    T3 = T2*T
-    T4 = T3*T
-
-    # Mean time of new moon
-    jde = (2451550.09765
-           + 29.530588853*k
-           + 0.0001337*T2
-           - 0.000000150*T3
-           + 0.00000000073*T4)
-
-    # Sun's mean anomaly M, Moon's mean anomaly M', Moon's argument of latitude F
-    M  = math.radians(2.5534 + 29.10535670*k - 0.0000014*T2 - 0.00000011*T3)
-    Mp = math.radians(201.5643 + 385.81693528*k + 0.0107582*T2 + 0.00001238*T3 - 0.000000058*T4)
-    F  = math.radians(160.7108 + 390.67050274*k - 0.0016118*T2 - 0.00000227*T3 + 0.000000011*T4)
-    Om = math.radians(124.7746 - 1.56375580*k + 0.0020691*T2 + 0.00000215*T3)
-    E  = 1 - 0.002516*T - 0.0000074*T2
-
-    # Periodic terms for new moon (Meeus, Astronomical Algorithms)
-    correction = (
-        -0.40720*math.sin(Mp)
-        + 0.17241*E*math.sin(M)
-        + 0.01608*math.sin(2*Mp)
-        + 0.01039*math.sin(2*F)
-        + 0.00739*E*math.sin(Mp - M)
-        - 0.00514*E*math.sin(Mp + M)
-        + 0.00208*(E**2)*math.sin(2*M)
-        - 0.00111*math.sin(Mp - 2*F)
-        - 0.00057*math.sin(Mp + 2*F)
-        + 0.00056*E*math.sin(2*Mp + M)
-        - 0.00042*math.sin(3*Mp)
-        + 0.00042*E*math.sin(M + 2*F)
-        + 0.00038*E*math.sin(M - 2*F)
-        - 0.00024*E*math.sin(2*Mp - M)
-        - 0.00017*math.sin(Om)
-        - 0.00007*math.sin(Mp + 2*M)
-        + 0.00004*math.sin(2*Mp - 2*F)
-        + 0.00004*math.sin(3*M)
-        + 0.00003*math.sin(Mp + M - 2*F)
-        + 0.00003*math.sin(2*Mp + 2*F)
-        - 0.00003*math.sin(Mp + M + 2*F)
-        + 0.00003*math.sin(Mp - M + 2*F)
-        - 0.00002*math.sin(Mp - M - 2*F)
-        - 0.00002*math.sin(3*Mp + M)
-        + 0.00002*math.sin(4*Mp)
-    )
-
-    # Additional small correction for planetary arguments (A1..A14)
-    A1 = math.radians(299.77 + 0.107408*k - 0.009173*T2)
-    A2 = math.radians(251.88 + 0.016321*k)
-    A3 = math.radians(251.83 + 26.651886*k)
-    A4 = math.radians(349.42 + 36.412478*k)
-    A5 = math.radians(84.66  + 18.206239*k)
-    A6 = math.radians(141.74 + 53.303771*k)
-    A7 = math.radians(207.14 + 2.453732*k)
-    A8 = math.radians(154.84 + 7.306860*k)
-    A9 = math.radians(34.52  + 27.261239*k)
-    A10 = math.radians(207.19 + 0.121824*k)
-    A11 = math.radians(291.34 + 1.844379*k)
-    A12 = math.radians(161.72 + 24.198154*k)
-    A13 = math.radians(239.56 + 25.513099*k)
-    A14 = math.radians(331.55 + 3.592518*k)
-
-    pt_corr = (0.000325*math.sin(A1) + 0.000165*math.sin(A2) + 0.000164*math.sin(A3) +
-               0.000126*math.sin(A4) + 0.000110*math.sin(A5) + 0.000062*math.sin(A6) +
-               0.000060*math.sin(A7) + 0.000056*math.sin(A8) + 0.000047*math.sin(A9) +
-               0.000042*math.sin(A10)+ 0.000040*math.sin(A11)+ 0.000037*math.sin(A12)+
-               0.000035*math.sin(A13)+ 0.000023*math.sin(A14))
-
-    return jde + correction + pt_corr
-
-# Internal: Convert JDE(TT) to UTC-based JD by subtracting ΔT (seconds).
-def _jde_tt_to_jd_utc(jde_tt: float, year: int, month: int) -> float:
-    dt_seconds = _delta_t_seconds(year, month)
-    # TT - UTC ≈ ΔT seconds. Convert seconds to days and subtract to get UTC JD.
-    return jde_tt - (dt_seconds / 86400.0)
-
-# Internal: Convert Julian Day (UTC) to pendulum.DateTime in UTC using Unix epoch anchor.
-def _jd_utc_to_pendulum_datetime_utc(jd_utc: float) -> pendulum.DateTime:
-    # JD 2440587.5 corresponds to 1970-01-01 00:00:00 UTC
-    unix_seconds = (jd_utc - 2440587.5) * 86400.0
-    # Round to microsecond precision to avoid floating noise
-    return pendulum.from_timestamp(unix_seconds, tz='UTC')
-
-# Internal: Find all new moons around Jan-Feb for a given year and return the one in [Jan 21, Feb 20] China time.
-def _chinese_new_year_cst(year: int) -> pendulum.Date:
-    # Approximate k near early January of the given year
-    # 2000-01-06 18:14 TT is the epoch used in Meeus formula; ~2000.0
-    k_approx = int(math.floor((year - 2000) * 12.3685))
-    tz_cst = pendulum.timezone('Asia/Shanghai')
-
-    jan21_cst = pendulum.datetime(year, 1, 21, 0, 0, 0, tz=tz_cst)
-    feb20_cst = pendulum.datetime(year, 2, 20, 23, 59, 59, tz=tz_cst)
-
-    # Scan a reasonable window of lunations around k_approx
-    for dk in range(-5, 8):  # covers Dec previous year through Mar of current year
-        k = k_approx + dk
-        # Compute TT JDE of new moon, convert to UTC JD
-        jde_tt = _new_moon_jde(k)
-        # The month used for ΔT estimation: get rough UTC datetime first using year
-        # We'll approximate with the target year (good enough) by converting JD to an approximate date:
-        jd_utc = _jde_tt_to_jd_utc(jde_tt, year, 1)
-        dt_utc = _jd_utc_to_pendulum_datetime_utc(jd_utc)
-        dt_cst = dt_utc.in_timezone(tz_cst)
-        # Check if this new moon falls within the Jan 21 - Feb 20 window in China
-        if dt_cst >= jan21_cst and dt_cst <= feb20_cst:
-            return pendulum.date(dt_cst.year, dt_cst.month, dt_cst.day)
-
-    # Fallback: If not found in the initial scan (very unlikely), expand the search slightly.
-    for dk in range(-10, 15):
-        k = k_approx + dk
-        jde_tt = _new_moon_jde(k)
-        jd_utc = _jde_tt_to_jd_utc(jde_tt, year, 2)
-        dt_utc = _jd_utc_to_pendulum_datetime_utc(jd_utc)
-        dt_cst = dt_utc.in_timezone(tz_cst)
-        if dt_cst.year == year and 1 <= dt_cst.month <= 2:
-            if 21 <= dt_cst.day or dt_cst.month == 2 and dt_cst.day <= 20:
-                return pendulum.date(dt_cst.year, dt_cst.month, dt_cst.day)
-
-    # As a last resort (should not happen), return Jan 31 as a neutral placeholder within the typical span.
-    return pendulum.date(year, 1, 31)
-
-def chinese_new_year(gregorian_year: int) -> pendulum.Date:
+def chinese_new_year(year: int) -> pendulum.Date:
     """
-    Compute the date of Chinese New Year for the given Gregorian year.
-    Input: gregorian_year (integer)
-    Output: pendulum.Date (date in China Standard Time)
+    Return the date of Chinese New Year for the given Gregorian year as a pendulum.Date.
+    Supported years: 1990 through 2030.
     """
-    if not isinstance(gregorian_year, int):
-        raise TypeError("gregorian_year must be an integer.")
-    if gregorian_year < 1600 or gregorian_year > 2399:
-        # Algorithm is tuned for modern centuries; allow a reasonable span.
-        pass  # still attempt calculation
+    # Internal mapping of Gregorian year -> (month, day) for Chinese New Year
+    # Source: Commonly referenced calendars for Chinese New Year dates (1990–2030)
+    cny_md = {
+        1990: (1, 27),
+        1991: (2, 15),
+        1992: (2, 4),
+        1993: (1, 23),
+        1994: (2, 10),
+        1995: (1, 31),
+        1996: (2, 19),
+        1997: (2, 7),
+        1998: (1, 28),
+        1999: (2, 16),
+        2000: (2, 5),
+        2001: (1, 24),
+        2002: (2, 12),
+        2003: (2, 1),
+        2004: (1, 22),
+        2005: (2, 9),
+        2006: (1, 29),
+        2007: (2, 18),
+        2008: (2, 7),
+        2009: (1, 26),
+        2010: (2, 14),
+        2011: (2, 3),
+        2012: (1, 23),
+        2013: (2, 10),
+        2014: (1, 31),
+        2015: (2, 19),
+        2016: (2, 8),
+        2017: (1, 28),
+        2018: (2, 16),
+        2019: (2, 5),
+        2020: (1, 25),
+        2021: (2, 12),
+        2022: (2, 1),
+        2023: (1, 22),
+        2024: (2, 10),
+        2025: (1, 29),
+        2026: (2, 17),
+        2027: (2, 6),
+        2028: (1, 26),
+        2029: (2, 13),
+        2030: (2, 3),
+    }
 
-    return _chinese_new_year_cst(gregorian_year)
+    if year not in cny_md:
+        raise ValueError("Supported years are from 1990 through 2030.")
 
-# Entry point: chinese_new_year(gregorian_year: int) -> pendulum.Date
+    month, day = cny_md[year]
+    return pendulum.date(year, month, day)
+
+# Entry point: chinese_new_year(year: int) -> pendulum.Date
 ```

@@ -6,24 +6,26 @@ from pendulum_generators import *
 from hypothesis import settings, seed, given
 
 import pendulum
-def find_first_monday(year: int, month: int) -> pendulum.DateTime:
-    # Step 1: Create a pendulum.DateTime object for the first day of the given month and year.
-    first_day_of_month = pendulum.datetime(year, month, 1)
+def find_first_monday_of_month(year: int, month: int) -> pendulum.Date:
+    # Step 1: Create a pendulum.Date object for the first day of the given month and year.
+    first_day_of_month = pendulum.date(year, month, 1)
 
-    # Step 2: Determine how many days to add to reach the first Monday.
-    # pendulum.MONDAY is 1. dt.day_of_week is also 1 for Monday, 2 for Tuesday, etc.
-    # If first_day_of_month is Monday (1), days_to_add will be (1 - 1 + 7) % 7 = 0.
-    # If first_day_of_month is Tuesday (2), days_to_add will be (1 - 2 + 7) % 7 = 6.
-    # If first_day_of_month is Sunday (7), days_to_add will be (1 - 7 + 7) % 7 = 1.
-    days_to_add = (pendulum.MONDAY - first_day_of_month.day_of_week + 7) % 7
+    # Step 2: Determine the day of the week for this first day.
+    # pendulum.day_of_week returns 1 for Monday, 2 for Tuesday, ..., 7 for Sunday.
+    current_day_of_week = first_day_of_month.day_of_week
 
-    # Step 3: Add the calculated number of days to find the first Monday.
+    # Step 3: Calculate the number of days to add to reach the first Monday.
+    # We want to reach pendulum.MONDAY (which is 1).
+    # The formula (desired_day_of_week - current_day_of_week + 7) % 7 gives the days to add.
+    days_to_add = (pendulum.MONDAY - current_day_of_week + 7) % 7
+
+    # Step 4: Add the calculated number of days to find the first Monday.
     first_monday = first_day_of_month.add(days=days_to_add)
 
-    # Step 4: Return the result as a pendulum.DateTime object.
+    # Step 5: Return the result.
     return first_monday
 
-# Entry point: find_first_monday(year: int, month: int) -> pendulum.DateTime
+# Entry point: find_first_monday_of_month(year: int, month: int) -> pendulum.Date
 
 def format_value_pd(*values):
     formatted_values = []
@@ -60,7 +62,7 @@ log_file = open(os.path.join("./results/run_gemini-gemini-2-5-flash/.logs/dt_vs_
 @seed(27)
 @settings(max_examples=10000, deadline=None, derandomize=True)
 @given(timestamp_strategy(), timestamp_strategy())
-def test_find_first_monday(year, month):
-    result = find_first_monday(year, month)
+def test_find_first_monday_of_month(year, month):
+    result = find_first_monday_of_month(year, month)
     formatted_result = format_value_pd(result, year, month)
     log_file.write(formatted_result + "\n")

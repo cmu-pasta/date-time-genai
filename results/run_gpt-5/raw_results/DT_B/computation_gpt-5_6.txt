@@ -1,48 +1,41 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module (date, timedelta).
+1. Import necessary classes from the datetime module.
 2. Define a function that accepts two date inputs.
-3. Ensure the earlier date is treated as the start; swap if needed.
-4. Compute preliminary differences for years, months, and days.
-5. If the day difference is negative, borrow days from the previous month of the end date.
-6. If the month difference is negative, borrow a year and adjust months.
-7. Return the result as a single integer encoded as YYYYMMDD, where:
-   - YYYY = full years
-   - MM = months (0–11)
-   - DD = days (0–31)
+3. Ensure the earlier date is start and the later date is end (swap if necessary).
+4. Compute initial differences: years = end.year - start.year, months = end.month - start.month, days = end.day - start.day.
+5. If days is negative, borrow days from the previous month of the end date and decrement months by 1.
+6. If months is negative, add 12 to months and decrement years by 1.
+7. Encode the result as an integer in the form YYYYMMDD: years*10000 + months*100 + days.
+8. Return the encoded integer.
 
 ```python
 from datetime import date, timedelta
 
-def calculate_age_ymd(start: date, end: date) -> int:
-    """
-    Calculate the age difference between two dates in years, months, and days.
-    Returns a single integer encoded as YYYYMMDD (years*10000 + months*100 + days).
-
-    - Input types: datetime.date
-    - Output type: integer
-    """
-    # Ensure chronological order
-    if end < start:
-        start, end = end, start
+def calculate_age_ymd(d1: date, d2: date) -> int:
+    # Ensure start <= end
+    if d1 <= d2:
+        start, end = d1, d2
+    else:
+        start, end = d2, d1
 
     years = end.year - start.year
     months = end.month - start.month
     days = end.day - start.day
 
-    # Adjust days by borrowing from the previous month when negative
+    # Adjust days by borrowing from the previous month if needed
     if days < 0:
-        first_of_end_month = date(end.year, end.month, 1)
-        last_of_prev_month = first_of_end_month - timedelta(days=1)
-        days += last_of_prev_month.day
+        # Last day of the month preceding 'end'
+        last_day_prev_month = (date(end.year, end.month, 1) - timedelta(days=1))
+        days += last_day_prev_month.day
         months -= 1
 
-    # Adjust months by borrowing a year when negative
+    # Adjust months by borrowing from years if needed
     if months < 0:
         months += 12
         years -= 1
 
-    # Encode as YYYYMMDD
+    # Encode as YYYYMMDD integer
     return years * 10000 + months * 100 + days
 
-# Entry point: calculate_age_ymd(start: date, end: date) -> int
+# Entry point: calculate_age_ymd(d1: date, d2: date) -> int
 ```

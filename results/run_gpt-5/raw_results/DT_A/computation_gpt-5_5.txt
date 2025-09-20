@@ -1,27 +1,22 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module.
-2. Define a function that accepts the target year and month as integers.
-3. Construct a date object representing the first day of the specified month.
-4. Determine the weekday of the first day (Monday is 0, Sunday is 6).
-5. Compute the offset in days to the first Monday using modular arithmetic.
-6. Add the offset to the first day to get the first Monday and return it as a date.
+1. Import the required classes (date, timedelta) from the datetime module.
+2. Define a function that takes two integers: year and month.
+3. Construct the first day of the given month and year as a date object.
+4. Determine the weekday of this date (Monday=0, Sunday=6).
+5. Compute the offset in days to reach the first Monday using modular arithmetic.
+6. Add the offset to the first day and return the resulting date.
 
 ```python
 from datetime import date, timedelta
 
-def first_monday(year: int, month: int) -> date:
+def first_monday_of_month(year: int, month: int) -> date:
     """
-    Return the first Monday of the given month and year as a date.
+    Return the date of the first Monday for the specified month and year.
     """
-    # Step 1: Construct the first day of the given month and year
     first_day = date(year, month, 1)
-    
-    # Step 2: Compute how many days to add to reach the first Monday
-    # Monday is 0, Sunday is 6
-    offset = (0 - first_day.weekday()) % 7
-    
-    # Step 3: Calculate and return the first Monday
-    return first_day + timedelta(days=offset)
+    weekday = first_day.weekday()  # Monday=0, Sunday=6
+    offset_days = (7 - weekday) % 7  # 0 if Monday, else days until next Monday
+    return first_day + timedelta(days=offset_days)
 
-# Entry point: first_monday(year: int, month: int) -> date
+# Entry point: first_monday_of_month(year: int, month: int) -> date
 ```

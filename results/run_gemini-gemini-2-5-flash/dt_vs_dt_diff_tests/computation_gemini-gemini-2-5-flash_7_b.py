@@ -5,10 +5,14 @@ from datetime import date, datetime, time, timedelta, timezone
 from datetime_generators import *
 from hypothesis import given, seed, settings
 
-from datetime import date
+from datetime import datetime
 def is_leap_year(year: int) -> bool:
     """
     Determines if a given year is a leap year using the datetime library.
+
+    A year is a leap year if it is divisible by 4, unless it is divisible by 100
+    but not by 400. This function infers leap year status by checking if
+    February 29th exists in that year.
 
     Args:
         year: An integer representing the year.
@@ -17,13 +21,13 @@ def is_leap_year(year: int) -> bool:
         True if the year is a leap year, False otherwise.
     """
     try:
-        # Attempt to create a date object for February 29th of the given year.
-        # If this succeeds, the year is a leap year.
-        date(year, 2, 29)
+        # Attempt to create a datetime object for February 29th of the given year.
+        # If this date exists, the year is a leap year.
+        datetime(year, 2, 29)
         return True
     except ValueError:
-        # If a ValueError is raised (e.g., 'day is out of range for month'),
-        # then February 29th does not exist in this year, so it's not a leap year.
+        # If a ValueError is raised (e.g., "day is out of range for month"),
+        # it means February 29th does not exist in that year, so it's not a leap year.
         return False
 
 # Entry point: is_leap_year(year: int) -> bool

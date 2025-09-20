@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and durations.
+2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object as input, representing the given date.
+3.  **Determine the end of the month**: Find the last day of the month for the given date using `end_of('month')`.
+4.  **Initialize a counter**: Set a variable to zero to store the count of business days.
+5.  **Iterate through the remaining days**: Start iterating from the day immediately after the given date up to and including the last day of the month.
+6.  **Check for weekdays**: For each day in the iteration, use the `is_weekday()` method to determine if it's a business day (Monday to Friday).
+7.  **Increment counter**: If the day is a weekday, increment the business days counter.
+8.  **Return the total**: After iterating through all remaining days, return the final count as an integer.
+
+```python
+import pendulum
+
+def calculate_business_days_remaining_in_month(given_date: pendulum.DateTime) -> int:
+    # Step 1: Get the last day of the month for the given date.
+    last_day_of_month = given_date.end_of('month')
+    
+    # Step 2: Initialize a counter for business days.
+    business_days_remaining = 0
+    
+    # Step 3: Start iterating from the day after the given_date.
+    # We use add(days=1) to get the next day.
+    current_day = given_date.add(days=1)
+    
+    # Step 4: Loop through each day until the end of the month.
+    while current_day <= last_day_of_month:
+        # Step 5: Check if the current_day is a weekday (Monday to Friday).
+        if current_day.is_weekday():
+            business_days_remaining += 1
+        
+        # Step 6: Move to the next day.
+        current_day = current_day.add(days=1)
+        
+    # Step 7: Return the total number of business days remaining.
+    return business_days_remaining
+
+# Entry point: calculate_business_days_remaining_in_month(given_date: pendulum.DateTime) -> int
+```

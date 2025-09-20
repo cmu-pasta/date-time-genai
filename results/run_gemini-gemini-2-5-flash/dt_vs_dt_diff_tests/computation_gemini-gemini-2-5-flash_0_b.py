@@ -7,31 +7,23 @@ from hypothesis import given, seed, settings
 
 from datetime import datetime, timedelta
 def calculate_business_days(dt1: datetime, dt2: datetime) -> int:
-    # Step 1: Ensure dt_start is the earlier date and dt_end is the later date.
-    # This simplifies the iteration logic.
-    if dt1 > dt2:
-        dt_start = dt2
-        dt_end = dt1
-    else:
-        dt_start = dt1
-        dt_end = dt2
+    # Step 1: Determine the earlier and later dates
+    start_date = min(dt1, dt2)
+    end_date = max(dt1, dt2)
 
     business_days_count = 0
-    current_date = dt_start
+    current_date = start_date
 
-    # Step 2: Iterate day by day from the start date to the end date (inclusive).
-    # We only care about the date component, so the time part of datetime objects
-    # does not affect the business day calculation.
-    while current_date <= dt_end:
-        # Step 3: Check if the current day is a business day (Monday to Friday).
-        # weekday() returns 0 for Monday, 1 for Tuesday, ..., 4 for Friday, 5 for Saturday, 6 for Sunday.
-        if current_date.weekday() < 5:  # Monday (0) through Friday (4)
+    # Step 2: Iterate through each day from start_date to end_date (inclusive)
+    # Using timedelta(days=1) to advance by one day at a time
+    while current_date <= end_date:
+        # Step 3: Check if the current day is a weekday (Monday=0 to Friday=4)
+        if 0 <= current_date.weekday() <= 4:
             business_days_count += 1
         
-        # Step 4: Move to the next day.
+        # Move to the next day
         current_date += timedelta(days=1)
         
-    # Step 5: Return the total count of business days.
     return business_days_count
 
 # Entry point: calculate_business_days(dt1: datetime, dt2: datetime) -> int

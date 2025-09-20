@@ -1,21 +1,25 @@
 Let's think step by step to solve this problem.
-1. Create a pendulum.Date for January 1st of the given year.
-2. Compute how many days to add to reach the first Monday on or after January 1st.
-3. Add two weeks to the first Monday to obtain the third Monday of January (MLK Day).
-4. Return the resulting pendulum.Date.
+1. Import the pendulum library to work with dates.
+2. Accept the target year as an integer input.
+3. Create the date for January 1st of the given year using pendulum.date.
+4. Compute the first Monday on or after January 1st using modular arithmetic on day_of_week.
+5. Add two weeks to that first Monday to get the third Monday of January.
+6. Return the result as a pendulum.Date.
 
 ```python
 import pendulum
 
 def mlk_day(year: int) -> pendulum.Date:
     """
-    Return the date of Martin Luther King Jr. Day for a given year.
-    MLK Day is observed on the third Monday of January.
+    Compute Martin Luther King Jr. Day (third Monday of January) for a given year.
+
+    :param year: The target year as an integer.
+    :return: A pendulum.Date representing the third Monday of January of the given year.
     """
-    jan1 = pendulum.date(year, 1, 1)  # pendulum.Date
-    # Monday is 0 in pendulum's weekday numbering (Monday=0 ... Sunday=6)
-    days_to_monday = (0 - jan1.weekday()) % 7
-    first_monday = jan1.add(days=days_to_monday)
+    jan_first = pendulum.date(year, 1, 1)
+    # day_of_week: Monday=0, Sunday=6 in pendulum
+    days_to_first_monday = (pendulum.MONDAY - jan_first.day_of_week) % 7
+    first_monday = jan_first.add(days=days_to_first_monday)
     third_monday = first_monday.add(weeks=2)
     return third_monday
 

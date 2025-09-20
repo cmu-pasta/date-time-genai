@@ -1,22 +1,22 @@
 Let's think step by step to solve this problem.
 
-1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and times.
-2.  **Define a function**: Create a function `is_leap_year` that accepts an integer representing the year.
-3.  **Create a `pendulum.DateTime` object**: Construct a `pendulum.DateTime` object for the given year. The specific month and day (e.g., January 1st) do not affect whether the year itself is a leap year.
-4.  **Utilize the `is_leap()` method**: The `pendulum.DateTime` object has an `is_leap()` method that directly checks if its year component is a leap year. Call this method on the created object.
-5.  **Return the boolean result**: The `is_leap()` method returns `True` if it's a leap year, `False` otherwise, which is exactly the desired output.
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts an integer representing the year.
+3.  **Create a `pendulum.Date` object**: Construct a `pendulum.Date` object for the given year (e.g., January 1st of that year). This object will carry the necessary information about the year.
+4.  **Access the `is_leap_year` property**: The `pendulum.Date` object has a convenient `is_leap_year` property that directly returns a boolean indicating whether the year is a leap year.
+5.  **Return the result**: Return the boolean value obtained from the `is_leap_year` property.
 
 ```python
 import pendulum
 
 def is_leap_year(year: int) -> bool:
-    # Step 1: Create a pendulum.DateTime object for the given year.
-    # The day and month (e.g., January 1st) don't affect the leap year check for the year itself.
-    date_in_year = pendulum.datetime(year, 1, 1)
+    # Step 1: Create a pendulum.Date object for the given year.
+    # We can use any date within that year, for simplicity, we pick January 1st.
+    date_in_year = pendulum.date(year, 1, 1)
     
-    # Step 2: Use the is_leap() method available on pendulum.DateTime objects.
-    # This method returns True if the year of the object is a leap year, False otherwise.
-    is_leap = date_in_year.is_leap()
+    # Step 2: Access the is_leap_year property of the pendulum.Date object.
+    # This property directly returns a boolean indicating if the year is a leap year.
+    is_leap = date_in_year.is_leap_year
     
     # Step 3: Return the boolean result.
     return is_leap

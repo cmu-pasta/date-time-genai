@@ -1,28 +1,26 @@
 Let's think step by step to solve this problem.
 
-1.  **Import the necessary libraries**: We will need the `datetime` class from Python's standard `datetime` module.
-2.  **Define a function**: We will create a function that accepts an integer representing the year as input.
-3.  **Construct `datetime` objects**: To determine the number of days in a year, we can create `datetime` objects for the very first day of the given year and the very first day of the *next* year.
-    *   `datetime(year, 1, 1)` for the start of the given year.
-    *   `datetime(year + 1, 1, 1)` for the start of the next year.
-4.  **Calculate the difference**: Subtracting these two `datetime` objects will yield a `timedelta` object. We can then access its `.days` attribute to get the total number of days between these two dates.
-5.  **Determine if it's a leap year**: A leap year has 366 days, while a common year has 365 days. We will compare the calculated number of days to 366. If it matches, the year is a leap year; otherwise, it is not.
-6.  **Return the result**: The function will return a boolean value (`True` if it's a leap year, `False` otherwise).
+1.  **Import necessary types**: We need `date` and `timedelta` from the `datetime` module to perform date calculations.
+2.  **Define a function**: Create a function that takes an integer representing the year as input.
+3.  **Leverage date arithmetic**: To determine if a year is a leap year, we can check the number of days in February for that year. A leap year has 29 days in February, while a common year has 28.
+4.  **Calculate the last day of February**: We can construct a `date` object for March 1st of the given year and then subtract one day using `timedelta`. This will give us the `date` object for the last day of February.
+5.  **Check the day**: Extract the `day` attribute from the resulting date. If it is 29, the year is a leap year; otherwise, it is not.
+6.  **Return the boolean result**: The function should return `True` for a leap year and `False` for a common year.
 
 ```python
-from datetime import datetime
+from datetime import date, timedelta
 
 def is_leap_year(year: int) -> bool:
-    # Step 3: Construct datetime objects for the beginning of the given year and the next year.
-    start_of_year = datetime(year, 1, 1)
-    start_of_next_year = datetime(year + 1, 1, 1)
+    # Step 1: Create a date object for March 1st of the given year.
+    # We use 3 for March and 1 for the day.
+    march_first = date(year, 3, 1)
     
-    # Step 4: Calculate the difference between these two dates.
-    # The .days attribute of the timedelta object gives the total number of days.
-    number_of_days = (start_of_next_year - start_of_year).days
+    # Step 2: Subtract one day to get the last day of February for that year.
+    last_day_of_february = march_first - timedelta(days=1)
     
-    # Step 5 & 6: A leap year has 366 days. Return True if the calculated number of days is 366, else False.
-    return number_of_days == 366
+    # Step 3: Check the day component of the resulting date.
+    # If it's 29, it's a leap year. Otherwise, it's 28 for a common year.
+    return last_day_of_february.day == 29
 
 # Entry point: is_leap_year(year: int) -> bool
 ```

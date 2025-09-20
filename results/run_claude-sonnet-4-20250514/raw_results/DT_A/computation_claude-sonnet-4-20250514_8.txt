@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+
+2. **Define a function**: We will create a function that accepts a datetime object as input representing the date for which we want to find the last day of the month.
+
+3. **Extract year and month**: Get the year and month from the input datetime object.
+
+4. **Calculate the first day of the next month**: We need to handle the edge case where the current month is December (month 12), in which case the next month would be January of the next year.
+
+5. **Get the last day of current month**: Subtract one day from the first day of the next month to get the last day of the current month.
+
+6. **Return the result**: Return the datetime object representing the last day of the month.
+
+```python
+from datetime import datetime, timedelta
+
+def find_last_day_of_month(dt: datetime) -> datetime:
+    # Step 1: Extract year and month from the input date
+    year = dt.year
+    month = dt.month
+    
+    # Step 2: Calculate the first day of the next month
+    if month == 12:
+        # If current month is December, next month is January of next year
+        next_month_first_day = datetime(year + 1, 1, 1)
+    else:
+        # Otherwise, just increment the month
+        next_month_first_day = datetime(year, month + 1, 1)
+    
+    # Step 3: Get the last day of current month by subtracting one day
+    last_day_of_month = next_month_first_day - timedelta(days=1)
+    
+    # Step 4: Return the result
+    return last_day_of_month
+
+# Entry point: find_last_day_of_month(dt: datetime) -> datetime
+```

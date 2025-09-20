@@ -1,53 +1,35 @@
 Let's think step by step to solve this problem.
 
-1. **Understand the different epochs**: Unix epoch starts at January 1, 1970, 00:00:00 UTC, while Windows epoch starts at January 1, 1601, 00:00:00 UTC.
+1. **Understand the epochs**: Unix epoch starts at January 1, 1970, 00:00:00 UTC, while Windows FILETIME epoch starts at January 1, 1601, 00:00:00 UTC.
 
-2. **Calculate the offset**: We need to calculate the difference between these two epochs. The difference is 11,644,473,600 seconds (369 years, 1 month, 1 day).
+2. **Import necessary libraries**: We need the `datetime` module to work with date and time objects.
 
-3. **Handle different timestamp formats**: Unix timestamps are typically in seconds since epoch, while Windows timestamps are in 100-nanosecond intervals since epoch.
+3. **Define the function**: Create a function that takes a Unix timestamp (as a float) and converts it to Windows epoch format.
 
-4. **Create conversion function**: We'll create a function that can convert from Unix timestamp to Windows timestamp and vice versa.
+4. **Convert Unix timestamp to datetime**: Use `datetime.fromtimestamp()` to convert the Unix timestamp to a datetime object.
 
-5. **Use datetime library**: We'll use the datetime module to handle the epoch calculations and conversions.
+5. **Calculate Windows epoch timestamp**: Get the difference between the datetime and Windows epoch start date, then convert to total seconds.
 
-6. **Return appropriate types**: Since Windows timestamps are large numbers, we'll return them as integers, while Unix timestamps can be floats.
+6. **Return the result**: Return the Windows epoch timestamp as a float.
 
 ```python
 from datetime import datetime
 
-def convert_timestamp_epoch(timestamp: float, from_epoch: str = "unix", to_epoch: str = "windows") -> float:
-    """
-    Convert a timestamp between different epochs (Unix and Windows).
+def convert_unix_to_windows_epoch(unix_timestamp: float) -> float:
+    # Step 1: Convert Unix timestamp to datetime object
+    dt = datetime.fromtimestamp(unix_timestamp)
     
-    Args:
-        timestamp: The input timestamp
-        from_epoch: Source epoch ("unix" or "windows")
-        to_epoch: Target epoch ("unix" or "windows")
+    # Step 2: Define Windows epoch start date (January 1, 1601, 00:00:00 UTC)
+    windows_epoch_start = datetime(1601, 1, 1)
     
-    Returns:
-        Converted timestamp as float
-    """
-    # Unix epoch: January 1, 1970, 00:00:00 UTC
-    # Windows epoch: January 1, 1601, 00:00:00 UTC
-    # Difference: 11,644,473,600 seconds
-    EPOCH_OFFSET_SECONDS = 11644473600
-    WINDOWS_TICKS_PER_SECOND = 10000000  # 100-nanosecond intervals per second
+    # Step 3: Calculate the difference between the datetime and Windows epoch start
+    time_difference = dt - windows_epoch_start
     
-    if from_epoch == "unix" and to_epoch == "windows":
-        # Convert Unix timestamp (seconds) to Windows timestamp (100-nanosecond intervals)
-        windows_seconds = timestamp + EPOCH_OFFSET_SECONDS
-        windows_ticks = windows_seconds * WINDOWS_TICKS_PER_SECOND
-        return float(windows_ticks)
+    # Step 4: Convert the difference to total seconds (Windows epoch timestamp)
+    windows_timestamp = time_difference.total_seconds()
     
-    elif from_epoch == "windows" and to_epoch == "unix":
-        # Convert Windows timestamp (100-nanosecond intervals) to Unix timestamp (seconds)
-        windows_seconds = timestamp / WINDOWS_TICKS_PER_SECOND
-        unix_seconds = windows_seconds - EPOCH_OFFSET_SECONDS
-        return float(unix_seconds)
-    
-    else:
-        # Same epoch or unsupported conversion
-        return float(timestamp)
+    # Step 5: Return the Windows epoch timestamp
+    return windows_timestamp
 
-# Entry point: convert_timestamp_epoch(timestamp: float, from_epoch: str = "unix", to_epoch: str = "windows") -> float
+# Entry point: convert_unix_to_windows_epoch(unix_timestamp: float) -> float
 ```

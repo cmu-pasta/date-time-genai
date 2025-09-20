@@ -1,41 +1,27 @@
 Let's think step by step to solve this problem.
-1. Import the necessary classes from the datetime module: date and timedelta.
-2. Define a function that accepts the target month and year as integers.
-3. Compute the first day of the next month and subtract one day to get the last calendar day of the given month.
-4. If the last calendar day falls on a weekend (Saturday or Sunday), move backward to the most recent Friday.
-5. Return the resulting date as the last business day.
+1. Accept a date that represents any day within the target month.
+2. Move to the first day of the next month by setting the day to 28 (safe for all months) and adding a few days to cross into the next month.
+3. Subtract one day to get the last calendar day of the original month.
+4. If that day is Saturday or Sunday, move backward to the most recent Friday.
+5. Return the resulting date as the last business day of the month.
 
 ```python
 from datetime import date, timedelta
 
-def last_business_day(year: int, month: int) -> date:
+def find_last_business_day(d: date) -> date:
     """
-    Find the last business day (Monday-Friday) of the given month and year.
-    
-    Args:
-        year (int): The year of interest (e.g., 2025).
-        month (int): The month of interest as an integer from 1 to 12.
-    
-    Returns:
-        date: The last business day of the given month.
+    Return the last business day (Mon-Fri) of the month for the given date's month.
     """
-    # Step 1: Get the first day of the next month
-    if month == 12:
-        first_of_next_month = date(year + 1, 1, 1)
-    else:
-        first_of_next_month = date(year, month + 1, 1)
-    
-    # Step 2: The last calendar day of the current month
+    # Step 2: Move to the first day of the next month
+    first_of_next_month = (d.replace(day=28) + timedelta(days=4)).replace(day=1)
+    # Step 3: Get the last calendar day of the current month
     last_calendar_day = first_of_next_month - timedelta(days=1)
-    
-    # Step 3: Adjust backward if the last calendar day is a weekend
-    # weekday(): Monday=0 ... Sunday=6
-    if last_calendar_day.weekday() >= 5:  # 5=Saturday, 6=Sunday
-        days_to_subtract = last_calendar_day.weekday() - 4  # Sat->1, Sun->2
-        last_calendar_day -= timedelta(days=days_to_subtract)
-    
-    # Step 4: Return the last business day
+    # Step 4: Adjust backward if the last day is on a weekend (Saturday=5, Sunday=6)
+    if last_calendar_day.weekday() == 6:  # Sunday
+        return last_calendar_day - timedelta(days=2)
+    if last_calendar_day.weekday() == 5:  # Saturday
+        return last_calendar_day - timedelta(days=1)
     return last_calendar_day
 
-# Entry point: last_business_day(year: int, month: int) -> date
+# Entry point: find_last_business_day(d: date) -> date
 ```

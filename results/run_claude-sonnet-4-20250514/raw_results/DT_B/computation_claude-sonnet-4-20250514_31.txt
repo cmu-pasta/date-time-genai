@@ -1,25 +1,28 @@
 Let's think step by step to solve this problem.
 
-1. **Understand the fiscal year concept**: A fiscal year starting in April means that April 1st marks the beginning of a new fiscal year. So dates from April 1st to March 31st of the following year belong to the same fiscal year.
+1. **Understand the fiscal year concept**: A fiscal year starting in April means it runs from April 1st of one calendar year to March 31st of the next calendar year.
 
-2. **Determine the logic**: If a date falls between April and December of year X, it belongs to fiscal year X. If a date falls between January and March of year X, it belongs to fiscal year X-1 (since it's part of the fiscal year that started in April of the previous year).
+2. **Determine the naming convention**: Fiscal years are typically named after the ending year. So April 2023 to March 2024 would be fiscal year 2024.
 
-3. **Import necessary libraries**: We need the `datetime` module to work with date objects.
+3. **Define the logic**: 
+   - If the given date is from April to December (months 4-12), the fiscal year is the current calendar year + 1
+   - If the given date is from January to March (months 1-3), the fiscal year is the current calendar year
 
-4. **Create the function**: The function should take a datetime object as input and return an integer representing the fiscal year.
+4. **Implement the function**: Create a function that takes a datetime object as input and returns the fiscal year as an integer.
 
-5. **Implement the logic**: Check if the month is April (4) or later. If yes, return the current year. If no (January-March), return the previous year.
+5. **Extract month and year**: Use the datetime object's month and year attributes to determine which fiscal year the date belongs to.
 
 ```python
 from datetime import datetime
 
 def determine_fiscal_year(date: datetime) -> int:
-    # If the month is April (4) or later, the fiscal year is the same as the calendar year
+    # Check if the month is April (4) or later
     if date.month >= 4:
-        return date.year
-    # If the month is before April (January-March), the fiscal year is the previous year
+        # Fiscal year is the next calendar year
+        return date.year + 1
     else:
-        return date.year - 1
+        # Fiscal year is the current calendar year (for Jan-Mar)
+        return date.year
 
 # Entry point: determine_fiscal_year(date: datetime) -> int
 ```

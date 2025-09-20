@@ -1,47 +1,33 @@
 Let's think step by step to solve this problem.
-1. Import the required classes from the standard library: datetime and ZoneInfo.
-2. Ensure both input timestamps are timezone-aware; if a naive datetime is provided, attach the supplied ZoneInfo while preserving the fold value to handle DST ambiguities.
-3. Subtract the two aware datetimes; Python normalizes to UTC internally, correctly accounting for DST transitions.
-4. Return the resulting timedelta as the exact time difference.
+1. Import the required classes from the standard library: datetime, timedelta, and ZoneInfo.
+2. Define a function that accepts two timezone-aware datetime objects (with ZoneInfo tzinfo).
+3. Validate that both inputs are timezone-aware and specifically use ZoneInfo to enable correct DST handling.
+4. Convert both timestamps to a common reference timezone (UTC) using astimezone to ensure DST transitions are accurately accounted for.
+5. Subtract the converted datetimes to obtain the exact timedelta difference.
+6. Return the resulting timedelta.
 
 ```python
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-def calculate_exact_time_difference(dt1: datetime, dt2: datetime, tz: ZoneInfo | None = None) -> timedelta:
+def exact_time_difference(ts1: datetime, ts2: datetime) -> timedelta:
     """
-    Calculate the exact time difference between two timestamps, correctly accounting for DST.
-
-    Parameters:
-    - dt1: The first datetime. Can be aware or naive.
-    - dt2: The second datetime. Can be aware or naive.
-    - tz:  A ZoneInfo time zone to apply if any input datetime is naive.
-           If both datetimes are aware, this parameter is ignored.
-
-    Returns:
-    - A timedelta representing the exact difference (dt2 - dt1).
+    Compute the exact time difference between two timestamps considering daylight saving time.
+    Both inputs must be timezone-aware datetimes using ZoneInfo.
+    Returns a signed timedelta: positive if ts2 is after ts1, negative otherwise.
     """
-    def make_aware(dt: datetime) -> datetime:
-        # If already timezone-aware, return as-is
-        if dt.tzinfo is not None:
-            return dt
-        # If naive, a time zone must be provided to interpret local wall time
-        if tz is None:
-            raise ValueError("Naive datetime provided without a time zone. Supply a ZoneInfo via the 'tz' parameter.")
-        # Construct an aware datetime in the specified zone, preserving 'fold' for DST ambiguity handling
-        return datetime(
-            dt.year, dt.month, dt.day,
-            dt.hour, dt.minute, dt.second, dt.microsecond,
-            tzinfo=tz,
-            fold=getattr(dt, "fold", 0)
-        )
+    # Validate that both datetimes are timezone-aware and use ZoneInfo
+    if ts1.tzinfo is None or ts2.tzinfo is None:
+        raise ValueError("Both timestamps must be timezone-aware (tzinfo set).")
+    if not isinstance(ts1.tzinfo, ZoneInfo) or not isinstance(ts2.tzinfo, ZoneInfo):
+        raise ValueError("Both timestamps must use zoneinfo.ZoneInfo for tzinfo.")
 
-    aware_dt1 = make_aware(dt1)
-    aware_dt2 = make_aware(dt2)
+    # Normalize to UTC to account for DST transitions precisely
+    ts1_utc = ts1.astimezone(ZoneInfo("UTC"))
+    ts2_utc = ts2.astimezone(ZoneInfo("UTC"))
 
-    # Subtraction of aware datetimes normalizes across time zones and DST transitions
-    difference: timedelta = aware_dt2 - aware_dt1
-    return difference
+    # Compute and return the exact difference
+    return ts2_utc - ts1_utc
 
-# Entry point: calculate_exact_time_difference(dt1: datetime, dt2: datetime, tz: zoneinfo.ZoneInfo | None) -> timedelta
+# Entry point: exact_time_difference(ts1: datetime, ts2: datetime) -> timedelta
 ```

@@ -1,31 +1,31 @@
 Let's think step by step to solve this problem.
 
-1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and timedeltas.
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` classes from Python's datetime module to work with dates and time differences.
 
-2. **Define a function**: We will create a function that accepts a starting date and an integer N representing the number of business days to add.
+2. **Define a function**: We will create a function that accepts a starting date (datetime) and the number of business days (integer) as input parameters.
 
-3. **Iterate through dates**: Starting from the given date, we'll move forward day by day and count only the business days (Monday through Friday).
+3. **Identify business days**: Business days are typically Monday through Friday (weekdays), excluding weekends (Saturday and Sunday).
 
-4. **Check for business days**: Use the `weekday()` method to determine if a date falls on a weekday. In Python, Monday=0 through Friday=4, so we check if `weekday() < 5`.
+4. **Iterate through days**: Starting from the given date, we'll add one day at a time and check if it's a business day using the `weekday()` method (where Monday=0 and Sunday=6).
 
-5. **Count business days**: Keep a counter for business days encountered and stop when we reach exactly N business days.
+5. **Count business days**: We'll keep a counter for business days encountered and continue until we reach exactly N business days.
 
-6. **Return the result**: Return the final date that is exactly N business days after the starting date.
+6. **Return the result**: Return the final datetime object that represents the date exactly N business days after the starting date.
 
 ```python
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 
-def find_date_after_n_business_days(start_date: date, n: int) -> date:
+def find_business_days_after(start_date: datetime, n: int) -> datetime:
     current_date = start_date
     business_days_counted = 0
     
     while business_days_counted < n:
         current_date += timedelta(days=1)
-        # Check if it's a weekday (Monday=0 to Friday=4)
+        # Check if it's a weekday (Monday=0 through Friday=4)
         if current_date.weekday() < 5:
             business_days_counted += 1
     
     return current_date
 
-# Entry point: find_date_after_n_business_days(start_date: date, n: int) -> date
+# Entry point: find_business_days_after(start_date: datetime, n: int) -> datetime
 ```

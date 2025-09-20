@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary classes**: We will need `date` from the `datetime` module to represent dates and `timedelta` to perform date arithmetic.
+2.  **Define a function**: Create a function `find_columbus_day` that accepts an integer `year` as its input.
+3.  **Find the first day of October**: Construct a `date` object for October 1st of the given year.
+4.  **Determine the weekday of October 1st**: Use the `weekday()` method, where Monday is 0 and Sunday is 6.
+5.  **Calculate the offset to the first Monday**: If October 1st is a Monday, the offset is 0. Otherwise, we calculate how many days we need to add to reach the first Monday of October. The number of days to add can be found using the formula `(7 - first_day_of_october.weekday()) % 7`. This formula correctly handles cases where Oct 1st is already a Monday (adds 0 days) or any other day.
+6.  **Find the date of the first Monday**: Add the calculated offset to October 1st using `timedelta`.
+7.  **Find the date of the second Monday**: Add 7 days (one week) to the date of the first Monday. This will be Columbus Day.
+8.  **Return the result**: Return the calculated `date` object.
+
+```python
+from datetime import date, timedelta
+
+def find_columbus_day(year: int) -> date:
+    # Step 1: Get the date for October 1st of the given year
+    october_1st = date(year, 10, 1)
+    
+    # Step 2: Determine the weekday of October 1st (Monday is 0, Sunday is 6)
+    # days_to_add calculates how many days from October 1st to get to the first Monday
+    # If October 1st is Monday (0), (7 - 0) % 7 = 0
+    # If October 1st is Tuesday (1), (7 - 1) % 7 = 6
+    # If October 1st is Sunday (6), (7 - 6) % 7 = 1
+    days_to_first_monday = (7 - october_1st.weekday()) % 7
+    
+    # Step 3: Calculate the date of the first Monday in October
+    first_monday_in_october = october_1st + timedelta(days=days_to_first_monday)
+    
+    # Step 4: Columbus Day is the second Monday in October, so add 7 days to the first Monday
+    columbus_day = first_monday_in_october + timedelta(days=7)
+    
+    # Step 5: Return the calculated date
+    return columbus_day
+
+# Entry point: find_columbus_day(year: int) -> date
+```

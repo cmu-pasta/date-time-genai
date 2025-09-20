@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the different epochs**: Unix epoch starts at January 1, 1970, 00:00:00 UTC, while Windows epoch starts at January 1, 1601, 00:00:00 UTC.
+
+2. **Import necessary libraries**: We need the `datetime` and `timedelta` classes from Python's datetime module.
+
+3. **Define epoch reference points**: Create datetime objects representing the start of each epoch system.
+
+4. **Create conversion function**: The function should accept a timestamp and a boolean flag to indicate conversion direction.
+
+5. **Implement conversion logic**: 
+   - For Unix to Windows: Convert Unix timestamp to datetime, then calculate seconds since Windows epoch
+   - For Windows to Unix: Convert Windows timestamp to datetime, then calculate seconds since Unix epoch
+
+6. **Return the result**: Return the converted timestamp as a float.
+
+```python
+from datetime import datetime, timedelta
+
+def convert_timestamp_epoch(timestamp: float, from_unix_to_windows: bool) -> float:
+    # Define epoch starting points
+    unix_epoch = datetime(1970, 1, 1)
+    windows_epoch = datetime(1601, 1, 1)
+    
+    if from_unix_to_windows:
+        # Convert from Unix timestamp to datetime (UTC)
+        dt = datetime.utcfromtimestamp(timestamp)
+        # Calculate seconds since Windows epoch
+        delta = dt - windows_epoch
+        return delta.total_seconds()
+    else:
+        # Convert from Windows timestamp to datetime
+        dt = windows_epoch + timedelta(seconds=timestamp)
+        # Calculate seconds since Unix epoch
+        delta = dt - unix_epoch
+        return delta.total_seconds()
+
+# Entry point: convert_timestamp_epoch(timestamp: float, from_unix_to_windows: bool) -> float
+```

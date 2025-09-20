@@ -1,37 +1,51 @@
 Let's think step by step to solve this problem.
-1. Choose a reliable approximation for the vernal equinox date. For years 1900–2099, a well-known Japanese astronomical approximation gives the March day as: floor(20.8431 + 0.242194*(year - 1980)) - floor((year - 1980)/4).
-2. Validate the year input to ensure it falls within the supported range for this approximation (1900–2099).
-3. Compute the equinox day in March using the formula.
-4. Construct and return a date object for the computed day in March of the given year.
+1. Use a well-known astronomical polynomial (Meeus) to approximate the Julian Day of the March (vernal) equinox for a given Gregorian year.
+2. Convert the computed Julian Day to a Gregorian calendar date using a standard JD-to-calendar conversion algorithm.
+3. Return the resulting calendar date (year-month-day) as a datetime.date object.
 
 ```python
 from datetime import date
 
-def vernal_equinox_date(year: int) -> date:
-    """
-    Compute the date of the vernal (March) equinox for a given year using
-    a standard astronomical approximation valid for years 1900–2099.
-    
-    Parameters:
-        year (int): The Gregorian calendar year (1900–2099).
-    
-    Returns:
-        date: The computed date of the vernal equinox in March (UTC-based approximation).
-    
-    Raises:
-        ValueError: If the year is outside the supported range.
-    """
-    if not isinstance(year, int):
-        raise ValueError("year must be an integer.")
-    if year < 1900 or year > 2099:
-        raise ValueError("This approximation is supported only for years 1900–2099.")
-    
-    # Japanese astronomical approximation for vernal equinox day in March (UTC)
-    # day = floor(20.8431 + 0.242194*(year - 1980)) - floor((year - 1980)/4)
-    y = year - 1980
-    day = int((20.8431 + 0.242194 * y) // 1) - (y // 4)
-    
-    return date(year, 3, day)
+def _julian_day_to_date(jd: float) -> date:
+    # Converts Julian Day to Gregorian calendar date (no time), using standard algorithm.
+    # This conversion uses the convention that JD starts at noon; adding 0.5 aligns to midnight.
+    J = jd + 0.5
+    Z = int(J)
+    F = J - Z
+    if Z < 2299161:
+        A = Z
+    else:
+        alpha = int((Z - 1867216.25) / 36524.25)
+        A = Z + 1 + alpha - alpha // 4
+    B = A + 1524
+    C = int((B - 122.1) / 365.25)
+    D = int(365.25 * C)
+    E = int((B - D) / 30.6001)
+    # Day with fractional part; we only need the calendar date, so take integer day
+    day_float = B - D - int(30.6001 * E) + F
+    day = int(day_float)
+    month = E - 1 if E < 14 else E - 13
+    year = C - 4716 if month > 2 else C - 4715
+    return date(year, month, day)
 
-# Entry point: vernal_equinox_date(year: int) -> date
+def find_vernal_equinox_date(year: int) -> date:
+    """
+    Compute the approximate date of the vernal (March) equinox for a given Gregorian year.
+    Uses Meeus polynomial (valid and accurate to within about an hour for years ~1000–3000)
+    to estimate the Julian Day of the equinox, then converts to a calendar date.
+    Returns a datetime.date with the calendar day on which the equinox occurs (UTC).
+    """
+    # Meeus (Astronomical Algorithms) polynomial for March equinox (years 1000–3000)
+    T = (year - 2000) / 1000.0
+    jde = (
+        2451623.80984
+        + 365242.37404 * T
+        + 0.05169 * (T ** 2)
+        - 0.00411 * (T ** 3)
+        - 0.00057 * (T ** 4)
+    )
+    # Convert Julian Day to Gregorian calendar date (UTC)
+    return _julian_day_to_date(jde)
+
+# Entry point: find_vernal_equinox_date(year: int) -> date
 ```

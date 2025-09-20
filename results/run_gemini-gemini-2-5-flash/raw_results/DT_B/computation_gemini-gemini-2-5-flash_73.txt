@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1.  **Import the necessary libraries**: We need the `datetime` module to work with `datetime` and `time` objects.
+2.  **Define a function**: Create a function that takes a `datetime` object as input, representing the time to check.
+3.  **Define business hours**: Establish the start and end of business hours. For this problem, 9 AM and 5 PM. These can be represented as `time` objects.
+4.  **Extract the time component**: From the input `datetime` object, extract its `time` component, as the date part is irrelevant for this specific check.
+5.  **Compare the time**: Check if the extracted time is greater than or equal to the start time (9 AM) and strictly less than the end time (5 PM). The strict less than for 5 PM means that 4:59:59 PM is within business hours, but 5:00:00 PM is not.
+6.  **Return a boolean**: Return `True` if the time falls within business hours, `False` otherwise.
+
+```python
+from datetime import datetime, time
+
+def is_within_business_hours(dt: datetime) -> bool:
+    # Step 1: Define the start and end of business hours
+    # Business hours are 9 AM to 5 PM
+    business_start = time(9, 0, 0) # 9:00:00 AM
+    business_end = time(17, 0, 0)  # 5:00:00 PM (17:00:00 in 24-hour format)
+    
+    # Step 2: Extract the time component from the input datetime object
+    current_time = dt.time()
+    
+    # Step 3: Compare the current_time with the business hours
+    # The time is within business hours if it's >= business_start and < business_end
+    # This means 9:00:00 AM is included, but 5:00:00 PM is not.
+    is_business_hour = business_start <= current_time < business_end
+    
+    # Step 4: Return the boolean result
+    return is_business_hour
+
+# Entry point: is_within_business_hours(dt: datetime) -> bool
+```

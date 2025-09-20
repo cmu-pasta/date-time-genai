@@ -1,33 +1,23 @@
 Let's think step by step to solve this problem.
-1. Import the pendulum library to work with date objects.
-2. Accept a year as an integer input since the specific day is determined by year.
-3. Construct the date for October 1st of the given year using pendulum.date.
-4. Determine the first Monday of October by calculating the offset from October 1st to the next Monday.
-5. Add one week (7 days) to the first Monday to obtain the second Monday of October.
-6. Return the computed date as a pendulum.Date.
+1. Import the pendulum library to work with dates.
+2. Create a pendulum.Date representing October 1st of the given year.
+3. Determine the offset in days to reach the first Monday on or after October 1st.
+4. Add that offset to get the first Monday.
+5. Add one week to reach the second Monday (Indigenous Peoples' Day).
+6. Return the resulting pendulum.Date.
 
 ```python
 import pendulum
 
 def indigenous_peoples_day(year: int) -> pendulum.Date:
-    """
-    Compute Indigenous Peoples' Day for the given year: the second Monday of October.
-    
-    Parameters:
-    - year (int): The year for which to compute the date.
-    
-    Returns:
-    - pendulum.Date: The date of the second Monday in October for the given year.
-    """
-    # October 1st of the given year
+    # Step 1: Start with October 1st of the given year
     oct_first = pendulum.date(year, 10, 1)
-    
-    # Monday is 0 in Pendulum's weekday() convention (Monday=0 ... Sunday=6)
-    days_to_monday = (0 - oct_first.weekday()) % 7
+    # Step 2: Compute days to the first Monday (Monday = 0)
+    days_to_monday = (0 - oct_first.day_of_week) % 7
     first_monday = oct_first.add(days=days_to_monday)
-    
-    # Second Monday is one week after the first Monday
+    # Step 3: The holiday is the second Monday of October
     second_monday = first_monday.add(weeks=1)
+    # Step 4: Return the date
     return second_monday
 
 # Entry point: indigenous_peoples_day(year: int) -> pendulum.Date
