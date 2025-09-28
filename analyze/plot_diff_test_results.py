@@ -122,21 +122,44 @@ def make_step_cdf(
     return x_ext, y_ext
 
 
+def get_model_color(label: str) -> str:
+    """
+    Get the appropriate logo color for each model.
+
+    Args:
+        label: Model label (e.g., 'GPT-5', 'Claude Sonnet 4', 'Gemini 2.5 Flash')
+
+    Returns:
+        Hex color code matching the model's logo color
+    """
+    if "GPT" in label.upper():
+        return "#10A37F"  # OpenAI green
+    elif "CLAUDE" in label.upper():
+        return "#CC785C"  # Anthropic orange-brown
+    elif "GEMINI" in label.upper():
+        return "#4285F4"  # Google blue
+    else:
+        return "#166666"  # Default teal color
+
+
 def plot_three_logs(
-    file_paths: List[str], labels: List[str], figsize=(12, 8), save_path: str = None
+    file_paths: List[str],
+    labels: List[str],
+    figsize=(12, 6),
+    save_path: str = None,
+    show_vertical_line: bool = True,
 ):
     assert len(file_paths) == len(labels), "file_paths and labels must match in length."
 
-    # Set up the style
+    # Set up the default matplotlib style
     plt.style.use("default")
-    sns.set_palette("husl")
 
-    # Create figure with better styling
+    # Create figure with clean styling
     fig, ax = plt.subplots(figsize=figsize, facecolor="white")
-    ax.set_facecolor("#fafafa")
+    ax.set_facecolor("white")
 
-    # Modern color palette
-    colors = ["#2E86C1", "#E74C3C", "#28B463", "#F39C12", "#8E44AD", "#17A2B8"]
+    # Use model-specific logo colors
+    colors = [get_model_color(label) for label in labels]
     linestyles = ["-", "--", "-.", ":", "-", "--"]
 
     for i, (fp, lab) in enumerate(zip(file_paths, labels)):
@@ -154,68 +177,61 @@ def plot_three_logs(
 
         x, y = make_step_cdf(pcts, x_start=0.0, x_end=100.0)
 
-        # Plot with enhanced styling
+        # Plot with refined styling for better visual appeal
         ax.step(
             x,
             y,
             where="post",
             linestyle=linestyles[i % len(linestyles)],
-            linewidth=3,
-            color=colors[i % len(colors)],
+            linewidth=2,
+            color=colors[i],
             label=f"{lab} (n={len(pcts)})",
-            alpha=0.8,
+            alpha=0.9,
         )
 
-    # Enhanced styling
-    ax.set_xlabel("Percentage (%)", fontsize=14, fontweight="bold", color="#2C3E50")
-    ax.set_ylabel(
-        "Number of Computations", fontsize=14, fontweight="bold", color="#2C3E50"
-    )
-    ax.set_title(
-        "Cumulative Distribution of Computations\n(excluding runtime errors)",
-        fontsize=16,
+    # Refined styling with more balanced font sizes
+    ax.set_xlabel(
+        "\nPercentage of inputs with differing behavior (P)",
+        size=18,
         fontweight="bold",
-        color="#2C3E50",
-        pad=20,
     )
+    ax.set_ylabel("Number of Code Pairs\n", size=18, fontweight="bold")
 
-    # Enhanced grid
-    ax.grid(True, linestyle="--", alpha=0.3, color="#BDC3C7", linewidth=0.8)
+    # Clean grid styling
+    ax.grid(True, linestyle="--", alpha=0.3, linewidth=0.8)
     ax.set_axisbelow(True)
 
-    # Enhanced legend
+    # Add vertical line at 75% (without legend entry) - only for reliability plots
+    if show_vertical_line:
+        ax.axvline(x=75, color="red", linestyle="-", linewidth=2, alpha=0.7)
+
+    # Clean legend styling in top left corner
     legend = ax.legend(
         frameon=True,
-        fancybox=True,
-        shadow=True,
-        fontsize=12,
-        loc="lower right",
+        fontsize=14,
+        loc="upper left",
         framealpha=0.9,
-        edgecolor="#BDC3C7",
         facecolor="white",
     )
-    legend.get_frame().set_linewidth(1.2)
+    # Make legend text bold
+    for text in legend.get_texts():
+        text.set_fontweight("bold")
 
-    # Set limits and ticks with padding for better visibility
+    # Set limits with padding for better visibility
     ax.set_xlim(-2, 102)  # Add 2% padding on both sides
     ax.set_ylim(0)  # allow matplotlib to auto-scale upper y
 
-    # Enhanced tick styling
-    ax.tick_params(axis="both", which="major", labelsize=11, colors="#34495E")
-    ax.tick_params(axis="both", which="minor", labelsize=9, colors="#7F8C8D")
-
-    # Add subtle border
-    for spine in ax.spines.values():
-        spine.set_edgecolor("#BDC3C7")
-        spine.set_linewidth(1.2)
+    # Refined tick styling with more balanced font sizes
+    ax.tick_params(axis="x", labelsize=16)
+    ax.tick_params(axis="y", labelsize=16)
 
     plt.tight_layout()
 
     if save_path:
-        plt.savefig(
-            save_path, dpi=300, bbox_inches="tight", facecolor="white", edgecolor="none"
-        )
-        print(f"Saved figure to {save_path}")
+        # Save as PDF
+        pdf_path = save_path.replace(".png", ".pdf")
+        plt.savefig(pdf_path, transparent=True, bbox_inches="tight")
+        print(f"Saved figure to {pdf_path}")
 
     plt.show()
 
@@ -281,4 +297,4 @@ def plot_models_divergence():
     figures_dir.mkdir(parents=True, exist_ok=True)
     save_path = str(figures_dir / "model_divergence_comparison.png")
 
-    plot_three_logs(files, labels, save_path=save_path)
+    plot_three_logs(files, labels, save_path=save_path, show_vertical_line=False)

@@ -9,8 +9,10 @@ from analyze.plot_diff_test_results import (
     plot_models_divergence,
     plot_models_reliability,
 )
+from analyze.print_diff_test_results import print_models_statistics
 from genai.models import Model, ModelType
 from genai.utils import sanitize_model_name_for_path
+from manual_analysis.plot_merged_categories import plot_merged_categories
 from sample_llm.sample_code import sample_dt_vs_dt_code_sets, sample_pendulum_code_sets
 from sample_llm.sample_ideas import sample_ideas
 from testing_framework.diff_test_runner import (
@@ -265,8 +267,10 @@ def main():
     if run_analyze:
         print("📊 Analyzing results...")
         try:
+            print_models_statistics()
             plot_models_reliability()
             plot_models_divergence()
+            plot_merged_categories()
         except Exception as e:
             print(f"Error during results analysis: {e}")
         print("✅ Results analysis completed!")
