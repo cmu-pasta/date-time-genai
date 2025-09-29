@@ -103,10 +103,12 @@ def create_category_bar_chart(df):
         )
 
     # Customizing the chart
-    ax.set_xlabel("\nNumber of Code Pairs", fontsize=18, fontweight="bold")
+    ax.set_xlabel(
+        "\nNumber of Differentiating Code Pairs", fontsize=18, fontweight="bold"
+    )
     ax.set_ylabel("Categories\n", fontsize=18, fontweight="bold")
     ax.legend(
-        ["Divergence", "Reliability"],
+        ["Datetime vs Pendulum", "Datetime vs Datetime"],
         title="Source Type",
         fontsize=14,
         title_fontsize=14,

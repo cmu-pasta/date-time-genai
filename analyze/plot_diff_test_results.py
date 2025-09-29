@@ -191,7 +191,7 @@ def plot_three_logs(
 
     # Refined styling with more balanced font sizes
     ax.set_xlabel(
-        "\nPercentage of inputs with differing behavior (P)",
+        "\nPercentage of Inputs With Differing Behavior (P)",
         size=18,
         fontweight="bold",
     )
