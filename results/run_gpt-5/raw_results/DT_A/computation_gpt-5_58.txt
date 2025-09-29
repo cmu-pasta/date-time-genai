@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Define the concept of an epoch as a reference datetime.
+2. Convert the input timestamp (seconds since the source epoch) into an absolute instant by adding it to the source epoch.
+3. Compute the difference in seconds between this instant and the target epoch.
+4. Ensure consistent timezone handling by treating naive datetimes as UTC and converting aware datetimes to UTC.
+5. Return the resulting timestamp as seconds since the target epoch.
+
+```python
+from datetime import datetime, timedelta, timezone
+
+def convert_epoch(timestamp: float, from_epoch: datetime, to_epoch: datetime) -> float:
+    # Ensure both epochs are treated in UTC for consistent calculations
+    def _to_utc(dt: datetime) -> datetime:
+        # Treat naive datetimes as UTC; convert aware datetimes to UTC
+        return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt.astimezone(timezone.utc)
+
+    fe = _to_utc(from_epoch)
+    te = _to_utc(to_epoch)
+
+    # Compute the absolute instant represented by the timestamp relative to from_epoch
+    instant = fe + timedelta(seconds=timestamp)
+
+    # Convert the instant to seconds relative to to_epoch
+    result = (instant - te).total_seconds()
+    return result
+
+# Example usage (Unix to Windows epoch seconds):
+# unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+# windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
+# windows_seconds = convert_epoch(0.0, unix_epoch, windows_epoch)  # 11644473600.0
+
+# Entry point: convert_epoch(timestamp: float, from_epoch: datetime, to_epoch: datetime) -> float
+```

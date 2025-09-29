@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2.  **Define a function**: Create a function that accepts two `datetime` objects: the `target_datetime` to be converted and a `reference_datetime` from which the days are counted.
+3.  **Calculate the difference**: Subtract the `reference_datetime` from the `target_datetime`. This operation will result in a `timedelta` object.
+4.  **Extract the number of days**: The `timedelta` object has a `.days` attribute, which provides the difference in full days as an integer.
+5.  **Return the result**: Return this integer value, representing the number of days since the reference date.
+
+```python
+from datetime import datetime
+
+def convert_datetime_to_days_since_reference(target_dt: datetime, reference_dt: datetime) -> int:
+    # Step 1: Calculate the difference between the target_dt and the reference_dt
+    # This will result in a timedelta object.
+    time_difference = target_dt - reference_dt
+    
+    # Step 2: Extract the number of days from the timedelta object.
+    # The .days attribute gives the difference in full days as an integer.
+    days_since_reference = time_difference.days
+    
+    # Step 3: Return the integer representing the number of days.
+    return days_since_reference
+
+# Entry point: convert_datetime_to_days_since_reference(target_dt: datetime, reference_dt: datetime) -> int
+```

@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module to work with dates.
+2.  **Define a function**: Create a function that accepts a `datetime` object as input, representing the specific date for which we want to calculate the percentage.
+3.  **Determine the start of the year**: For the given date, create a `datetime` object representing January 1st of the same year. This will be our reference point for the beginning of the year.
+4.  **Determine the start of the next year**: To accurately calculate the total number of days in the current year (handling leap years), create a `datetime` object representing January 1st of the *next* year.
+5.  **Calculate the total days in the current year**: Subtract the `start_of_year` from the `start_of_next_year`. The `.days` attribute of the resulting `timedelta` will give us the total number of days in the current year.
+6.  **Calculate the number of days passed**: Subtract the `start_of_year` from the input `date`. The `.days` attribute of the resulting `timedelta` will give us the number of full days that have passed since the beginning of the year, up to the input date (excluding the input date itself). We add 1 to this value to include the current day in the count.
+7.  **Calculate the percentage**: Divide the `days_passed` (including the current day) by the `total_days_in_year` and multiply by 100.
+8.  **Return the result**: Return the calculated percentage as a float.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_percentage_of_year_passed(date: datetime) -> float:
+    # Step 3: Determine the start of the year for the given date
+    start_of_year = datetime(date.year, 1, 1)
+
+    # Step 4: Determine the start of the next year to find total days in current year
+    start_of_next_year = datetime(date.year + 1, 1, 1)
+
+    # Step 5: Calculate the total number of days in the current year
+    total_days_in_year = (start_of_next_year - start_of_year).days
+
+    # Step 6: Calculate the number of days that have passed up to and including the given date
+    # (date - start_of_year).days gives the number of full days between them.
+    # Adding 1 includes the current day in the count.
+    days_passed_inclusive = (date - start_of_year).days + 1
+
+    # Step 7: Calculate the percentage of the year that has passed
+    percentage = (days_passed_inclusive / total_days_in_year) * 100
+
+    # Step 8: Return the result as a float
+    return percentage
+
+# Entry point: calculate_percentage_of_year_passed(date: datetime) -> float
+```

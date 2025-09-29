@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+1. Choose a known reference new moon instant (epoch) in UTC to compute relative cycles.
+2. Use the average synodic month length (29.530588853 days) to model subsequent new moons.
+3. Normalize the input datetime to UTC (assume UTC if naive).
+4. Compute the number of synodic cycles elapsed since the epoch.
+5. Find the smallest integer cycle index whose new moon time is strictly after the given datetime.
+6. Return that next new moon as a timezone-aware UTC datetime.
+
+```python
+from datetime import datetime, timedelta, timezone
+
+def next_new_moon(after_dt: datetime) -> datetime:
+    # Average synodic month (new moon to new moon) in days
+    synodic_days = 29.530588853
+    
+    # Reference new moon (UTC): 2000-01-06 18:14:00 UTC
+    epoch = datetime(2000, 1, 6, 18, 14, tzinfo=timezone.utc)
+    
+    # Normalize input to UTC: assume UTC if naive
+    if after_dt.tzinfo is None:
+        base = after_dt.replace(tzinfo=timezone.utc)
+    else:
+        base = after_dt.astimezone(timezone.utc)
+    
+    # Elapsed days since epoch
+    delta_days = (base - epoch).total_seconds() / 86400.0
+    
+    # Integer cycle index not exceeding the elapsed time
+    k = int(delta_days / synodic_days)
+    
+    # Candidate new moon at cycle k
+    candidate = epoch + timedelta(days=synodic_days * k)
+    
+    # Ensure the result is strictly after the given datetime
+    if candidate <= base:
+        k += 1
+        candidate = epoch + timedelta(days=synodic_days * k)
+    
+    return candidate
+
+# Entry point: next_new_moon(after_dt: datetime) -> datetime
+```

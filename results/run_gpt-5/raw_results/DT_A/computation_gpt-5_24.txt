@@ -1,0 +1,55 @@
+Let's think step by step to solve this problem.
+1. Normalize the input so computations always proceed from the earlier to the later datetime.
+2. Initialize a total duration accumulator set to zero timedelta.
+3. Iterate day by day from the start datetime to the end datetime.
+4. For each day, compute the interval within that day to consider (from the current time to either the next midnight or the end datetime).
+5. If the current day is a weekday (Monday–Friday), add the interval to the total; otherwise, skip it.
+6. Continue until reaching the end datetime and return the accumulated timedelta.
+
+```python
+from datetime import datetime, timedelta
+
+def working_hours_between(start: datetime, end: datetime) -> timedelta:
+    """
+    Calculate the working hours between two datetimes excluding weekends.
+    Working hours here are defined as all time that falls on weekdays (Monday–Friday),
+    with no specific daily business-hour window (i.e., any time on a weekday counts).
+    
+    Parameters:
+        start (datetime): The starting datetime.
+        end   (datetime): The ending datetime.
+    
+    Returns:
+        timedelta: The total duration that falls on weekdays between start and end.
+    """
+    # Step 1: Normalize order to ensure start <= end
+    if end < start:
+        start, end = end, start
+
+    # Quick exit for equality
+    if start == end:
+        return timedelta(0)
+
+    total = timedelta(0)
+    current = start
+
+    while current < end:
+        # Step 2: Determine the boundary at the next midnight in current's timezone
+        start_of_day = current.replace(hour=0, minute=0, second=0, microsecond=0)
+        next_midnight = start_of_day + timedelta(days=1)
+
+        # Step 3: Clip the day's upper bound to the end datetime
+        upper = next_midnight if next_midnight < end else end
+
+        # Step 4: If it's a weekday (Mon-Fri), accumulate the overlap
+        if current.weekday() < 5:
+            if upper > current:
+                total += (upper - current)
+
+        # Step 5: Move to the next segment/day
+        current = upper
+
+    return total
+
+# Entry point: working_hours_between(start: datetime, end: datetime) -> timedelta
+```

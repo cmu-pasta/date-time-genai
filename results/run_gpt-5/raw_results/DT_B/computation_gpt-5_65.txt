@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime module.
+2. Define a function that accepts a year as an integer.
+3. Use a conventional approximation for the summer solstice date as June 21 for the given year.
+4. Return the result as a datetime.date object.
+
+```python
+from datetime import date
+
+def summer_solstice_date(year: int) -> date:
+    """
+    Return the (conventional) date of the summer solstice for the given year.
+    This implementation uses a widely accepted approximation of June 21.
+    """
+    return date(year, 6, 21)
+
+# Entry point: summer_solstice_date(year: int) -> date
+```

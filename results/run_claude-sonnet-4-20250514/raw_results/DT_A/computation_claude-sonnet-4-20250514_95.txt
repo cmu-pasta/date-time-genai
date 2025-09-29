@@ -1,0 +1,55 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the complexity**: Finding the exact date of the next solar eclipse visible from a specific location requires complex astronomical calculations involving the positions of the Sun, Moon, and Earth, which cannot be accurately computed using only the datetime library.
+
+2. **Define the approach**: Since we're limited to the datetime library, we'll create a simplified implementation that uses approximate eclipse cycles and basic calculations to estimate the next eclipse date.
+
+3. **Use the Saros cycle**: Solar eclipses follow approximately predictable cycles. The Saros cycle is about 18 years, 11 days, and 8 hours, which we can use as a rough approximation.
+
+4. **Accept location parameters**: We'll accept latitude and longitude as floats, and a reference datetime to calculate from.
+
+5. **Implement basic logic**: We'll use a simplified calculation based on known eclipse patterns and add the Saros cycle duration to estimate the next occurrence.
+
+6. **Return the result**: Return a datetime object representing the estimated date of the next solar eclipse.
+
+```python
+from datetime import datetime, timedelta
+
+def find_next_solar_eclipse(reference_date: datetime, latitude: float, longitude: float) -> datetime:
+    # Simplified approach using approximate Saros cycle (18 years, 11 days, 8 hours)
+    # This is a very rough approximation since actual eclipse calculations require
+    # complex astronomical computations not available in the datetime library
+    
+    # Base reference: A known solar eclipse date (August 21, 2017)
+    base_eclipse = datetime(2017, 8, 21, 18, 26)  # Total solar eclipse over USA
+    
+    # Saros cycle: approximately 6585.3211 days
+    saros_days = 6585
+    saros_hours = 8  # Additional ~8 hours for more precision
+    
+    # Calculate how many Saros cycles have passed since the base eclipse
+    days_since_base = (reference_date - base_eclipse).days
+    
+    if days_since_base < 0:
+        # If reference date is before base eclipse, return the base eclipse
+        return base_eclipse
+    
+    # Find the next eclipse in the cycle
+    cycles_passed = days_since_base // saros_days
+    next_eclipse_date = base_eclipse + timedelta(days=(cycles_passed + 1) * saros_days, hours=saros_hours)
+    
+    # Simple location-based adjustment (very rough approximation)
+    # Adjust by up to +/- 1 day based on longitude difference from reference location
+    reference_longitude = -97.0  # Approximate longitude of 2017 eclipse path
+    longitude_adjustment_hours = int((longitude - reference_longitude) * 0.25)  # Very rough estimation
+    
+    next_eclipse_date = next_eclipse_date + timedelta(hours=longitude_adjustment_hours)
+    
+    # Ensure we return a date after the reference date
+    if next_eclipse_date <= reference_date:
+        next_eclipse_date = next_eclipse_date + timedelta(days=saros_days, hours=saros_hours)
+    
+    return next_eclipse_date
+
+# Entry point: find_next_solar_eclipse(reference_date: datetime, latitude: float, longitude: float) -> datetime
+```

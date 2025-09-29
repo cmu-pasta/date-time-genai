@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with DateTime values.
+2. Define a function that accepts a pendulum.DateTime input.
+3. Construct the business hour boundaries (9:00 AM inclusive to 5:00 PM exclusive) on the same date and timezone as the input.
+4. Compare the input DateTime against these boundaries and return a boolean indicating whether it falls within business hours.
+
+```python
+import pendulum
+
+def is_within_business_hours(dt: pendulum.DateTime) -> bool:
+    # Construct start and end boundaries on the same date and timezone as the input
+    start = dt.replace(hour=9, minute=0, second=0, microsecond=0)
+    end = dt.replace(hour=17, minute=0, second=0, microsecond=0)
+    
+    # Check if dt is within [09:00, 17:00)
+    return start <= dt < end
+
+# Entry point: is_within_business_hours(dt: pendulum.DateTime) -> bool
+```

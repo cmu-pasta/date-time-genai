@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` class from Python's standard `datetime` module.
+2.  **Define a function**: Create a function `find_next_valentines_day` that accepts one `datetime` object as input, representing the starting date.
+3.  **Construct the current year's Valentine's Day**: Create a `datetime` object for February 14th of the same year as the `given_date`. To ensure consistent comparison, we will set the time component to midnight (00:00:00).
+4.  **Compare and determine the next Valentine's Day**:
+    *   If this constructed Valentine's Day is on or after the `given_date` (considering the entire day, meaning `datetime(year, 2, 14)` >= `given_date`), then it is the next Valentine's Day.
+    *   Otherwise, if the `given_date` has already passed February 14th of its year, the next Valentine's Day must be in the subsequent year.
+5.  **Return the result**: Return the determined `datetime` object.
+
+```python
+from datetime import datetime
+
+def find_next_valentines_day(given_date: datetime) -> datetime:
+    # Step 1: Construct Valentine's Day for the year of the given_date.
+    # We set the time to 00:00:00 for a consistent day-based comparison.
+    valentines_this_year = datetime(given_date.year, 2, 14)
+    
+    # Step 2: Compare the constructed Valentine's Day with the given_date.
+    # If the given_date is before or on the Valentine's Day of its year,
+    # then this year's Valentine's Day is the next one.
+    if given_date <= valentines_this_year:
+        return valentines_this_year
+    else:
+        # Step 3: If the given_date is after Valentine's Day of its year,
+        # then the next Valentine's Day is in the following year.
+        valentines_next_year = datetime(given_date.year + 1, 2, 14)
+        return valentines_next_year
+
+# Entry point: find_next_valentines_day(given_date: datetime) -> datetime
+```

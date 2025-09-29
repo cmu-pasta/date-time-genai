@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime library.
+2. Define a function that accepts a date input.
+3. Extract the month from the given date.
+4. Compute the quarter using integer arithmetic.
+5. Return the quarter as an integer.
+
+```python
+from datetime import date
+
+def determine_quarter(d: date) -> int:
+    # Extract month and compute quarter: months 1-3 -> Q1, 4-6 -> Q2, 7-9 -> Q3, 10-12 -> Q4
+    month = d.month
+    quarter = (month - 1) // 3 + 1
+    return quarter
+
+# Entry point: determine_quarter(d: date) -> int
+```

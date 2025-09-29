@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2.  **Define a function**: Create a function that accepts a `datetime` object representing a Gregorian date.
+3.  **Calculate the Thai Buddhist year**: The Thai Buddhist calendar year is typically 543 years ahead of the Gregorian calendar year. We will add 543 to the year component of the input Gregorian date.
+4.  **Construct the new date**: Create a new `datetime` object using the calculated Thai Buddhist year, while retaining the month, day, and time components (hour, minute, second, microsecond, and timezone information) from the original Gregorian date.
+5.  **Return the result**: Return the new `datetime` object representing the Thai Buddhist calendar date.
+
+```python
+from datetime import datetime
+
+def get_thai_buddhist_date(gregorian_dt: datetime) -> datetime:
+    # Step 1: Extract the Gregorian year from the input datetime object.
+    gregorian_year = gregorian_dt.year
+
+    # Step 2: Calculate the corresponding Thai Buddhist year by adding 543.
+    thai_buddhist_year = gregorian_year + 543
+
+    # Step 3: Create a new datetime object with the Thai Buddhist year,
+    # retaining the month, day, and time components (including timezone info)
+    # from the original Gregorian datetime object.
+    thai_buddhist_dt = gregorian_dt.replace(year=thai_buddhist_year)
+
+    # Step 4: Return the new datetime object.
+    return thai_buddhist_dt
+
+# Entry point: get_thai_buddhist_date(gregorian_dt: datetime) -> datetime
+```

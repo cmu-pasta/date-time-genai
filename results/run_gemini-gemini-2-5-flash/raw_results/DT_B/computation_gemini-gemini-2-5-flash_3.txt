@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2.  **Define a function**: Create a function that accepts a `datetime` object as input, representing the given date.
+3.  **Implement leap year check**: A year is a leap year if it is divisible by 4, unless it is divisible by 100 but not by 400. This logic can be translated into a boolean expression: `(year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)`.
+4.  **Iterate to find the next leap year**: Start checking from the year immediately following the year of the input date. Increment the year one by one and apply the leap year check until a year satisfying the condition is found.
+5.  **Return the result**: The result will be an integer representing the next leap year.
+
+```python
+from datetime import datetime
+
+def determine_next_leap_year(dt: datetime) -> int:
+    """
+    Determines the next leap year after a given date.
+
+    Args:
+        dt: The given date as a datetime object.
+
+    Returns:
+        An integer representing the next leap year after the given date.
+    """
+    # Start checking from the year immediately after the given date's year.
+    # This ensures we always find a leap year strictly after the input date.
+    current_year = dt.year + 1
+
+    while True:
+        # Step 1 & 2: Implement the leap year check
+        # A year is a leap year if it is divisible by 4,
+        # unless it is divisible by 100 but not by 400.
+        is_leap_year = (current_year % 4 == 0 and current_year % 100 != 0) or \
+                       (current_year % 400 == 0)
+
+        if is_leap_year:
+            # Step 3: Return the found leap year
+            return current_year
+        
+        # Move to the next year if the current_year is not a leap year
+        current_year += 1
+
+# Entry point: determine_next_leap_year(dt: datetime) -> int
+```

@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input.
+3. **Determine the winter solstice date**: The winter solstice in the Northern Hemisphere typically occurs around December 21st each year.
+4. **Create the date object**: Use pendulum to create a Date object for December 21st of the given year.
+5. **Return the result**: Return the pendulum.Date object representing the winter solstice date.
+
+```python
+import pendulum
+
+def find_winter_solstice(year: int) -> pendulum.Date:
+    # Step 1: Create a pendulum.Date object for December 21st of the given year
+    # The winter solstice in the Northern Hemisphere typically occurs on December 21st
+    winter_solstice_date = pendulum.date(year, 12, 21)
+    
+    # Step 2: Return the date
+    return winter_solstice_date
+
+# Entry point: find_winter_solstice(year: int) -> pendulum.Date
+```

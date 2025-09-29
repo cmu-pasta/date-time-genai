@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the required type(s) from the datetime module.
+2. Accept a date-like input and extract its year.
+3. Starting from the following year, iterate upward to find the first leap year using the leap-year rule.
+4. If found within the supported range (1..9999), return February 29 of that leap year as a date object.
+5. If no valid leap year exists within range, raise a ValueError.
+
+```python
+from datetime import date
+
+def next_leap_year_date(given_date: date) -> date:
+    """
+    Determine the next leap year after the given date and return the date of Feb 29 of that year.
+    Raises ValueError if no such date exists within the supported datetime range.
+    """
+    year = given_date.year + 1
+
+    # Python's datetime supports years in the range 1..9999
+    while year <= 9999:
+        # Leap year rule: divisible by 4 and (not divisible by 100 unless divisible by 400)
+        if (year % 4 == 0) and ((year % 100 != 0) or (year % 400 == 0)):
+            return date(year, 2, 29)
+        year += 1
+
+    # If we exceed 9999, we cannot represent the date in datetime.date
+    raise ValueError("No representable next leap year exists after the given date.")
+
+# Entry point: next_leap_year_date(given_date: date) -> date
+```

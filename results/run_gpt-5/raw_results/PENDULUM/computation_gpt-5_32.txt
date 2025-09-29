@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+1. Accept two pendulum.DateTime inputs.
+2. Determine which input is earlier and which is later to ensure a positive interval.
+3. Compute the absolute duration between them in microseconds using pendulum's diff method.
+4. Add half of that duration (in microseconds) to the earlier DateTime to get the exact midpoint.
+5. Return the resulting pendulum.DateTime.
+
+```python
+import pendulum
+
+def midpoint_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Order the datetimes to identify the earlier and later moments
+    if dt1 <= dt2:
+        earlier = dt1
+        later = dt2
+    else:
+        earlier = dt2
+        later = dt1
+
+    # Step 2: Compute absolute duration between them in microseconds
+    total_us = later.diff(earlier).in_microseconds()
+
+    # Step 3: Add half of the duration to the earlier datetime to find the midpoint
+    half_us = total_us // 2
+    midpoint = earlier.add(microseconds=half_us)
+
+    # Step 4: Return the midpoint as a pendulum.DateTime
+    return midpoint
+
+# Entry point: midpoint_between(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime
+```

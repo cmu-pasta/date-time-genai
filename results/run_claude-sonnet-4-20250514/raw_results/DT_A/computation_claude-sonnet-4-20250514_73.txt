@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates and times.
+
+2. **Define a function**: We will create a function that accepts a datetime object as input to check if the time falls within business hours.
+
+3. **Extract the time component**: We need to get just the time portion from the datetime object to compare against business hours.
+
+4. **Define business hours**: Business hours are from 9 AM to 5 PM, so we need to create time objects representing 9:00 AM and 5:00 PM (17:00).
+
+5. **Compare the time**: Check if the extracted time falls within the business hours range.
+
+6. **Return the result**: Return True if the time is within business hours, False otherwise.
+
+```python
+from datetime import datetime, time
+
+def is_within_business_hours(dt: datetime) -> bool:
+    # Step 1: Extract the time component from the datetime object
+    current_time = dt.time()
+    
+    # Step 2: Define business hours (9 AM to 5 PM)
+    business_start = time(9, 0)  # 9:00 AM
+    business_end = time(17, 0)   # 5:00 PM
+    
+    # Step 3: Check if the current time falls within business hours
+    # Business hours are inclusive of start time but exclusive of end time
+    if business_start <= current_time < business_end:
+        return True
+    else:
+        return False
+
+# Entry point: is_within_business_hours(dt: datetime) -> bool
+```

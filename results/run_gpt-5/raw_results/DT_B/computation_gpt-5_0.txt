@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+1. Import the necessary types from the datetime standard library.
+2. Define a function that accepts two date-like inputs (date objects), representing the start and end dates.
+3. Normalize the order so the earlier date is first; compute the difference in days excluding the end date.
+4. Compute complete weeks within the range and convert them to business days (5 per week).
+5. Handle the remaining days by counting how many fall on weekdays (Monday–Friday).
+6. Return the total number of business days as an integer.
+
+```python
+from datetime import date
+
+def business_days_between(start: date, end: date) -> int:
+    """
+    Calculate the number of business days (Monday-Friday) between two dates.
+    The calculation is exclusive of the end date and inclusive of the start date,
+    matching the behavior of (end - start).days for total days.
+    
+    Args:
+        start: The start date.
+        end: The end date.
+    Returns:
+        The number of business days as an integer.
+    """
+    if start == end:
+        return 0
+
+    # Ensure start <= end
+    if start > end:
+        start, end = end, start
+
+    total_days = (end - start).days  # end is exclusive
+    full_weeks = total_days // 7
+    business_days = full_weeks * 5
+
+    remainder = total_days % 7
+    start_weekday = start.weekday()  # 0=Mon, 6=Sun
+
+    # Count weekdays in the remaining days
+    for i in range(remainder):
+        wd = (start_weekday + i) % 7
+        if wd < 5:
+            business_days += 1
+
+    return business_days
+
+# Entry point: business_days_between(start: date, end: date) -> int
+```

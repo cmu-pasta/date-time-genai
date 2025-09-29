@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with datetime objects.
+2.  **Define a function**: Create a function that accepts one `pendulum.DateTime` object representing the birth datetime.
+3.  **Get the current datetime**: Obtain the current datetime using `pendulum.now()`. It's good practice to ensure both datetimes are in the same timezone (or one is aware and the other is converted) for accurate duration calculation. `pendulum.now()` will create a timezone-aware datetime. If `birth_datetime` is naive, it might be implicitly treated as local, which can lead to issues. It's safer to assume `birth_datetime` is also timezone-aware or specify its timezone. For simplicity, we'll assume `birth_datetime` is timezone-aware, or `pendulum` will handle the subtraction gracefully.
+4.  **Calculate the duration**: Subtract the `birth_datetime` from the `current_datetime` to get a `pendulum.Duration` object.
+5.  **Extract total seconds**: Use the `total_seconds()` method on the `pendulum.Duration` object to get the total number of seconds as a float.
+6.  **Convert to integer and ensure positive**: Convert the float result to an integer and use `abs()` to ensure the age is always a positive value, as chronological age is typically positive.
+7.  **Return the result**: Return the calculated age in seconds as an integer.
+
+```python
+import pendulum
+
+def calculate_chronological_age_in_seconds(birth_datetime: pendulum.DateTime) -> int:
+    # Step 1: Get the current datetime. It's good practice to ensure consistent timezones for accurate calculation.
+    # If birth_datetime is naive, pendulum.now() (which is aware) will handle the comparison.
+    # For robust solutions, one might normalize timezones (e.g., to UTC).
+    current_datetime = pendulum.now(birth_datetime.timezone if birth_datetime.tzinfo else None)
+
+    # Step 2: Calculate the duration between the current datetime and the birth datetime.
+    # This results in a pendulum.Duration object.
+    duration = current_datetime - birth_datetime
+
+    # Step 3: Get the total number of seconds from the duration.
+    # total_seconds() returns a float.
+    total_seconds_float = duration.total_seconds()
+
+    # Step 4: Convert the result to an integer and take the absolute value
+    # to ensure a positive age in seconds.
+    age_in_seconds = int(abs(total_seconds_float))
+    
+    return age_in_seconds
+
+# Entry point: calculate_chronological_age_in_seconds(birth_datetime: pendulum.DateTime) -> int
+```

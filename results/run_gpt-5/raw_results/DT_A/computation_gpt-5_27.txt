@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Import the required class from the datetime library to work with calendar dates.
+2. Normalize the input years to determine the inclusive range [min_year, max_year].
+3. For each year in the range, attempt to construct February 29 using datetime.date; if successful, it's a leap year.
+4. Count how many years in the range successfully create February 29.
+5. Return the count as an integer.
+
+```python
+from datetime import date
+
+def count_leap_years_between(year1: int, year2: int) -> int:
+    """
+    Count the number of leap years between two years, inclusive of both endpoints.
+    Uses datetime.date to determine if Feb 29 exists for a given year.
+    """
+    # Normalize the range to be inclusive from the smaller to the larger year
+    start_year = year1 if year1 <= year2 else year2
+    end_year = year2 if year2 >= year1 else year1
+
+    count = 0
+    for y in range(start_year, end_year + 1):
+        try:
+            # If Feb 29 exists, it's a leap year
+            date(y, 2, 29)
+            count += 1
+        except ValueError:
+            # Not a leap year
+            pass
+
+    return count
+
+# Entry point: count_leap_years_between(year1: int, year2: int) -> int
+```

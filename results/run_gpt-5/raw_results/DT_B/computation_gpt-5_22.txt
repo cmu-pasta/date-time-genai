@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime library to work with times.
+2. Define a function that accepts a 12-hour time (as a time object with hour in 1..12) and a boolean indicating PM.
+3. Validate that the input hour is within the 12-hour clock range (1..12).
+4. Convert the 12-hour time to a 24-hour time using standard conversion rules.
+5. Preserve the original minutes, seconds, microseconds, tzinfo, and fold attributes.
+6. Return the resulting 24-hour time as a datetime.time object.
+
+```python
+from datetime import time
+
+def convert_12h_to_24h(t12: time, is_pm: bool) -> time:
+    # Validate that the provided time follows 12-hour format (hour must be 1..12)
+    if t12.hour < 1 or t12.hour > 12:
+        raise ValueError("For 12-hour input, hour must be in the range 1..12.")
+    
+    hour = t12.hour
+    # Conversion rules:
+    # - For AM: 12 AM -> 0, 1..11 AM -> 1..11
+    # - For PM: 12 PM -> 12, 1..11 PM -> 13..23
+    if is_pm:
+        hour_24 = 12 if hour == 12 else hour + 12
+    else:
+        hour_24 = 0 if hour == 12 else hour
+
+    # Preserve minute, second, microsecond, tzinfo, and fold
+    return t12.replace(hour=hour_24)
+
+# Entry point: convert_12h_to_24h(t12: time, is_pm: bool) -> time
+```

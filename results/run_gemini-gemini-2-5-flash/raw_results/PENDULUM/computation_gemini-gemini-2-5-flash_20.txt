@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library for date and time operations.
+2.  **Define a function**: Create a function that takes a `pendulum.DateTime` object as input, representing the given date.
+3.  **Utilize `previous()` method**: The `pendulum.DateTime` object has a convenient `previous()` method that can directly find the previous occurrence of a specified day of the week.
+4.  **Specify Friday**: Pass `pendulum.FRIDAY` as the argument to the `previous()` method to find the previous Friday.
+5.  **Return the result**: The `previous()` method will return a `pendulum.DateTime` object representing the previous Friday.
+
+```python
+import pendulum
+
+def find_previous_friday(date: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Use the 'previous()' method to find the previous Friday
+    # pendulum.FRIDAY is a constant representing Friday.
+    previous_friday = date.previous(pendulum.FRIDAY)
+    
+    # Step 2: Return the resulting pendulum.DateTime object
+    return previous_friday
+
+# Entry point: find_previous_friday(date: pendulum.DateTime) -> pendulum.DateTime
+```

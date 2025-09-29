@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Import the date class from the datetime module to work with date objects.
+2. Define a helper function to convert an integer year to its Roman numeral representation using standard subtractive notation.
+3. Implement the main function that takes a date, extracts the year, converts it to a Roman numeral string, and returns it.
+4. Ensure the entry point function signature is clearly specified.
+
+```python
+from datetime import date
+
+def _int_to_roman(n: int) -> str:
+    if n <= 0:
+        raise ValueError("Year must be a positive integer.")
+    # Standard Roman numeral mapping for subtractive notation
+    vals = (1000, 900, 500, 400, 100, 90,  50,  40,  10,  9,   5,   4,   1)
+    syms = ("M",  "CM","D", "CD","C","XC","L","XL","X","IX","V","IV","I")
+    result = []
+    for v, s in zip(vals, syms):
+        if n == 0:
+            break
+        count, n = divmod(n, v)
+        if count:
+            result.append(s * count)
+    return "".join(result)
+
+def date_to_roman_year(d: date) -> str:
+    # Extract the year from the given date and convert to Roman numerals
+    return _int_to_roman(d.year)
+
+# Entry point: date_to_roman_year(d: date) -> str
+```

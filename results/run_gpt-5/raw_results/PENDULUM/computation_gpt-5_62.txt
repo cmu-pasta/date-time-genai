@@ -1,0 +1,86 @@
+Let's think step by step to solve this problem.
+1. Accept a target year (integer) and a timezone (pendulum.Timezone).
+2. Walk day by day through the given year, comparing the DST status (is_dst) at midnight of each day and the next day.
+3. When we find a day where DST flips from False (standard time) to True (daylight time), perform a binary search within that 24-hour window to locate the exact transition moment to the second.
+4. Return the calendar date (pendulum.Date) of the transition moment.
+5. If no DST start occurs within the year for the given timezone, raise a ValueError.
+
+```python
+import pendulum
+
+def _binary_search_dst_start(start_dt: pendulum.DateTime, end_dt: pendulum.DateTime) -> pendulum.DateTime:
+    """
+    Given a window [start_dt, end_dt] where is_dst flips from False to True,
+    binary search to find the exact transition instant (to the second).
+    """
+    # Ensure start is non-DST and end is DST
+    if not (start_dt.is_dst() is False and end_dt.is_dst() is True):
+        raise ValueError("Search window must start in standard time and end in daylight saving time.")
+
+    # Use timestamps to avoid issues around nonexistent/ambiguous local times
+    lo = start_dt.int_timestamp
+    hi = end_dt.int_timestamp
+
+    # Binary search for the first timestamp where is_dst becomes True
+    while lo < hi:
+        mid = (lo + hi) // 2
+        mid_dt = pendulum.from_timestamp(mid, tz=start_dt.timezone)
+        if mid_dt.is_dst():
+            hi = mid
+        else:
+            lo = mid + 1
+
+    # lo (== hi) is the first second where DST is True
+    transition_dt = pendulum.from_timestamp(lo, tz=start_dt.timezone)
+    return transition_dt
+
+def find_dst_start_date(year: int, tz: pendulum.Timezone) -> pendulum.Date:
+    """
+    Find the date when daylight saving time starts for a given year and timezone.
+
+    Inputs:
+      - year: int (target calendar year)
+      - tz: pendulum.Timezone
+
+    Output:
+      - pendulum.Date representing the date of DST start within the given year.
+
+    Raises:
+      - ValueError if the timezone has no DST start within the given year.
+    """
+    # Start at the very beginning of the year in the given timezone
+    current = pendulum.datetime(year, 1, 1, 0, 0, 0, tz=tz)
+    end_of_year = pendulum.datetime(year, 12, 31, 23, 59, 59, tz=tz)
+
+    one_day = pendulum.duration(days=1)
+
+    # Iterate day by day to find a window where DST flips from False to True
+    while current <= end_of_year:
+        next_day = current + one_day
+        # Clamp next_day to end_of_year + 1s window if needed
+        if next_day > end_of_year:
+            next_day = end_of_year
+
+        # Check is_dst at the start of 'current' day and the start of the following day
+        start_is_dst = current.is_dst()
+        # Use midnight of the next day (or end_of_year if clamped)
+        next_midnight = pendulum.datetime(current.year, current.month, current.day, 0, 0, 0, tz=tz) + one_day
+        if next_midnight > end_of_year:
+            next_midnight = end_of_year
+
+        end_is_dst = next_midnight.is_dst()
+
+        # Detect a False -> True transition inside this day
+        if start_is_dst is False and end_is_dst is True:
+            # Binary search between current midnight and next midnight
+            transition_dt = _binary_search_dst_start(current, next_midnight)
+            return transition_dt.date()
+
+        # Advance to next day
+        current = current + one_day
+
+    # If we finish the loop without finding a start of DST
+    raise ValueError("No DST start found in the specified year for the given timezone.")
+
+# Entry point: find_dst_start_date(year: int, tz: pendulum.Timezone) -> pendulum.Date
+```

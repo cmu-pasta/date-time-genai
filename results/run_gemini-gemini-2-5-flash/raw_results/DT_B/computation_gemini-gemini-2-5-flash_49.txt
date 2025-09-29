@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need `date` and `timedelta` from the `datetime` module to work with dates and calculate day differences.
+2.  **Define a function**: Create a function that accepts an integer representing the `year` as input.
+3.  **Initialize a counter**: Set a variable to zero to keep track of the number of Sundays.
+4.  **Set the starting date**: Create a `date` object for February 1st of the given year.
+5.  **Iterate through February**: Loop through each day of February. The loop should continue as long as the current date's month is February. This naturally handles both 28-day and 29-day Februaries (leap years).
+6.  **Check for Sunday**: Inside the loop, for each day, use the `weekday()` method. `weekday()` returns an integer where Monday is 0 and Sunday is 6. If the day is a Sunday, increment the counter.
+7.  **Advance to the next day**: After checking, add one day to the current date using `timedelta(days=1)`.
+8.  **Return the count**: After the loop finishes, return the final count of Sundays as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_february_sundays(year: int) -> int:
+    sunday_count = 0
+    
+    # Step 1: Set the starting date to February 1st of the given year
+    current_date = date(year, 2, 1)
+    
+    # Step 2: Iterate through each day of February
+    # The loop continues as long as the current_date is still in February
+    while current_date.month == 2:
+        # Step 3: Check if the current day is a Sunday (weekday() returns 6 for Sunday)
+        if current_date.weekday() == 6:
+            sunday_count += 1
+        
+        # Step 4: Move to the next day
+        current_date += timedelta(days=1)
+        
+    # Step 5: Return the total count of Sundays
+    return sunday_count
+
+# Entry point: count_february_sundays(year: int) -> int
+```

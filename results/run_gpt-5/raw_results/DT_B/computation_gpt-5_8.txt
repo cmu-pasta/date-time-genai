@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime library: date and timedelta.
+2. Define a function that accepts a date input.
+3. Compute the first day of the next month (handling December by rolling over to January of the next year).
+4. Subtract one day from the first day of the next month to get the last day of the current month.
+5. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def last_day_of_month(d: date) -> date:
+    """
+    Return the last day of the month for the given date.
+    """
+    # Step 1: Determine the first day of the next month
+    if d.month == 12:
+        first_of_next_month = date(d.year + 1, 1, 1)
+    else:
+        first_of_next_month = date(d.year, d.month + 1, 1)
+    
+    # Step 2: Subtract one day to get the last day of the current month
+    last_day = first_of_next_month - timedelta(days=1)
+    
+    # Step 3: Return the result as a date
+    return last_day
+
+# Entry point: last_day_of_month(d: date) -> date
+```

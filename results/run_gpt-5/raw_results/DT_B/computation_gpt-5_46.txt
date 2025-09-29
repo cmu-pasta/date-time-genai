@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime library.
+2. Define a function that accepts a datetime input.
+3. Determine whether the time is AM or PM based on the 24-hour hour value.
+4. Convert the hour to 12-hour format (with 12 instead of 0).
+5. Return a time object with the converted hour and use the fold attribute to encode AM (0) or PM (1).
+
+```python
+from datetime import datetime, time
+
+def convert_datetime_to_12h(dt: datetime) -> time:
+    """
+    Convert a datetime in 24-hour time to a 12-hour time with AM/PM indication.
+    The AM/PM information is encoded via the 'fold' attribute:
+      - fold == 0 represents AM
+      - fold == 1 represents PM
+    The returned object is a datetime.time instance.
+    """
+    hour_24 = dt.hour
+    is_pm = hour_24 >= 12
+    hour_12 = hour_24 % 12
+    if hour_12 == 0:
+        hour_12 = 12
+
+    return time(
+        hour=hour_12,
+        minute=dt.minute,
+        second=dt.second,
+        microsecond=dt.microsecond,
+        tzinfo=dt.tzinfo,
+        fold=1 if is_pm else 0
+    )
+
+# Entry point: convert_datetime_to_12h(dt: datetime) -> time
+```

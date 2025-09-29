@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts a date input.
+3. Determine the weekday of the given date (Monday=0, ..., Friday=4).
+4. Compute how many days to go back to reach the strictly previous Friday (7 days back if the date is Friday).
+5. Subtract that number of days from the given date to get the previous Friday.
+6. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def previous_friday_before(d: date) -> date:
+    """
+    Return the previous Friday strictly before the given date.
+    If the given date is a Friday, returns the Friday one week earlier.
+    """
+    weekday = d.weekday()  # Monday=0 ... Sunday=6
+    days_back = (weekday - 4) % 7  # distance to Friday (4)
+    if days_back == 0:
+        days_back = 7  # ensure strictly previous Friday
+    return d - timedelta(days=days_back)
+
+# Entry point: previous_friday_before(d: date) -> date
+```

@@ -1,0 +1,60 @@
+Let's think step by step to solve this problem.
+1.  **Import the necessary libraries**: We will need the `datetime` module from Python's standard library to handle date objects.
+2.  **Define a function**: Create a function that accepts a `datetime` object as input.
+3.  **Implement the Julian Day Number calculation**: The Julian Day Number (JDN) is the integer number of days that have elapsed since noon Universal Time on January 1, 4713 BC (Julian proleptic calendar). There isn't a direct method in the `datetime` library for this, so we will implement a standard astronomical algorithm. The formula converts a Gregorian date (Year, Month, Day) to its corresponding Julian Day.
+    *   Adjust month and year for the formula's calculation (if month is Jan or Feb).
+    *   Calculate the Gregorian calendar correction term.
+    *   Apply the standard formula to compute the Julian Day (JD), which is typically a float.
+    *   The Julian Day Number (JDN) is the integer part of the Julian Day *at noon UTC*. For a `datetime` object representing a date at midnight, we need to add 0.5 to get to noon before taking the integer part, or more commonly, the JDN is defined as the number of days since the reference epoch, and the current date (midnight) is `JD - 0.5`. The `int(JD)` for the date is common. The formula used below directly calculates the JDN at 0h UT.
+4.  **Return the result**: The JDN is an integer, so we will return it as such.
+
+Here is the implementation of the above steps in code:
+
+```python
+from datetime import datetime
+
+def convert_date_to_julian_day_number(dt: datetime) -> int:
+    """
+    Converts a datetime object to its Julian Day Number (JDN).
+
+    The Julian Day Number is the integer part of the Julian Day.
+    This function calculates the JDN for the date part of the datetime object
+    at 0h UT (midnight).
+
+    Args:
+        dt: The datetime object to convert.
+
+    Returns:
+        The Julian Day Number as an integer.
+    """
+    year = dt.year
+    month = dt.month
+    day = dt.day
+
+    # Adjust month and year for the formula if month is January or February
+    if month <= 2:
+        year -= 1
+        month += 12
+
+    # Calculate the Gregorian calendar correction term
+    # This term (B) is only relevant for dates after October 15, 1582.
+    # Python's datetime objects are typically post-Gregorian calendar,
+    # and this formula implicitly handles that by its structure.
+    A = year // 100
+    B = 2 - A + (A // 4)
+
+    # Calculate the Julian Day (JD) using a standard astronomical formula
+    # This formula calculates the JD for 0h UT (midnight) of the given date.
+    # The Julian Day Number (JDN) is simply the integer part of this JD.
+    # Using float(day) to ensure floating point arithmetic for precision before int conversion.
+    julian_day = (
+        int(365.25 * (year + 4716)) +
+        int(30.6001 * (month + 1)) +
+        float(day) + B - 1524.5
+    )
+
+    # The Julian Day Number is the integer part of the Julian Day for 0h UT.
+    return int(julian_day)
+
+# Entry point: convert_date_to_julian_day_number(dt: datetime) -> int
+```

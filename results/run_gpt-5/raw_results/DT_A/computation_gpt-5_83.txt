@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+1. Accept a target year and a timezone (ZoneInfo).
+2. Iterate day by day across the year, comparing the DST offset at local midnight for a day and the following day.
+3. Detect a DST end when the DST offset decreases from one day to the next.
+4. Return the local calendar date of the day on which the decrease starts (the transition occurs during that day).
+5. If no DST end occurs within the year for the given timezone, raise a ValueError.
+
+```python
+from datetime import datetime, date, time, timedelta
+from zoneinfo import ZoneInfo
+
+def find_dst_end_date(year: int, tz: ZoneInfo) -> date:
+    # Start at the first moment of the year in the given timezone
+    start_of_year = datetime(year, 1, 1, 0, 0, tzinfo=tz)
+    start_of_next_year = datetime(year + 1, 1, 1, 0, 0, tzinfo=tz)
+
+    current = start_of_year
+    # Iterate through each day of the year
+    while current < start_of_next_year:
+        next_day = current + timedelta(days=1)
+        # Compare DST offsets at local midnight for consecutive days
+        dst_current = tz.dst(current)
+        dst_next = tz.dst(next_day)
+
+        # Detect DST end: a decrease in DST offset between consecutive midnights
+        if dst_current is not None and dst_next is not None and dst_next < dst_current:
+            return current.date()
+
+        current = next_day
+
+    # If no DST end is detected in the year for this timezone, signal this condition
+    raise ValueError("No daylight saving time end found for the given year and timezone.")
+
+# Entry point: find_dst_end_date(year: int, tz: ZoneInfo) -> date
+```

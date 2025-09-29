@@ -1,0 +1,51 @@
+Let's think step by step to solve this problem.
+1. Recognize that Nowruz is the first day of the Iranian (Jalali) year, which falls in March of the corresponding Gregorian year.
+2. Use a well-known arithmetic algorithm for the Jalali calendar to compute the March day on which Farvardin 1 (Nowruz) occurs for a given Jalali year.
+3. Convert the Gregorian year to the corresponding Jalali year by subtracting 621.
+4. Compute the March day using the breaks-based Jalali calendar arithmetic (no external libraries).
+5. Construct and return the Gregorian date using the Python datetime.date type.
+
+```python
+from datetime import date
+
+def _march_day_for_jalali_year(jy: int) -> int:
+    # Arithmetic Jalali calendar parameters (break points)
+    breaks = [-61, 9, 38, 199, 426, 686, 756, 818,
+              1111, 1181, 1210, 1635, 2060, 2097,
+              2192, 2262, 2324, 2394, 2456, 3178]
+
+    gy = jy + 621
+    leap_j = -14
+    jp = breaks[0]
+
+    for jm in breaks[1:]:
+        jump = jm - jp
+        if jy < jm:
+            n = jy - jp
+            leap_j += (n // 33) * 8 + ((n % 33 + 3) // 4)
+            # Special correction
+            if (jump % 33 == 4) and (jump - n == 4):
+                leap_j += 1
+            leap_g = (gy // 4) - ((gy // 100 + 1) // 25) + (gy // 400)
+            march = 20 + leap_j - leap_g
+            return march
+        leap_j += (jump // 33) * 8 + ((jump % 33) // 4)
+        jp = jm
+
+    # For years beyond the last break
+    n = jy - jp
+    leap_j += (n // 33) * 8 + ((n % 33 + 3) // 4)
+    leap_g = (gy // 4) - ((gy // 100 + 1) // 25) + (gy // 400)
+    march = 20 + leap_j - leap_g
+    return march
+
+def nowruz_date_for_gregorian_year(year: int) -> date:
+    # Convert Gregorian year to Jalali year
+    jy = year - 621
+    # Compute the day in March when Nowruz occurs
+    march_day = _march_day_for_jalali_year(jy)
+    # Return the Gregorian date of Nowruz
+    return date(year, 3, march_day)
+
+# Entry point: nowruz_date_for_gregorian_year(year: int) -> date
+```

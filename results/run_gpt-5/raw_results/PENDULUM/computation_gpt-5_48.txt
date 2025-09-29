@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with DateTime and Timezone objects.
+2. Define a function that accepts a pendulum.DateTime and a pendulum.Timezone.
+3. Convert the given datetime to the specified timezone using in_timezone.
+4. Compute the UTC offset in seconds via utcoffset().total_seconds().
+5. Convert the offset from seconds to hours and return it as a float.
+
+```python
+import pendulum
+
+def calculate_timezone_offset_hours(dt: pendulum.DateTime, tz: pendulum.Timezone) -> float:
+    # Step 1: Convert the datetime to the specified timezone
+    localized_dt = dt.in_timezone(tz)
+    # Step 2: Get the UTC offset in seconds
+    offset_seconds = localized_dt.utcoffset().total_seconds()
+    # Step 3: Convert seconds to hours and return
+    return offset_seconds / 3600.0
+
+# Entry point: calculate_timezone_offset_hours(dt: pendulum.DateTime, tz: pendulum.Timezone) -> float
+```

@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to access the Time type.
+2. Define a function that accepts two pendulum.Time inputs representing times on the same day.
+3. Convert each time to the total number of seconds since midnight.
+4. Compute the absolute difference in seconds between the two times.
+5. Convert the difference from seconds to whole minutes using integer division.
+6. Return the integer number of minutes.
+
+```python
+import pendulum
+
+def minutes_between_times(t1: pendulum.Time, t2: pendulum.Time) -> int:
+    # Step 1: Convert both times to total seconds from midnight
+    s1 = t1.hour * 3600 + t1.minute * 60 + t1.second
+    s2 = t2.hour * 3600 + t2.minute * 60 + t2.second
+
+    # Step 2: Compute absolute difference in seconds
+    diff_seconds = abs(s2 - s1)
+
+    # Step 3: Convert seconds to whole minutes
+    diff_minutes = diff_seconds // 60
+
+    # Step 4: Return the integer number of minutes
+    return int(diff_minutes)
+
+# Entry point: minutes_between_times(t1: pendulum.Time, t2: pendulum.Time) -> int
+```

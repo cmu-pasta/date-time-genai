@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` from Python's datetime module to work with dates and date arithmetic.
+
+2. **Define the function**: Create a function that accepts two datetime objects as input and returns the count of weekends as an integer.
+
+3. **Ensure proper date ordering**: Make sure we work with the earlier date first to avoid negative calculations.
+
+4. **Define weekend logic**: A weekend consists of Saturday and Sunday. We need to count complete weekends (Saturday-Sunday pairs) that fall between the two dates.
+
+5. **Calculate using date arithmetic**: Find the first Saturday on or after the start date, and the last Saturday on or before the end date, then count the number of weeks between them.
+
+6. **Return the result**: Return the count as an integer.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int:
+    # Ensure dt1 is the earlier date
+    if dt1 > dt2:
+        dt1, dt2 = dt2, dt1
+    
+    # Find the first Saturday on or after dt1
+    # weekday() returns 0=Monday, 1=Tuesday, ..., 5=Saturday, 6=Sunday
+    days_to_first_saturday = (5 - dt1.weekday()) % 7
+    first_saturday = dt1 + timedelta(days=days_to_first_saturday)
+    
+    # Find the last Saturday on or before dt2
+    days_from_last_saturday = (dt2.weekday() - 5) % 7
+    last_saturday = dt2 - timedelta(days=days_from_last_saturday)
+    
+    # If first Saturday is after last Saturday, no complete weekends exist
+    if first_saturday > last_saturday:
+        return 0
+    
+    # Calculate number of complete weekends
+    # Each weekend is 7 days apart
+    weekends = ((last_saturday - first_saturday).days // 7) + 1
+    
+    return weekends
+
+# Entry point: calculate_weekends_between_dates(dt1: datetime, dt2: datetime) -> int
+```

@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Import the datetime class from the datetime module to work with date/time values.
+2. Define a function that accepts four datetime inputs representing the start and end of two ranges.
+3. Normalize each range so that the start is less than or equal to the end, in case inputs are reversed.
+4. Determine overlap: two ranges overlap if they are not disjoint. Specifically, they overlap if not (end1 < start2 or end2 < start1).
+5. Return the result as a boolean.
+
+```python
+from datetime import datetime
+
+def ranges_overlap(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> bool:
+    # Normalize the first range
+    if end1 < start1:
+        s1 = end1
+        e1 = start1
+    else:
+        s1 = start1
+        e1 = end1
+
+    # Normalize the second range
+    if end2 < start2:
+        s2 = end2
+        e2 = start2
+    else:
+        s2 = start2
+        e2 = end2
+
+    # Ranges overlap if they are not strictly disjoint
+    return not (e1 < s2 or e2 < s1)
+
+# Entry point: ranges_overlap(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> bool
+```

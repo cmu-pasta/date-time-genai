@@ -1,0 +1,15 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with durations.
+2. Define a function that accepts a pendulum.Duration as input.
+3. Convert the duration to total seconds and multiply by 1000 to get milliseconds.
+4. Cast the result to an integer and return it.
+
+```python
+import pendulum
+
+def milliseconds_in_duration(duration: pendulum.Duration) -> int:
+    # Convert total seconds (including fractional part) to milliseconds and cast to int
+    return int(duration.total_seconds() * 1000)
+
+# Entry point: milliseconds_in_duration(duration: pendulum.Duration) -> int
+```

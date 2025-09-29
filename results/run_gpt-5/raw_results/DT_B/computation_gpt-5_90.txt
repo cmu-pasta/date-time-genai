@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Choose a reference new moon datetime in UTC to measure from.
+2. Define the synodic month length (average lunar cycle) in days.
+3. Normalize the input datetime to UTC (assuming UTC if naive).
+4. Compute the time difference between the input datetime and the reference new moon.
+5. Convert the difference to days as a floating-point number.
+6. Compute the remainder modulo the synodic month length to get the lunar age in days.
+7. Return the lunar age as a float.
+
+```python
+from datetime import datetime, timezone, timedelta
+
+def calculate_lunar_age(dt: datetime) -> float:
+    # Step 1: Reference new moon (UTC): 2000-01-06 18:14 UTC
+    reference_new_moon = datetime(2000, 1, 6, 18, 14, tzinfo=timezone.utc)
+    
+    # Step 2: Synodic month length in days (mean lunar cycle)
+    synodic_month_days = 29.530588853
+    
+    # Step 3: Normalize input datetime to UTC
+    if dt.tzinfo is None:
+        dt_utc = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = dt.astimezone(timezone.utc)
+    
+    # Step 4: Compute elapsed time since reference new moon
+    elapsed = dt_utc - reference_new_moon
+    
+    # Step 5: Convert elapsed time to days (float)
+    elapsed_days = elapsed.total_seconds() / 86400.0
+    
+    # Step 6: Compute lunar age modulo the synodic month
+    lunar_age_days = elapsed_days % synodic_month_days
+    
+    # Step 7: Return lunar age in days as a float
+    return float(lunar_age_days)
+
+# Entry point: calculate_lunar_age(dt: datetime) -> float
+```

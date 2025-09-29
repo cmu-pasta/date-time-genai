@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1.  **Understand the concept of Lunar Age**: The lunar age is the number of days since the most recent new moon. This calculation requires knowledge of the lunar cycle, specifically the average length of a synodic month.
+2.  **Identify a Reference New Moon Date**: To calculate the lunar age, we need a known, fixed point in the past that was a new moon. For the purpose of this calculation using only the `datetime` library, we will hardcode a specific New Moon date. A widely accepted approximate New Moon occurred on January 6, 2000. This will serve as our `EPOCH_NEW_MOON`.
+3.  **Define the Synodic Month Length**: The average length of a synodic month (the time between two successive new moons) is approximately 29.530588 days. This value is crucial for determining the current phase within the cycle.
+4.  **Calculate Total Days Since Epoch**: Determine the total number of days between the given date and our `EPOCH_NEW_MOON`. This can be done by subtracting the epoch date from the given date, resulting in a `timedelta` object, from which we can extract the `.days` attribute.
+5.  **Calculate Lunar Age using Modulo**: Divide the total number of days since the epoch by the average synodic month length. The remainder of this division (using the modulo operator `%`) will give us the number of days into the current lunar cycle, which is the lunar age.
+6.  **Handle Date vs. Datetime**: The problem refers to "date" and uses `datetime` objects in the example. We will accept a `datetime` object, but for lunar calculations, the time component usually doesn't significantly alter the *day* count of the lunar age, though a more precise calculation would account for hours and minutes. For simplicity and to return an integer day count, we will primarily work with the date component for the difference, but the input type remains `datetime`.
+7.  **Return the Result**: The result will be a float, representing days since the new moon. Since the prompt implies an integer result ("days since new moon"), we will round this float to the nearest whole number.
+
+```python
+from datetime import datetime, date
+
+def calculate_lunar_age(current_dt: datetime) -> int:
+    # Step 1: Define a known New Moon reference date (January 6, 2000, 00:00:00 UTC was a New Moon)
+    # Using a datetime object for consistency, though only date part is strictly needed for rough days
+    EPOCH_NEW_MOON = datetime(2000, 1, 6)
+    
+    # Step 2: Define the average length of a synodic month in days
+    SYNODIC_MONTH_LENGTH = 29.530588
+
+    # Step 3: Calculate the total number of days between the current date and the epoch new moon
+    # Convert datetimes to dates to get whole day difference consistently, though timedelta handles it
+    total_days_since_epoch = (current_dt.date() - EPOCH_NEW_MOON.date()).days
+    
+    # Step 4: Calculate the lunar age using the modulo operator
+    # The result represents days into the current lunar cycle
+    lunar_age_float = total_days_since_epoch % SYNODIC_MONTH_LENGTH
+    
+    # Ensure the result is non-negative if total_days_since_epoch was negative
+    if lunar_age_float < 0:
+        lunar_age_float += SYNODIC_MONTH_LENGTH
+
+    # Step 5: Round the lunar age to the nearest integer as requested (days since new moon implies integer)
+    return round(lunar_age_float)
+
+# Entry point: calculate_lunar_age(current_dt: datetime) -> int
+```

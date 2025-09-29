@@ -1,0 +1,57 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with DateTime inputs.
+2. Convert the input DateTime to UTC to ensure correct MJD computation.
+3. Extract date and time components (year, month, day, hour, minute, second, microsecond).
+4. Compute the fractional part of the day from the time components.
+5. Use the standard astronomical algorithm to compute the Julian Date (JD).
+6. Convert JD to Modified Julian Date (MJD) by subtracting 2400000.5.
+7. Return the MJD as a float.
+
+```python
+import pendulum
+
+def datetime_to_mjd(dt: pendulum.DateTime) -> float:
+    """
+    Convert a pendulum.DateTime to Modified Julian Date (MJD).
+    MJD = JD - 2400000.5
+    """
+    # Step 1: Ensure UTC to avoid timezone-dependent shifts
+    utc = dt.in_timezone("UTC")
+
+    # Step 2: Extract date components
+    Y = utc.year
+    M = utc.month
+    D = utc.day
+
+    # Step 3: Compute fractional day from time components
+    frac_day = (
+        (utc.hour + (utc.minute + (utc.second + utc.microsecond / 1_000_000.0) / 60.0) / 60.0)
+        / 24.0
+    )
+
+    # Step 4: Adjust months and years for the JD algorithm
+    if M <= 2:
+        Y -= 1
+        M += 12
+
+    # Step 5: Gregorian calendar correction
+    A = int(Y / 100)  # floor for positive Y
+    B = 2 - A + int(A / 4)
+
+    # Step 6: Compute Julian Date (JD)
+    JD = (
+        int(365.25 * (Y + 4716))  # floor for positive argument
+        + int(30.6001 * (M + 1))  # floor for positive argument
+        + D
+        + B
+        - 1524.5
+        + frac_day
+    )
+
+    # Step 7: Convert to Modified Julian Date
+    MJD = JD - 2400000.5
+
+    return float(MJD)
+
+# Entry point: datetime_to_mjd(dt: pendulum.DateTime) -> float
+```

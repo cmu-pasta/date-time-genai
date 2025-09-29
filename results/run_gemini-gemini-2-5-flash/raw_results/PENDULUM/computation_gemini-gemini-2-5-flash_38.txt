@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and times.
+2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object as its starting point.
+3.  **Initialize current date**: Start checking from the day immediately following the given `start_date` to ensure we find the *next* occurrence.
+4.  **Iterate to find the next Friday the 13th**: Use a loop to increment the current date day by day.
+5.  **Check conditions**: Inside the loop, for each date, check two conditions:
+    *   If the day of the month is 13 (`.day == 13`).
+    *   If the day of the week is Friday (`.day_of_week == pendulum.FRIDAY`). (Pendulum uses `pendulum.FRIDAY` for Friday, which is 5).
+6.  **Return the result**: Once both conditions are met, that date is the next Friday the 13th. Return this `pendulum.DateTime` object.
+
+```python
+import pendulum
+
+def find_next_friday_13th(start_date: pendulum.DateTime) -> pendulum.DateTime:
+    # Start checking from the day after the given start_date
+    current_date = start_date.add(days=1)
+
+    while True:
+        # Check if the current date is the 13th of the month
+        is_thirteenth = current_date.day == 13
+        
+        # Check if the current date is a Friday
+        is_friday = current_date.day_of_week == pendulum.FRIDAY # pendulum.FRIDAY has a value of 5
+
+        if is_thirteenth and is_friday:
+            # If both conditions are met, this is our Friday the 13th
+            return current_date
+        
+        # Move to the next day if conditions are not met
+        current_date = current_date.add(days=1)
+
+# Entry point: find_next_friday_13th(start_date: pendulum.DateTime) -> pendulum.DateTime
+```

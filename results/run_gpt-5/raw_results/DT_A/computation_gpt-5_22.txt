@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime library.
+2. Define a function that accepts a 12-hour time (as a time object) and an AM/PM indicator (as a boolean).
+3. Adjust the hour:
+   - If PM and hour is 1–11, add 12.
+   - If PM and hour is 12, keep 12.
+   - If AM and hour is 12, convert to 0.
+   - If AM and hour is 1–11, keep as is.
+4. Return a new time object in 24-hour format, preserving minute, second, microsecond, tzinfo, and fold.
+
+```python
+from datetime import time
+
+def convert_12h_to_24h(t12: time, is_pm: bool) -> time:
+    # Step 1: Extract the hour from the input time
+    hour = t12.hour
+
+    # Step 2: Convert based on AM/PM
+    if is_pm:
+        # For PM, 12 PM stays 12; 1-11 PM becomes 13-23
+        hour = 12 if hour == 12 else hour + 12
+    else:
+        # For AM, 12 AM becomes 0; 1-11 AM stays the same
+        hour = 0 if hour == 12 else hour
+
+    # Step 3: Construct and return the 24-hour time, preserving other fields
+    return time(
+        hour=hour,
+        minute=t12.minute,
+        second=t12.second,
+        microsecond=t12.microsecond,
+        tzinfo=t12.tzinfo,
+        fold=t12.fold
+    )
+
+# Entry point: convert_12h_to_24h(t12: time, is_pm: bool) -> time
+```

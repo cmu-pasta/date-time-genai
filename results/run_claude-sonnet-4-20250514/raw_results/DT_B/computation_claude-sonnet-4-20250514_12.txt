@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a datetime object as input.
+3. **Calculate the week number**: Use the `isocalendar()` method from the datetime library, which returns a tuple containing (year, week_number, weekday). We need the week number which is at index 1.
+4. **Return the result**: Return the week number as an integer.
+
+```python
+from datetime import datetime
+
+def calculate_week_number(dt: datetime) -> int:
+    # Step 1: Get the ISO calendar representation which returns (year, week, weekday)
+    iso_calendar = dt.isocalendar()
+    
+    # Step 2: Extract the week number (index 1 in the tuple)
+    week_number = iso_calendar[1]
+    
+    # Step 3: Return the week number as an integer
+    return week_number
+
+# Entry point: calculate_week_number(dt: datetime) -> int
+```

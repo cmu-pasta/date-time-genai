@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts two `pendulum.DateTime` objects as input.
+3.  **Calculate the absolute difference in days**: First, find the difference between the two `pendulum.DateTime` objects using `diff()` and extract the number of days using `in_days()`. Use `abs()` to ensure the result is a positive integer, regardless of the order of the input dates.
+4.  **Convert days to fortnights**: A fortnight is 14 days. To find the number of fortnights, divide the total number of days by 14. Use integer division (`//`) to get the whole number of fortnights.
+5.  **Return the result**: Return the calculated number of fortnights as an integer.
+
+```python
+import pendulum
+
+def calculate_fortnights_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    # Step 1: Calculate the absolute difference in days between the two dates.
+    # We use abs() to ensure the difference is always positive.
+    days_difference = abs(dt2.diff(dt1).in_days())
+    
+    # Step 2: Convert the total days into fortnights.
+    # A fortnight is 14 days, so we divide by 14.
+    # We use integer division (//) to get the whole number of fortnights.
+    fortnights = days_difference // 14
+    
+    # Step 3: Return the result as an integer.
+    return fortnights
+
+# Entry point: calculate_fortnights_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+```

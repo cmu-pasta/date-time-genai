@@ -1,0 +1,56 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the conversion**: The Julian calendar differs from the Gregorian calendar due to different leap year rules. We need to convert a date interpreted as Julian to its equivalent Gregorian date.
+
+2. **Calculate Julian Day Number**: First, convert the Julian calendar date to a Julian Day Number (a continuous count of days since a reference point).
+
+3. **Convert to Gregorian**: Then convert the Julian Day Number back to a Gregorian calendar date using the Gregorian calendar rules.
+
+4. **Use datetime operations**: Since we must use only the datetime library, we'll implement the conversion algorithms using basic date arithmetic and the datetime constructor.
+
+5. **Return the result**: Return the converted date as a datetime object representing the Gregorian equivalent.
+
+```python
+from datetime import datetime
+
+def julian_to_gregorian(julian_date: datetime) -> datetime:
+    # Extract year, month, day from the Julian date
+    year = julian_date.year
+    month = julian_date.month
+    day = julian_date.day
+    
+    # Convert Julian date to Julian Day Number
+    # Julian Day Number calculation for Julian calendar
+    if month <= 2:
+        year -= 1
+        month += 12
+    
+    # Julian calendar Julian Day Number calculation
+    a = year // 100
+    b = 2 - a + (a // 4)  # This is 0 for Julian calendar
+    b = 0  # For Julian calendar, we don't apply the Gregorian correction
+    
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + b - 1524
+    
+    # Convert Julian Day Number back to Gregorian date
+    # Gregorian calendar conversion from Julian Day Number
+    a = jd + 32044
+    b = (4 * a + 3) // 146097
+    c = a - (146097 * b) // 4
+    d = (4 * c + 3) // 1461
+    e = c - (1461 * d) // 4
+    m = (5 * e + 2) // 153
+    
+    greg_day = e - (153 * m + 2) // 5 + 1
+    greg_month = m + 3 - 12 * (m // 10)
+    greg_year = 100 * b + d - 4800 + m // 10
+    
+    # Create and return the Gregorian datetime object
+    gregorian_date = datetime(greg_year, greg_month, greg_day, 
+                            julian_date.hour, julian_date.minute, 
+                            julian_date.second, julian_date.microsecond)
+    
+    return gregorian_date
+
+# Entry point: julian_to_gregorian(julian_date: datetime) -> datetime
+```

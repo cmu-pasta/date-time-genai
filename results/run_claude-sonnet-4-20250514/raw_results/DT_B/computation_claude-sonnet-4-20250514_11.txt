@@ -1,0 +1,61 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and create the Easter Sunday date.
+
+2. **Understand the Easter calculation**: Easter Sunday is calculated using a complex algorithm based on the lunar calendar and the spring equinox. We need to implement the Western Easter calculation algorithm.
+
+3. **Implement the algorithm**: The algorithm involves several steps:
+   - Calculate the golden number (position in the 19-year Metonic cycle)
+   - Calculate century-based corrections
+   - Find the Easter full moon date
+   - Find the first Sunday after the full moon
+
+4. **Create the function**: Write a function that takes a year as input and returns the Easter Sunday date as a datetime object.
+
+5. **Return the result**: Return the calculated Easter Sunday date as a datetime object.
+
+```python
+from datetime import datetime
+
+def find_easter_sunday(year: int) -> datetime:
+    # Step 1: Calculate the golden number (position in 19-year cycle)
+    golden_number = (year % 19) + 1
+    
+    # Step 2: Calculate the century
+    century = (year // 100) + 1
+    
+    # Step 3: Calculate corrections for leap years
+    leap_correction = (3 * century) // 4 - 12
+    moon_correction = (8 * century + 5) // 25 - 5
+    
+    # Step 4: Find Sunday letter correction
+    sunday_correction = (5 * year) // 4 - leap_correction - 10
+    
+    # Step 5: Calculate the epact (moon's age on January 1st)
+    epact = (11 * golden_number + 20 + moon_correction - leap_correction) % 30
+    if (epact == 25 and golden_number > 11) or epact == 24:
+        epact += 1
+    
+    # Step 6: Find the full moon date
+    full_moon = 44 - epact
+    if full_moon < 21:
+        full_moon += 30
+    
+    # Step 7: Find the Sunday after the full moon
+    full_moon += 7 - ((sunday_correction + full_moon) % 7)
+    
+    # Step 8: Determine if Easter falls in March or April
+    if full_moon > 31:
+        # Easter is in April
+        easter_month = 4
+        easter_day = full_moon - 31
+    else:
+        # Easter is in March
+        easter_month = 3
+        easter_day = full_moon
+    
+    # Step 9: Create and return the Easter Sunday datetime
+    return datetime(year, easter_month, easter_day)
+
+# Entry point: find_easter_sunday(year: int) -> datetime
+```

@@ -1,0 +1,85 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need the `datetime`, `timedelta`, and `time` objects from Python's `datetime` module.
+2.  **Define a function**: Create a function that accepts two `datetime` objects, `start_dt` and `end_dt`, as input.
+3.  **Handle edge cases**: If `start_dt` is later than `end_dt`, return 0 working hours. If `start_dt` and `end_dt` are the same, determine if that specific point in time falls within working hours on a weekday and return 0. (A more robust check for same `datetime` can be integrated, but generally, 0 duration means 0 hours).
+4.  **Define working day parameters**: Establish the start and end times of a working day (e.g., 9 AM to 5 PM, which is 17 PM) and the days of the week that are considered working days (Monday to Friday, 0-4).
+5.  **Iterate day by day**: Start from the `start_dt`'s date and iterate day by day up to and including the `end_dt`'s date.
+6.  **Check for weekdays**: For each day in the iteration, determine if it's a weekday (Monday-Friday) using `weekday()`. Weekends (Saturday and Sunday) are skipped.
+7.  **Calculate working hours for each day**:
+    *   **For the `start_dt`'s day**: Calculate the intersection of the time range from `start_dt` to the end of the day (23:59:59.999999) and the defined working hours (9:00-17:00). The effective start time for this day will be `max(start_dt.time(), working_start_time)` and the effective end time will be `min(datetime(start_dt.year, start_dt.month, start_dt.day, 17, 0, 0).time(), working_end_time_for_start_dt)`
+    *   **For the `end_dt`'s day**: Calculate the intersection of the time range from the beginning of the day (00:00:00) to `end_dt` and the defined working hours (9:00-17:00).
+    *   **For full intermediate weekdays**: If a day is a weekday and falls entirely between `start_dt` and `end_dt` (i.e., not the start or end day), add the full number of working hours (e.g., 8 hours).
+    *   **Detailed calculation for partial days**: For the start and end days, create `datetime` objects representing the start and end of the working hours *on that specific day*. Then, calculate the overlap between the given `start_dt`/`end_dt` and the working hours window for that particular day.
+8.  **Sum up working hours**: Keep a running total of the calculated working hours.
+9.  **Return the total**: The result should be a float representing the total number of working hours.
+
+```python
+from datetime import datetime, timedelta, time
+
+def calculate_working_hours_between_datetimes(start_dt: datetime, end_dt: datetime) -> float:
+    # Handle cases where start_dt is after end_dt
+    if start_dt > end_dt:
+        return 0.0
+
+    # Define working hours (9 AM to 5 PM, inclusive, so 8 hours total)
+    working_start_time = time(9, 0, 0)
+    working_end_time = time(17, 0, 0) # 5 PM
+    
+    # Calculate daily working hours (e.g., 17 - 9 = 8 hours)
+    daily_working_hours = (working_end_time.hour - working_start_time.hour)
+
+    total_working_hours = 0.0
+
+    current_dt = start_dt
+
+    # Loop day by day
+    while current_dt.date() <= end_dt.date():
+        # Check if the current day is a weekday (Monday=0, Sunday=6)
+        if 0 <= current_dt.weekday() <= 4: # Monday to Friday
+            
+            # Create datetime objects for the start and end of working hours for the current day
+            day_working_start_dt = datetime(current_dt.year, current_dt.month, current_dt.day,
+                                            working_start_time.hour, working_start_time.minute, working_start_time.second)
+            day_working_end_dt = datetime(current_dt.year, current_dt.month, current_dt.day,
+                                          working_end_time.hour, working_end_time.minute, working_end_time.second)
+
+            # Determine the effective start and end for calculating hours on this specific day
+            effective_day_start = max(start_dt, day_working_start_dt)
+            effective_day_end = min(end_dt, day_working_end_dt)
+
+            # Only add hours if the effective period has a positive duration
+            if effective_day_end > effective_day_start:
+                duration_on_day = effective_day_end - effective_day_start
+                total_working_hours += duration_on_day.total_seconds() / 3600.0 # Convert timedelta to hours
+
+        # Move to the next day
+        current_dt += timedelta(days=1)
+        # Reset time to start of day to avoid issues with time skipping, especially if we iterate `current_dt`
+        # However, the `current_dt` in the loop needs to preserve its time component if it's the `start_dt`
+        # For subsequent days, we effectively process full days or the `end_dt` part.
+        # A safer iteration method is to iterate dates and construct datetime for calculations.
+
+    # Corrected iteration: iterate through dates, construct datetimes for calculations
+    current_date = start_dt.date()
+    while current_date <= end_dt.date():
+        if 0 <= current_date.weekday() <= 4: # Monday to Friday
+            # Define the working window for the current_date
+            day_working_start_dt_calc = datetime(current_date.year, current_date.month, current_date.day,
+                                                 working_start_time.hour, working_start_time.minute, working_start_time.second)
+            day_working_end_dt_calc = datetime(current_date.year, current_date.month, current_date.day,
+                                               working_end_time.hour, working_end_time.minute, working_end_time.second)
+
+            # Calculate the intersection of the given time range with the working hours window for this day
+            segment_start = max(start_dt, day_working_start_dt_calc)
+            segment_end = min(end_dt, day_working_end_dt_calc)
+
+            if segment_end > segment_start:
+                total_working_hours += (segment_end - segment_start).total_seconds() / 3600.0
+
+        current_date += timedelta(days=1)
+
+    return total_working_hours
+
+# Entry point: calculate_working_hours_between_datetimes(start_dt: datetime, end_dt: datetime) -> float
+```

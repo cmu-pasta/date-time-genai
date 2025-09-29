@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary types**: We will need `date` and `timedelta` from the `datetime` module to perform date arithmetic and check weekdays.
+2.  **Define a function**: Create a function that accepts an integer representing the year.
+3.  **Initialize variables**: Set a counter for trading days to zero. Determine the start and end dates of the given year.
+4.  **Iterate through the days**: Loop through each day from the first day of the year to the last day.
+5.  **Check for weekdays**: For each day, use the `weekday()` method to determine if it's a Monday (0) through Friday (4). If it falls within this range, increment the counter.
+6.  **Return the count**: After iterating through all days, return the final count of trading days. As per the constraints, "trading days" here refers strictly to weekdays (Monday-Friday) as the `datetime` library does not contain information on public holidays.
+
+```python
+from datetime import date, timedelta
+
+def calculate_trading_days(year: int) -> int:
+    """
+    Calculates the number of trading days (weekdays from Monday to Friday)
+    in a given year using only the datetime library.
+    
+    Args:
+        year (int): The year for which to calculate trading days.
+
+    Returns:
+        int: The number of weekdays (trading days) in the specified year.
+    """
+    start_date = date(year, 1, 1)
+    end_date = date(year, 12, 31)
+    
+    trading_days_count = 0
+    current_date = start_date
+
+    # Iterate through each day of the year
+    while current_date <= end_date:
+        # Check if the current day is a weekday (Monday=0 to Friday=4)
+        if 0 <= current_date.weekday() <= 4:
+            trading_days_count += 1
+        
+        # Move to the next day
+        current_date += timedelta(days=1)
+            
+    return trading_days_count
+
+# Entry point: calculate_trading_days(year: int) -> int
+```

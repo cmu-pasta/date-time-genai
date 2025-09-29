@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle datetime computations.
+2. Define a function that accepts two pendulum.DateTime inputs: the birth datetime and the reference "current" datetime.
+3. Subtract the birth datetime from the reference datetime to obtain a pendulum.Duration.
+4. Convert the duration to seconds using in_seconds().
+5. Ensure the result is non-negative (chronological age cannot be negative) by clamping at zero.
+6. Return the age in seconds as an integer.
+
+```python
+import pendulum
+
+def calculate_age_in_seconds(birth_dt: pendulum.DateTime, as_of_dt: pendulum.DateTime) -> int:
+    """
+    Calculate the chronological age in seconds given a birth datetime and a reference datetime.
+    Both inputs must be pendulum.DateTime instances. Returns a non-negative integer number of seconds.
+    """
+    # Compute the duration between the reference datetime and the birth datetime
+    duration: pendulum.Duration = as_of_dt - birth_dt
+
+    # Convert the duration to total seconds (may be negative if as_of_dt < birth_dt)
+    seconds: int = duration.in_seconds()
+
+    # Chronological age should not be negative
+    if seconds < 0:
+        seconds = 0
+
+    return seconds
+
+# Entry point: calculate_age_in_seconds(birth_dt: pendulum.DateTime, as_of_dt: pendulum.DateTime) -> int
+```

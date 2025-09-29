@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the required class from the datetime library.
+2. Define a function that accepts a year as an integer input.
+3. Construct the date for the first day of spring using March 20 of the given year (conventional Northern Hemisphere start).
+4. Return the resulting date object.
+
+```python
+from datetime import date
+
+def first_day_of_spring(year: int) -> date:
+    """
+    Returns the date of the first day of spring for the given year.
+    Assumes the conventional Northern Hemisphere start of spring (vernal equinox) as March 20.
+    """
+    return date(year, 3, 20)
+
+# Entry point: first_day_of_spring(year: int) -> date
+```

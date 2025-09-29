@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a date as input. This date should be a pendulum.DateTime object.
+3. **Determine fiscal year logic**: Since the fiscal year starts in April, we need to check if the given date's month is April or later. If it's April or later (months 4-12), the fiscal year is the same as the calendar year. If it's before April (months 1-3), the fiscal year is the previous calendar year.
+4. **Return the result**: Return the fiscal year as an integer.
+
+```python
+import pendulum
+
+def determine_fiscal_year(dt: pendulum.DateTime) -> int:
+    # Step 1: Get the year and month from the date
+    year = dt.year
+    month = dt.month
+    
+    # Step 2: Determine fiscal year based on April start
+    if month >= 4:  # April onwards (months 4-12)
+        fiscal_year = year
+    else:  # January to March (months 1-3)
+        fiscal_year = year - 1
+    
+    # Step 3: Return the fiscal year as an integer
+    return fiscal_year
+
+# Entry point: determine_fiscal_year(dt: pendulum.DateTime) -> int
+```

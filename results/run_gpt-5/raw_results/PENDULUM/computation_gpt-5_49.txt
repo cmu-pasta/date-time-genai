@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date computations.
+2. Accept the target year as an integer input.
+3. Construct the start date as February 1 of the given year using pendulum.date.
+4. Compute the exclusive end boundary as March 1 of the same year.
+5. Iterate from the start date up to (but not including) the end boundary, incrementing by one day each loop.
+6. For each date, check if the weekday is Sunday (weekday() == 6) and increment a counter.
+7. Return the final count as an integer.
+
+```python
+import pendulum
+
+def count_sundays_in_february(year: int) -> int:
+    # Step 1: Start at February 1 of the given year
+    start = pendulum.date(year, 2, 1)
+    # Step 2: End at March 1 (exclusive boundary)
+    end = start.add(months=1)
+    # Step 3: Iterate over each day in February and count Sundays
+    count = 0
+    current = start
+    while current < end:
+        if current.weekday() == 6:  # 0=Mon ... 6=Sun
+            count += 1
+        current = current.add(days=1)
+    # Step 4: Return the number of Sundays as an integer
+    return count
+
+# Entry point: count_sundays_in_february(year: int) -> int
+```

@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and weekdays.
+2. **Define the function parameters**: We need a year (integer), month (integer), and the target weekday (integer, where Monday=1 and Sunday=7 in pendulum).
+3. **Find the last day of the given month**: We can do this by creating the first day of the next month and subtracting one day.
+4. **Determine the weekday of the last day**: Use pendulum's day_of_week property to get the weekday number.
+5. **Calculate days to go backwards**: Calculate how many days we need to go back from the last day to reach the target weekday.
+6. **Return the target date**: Subtract the calculated days from the last day of the month.
+
+```python
+import pendulum
+
+def find_last_weekday_in_month(year: int, month: int, weekday: int) -> pendulum.Date:
+    # Step 1: Create the last day of the given month
+    # We do this by going to the first day of next month and subtracting 1 day
+    if month == 12:
+        next_month = pendulum.date(year + 1, 1, 1)
+    else:
+        next_month = pendulum.date(year, month + 1, 1)
+    
+    last_day_of_month = next_month.subtract(days=1)
+    
+    # Step 2: Find the weekday of the last day (1=Monday, 7=Sunday)
+    last_day_weekday = last_day_of_month.day_of_week
+    
+    # Step 3: Calculate how many days to go back to find the target weekday
+    days_back = (last_day_weekday - weekday) % 7
+    
+    # Step 4: Find the target date by going back the calculated days
+    target_date = last_day_of_month.subtract(days=days_back)
+    
+    return target_date
+
+# Entry point: find_last_weekday_in_month(year: int, month: int, weekday: int) -> pendulum.Date
+```

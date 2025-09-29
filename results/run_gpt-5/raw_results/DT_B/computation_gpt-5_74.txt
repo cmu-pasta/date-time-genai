@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+1. Choose a well-known reference instant of a new moon to serve as an epoch for calculations.
+2. Use the average synodic month length (the mean time between new moons) to step through lunar cycles.
+3. Compute how many complete lunations have elapsed between the reference and the given datetime using floor division, then add one to get the next lunation strictly after the given datetime.
+4. Add that many synodic months to the reference to obtain the next new moon instant.
+5. Return the calendar date of that instant.
+
+```python
+from datetime import datetime, date, timedelta
+
+def next_new_moon_after(given_dt: datetime) -> date:
+    # Reference new moon: 2000-01-06 18:14:00 UTC (widely used epoch)
+    reference_new_moon = datetime(2000, 1, 6, 18, 14, 0)
+
+    # Mean synodic month length in days (average time between new moons)
+    synodic_month_days = 29.530588853
+
+    # Convert synodic month length to seconds to avoid floating drift with timedelta(days=...)
+    seconds_per_day = 86400.0
+    synodic_month_seconds = synodic_month_days * seconds_per_day
+
+    # Elapsed time in seconds from reference to the given datetime
+    elapsed_seconds = (given_dt - reference_new_moon).total_seconds()
+
+    # Number of completed lunations since the reference (floor division for correct handling of negatives)
+    completed_lunations = int(elapsed_seconds // synodic_month_seconds)
+
+    # Next lunation index strictly after the given datetime
+    next_lunation_index = completed_lunations + 1
+
+    # Compute the datetime of the next new moon
+    next_new_moon_dt = reference_new_moon + timedelta(seconds=next_lunation_index * synodic_month_seconds)
+
+    # Return the calendar date of the next new moon
+    return next_new_moon_dt.date()
+
+# Entry point: next_new_moon_after(given_dt: datetime) -> date
+```

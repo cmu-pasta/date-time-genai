@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Accept two date inputs and determine the earlier and later date.
+3. Convert both dates to datetime at midnight to allow precise half-interval computation.
+4. Compute the timedelta between the two datetimes.
+5. Add half of this timedelta to the earlier datetime to get the midpoint instant.
+6. Convert the midpoint instant back to a date and return it.
+
+```python
+from datetime import date, datetime, timedelta
+
+def midpoint_date(d1: date, d2: date) -> date:
+    """
+    Find the date that falls exactly in the middle of two given dates.
+    The midpoint is computed as the earlier date plus half the interval between them.
+    If the interval has odd days, the midpoint instant falls at noon of the earlier day's date,
+    and the resulting date is that earlier date (since we return a date).
+    """
+    # Ensure we work from the earlier date to the later date
+    if d1 <= d2:
+        start = d1
+        end = d2
+    else:
+        start = d2
+        end = d1
+
+    # Convert to datetime at midnight to handle half-day intervals precisely
+    start_dt = datetime.combine(start, datetime.min.time())
+    end_dt = datetime.combine(end, datetime.min.time())
+
+    # Compute midpoint instant
+    delta = end_dt - start_dt
+    midpoint_dt = start_dt + (delta / 2)
+
+    # Return the date component of the midpoint instant
+    return midpoint_dt.date()
+
+# Entry point: midpoint_date(d1: date, d2: date) -> date
+```

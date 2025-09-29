@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates and times.
+2. Define a function that accepts the year and month as integers.
+3. Create a pendulum.DateTime for the first day of the given month, then another for the first day of the next month.
+4. Subtract the two DateTime objects to get a pendulum.Duration, then convert that duration to total hours and return it as an integer.
+
+```python
+import pendulum
+
+def hours_in_month(year: int, month: int) -> int:
+    """
+    Calculate the number of hours in a given month of a specific year,
+    correctly accounting for leap years.
+    """
+    start = pendulum.datetime(year, month, 1)
+    end = start.add(months=1)
+    hours = (end - start).in_hours()
+    return hours
+
+# Entry point: hours_in_month(year: int, month: int) -> int
+```

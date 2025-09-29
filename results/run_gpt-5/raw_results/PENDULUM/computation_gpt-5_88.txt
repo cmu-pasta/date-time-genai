@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with durations.
+2. Define a function that accepts a pendulum.Duration input.
+3. Compute the total seconds of the duration.
+4. Convert total seconds to hours as a decimal number and return it as a float.
+
+```python
+import pendulum
+
+def convert_duration_to_hours(duration: pendulum.Duration) -> float:
+    """
+    Convert a pendulum.Duration to total hours as a decimal number.
+    """
+    total_seconds = duration.total_seconds()
+    return total_seconds / 3600.0
+
+# Entry point: convert_duration_to_hours(duration: pendulum.Duration) -> float
+```

@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Import pendulum and define a helper to determine if a DateTime is in DST using its DST offset.
+2. Create a timezone-aware DateTime at the start of the given year and iterate forward hour-by-hour within that year.
+3. Detect the first transition where DST changes from True to False (DST ends).
+4. Return the calendar date (pendulum.Date) of the transition.
+5. If the timezone has no DST end in that year, raise an error.
+
+```python
+import pendulum
+
+def _is_in_dst(dt: pendulum.DateTime) -> bool:
+    # A non-zero DST offset indicates DST is in effect
+    return dt.dst().in_seconds() != 0
+
+def find_dst_end_date(year: int, tz: pendulum.Timezone) -> pendulum.Date:
+    # Start at the beginning of the year in the given timezone
+    current = pendulum.datetime(year, 1, 1, 0, 0, 0, tz=tz)
+    end_of_year = pendulum.datetime(year, 12, 31, 23, 59, 59, tz=tz)
+
+    prev = current
+    prev_in_dst = _is_in_dst(prev)
+
+    # Iterate hour by hour to find a True -> False DST transition
+    while prev <= end_of_year:
+        nxt = prev.add(hours=1)
+        nxt_in_dst = _is_in_dst(nxt)
+
+        # DST ends when we move from DST (True) to Standard Time (False)
+        if prev_in_dst and not nxt_in_dst:
+            # The transition occurs within this hour; return the date of the transition
+            return nxt.date()
+
+        prev = nxt
+        prev_in_dst = nxt_in_dst
+
+    # If no DST end was found for this timezone/year, raise an error
+    raise ValueError("No DST end found for the specified year and timezone.")
+
+# Entry point: find_dst_end_date(year: int, tz: pendulum.Timezone) -> pendulum.Date
+```

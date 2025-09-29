@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Import the datetime class from the datetime module to work with dates.
+2. Define a function that accepts two integers: the year and the month.
+3. Construct a datetime representing the first day of the given month.
+4. Construct a datetime representing the first day of the next month (handling December rollover).
+5. Compute the timedelta between these two dates.
+6. Convert the timedelta to hours by multiplying the number of days by 24.
+7. Return the integer number of hours.
+
+```python
+from datetime import datetime
+
+def calculate_hours_in_month(year: int, month: int) -> int:
+    """
+    Calculate the number of hours in a given month of a given year.
+    Handles leap years by relying on datetime arithmetic.
+    """
+    if month < 1 or month > 12:
+        raise ValueError("month must be in 1..12")
+
+    start = datetime(year, month, 1)
+    if month == 12:
+        next_month_start = datetime(year + 1, 1, 1)
+    else:
+        next_month_start = datetime(year, month + 1, 1)
+
+    delta = next_month_start - start
+    hours = delta.days * 24
+    return hours
+
+# Entry point: calculate_hours_in_month(year: int, month: int) -> int
+```

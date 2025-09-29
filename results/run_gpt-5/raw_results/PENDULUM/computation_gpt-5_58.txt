@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Define the source and target epochs using pendulum (Unix: 1970-01-01 UTC, Windows FILETIME: 1601-01-01 UTC).
+2. Compute the difference between these epochs in seconds using pendulum.
+3. Convert Unix seconds to Windows FILETIME ticks by adding the epoch offset seconds and multiplying by 10,000,000 (100 ns per tick).
+4. Return the result as an integer.
+
+```python
+import pendulum
+
+def convert_unix_to_windows_filetime(unix_seconds: float) -> int:
+    # Step 1: Define epochs in UTC using pendulum
+    unix_epoch = pendulum.datetime(1970, 1, 1, tz="UTC")
+    windows_epoch = pendulum.datetime(1601, 1, 1, tz="UTC")
+    
+    # Step 2: Compute the offset between epochs in seconds
+    epoch_offset_seconds = unix_epoch.diff(windows_epoch).in_seconds()
+    # Note: diff(a).in_seconds() returns the whole-second difference between 'self' and 'a'
+    # Here, it's 11644473600 seconds from 1601-01-01 to 1970-01-01.
+
+    # Step 3: Convert Unix seconds to Windows FILETIME ticks (100-nanosecond intervals)
+    # FILETIME ticks = (seconds since 1601-01-01) * 10_000_000
+    total_seconds_since_windows_epoch = unix_seconds + epoch_offset_seconds
+    filetime_ticks = int(total_seconds_since_windows_epoch * 10_000_000)
+    
+    # Step 4: Return the integer number of FILETIME ticks
+    return filetime_ticks
+
+# Entry point: convert_unix_to_windows_filetime(unix_seconds: float) -> int
+```

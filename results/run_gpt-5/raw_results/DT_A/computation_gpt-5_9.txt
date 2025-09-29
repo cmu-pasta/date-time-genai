@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the necessary class from the datetime module.
+2. Define a function that accepts two datetime inputs representing the timestamps.
+3. Subtract the two datetime objects to get a timedelta.
+4. Convert the timedelta to total seconds using total_seconds().
+5. Return the absolute value of the total seconds as a float.
+
+```python
+from datetime import datetime
+
+def calculate_seconds_difference(ts1: datetime, ts2: datetime) -> float:
+    """
+    Calculate the absolute number of seconds between two datetime timestamps.
+
+    Args:
+        ts1: First timestamp as a datetime object.
+        ts2: Second timestamp as a datetime object.
+
+    Returns:
+        A float representing the absolute number of seconds between ts1 and ts2,
+        including fractional seconds for sub-second precision.
+    """
+    delta = ts2 - ts1
+    return abs(delta.total_seconds())
+
+# Entry point: calculate_seconds_difference(ts1: datetime, ts2: datetime) -> float
+```

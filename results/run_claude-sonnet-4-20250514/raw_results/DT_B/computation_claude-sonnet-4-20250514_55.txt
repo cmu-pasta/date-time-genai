@@ -1,0 +1,57 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define the Islamic epoch**: The Islamic calendar started on July 16, 622 CE in the Gregorian calendar.
+3. **Calculate days since epoch**: Find the difference between the given Gregorian date and the Islamic epoch.
+4. **Convert to Islamic date**: Use the lunar calendar properties to convert the days into Islamic years, months, and days. The Islamic year averages about 354.367 days.
+5. **Handle month and day calculations**: Islamic months alternate between 29 and 30 days, with some variation.
+6. **Return the result**: Return the Islamic date components as integers.
+
+```python
+from datetime import datetime, date
+
+def gregorian_to_islamic(gregorian_date: date) -> date:
+    # Islamic epoch: July 16, 622 CE (Gregorian)
+    islamic_epoch = date(622, 7, 16)
+    
+    # Calculate days since Islamic epoch
+    if gregorian_date < islamic_epoch:
+        # Handle dates before Islamic epoch
+        days_diff = (islamic_epoch - gregorian_date).days
+        # For simplicity, return epoch date for pre-Islamic dates
+        return date(1, 1, 1)
+    else:
+        days_since_epoch = (gregorian_date - islamic_epoch).days
+    
+    # Average Islamic year is approximately 354.367 days
+    # Average Islamic month is approximately 29.531 days
+    avg_year_days = 354.367
+    avg_month_days = 29.531
+    
+    # Calculate approximate Islamic year
+    islamic_year = int(days_since_epoch / avg_year_days) + 1
+    
+    # Calculate remaining days after full years
+    remaining_days = days_since_epoch - int((islamic_year - 1) * avg_year_days)
+    
+    # Calculate Islamic month
+    islamic_month = min(12, max(1, int(remaining_days / avg_month_days) + 1))
+    
+    # Calculate remaining days for the day of month
+    days_in_prev_months = (islamic_month - 1) * avg_month_days
+    islamic_day = max(1, min(30, int(remaining_days - days_in_prev_months) + 1))
+    
+    # Ensure valid day for the month (Islamic months have 29 or 30 days)
+    if islamic_month in [1, 3, 5, 7, 9, 11]:  # Odd months typically have 30 days
+        max_days = 30
+    else:  # Even months typically have 29 days
+        max_days = 29
+    
+    islamic_day = min(islamic_day, max_days)
+    
+    # Create and return the Islamic date as a standard date object
+    # Note: This is an approximation and may not be completely accurate
+    return date(islamic_year, islamic_month, islamic_day)
+
+# Entry point: gregorian_to_islamic(gregorian_date: date) -> date
+```

@@ -1,0 +1,47 @@
+Let's think step by step to solve this problem.
+1. Import the required classes (date and timedelta) from the datetime module.
+2. Define a function that takes a date named 'after' as input.
+3. Start searching from the day after the given date to ensure the result is strictly after the input.
+4. Determine the next 13th day on or after the current month; if the current day is past the 13th, move to the next month (handling year rollover).
+5. Check if the candidate date (the 13th) is a Friday using weekday() == 4 (Monday=0,...,Friday=4).
+6. If not Friday, move month-by-month to the next 13th until a Friday is found.
+7. Return the found date.
+
+```python
+from datetime import date, timedelta
+
+def next_friday_13th(after: date) -> date:
+    # Start strictly after the given date
+    start = after + timedelta(days=1)
+
+    y = start.year
+    m = start.month
+
+    # Determine the first candidate 13th to check
+    if start.day > 13:
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+
+    candidate = date(y, m, 13)
+    if candidate < start:
+        # Safety adjustment if candidate is still before 'start'
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+        candidate = date(y, m, 13)
+
+    # Advance by months until the 13th is a Friday (weekday() == 4)
+    while candidate.weekday() != 4:
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+        candidate = date(y, m, 13)
+
+    return candidate
+
+# Entry point: next_friday_13th(after: date) -> date
+```

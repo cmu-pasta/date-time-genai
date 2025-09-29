@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module and timezone support from Python's standard library to work with timezone-aware dates.
+
+2. **Define a function**: We will create a function that accepts two timezone-aware datetime objects as input.
+
+3. **Calculate the time difference**: When we subtract two timezone-aware datetime objects, Python automatically converts them to UTC for comparison, which accounts for the different time zones.
+
+4. **Return the result**: Return the timedelta object representing the time difference between the two datetime objects.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_timezone_difference(dt1: datetime, dt2: datetime) -> timedelta:
+    # Step 1: Calculate the difference between timezone-aware datetime objects
+    # Python automatically handles timezone conversion when subtracting datetime objects
+    difference = dt2 - dt1
+    
+    # Step 2: Return the timedelta result
+    return difference
+
+# Entry point: calculate_timezone_difference(dt1: datetime, dt2: datetime) -> timedelta
+```

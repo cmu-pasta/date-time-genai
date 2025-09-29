@@ -1,0 +1,66 @@
+Let's think step by step to solve this problem.
+1. Use the civil (tabular) Islamic calendar algorithm, which approximates lunar months with alternating 30/29 days and intercalates leap days on a 30-year cycle.
+2. Convert the input Gregorian date to a Julian Day Number (JDN) using an integer arithmetic formula.
+3. Convert the JDN to the Islamic (Hijri) year using a closed-form expression.
+4. Find the Islamic month by estimating via the average month length and refining using the forward conversion.
+5. Compute the Islamic day by subtracting the JDN of the first day of the found month.
+6. Return the Islamic date encoded as a datetime.date object whose year, month, and day fields correspond to the Islamic calendar values.
+
+```python
+from datetime import date
+
+# Internal constants for the Islamic civil calendar
+_ISLAMIC_EPOCH_JDN = 1948439  # JDN for 1 Muharram, year 1 (civil/tabular algorithm)
+
+def _gregorian_to_jdn(y: int, m: int, d: int) -> int:
+    # Gregorian date to Julian Day Number (JDN), valid for proleptic Gregorian calendar
+    a = (14 - m) // 12
+    y2 = y + 4800 - a
+    m2 = m + 12 * a - 3
+    return d + (153 * m2 + 2) // 5 + 365 * y2 + y2 // 4 - y2 // 100 + y2 // 400 - 32045
+
+def _islamic_to_jdn(y: int, m: int, d: int) -> int:
+    # Islamic civil date to JDN using integer arithmetic
+    # ceil(29.5*(m-1)) == (59*(m-1) + 1) // 2
+    month_days = (59 * (m - 1) + 1) // 2
+    leap_days = (3 + 11 * y) // 30
+    return d + month_days + (y - 1) * 354 + leap_days + _ISLAMIC_EPOCH_JDN - 1
+
+def gregorian_to_islamic_date(greg: date) -> date:
+    # Step 1: Convert Gregorian date to JDN
+    jdn = _gregorian_to_jdn(greg.year, greg.month, greg.day)
+
+    # Step 2: Estimate Islamic year from JDN
+    days_since_epoch = jdn - _ISLAMIC_EPOCH_JDN
+    islamic_year = (30 * days_since_epoch + 10646) // 10631  # floor
+
+    # Step 3: Find Islamic month by estimating then refining
+    start_of_year_jdn = _islamic_to_jdn(islamic_year, 1, 1)
+    r = jdn - start_of_year_jdn + 1  # day-of-year starting at 1
+
+    # Estimate month via ceil(r / 29.5) with integer arithmetic: ceil(2r / 59)
+    est_month = (2 * r + 59 - 1) // 59
+    if est_month < 1:
+        est_month = 1
+    if est_month > 12:
+        est_month = 12
+
+    # Refine by ensuring the month start is <= jdn and next month start is > jdn
+    # Adjust downward if needed
+    while est_month > 1 and _islamic_to_jdn(islamic_year, est_month, 1) > jdn:
+        est_month -= 1
+    # Adjust upward if needed
+    while est_month < 12 and _islamic_to_jdn(islamic_year, est_month + 1, 1) <= jdn:
+        est_month += 1
+
+    islamic_month = est_month
+
+    # Step 4: Compute Islamic day
+    start_of_month_jdn = _islamic_to_jdn(islamic_year, islamic_month, 1)
+    islamic_day = jdn - start_of_month_jdn + 1
+
+    # Step 5: Return as a date object whose Y-M-D fields represent the Islamic date
+    return date(islamic_year, islamic_month, islamic_day)
+
+# Entry point: gregorian_to_islamic_date(greg: date) -> date
+```

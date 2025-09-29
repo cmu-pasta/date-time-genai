@@ -1,0 +1,15 @@
+Let's think step by step to solve this problem.
+1. Import the necessary type (date) from the datetime module.
+2. Define a function that accepts a Gregorian date as input.
+3. Compute the Thai Buddhist calendar year by adding 543 to the Gregorian year.
+4. Construct and return a new date with the computed year and the same month and day.
+
+```python
+from datetime import date
+
+def determine_thai_buddhist_date(gregorian_date: date) -> date:
+    buddhist_year = gregorian_date.year + 543
+    return date(buddhist_year, gregorian_date.month, gregorian_date.day)
+
+# Entry point: determine_thai_buddhist_date(gregorian_date: date) -> date
+```

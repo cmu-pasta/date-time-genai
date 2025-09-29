@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts two dates as datetime objects - typically a birth date and a current date.
+3. **Calculate years**: Find the difference in years by comparing the year components.
+4. **Calculate remaining months**: After accounting for full years, calculate the remaining months.
+5. **Calculate remaining days**: After accounting for full years and months, calculate the remaining days.
+6. **Handle edge cases**: Account for cases where the day/month hasn't been reached yet in the target year/month.
+7. **Return the results**: Since we can't return complex data types, we'll need to return the total days equivalent or find another approach.
+
+Given the constraint that we cannot return complex data types like tuples, I'll calculate the total number of days between the two dates, which represents the age in days.
+
+```python
+from datetime import datetime
+
+def calculate_age_in_days(birth_date: datetime, current_date: datetime) -> int:
+    # Ensure current_date is after birth_date for positive age
+    if current_date < birth_date:
+        birth_date, current_date = current_date, birth_date
+    
+    # Calculate the difference in days
+    age_in_days = (current_date - birth_date).days
+    
+    return age_in_days
+
+# Entry point: calculate_age_in_days(birth_date: datetime, current_date: datetime) -> int
+```

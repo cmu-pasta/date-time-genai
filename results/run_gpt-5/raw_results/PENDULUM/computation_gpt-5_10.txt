@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library for date handling.
+2. Define a function that accepts a pendulum.Date input.
+3. Extract year, month, and day from the input date.
+4. Apply the standard proleptic Gregorian algorithm to compute the Julian Day Number (JDN).
+5. Return the computed JDN as an integer.
+
+```python
+import pendulum
+
+def date_to_julian_day_number(d: pendulum.Date) -> int:
+    # Extract the Gregorian calendar components
+    y = d.year
+    m = d.month
+    day = d.day
+
+    # Algorithm: Proleptic Gregorian calendar to JDN
+    a = (14 - m) // 12
+    y2 = y + 4800 - a
+    m2 = m + 12 * a - 3
+
+    jdn = day + ((153 * m2 + 2) // 5) + 365 * y2 + (y2 // 4) - (y2 // 100) + (y2 // 400) - 32045
+    return int(jdn)
+
+# Entry point: date_to_julian_day_number(d: pendulum.Date) -> int
+```

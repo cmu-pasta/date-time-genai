@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date objects.
+2. Define a function that accepts a year as an integer input.
+3. Create a pendulum.Date representing March 1st of the given year, which is the meteorological first day of spring.
+4. Return this pendulum.Date.
+
+```python
+import pendulum
+
+def first_day_of_spring(year: int) -> pendulum.Date:
+    """
+    Return the first day of spring (meteorological) for the given year as a pendulum.Date.
+    Meteorological spring starts on March 1 in the Northern Hemisphere.
+    """
+    # Create and return March 1st of the specified year
+    return pendulum.date(year, 3, 1)
+
+# Entry point: first_day_of_spring(year: int) -> pendulum.Date
+```

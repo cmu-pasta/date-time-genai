@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: Create a function that accepts a datetime object as input to extract the year from it.
+3. **Extract the year**: Get the year component from the datetime object using the `.year` attribute.
+4. **Convert to Roman numerals**: Implement the logic to convert the integer year to Roman numeral representation.
+5. **Return the result**: Return the Roman numeral string representation of the year.
+
+```python
+from datetime import datetime
+
+def convert_date_to_roman_year(dt: datetime) -> str:
+    # Step 1: Extract the year from the datetime object
+    year = dt.year
+    
+    # Step 2: Convert the year to Roman numerals
+    # Define the mapping of values to Roman numerals in descending order
+    values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+    roman_chars = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']
+    
+    # Build the Roman numeral representation
+    roman_year = ''
+    for i in range(len(values)):
+        count = year // values[i]
+        if count:
+            roman_year += roman_chars[i] * count
+            year -= values[i] * count
+    
+    return roman_year
+
+# Entry point: convert_date_to_roman_year(dt: datetime) -> str
+```

@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` modules from Python's standard library to work with dates and date arithmetic.
+
+2. **Define a function**: We will create a function that accepts a datetime object as input representing the given date.
+
+3. **Determine the current weekday**: Use the `weekday()` method to get the day of the week (Monday=0, Tuesday=1, ..., Friday=4, Saturday=5, Sunday=6).
+
+4. **Calculate days to subtract**: To find the previous Friday, we need to calculate how many days to go back from the current date. Friday is weekday 4, so we need to find the appropriate number of days to subtract.
+
+5. **Handle the logic**: 
+   - If the current day is Saturday (5), previous Friday is 1 day back
+   - If the current day is Sunday (6), previous Friday is 2 days back  
+   - If the current day is Monday-Thursday (0-3), previous Friday is (weekday + 3) days back
+   - If the current day is Friday (4), previous Friday is 7 days back (last week's Friday)
+
+6. **Subtract the calculated days**: Use timedelta to subtract the appropriate number of days from the given date.
+
+7. **Return the result**: Return the datetime object representing the previous Friday.
+
+```python
+from datetime import datetime, timedelta
+
+def find_previous_friday(dt: datetime) -> datetime:
+    # Get the weekday (Monday=0, Tuesday=1, ..., Sunday=6)
+    current_weekday = dt.weekday()
+    
+    # Calculate how many days to go back to reach the previous Friday
+    # Friday is weekday 4
+    days_back = (current_weekday - 4) % 7
+    
+    # Special case: if today is Friday, we want the previous Friday (7 days back)
+    if days_back == 0:
+        days_back = 7
+    
+    # Calculate the previous Friday by subtracting the required days
+    previous_friday = dt - timedelta(days=days_back)
+    
+    return previous_friday
+
+# Entry point: find_previous_friday(dt: datetime) -> datetime
+```

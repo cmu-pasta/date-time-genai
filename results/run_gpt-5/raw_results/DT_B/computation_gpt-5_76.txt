@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime library.
+2. Accept a datetime representing the moment and a date representing the reference date.
+3. Convert the datetime to its date component to align with the "reference date".
+4. Subtract the reference date from the moment’s date to get a timedelta.
+5. Return the number of days as an integer.
+
+```python
+from datetime import datetime, date
+
+def days_since_reference(moment: datetime, reference_date: date) -> int:
+    """
+    Convert a datetime to the number of days since a reference date.
+    Returns a signed integer: positive if moment is after the reference_date,
+    negative if before, and zero if on the same calendar date.
+    """
+    return (moment.date() - reference_date).days
+
+# Entry point: days_since_reference(moment: datetime, reference_date: date) -> int
+```

@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates and durations.
+2. Define a function that takes two pendulum.Date inputs representing the two dates.
+3. Compute an absolute period between the two dates using diff with absolute=True to get non-negative components.
+4. Extract the years, months, and days components from the resulting period.
+5. Construct and return a pendulum.Duration with the extracted years, months, and days.
+
+```python
+import pendulum
+
+def calculate_age_in_ymd(d1: pendulum.Date, d2: pendulum.Date) -> pendulum.Duration:
+    # Step 1: Get the absolute period difference between the two dates
+    period = d1.diff(d2, absolute=True)
+    
+    # Step 2: Extract years, months, and days from the period
+    years = period.years
+    months = period.months
+    days = period.days  # days remaining after years and months
+    
+    # Step 3: Return the result as a pendulum.Duration
+    return pendulum.duration(years=years, months=months, days=days)
+
+# Entry point: calculate_age_in_ymd(d1: pendulum.Date, d2: pendulum.Date) -> pendulum.Duration
+```

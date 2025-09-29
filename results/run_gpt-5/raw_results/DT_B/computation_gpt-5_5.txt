@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Create a function that takes the year and month as integers.
+3. Construct a date representing the first day of the given month and year.
+4. Compute the offset in days to reach the first Monday (weekday 0).
+5. Return the computed date as a datetime.date object.
+
+```python
+from datetime import date, timedelta
+
+def first_monday_of_month(year: int, month: int) -> date:
+    # Step 1: Create a date for the first day of the given month and year
+    first_day = date(year, month, 1)
+    # Step 2: Calculate offset to the first Monday (Monday is 0)
+    days_until_monday = (0 - first_day.weekday()) % 7
+    # Step 3: Compute and return the first Monday
+    first_monday = first_day + timedelta(days=days_until_monday)
+    return first_monday
+
+# Entry point: first_monday_of_month(year: int, month: int) -> date
+```

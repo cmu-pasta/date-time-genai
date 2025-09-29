@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `time` class from the `datetime` module to work with time objects.
+2. **Define a function**: We will create a function that accepts a time object (representing 12-hour format) and a boolean indicating AM/PM.
+3. **Handle the conversion logic**: Convert the 12-hour time to 24-hour format by adjusting the hour component based on AM/PM indicator.
+4. **Return the result**: Return a new time object representing the same time in 24-hour format.
+
+```python
+from datetime import time
+
+def convert_12_to_24_hour(twelve_hour_time: time, is_pm: bool) -> time:
+    # Step 1: Extract hour, minute, second, and microsecond from the input time
+    hour = twelve_hour_time.hour
+    minute = twelve_hour_time.minute
+    second = twelve_hour_time.second
+    microsecond = twelve_hour_time.microsecond
+    
+    # Step 2: Convert 12-hour format to 24-hour format
+    if is_pm:
+        # PM case: add 12 to hours 1-11, keep 12 as is
+        if hour != 12:
+            hour += 12
+    else:
+        # AM case: keep hours 1-11 as is, convert 12 to 0
+        if hour == 12:
+            hour = 0
+    
+    # Step 3: Create and return the 24-hour time object
+    return time(hour, minute, second, microsecond)
+
+# Entry point: convert_12_to_24_hour(twelve_hour_time: time, is_pm: bool) -> time
+```

@@ -1,0 +1,30 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with date and time objects.
+2.  **Define a function**: Create a function that accepts two `pendulum.DateTime` objects as input.
+3.  **Calculate the total duration**: Determine the `pendulum.Duration` between the two input dates. This can be done by subtracting one date from the other.
+4.  **Calculate half the duration**: Divide the total duration by two to find the time difference from one end to the middle.
+5.  **Add half duration to the earlier date**: Add this calculated half duration to the starting (or earlier) of the two dates to find the exact middle date. The subtraction `dt2 - dt1` handles the direction correctly, so simply adding `(dt2 - dt1) / 2` to `dt1` will yield the middle date regardless of which date is chronologically first.
+6.  **Return the result**: The function should return the calculated middle date as a `pendulum.DateTime` object.
+
+```python
+import pendulum
+
+def find_middle_date(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Calculate the total duration between the two dates
+    # Subtracting two DateTime objects results in a pendulum.Duration object
+    total_duration = dt2 - dt1
+    
+    # Step 2: Calculate half of the total duration
+    half_duration = total_duration / 2
+    
+    # Step 3: Add the half duration to the first date to find the middle date.
+    # This works correctly even if dt1 is chronologically after dt2,
+    # as half_duration will be negative in that case.
+    middle_date = dt1 + half_duration
+    
+    # Step 4: Return the resulting middle date
+    return middle_date
+
+# Entry point: find_middle_date(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.DateTime
+```

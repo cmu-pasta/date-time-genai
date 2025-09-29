@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We will need `date` and `timedelta` from the `datetime` module to work with dates and calculate differences.
+2.  **Define the function signature**: Create a function `find_last_weekday_in_month` that accepts three integer arguments: `year`, `month`, and `weekday`. The `weekday` integer should follow the `datetime.weekday()` convention (0 for Monday, 6 for Sunday). The function will return a `datetime.date` object.
+3.  **Determine the last day of the given month**: To find the last day of the specified month, we can construct a `date` object for the first day of the *next* month. Then, by subtracting one day using `timedelta`, we get the last day of the current month. Special care is needed for December, where the next month is January of the following year.
+4.  **Iterate backwards to find the specific weekday**: Starting from the last day of the month, we repeatedly subtract one day until we find a `date` whose `weekday()` matches the target `weekday`. Since there's always at least one occurrence of each weekday in a month, this loop is guaranteed to terminate within 7 iterations.
+
+```python
+from datetime import date, timedelta
+
+def find_last_weekday_in_month(year: int, month: int, weekday: int) -> date:
+    # Step 1: Determine the first day of the next month
+    if month == 12:
+        # If it's December, the next month is January of the next year
+        first_day_of_next_month = date(year + 1, 1, 1)
+    else:
+        # Otherwise, it's the first day of the next month in the same year
+        first_day_of_next_month = date(year, month + 1, 1)
+    
+    # Step 2: Subtract one day to get the last day of the current month
+    last_day_of_current_month = first_day_of_next_month - timedelta(days=1)
+    
+    # Step 3: Iterate backwards from the last day of the month until the target weekday is found
+    current_date = last_day_of_current_month
+    while current_date.weekday() != weekday:
+        current_date -= timedelta(days=1)
+        
+    # Step 4: Return the date of the last occurrence of the specific weekday
+    return current_date
+
+# Entry point: find_last_weekday_in_month(year: int, month: int, weekday: int) -> date
+```

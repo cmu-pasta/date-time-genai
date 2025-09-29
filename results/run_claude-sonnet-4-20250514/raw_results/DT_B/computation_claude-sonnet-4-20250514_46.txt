@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with datetime objects.
+2. **Define a function**: Create a function that accepts a datetime object as input.
+3. **Extract time components**: Get the hour, minute, and second from the datetime object.
+4. **Convert to 12-hour format**: Determine if it's AM or PM based on the hour, and convert the hour to 12-hour format (1-12 instead of 0-23).
+5. **Format the output**: Create the 12-hour format string with AM/PM designation.
+6. **Return the result**: Return the formatted string representation.
+
+```python
+from datetime import datetime
+
+def convert_to_12hour_format(dt: datetime) -> str:
+    # Step 1: Extract the hour from the datetime object
+    hour = dt.hour
+    minute = dt.minute
+    second = dt.second
+    
+    # Step 2: Determine AM/PM and convert hour to 12-hour format
+    if hour == 0:
+        # Midnight case: 0:xx -> 12:xx AM
+        hour_12 = 12
+        am_pm = "AM"
+    elif hour < 12:
+        # Morning hours: 1-11 -> 1-11 AM
+        hour_12 = hour
+        am_pm = "AM"
+    elif hour == 12:
+        # Noon case: 12:xx -> 12:xx PM
+        hour_12 = 12
+        am_pm = "PM"
+    else:
+        # Afternoon/Evening hours: 13-23 -> 1-11 PM
+        hour_12 = hour - 12
+        am_pm = "PM"
+    
+    # Step 3: Format the result as 12-hour format with AM/PM
+    formatted_time = f"{hour_12}:{minute:02d}:{second:02d} {am_pm}"
+    
+    return formatted_time
+
+# Entry point: convert_to_12hour_format(dt: datetime) -> str
+```

@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` class from Python's standard `datetime` module.
+2.  **Define a function**: Create a function that accepts a Unix timestamp as an integer or float.
+3.  **Convert the timestamp**: Use the `datetime.fromtimestamp()` class method to convert the Unix timestamp into a `datetime` object.
+4.  **Return the result**: The function should return the newly created `datetime` object, which is inherently human-readable.
+
+```python
+from datetime import datetime
+
+def convert_unix_to_datetime(timestamp: float) -> datetime:
+    # Step 1: Use datetime.fromtimestamp() to convert the Unix timestamp
+    # This method directly creates a datetime object from a timestamp.
+    dt_object = datetime.fromtimestamp(timestamp)
+    
+    # Step 2: Return the resulting datetime object
+    return dt_object
+
+# Entry point: convert_unix_to_datetime(timestamp: float) -> datetime
+```

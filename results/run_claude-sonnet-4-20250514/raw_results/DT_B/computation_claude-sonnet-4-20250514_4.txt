@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module and `zoneinfo` module from Python's standard library to work with dates and timezones.
+2. **Define a function**: We will create a function that accepts a datetime object (with timezone information) and a target timezone as ZoneInfo object.
+3. **Convert the timezone**: Use the `astimezone()` method to convert the datetime from its current timezone to the target timezone.
+4. **Return the result**: Return the converted datetime object with the new timezone information.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_timezone(dt: datetime, target_timezone: ZoneInfo) -> datetime:
+    # Step 1: Convert the datetime to the target timezone
+    converted_dt = dt.astimezone(target_timezone)
+    
+    # Step 2: Return the converted datetime
+    return converted_dt
+
+# Entry point: convert_timezone(dt: datetime, target_timezone: ZoneInfo) -> datetime
+```

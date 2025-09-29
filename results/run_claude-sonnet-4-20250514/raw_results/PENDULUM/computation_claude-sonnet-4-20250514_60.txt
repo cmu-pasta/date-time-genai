@@ -1,0 +1,48 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library for date/time operations and math library for trigonometric calculations.
+
+2. **Define the main function**: Create a function that accepts a date, latitude, and longitude as inputs.
+
+3. **Calculate the equation of time**: This accounts for the Earth's elliptical orbit and axial tilt, representing the difference between apparent solar time and mean solar time.
+
+4. **Calculate longitude correction**: Convert the longitude difference from the local time zone's standard meridian to time difference.
+
+5. **Calculate solar noon time**: Combine the base noon time with the equation of time and longitude correction.
+
+6. **Return the result**: Return a pendulum.DateTime object representing the solar noon time for the given location and date.
+
+```python
+import pendulum
+import math
+
+def calculate_solar_noon(date: pendulum.Date, latitude: float, longitude: float) -> pendulum.DateTime:
+    # Step 1: Get the day of year
+    day_of_year = date.day_of_year
+    
+    # Step 2: Calculate the equation of time (in minutes)
+    # This accounts for Earth's elliptical orbit and axial tilt
+    B = 2 * math.pi * (day_of_year - 81) / 365
+    equation_of_time = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+    
+    # Step 3: Calculate longitude correction (4 minutes per degree)
+    # Assuming we're using local standard time zone
+    time_zone_longitude = round(longitude / 15) * 15  # Standard meridian for the time zone
+    longitude_correction = 4 * (longitude - time_zone_longitude)  # in minutes
+    
+    # Step 4: Calculate solar noon time
+    # Start with 12:00 noon and apply corrections
+    solar_noon_minutes = 12 * 60 + equation_of_time + longitude_correction
+    
+    # Step 5: Convert minutes to hours and minutes
+    hours = int(solar_noon_minutes // 60)
+    minutes = int(solar_noon_minutes % 60)
+    seconds = int((solar_noon_minutes % 1) * 60)
+    
+    # Step 6: Create and return the solar noon datetime
+    solar_noon_time = date.at(hours, minutes, seconds)
+    
+    return solar_noon_time
+
+# Entry point: calculate_solar_noon(date: pendulum.Date, latitude: float, longitude: float) -> pendulum.DateTime
+```

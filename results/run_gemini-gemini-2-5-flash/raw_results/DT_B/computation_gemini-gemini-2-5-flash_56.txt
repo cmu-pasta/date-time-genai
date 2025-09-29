@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `datetime` class from the `datetime` module to handle date and time objects.
+2.  **Define the function signature**: Create a function that accepts a `datetime` object as input and is expected to return a `datetime` object.
+3.  **Determine Valentine's Day for the current year**: Construct a `datetime` object representing February 14th of the same year as the `given_date`. We'll set the time components to midnight for consistency, as Valentine's Day is a specific date.
+4.  **Compare and adjust the year**:
+    *   If the `given_date` is on or after the Valentine's Day of its own year, it means the next Valentine's Day must be in the subsequent year.
+    *   Otherwise (if the `given_date` is before Valentine's Day of its own year), the next Valentine's Day is in the current year.
+5.  **Construct and return the result**: Based on the comparison, create the final `datetime` object for February 14th of the determined year and return it.
+
+```python
+from datetime import datetime
+
+def find_next_valentines_day(given_date: datetime) -> datetime:
+    # Step 1: Get the year of the given date
+    year = given_date.year
+
+    # Step 2: Create a datetime object for Valentine's Day of the current year (Feb 14th, 00:00:00)
+    # This sets the time to midnight for the start of the day.
+    valentines_day_this_year = datetime(year, 2, 14, 0, 0, 0)
+
+    # Step 3: Compare the given_date with Valentine's Day of the current year
+    # If the given_date is on or after this year's Valentine's Day,
+    # then the next Valentine's Day is in the next calendar year.
+    if given_date >= valentines_day_this_year:
+        next_year = year + 1
+    else:
+        # Otherwise, the next Valentine's Day is in the current year.
+        next_year = year
+
+    # Step 4: Construct the datetime object for the next Valentine's Day
+    next_valentines_day_date = datetime(next_year, 2, 14, 0, 0, 0)
+    
+    # Step 5: Return the result
+    return next_valentines_day_date
+
+# Entry point: find_next_valentines_day(given_date: datetime) -> datetime
+```

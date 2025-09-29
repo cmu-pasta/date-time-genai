@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts a single `pendulum.DateTime` object as input.
+3.  **Access the day of the year**: `pendulum.DateTime` objects have a `day_of_year` attribute which directly provides the day of the year (1-366).
+4.  **Return the result**: The `day_of_year` attribute returns an integer, which is the desired output.
+
+```python
+import pendulum
+
+def get_day_of_year(dt: pendulum.DateTime) -> int:
+    # Step 1: Access the day_of_year attribute of the pendulum.DateTime object
+    day_of_year = dt.day_of_year
+    
+    # Step 2: Return the result as an integer
+    return day_of_year
+
+# Entry point: get_day_of_year(dt: pendulum.DateTime) -> int
+```

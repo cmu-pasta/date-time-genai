@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date and time types.
+2. Accept a pendulum.DateTime input representing a 24-hour time.
+3. Compute the 12-hour clock hour: hour12 = ((hour24 + 11) % 12) + 1, keeping minutes, seconds, and microseconds unchanged.
+4. Construct and return a pendulum.Time object representing the 12-hour time. The AM/PM can be determined as dt.hour >= 12 when formatting if needed.
+
+```python
+import pendulum
+
+def convert_to_12h(dt: pendulum.DateTime) -> pendulum.Time:
+    """
+    Convert a pendulum.DateTime from 24-hour format to a 12-hour clock Time.
+    The returned pendulum.Time holds the 12-hour clock hour (1-12) with the same minutes,
+    seconds, and microseconds as the input. AM/PM can be determined by dt.hour >= 12.
+    """
+    h24 = dt.hour
+    m = dt.minute
+    s = dt.second
+    us = dt.microsecond
+
+    # Map 24-hour to 12-hour clock: 0 -> 12 (AM), 13 -> 1 (PM), 12 -> 12 (PM)
+    h12 = ((h24 + 11) % 12) + 1
+
+    return pendulum.time(h12, m, s, us)
+
+# Entry point: convert_to_12h(dt: pendulum.DateTime) -> pendulum.Time
+```

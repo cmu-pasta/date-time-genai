@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with timestamps and timezones.
+2. **Define a function**: We will create a function that accepts a timestamp as a pendulum.DateTime object and a target timezone as a pendulum.Timezone object.
+3. **Convert the timezone**: Use the `in_timezone()` method to convert the timestamp from its current timezone to the target timezone.
+4. **Return the result**: Return the converted timestamp as a pendulum.DateTime object.
+
+```python
+import pendulum
+
+def convert_timezone(dt: pendulum.DateTime, target_tz: pendulum.Timezone) -> pendulum.DateTime:
+    # Step 1: Convert the datetime to the target timezone
+    converted_dt = dt.in_timezone(target_tz)
+    
+    # Step 2: Return the converted datetime
+    return converted_dt
+
+# Entry point: convert_timezone(dt: pendulum.DateTime, target_tz: pendulum.Timezone) -> pendulum.DateTime
+```

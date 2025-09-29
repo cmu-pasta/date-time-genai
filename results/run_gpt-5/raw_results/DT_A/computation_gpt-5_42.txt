@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that takes a year and a month as integers.
+3. Create a date for the first day of the given month.
+4. Create a date for the first day of the following month (handling December rollover).
+5. Subtract the two dates to get the number of days in the month as a timedelta.
+6. Convert days to hours by multiplying by 24 and return the result as an integer.
+
+```python
+from datetime import date
+
+def hours_in_month(year: int, month: int) -> int:
+    # Step 3: Start of the given month
+    start_of_month = date(year, month, 1)
+    
+    # Step 4: Start of the next month (handle December)
+    if month == 12:
+        start_of_next_month = date(year + 1, 1, 1)
+    else:
+        start_of_next_month = date(year, month + 1, 1)
+    
+    # Step 5: Compute number of days in the month
+    days_in_month = (start_of_next_month - start_of_month).days
+    
+    # Step 6: Convert days to hours
+    return days_in_month * 24
+
+# Entry point: hours_in_month(year: int, month: int) -> int
+```

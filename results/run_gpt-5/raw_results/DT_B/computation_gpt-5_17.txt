@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Accept the inputs: year (integer), month (integer), weekday (integer 0-6 where Monday is 0), and n (integer > 0).
+2. Validate input ranges to ensure they represent a possible computation.
+3. Construct the first day of the given month using a date object.
+4. Compute the offset from the first day to the first desired weekday using modular arithmetic.
+5. Compute the nth occurrence by adding (n-1) weeks to the first occurrence.
+6. Validate that the resulting date still falls within the same month; if not, raise an error.
+7. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date:
+    # Validate inputs
+    if month < 1 or month > 12:
+        raise ValueError("Month must be in 1..12.")
+    if weekday < 0 or weekday > 6:
+        raise ValueError("Weekday must be in 0..6 where Monday=0 and Sunday=6.")
+    if n < 1:
+        raise ValueError("n must be a positive integer.")
+
+    # First day of the month
+    first_day = date(year, month, 1)
+
+    # Offset to the first desired weekday in the month
+    offset = (weekday - first_day.weekday()) % 7
+    first_occurrence = first_day + timedelta(days=offset)
+
+    # Compute the nth occurrence
+    nth_date = first_occurrence + timedelta(days=(n - 1) * 7)
+
+    # Ensure the nth occurrence is within the same month
+    if nth_date.month != month:
+        raise ValueError("The requested nth occurrence does not exist in the given month.")
+
+    return nth_date
+
+# Entry point: nth_weekday_of_month(year: int, month: int, weekday: int, n: int) -> date
+```

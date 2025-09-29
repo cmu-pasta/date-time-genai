@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input and returns the date of the summer solstice.
+3. **Determine the summer solstice date**: The summer solstice typically occurs on June 21st in the northern hemisphere (though it can vary slightly between June 20-22 depending on the year and timezone).
+4. **Create the datetime object**: Use the datetime constructor to create a date object for June 21st of the given year.
+5. **Return the result**: Return the datetime object representing the summer solstice date.
+
+```python
+from datetime import datetime
+
+def find_summer_solstice(year: int) -> datetime:
+    # Step 1: The summer solstice typically occurs on June 21st
+    # We'll use June 21st as the standard date for the summer solstice
+    summer_solstice_date = datetime(year, 6, 21)
+    
+    # Step 2: Return the datetime object for the summer solstice
+    return summer_solstice_date
+
+# Entry point: find_summer_solstice(year: int) -> datetime
+```

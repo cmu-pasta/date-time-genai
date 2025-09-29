@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts a year as an integer input.
+3. Create pendulum.Date objects for the first and last day of the given year.
+4. Iterate day by day from the start to the end of the year.
+5. Count a day as a trading day if it is a weekday (Monday to Friday).
+6. Return the total count as an integer.
+
+```python
+import pendulum
+
+def count_trading_days_in_year(year: int) -> int:
+    # Step 1: Define the start and end dates of the given year
+    start = pendulum.date(year, 1, 1)
+    end = pendulum.date(year, 12, 31)
+
+    # Step 2: Iterate through the year and count weekdays (Mon-Fri)
+    count = 0
+    current = start
+    while current <= end:
+        if current.is_weekday():  # True for Monday (0) through Friday (4)
+            count += 1
+        current = current.add(days=1)
+
+    # Step 3: Return the total number of trading days
+    return count
+
+# Entry point: count_trading_days_in_year(year: int) -> int
+```

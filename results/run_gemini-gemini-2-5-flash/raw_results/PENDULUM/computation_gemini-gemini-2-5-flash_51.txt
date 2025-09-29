@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and times.
+2.  **Define a function**: Create a function that accepts two `pendulum.DateTime` objects, representing the start and end of a time period.
+3.  **Calculate the duration**: Find the difference between the two `pendulum.DateTime` objects using the `diff()` method. This will return a `pendulum.Duration` object.
+4.  **Extract total minutes**: From the `pendulum.Duration` object, use the `in_minutes()` method to get the total number of minutes as an integer.
+5.  **Ensure positive result**: Use the absolute value to ensure the returned minute difference is always positive, regardless of the order of input times.
+6.  **Return the result**: Return the calculated total minutes as an integer.
+
+```python
+import pendulum
+
+def calculate_total_minutes_in_period(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    # Step 1: Calculate the duration between the two DateTime objects
+    # The diff() method returns a pendulum.Duration object
+    duration = dt2.diff(dt1)
+    
+    # Step 2: Get the total number of minutes from the duration
+    # in_minutes() returns the total minutes as an integer
+    total_minutes = duration.in_minutes()
+    
+    # Step 3: Return the absolute value to ensure a positive difference
+    return abs(total_minutes)
+
+# Entry point: calculate_total_minutes_in_period(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+```

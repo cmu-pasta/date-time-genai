@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a date (to identify the month/year), the target weekday (as an integer), and the occurrence number (nth occurrence).
+3. **Get the first day of the month**: Start from the beginning of the given month.
+4. **Iterate through the month**: Loop through each day in the month and count occurrences of the target weekday.
+5. **Return the result**: When we reach the nth occurrence, return that date.
+
+```python
+import pendulum
+
+def find_nth_weekday_in_month(date: pendulum.Date, weekday: int, occurrence: int) -> pendulum.Date:
+    # Step 1: Get the first day of the month
+    first_day = date.start_of('month')
+    
+    # Step 2: Initialize variables
+    current_date = first_day
+    count = 0
+    
+    # Step 3: Iterate through the month to find the nth occurrence
+    while current_date.month == first_day.month:
+        # Check if current day matches the target weekday
+        if current_date.weekday() == weekday:
+            count += 1
+            if count == occurrence:
+                return current_date
+        
+        # Move to the next day
+        current_date = current_date.add(days=1)
+    
+    # If we exit the loop without finding the nth occurrence, it doesn't exist
+    # Return None or raise an exception - but since we can only return pendulum types,
+    # we'll return the last day of the month as a fallback
+    return date.end_of('month')
+
+# Entry point: find_nth_weekday_in_month(date: pendulum.Date, weekday: int, occurrence: int) -> pendulum.Date
+```

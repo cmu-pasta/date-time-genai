@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` from Python's standard library to work with dates and time differences.
+
+2. **Define a function**: We will create a function that accepts two datetime objects as input representing the start and end times.
+
+3. **Handle edge cases**: Ensure the start time is before the end time for proper calculation.
+
+4. **Iterate through days**: Loop through each day between the start and end datetimes to check if it's a weekday.
+
+5. **Calculate weekday hours**: For each weekday, calculate how many hours fall within our time range, considering partial days at the beginning and end.
+
+6. **Sum working hours**: Accumulate the total working hours and return as a float.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_working_hours(start_dt: datetime, end_dt: datetime) -> float:
+    # Ensure start_dt is before end_dt
+    if start_dt > end_dt:
+        start_dt, end_dt = end_dt, start_dt
+    
+    total_hours = 0.0
+    current_dt = start_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    # Iterate through each day from start to end
+    while current_dt.date() <= end_dt.date():
+        # Check if current day is a weekday (Monday=0 to Friday=4)
+        if current_dt.weekday() < 5:  # Monday to Friday
+            # Determine the start and end times for this day
+            day_start = max(start_dt, current_dt)
+            day_end = min(end_dt, current_dt.replace(hour=23, minute=59, second=59, microsecond=999999))
+            
+            # Calculate hours for this weekday
+            if day_start.date() == day_end.date():
+                day_hours = (day_end - day_start).total_seconds() / 3600.0
+                total_hours += day_hours
+        
+        # Move to next day
+        current_dt += timedelta(days=1)
+    
+    return total_hours
+
+# Entry point: calculate_working_hours(start_dt: datetime, end_dt: datetime) -> float
+```

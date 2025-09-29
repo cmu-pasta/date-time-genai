@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the datetime module to work with date objects.
+2. Define a function that accepts a date input.
+3. Use the date.weekday() method to compute the weekday index where Monday=0 and Sunday=6.
+4. Return the integer index representing the day of the week.
+
+```python
+from datetime import date
+
+def day_name_index_for_date(d: date) -> int:
+    """
+    Returns the weekday index for the given date.
+    Monday = 0, Tuesday = 1, ..., Sunday = 6
+    """
+    return d.weekday()
+
+# Entry point: day_name_index_for_date(d: date) -> int
+```

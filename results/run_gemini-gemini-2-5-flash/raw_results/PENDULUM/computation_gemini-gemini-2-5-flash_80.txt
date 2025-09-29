@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and times.
+2.  **Define a function**: Create a function that accepts the year (integer), month (integer), and the desired weekday (integer, representing Monday=1 to Sunday=7) as inputs. The function will return a `pendulum.DateTime` object.
+3.  **Create a starting `pendulum.DateTime` object**: Construct a `pendulum.DateTime` object for the first day of the given month. This object will be used as a reference point.
+4.  **Utilize `last_of` method**: `pendulum.DateTime` objects have a convenient `last_of` method. We can call `last_of('month', weekday=desired_weekday_integer)` on our reference date to directly find the last occurrence of that weekday in the month.
+5.  **Return the result**: The `last_of` method returns a `pendulum.DateTime` object, which is exactly what we need to return.
+
+```python
+import pendulum
+
+def find_last_weekday_in_month(year: int, month: int, weekday_int: int) -> pendulum.DateTime:
+    """
+    Finds the last occurrence of a specific weekday in a given month.
+
+    Args:
+        year (int): The year (e.g., 2023).
+        month (int): The month (1-12).
+        weekday_int (int): The integer representation of the weekday
+                           (1 for Monday, 2 for Tuesday, ..., 7 for Sunday).
+
+    Returns:
+        pendulum.DateTime: A pendulum.DateTime object representing the last
+                           occurrence of the specified weekday in the month,
+                           with time set to midnight.
+    """
+    # Step 1: Create a pendulum.DateTime object for the first day of the specified month.
+    # The exact day (1) doesn't matter for 'last_of' as it only uses year and month.
+    start_of_month = pendulum.datetime(year, month, 1)
+
+    # Step 2: Use the last_of method to find the last occurrence of the weekday in the month.
+    # The 'weekday' parameter expects an integer from 1 (Monday) to 7 (Sunday).
+    last_occurrence = start_of_month.last_of('month', weekday=weekday_int)
+    
+    # Step 3: Return the resulting pendulum.DateTime object.
+    return last_occurrence
+
+# Entry point: find_last_weekday_in_month(year: int, month: int, weekday_int: int) -> pendulum.DateTime
+```

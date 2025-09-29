@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We will use the `datetime` module from Python's standard library to handle date objects.
+2.  **Define a function**: Create a function that accepts a `datetime` object as input, representing the starting date.
+3.  **Implement the leap year check**: A year is a leap year if it is divisible by 4, unless it is divisible by 100 but not by 400. We will create a helper condition or integrate this logic directly into our search.
+4.  **Find the next leap year**: Start checking years from the year *after* the given date. Increment the year sequentially until a year satisfying the leap year condition is found.
+5.  **Return the result**: Return the found leap year as an integer.
+
+```python
+from datetime import datetime
+
+def find_next_leap_year(start_date: datetime) -> int:
+    # Step 1: Start checking from the year immediately after the given date.
+    # We add 1 to the current year to find the *next* leap year.
+    year_to_check = start_date.year + 1
+
+    # Step 2: Loop indefinitely until a leap year is found.
+    while True:
+        # Step 3: Implement the leap year logic.
+        # A year is a leap year if:
+        # (it is divisible by 4 AND not divisible by 100)
+        # OR (it is divisible by 400)
+        is_leap = (year_to_check % 4 == 0 and year_to_check % 100 != 0) or (year_to_check % 400 == 0)
+
+        # Step 4: If the current year_to_check is a leap year, return it.
+        if is_leap:
+            return year_to_check
+        
+        # Step 5: If not a leap year, move to the next year.
+        year_to_check += 1
+
+# Entry point: find_next_leap_year(start_date: datetime) -> int
+```

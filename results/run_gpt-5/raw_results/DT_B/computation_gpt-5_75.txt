@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the datetime class from the datetime module.
+2. Define a function that takes a birth datetime as input.
+3. Determine the current datetime, aligning timezone awareness with the input.
+4. Compute the timedelta between now and the birth datetime.
+5. Convert the difference to total seconds and return it as an integer.
+
+```python
+from datetime import datetime
+
+def calculate_age_in_seconds(birth_dt: datetime) -> int:
+    """
+    Calculate the chronological age in seconds for a given birth datetime.
+    
+    Args:
+        birth_dt (datetime): The birth datetime.
+        
+    Returns:
+        int: The age in seconds. Negative if birth_dt is in the future.
+    """
+    # Use timezone-aware 'now' if birth_dt has tzinfo; else use naive 'now'
+    now = datetime.now(tz=birth_dt.tzinfo)
+    delta = now - birth_dt
+    return int(delta.total_seconds())
+
+# Entry point: calculate_age_in_seconds(birth_dt: datetime) -> int
+```

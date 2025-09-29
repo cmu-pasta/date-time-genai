@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date computations.
+2. Accept a pendulum.Date as input to represent the given date.
+3. Use the date's days_in_month attribute to determine how many days are in that month.
+4. Replace the day component of the input date with days_in_month to get the month's last day.
+5. Return the result as a pendulum.Date.
+
+```python
+import pendulum
+
+def last_day_of_month(given_date: pendulum.Date) -> pendulum.Date:
+    # Step 1: Determine the number of days in the month of the given date
+    dim = given_date.days_in_month
+    # Step 2: Replace the day with the last day to get the month-end date
+    last_date = given_date.replace(day=dim)
+    # Step 3: Return the last day of the month as a pendulum.Date
+    return last_date
+
+# Entry point: last_day_of_month(given_date: pendulum.Date) -> pendulum.Date
+```

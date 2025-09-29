@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and calculate periods.
+2. **Define a function**: Create a function that accepts two dates as pendulum.DateTime objects - typically a birth date and a current date.
+3. **Calculate the period difference**: Use pendulum's period functionality to calculate the difference between the two dates, which will give us years, months, and days.
+4. **Return the result**: Since we cannot return multiple values directly (no tuples/lists allowed), we'll return a pendulum.Duration object that represents the total difference.
+
+```python
+import pendulum
+
+def calculate_age(birth_date: pendulum.DateTime, current_date: pendulum.DateTime) -> pendulum.Duration:
+    # Calculate the period between birth date and current date
+    period = current_date - birth_date
+    
+    # Return the duration representing the age
+    return period
+
+# Entry point: calculate_age(birth_date: pendulum.DateTime, current_date: pendulum.DateTime) -> pendulum.Duration
+```

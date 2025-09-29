@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+
+1.  **Understand Lunar Age**: The lunar age is defined as the number of days since the most recent new moon.
+2.  **Identify a Reference New Moon**: Since `pendulum` does not natively provide astronomical calculations for moon phases, we need a known starting point. A widely accepted average synodic month (new moon to new moon) is approximately 29.530588 days. We can use a known new moon date as a reference. For instance, January 6, 2000, around 18:14 UTC was a new moon. We will use this date as our `base_new_moon`.
+3.  **Calculate Days Difference**: For a given `target_date`, we will calculate the total number of days between our `base_new_moon` and the `target_date`.
+4.  **Determine Lunar Age**: The lunar age can then be found by taking the total days difference modulo the average synodic month length. The result will be the number of days elapsed since the last new moon. We will use floating-point arithmetic for precision before rounding to an integer.
+
+```python
+import pendulum
+
+def calculate_lunar_age(date: pendulum.DateTime) -> int:
+    # Step 1: Define a reference new moon date (e.g., Jan 6, 2000, 18:14 UTC was a New Moon)
+    # Using a slightly simplified base date for integer day calculation.
+    # The actual precise average synodic month length is 29.530588 days.
+    # We will use 29.530588 for the modulo operation.
+    base_new_moon = pendulum.datetime(2000, 1, 6, tz='UTC')
+
+    # Step 2: Ensure the input date is in UTC for consistent calculation
+    # and convert to start of day for simpler day count if it's not already at midnight.
+    # However, for accurate lunar age, we should consider time.
+    # Let's keep the time component of the input date.
+    date_utc = date.in_timezone('UTC')
+
+    # Step 3: Calculate the total number of days between the base new moon and the target date
+    # pendulum.Duration.in_days() gives total full days.
+    # For more precision when dealing with moon phases, we calculate total hours and divide by 24.
+    duration = date_utc - base_new_moon
+    total_days_float = duration.total_seconds() / (24 * 3600)
+
+    # Step 4: Define the average length of a synodic month (new moon to new moon)
+    synodic_month_length = 29.530588
+
+    # Step 5: Calculate the lunar age using the modulo operator
+    # The result will be in the range [0, synodic_month_length)
+    lunar_age_float = total_days_float % synodic_month_length
+
+    # Ensure the result is positive, as Python's % can yield negative for negative dividends
+    if lunar_age_float < 0:
+        lunar_age_float += synodic_month_length
+
+    # Step 6: Return the result as an integer (days since new moon)
+    return int(round(lunar_age_float))
+
+# Entry point: calculate_lunar_age(date: pendulum.DateTime) -> int
+```

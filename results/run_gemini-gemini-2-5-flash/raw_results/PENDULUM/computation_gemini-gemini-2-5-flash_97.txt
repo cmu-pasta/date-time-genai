@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the `pendulum` library**: This library is necessary for all date and time operations, including creating and manipulating `pendulum.DateTime` objects.
+2.  **Define a function `get_thai_buddhist_date`**: This function will take a `pendulum.DateTime` object representing the Gregorian date as input.
+3.  **Calculate the Thai Buddhist year**: The Thai Buddhist calendar year is obtained by adding 543 to the Gregorian year.
+4.  **Construct the new `pendulum.DateTime` object**: Create a new `pendulum.DateTime` object using the calculated Thai Buddhist year, while keeping the month, day, hour, minute, second, microsecond, and timezone identical to the input Gregorian date.
+5.  **Return the `pendulum.DateTime` object**: This object will represent the date in the Thai Buddhist calendar.
+
+```python
+import pendulum
+
+def get_thai_buddhist_date(gregorian_date: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Extract the Gregorian year from the input date.
+    gregorian_year = gregorian_date.year
+    
+    # Step 2: Calculate the Thai Buddhist year by adding 543 to the Gregorian year.
+    thai_buddhist_year = gregorian_year + 543
+    
+    # Step 3: Construct a new pendulum.DateTime object with the Thai Buddhist year,
+    # keeping the month, day, time components, and timezone from the original Gregorian date.
+    thai_buddhist_date = pendulum.datetime(
+        thai_buddhist_year,
+        gregorian_date.month,
+        gregorian_date.day,
+        gregorian_date.hour,
+        gregorian_date.minute,
+        gregorian_date.second,
+        gregorian_date.microsecond,
+        tz=gregorian_date.tz
+    )
+    
+    # Step 4: Return the newly created Thai Buddhist calendar date.
+    return thai_buddhist_date
+
+# Entry point: get_thai_buddhist_date(gregorian_date: pendulum.DateTime) -> pendulum.DateTime
+```

@@ -1,0 +1,73 @@
+Let's think step by step to solve this problem.
+1. Import Pendulum and basic math tools for integer arithmetic.
+2. Convert the given Gregorian date to a Julian Day Number (JDN) using the standard proleptic Gregorian formula.
+3. Convert the JDN to the Islamic (Hijri) civil date using the tabular algorithm:
+   - Determine the Islamic year from days since the Islamic epoch.
+   - Compute the first JDN of that Islamic year.
+   - Determine whether the Islamic year is a leap year.
+   - Iterate through Islamic months based on their lengths (30/29 alternation, with the 12th month 30 days in leap years) to find the month and day.
+4. Return the Islamic date as a pendulum.Date constructed from the computed Islamic year, month, and day.
+5. Ensure inputs and outputs are Pendulum types and no non-allowed types are used.
+
+```python
+import pendulum
+
+def gregorian_to_islamic_date(gregorian_dt: pendulum.DateTime) -> pendulum.Date:
+    # Helper: Gregorian date to Julian Day Number (integer JDN)
+    def gregorian_to_jdn(y: int, m: int, d: int) -> int:
+        a = (14 - m) // 12
+        y2 = y + 4800 - a
+        m2 = m + 12 * a - 3
+        return d + (153 * m2 + 2) // 5 + 365 * y2 + y2 // 4 - y2 // 100 + y2 // 400 - 32045
+
+    # Helper: is Islamic year leap (tabular/civil calendar)
+    def is_islamic_leap(iy: int) -> bool:
+        return ((11 * iy + 14) % 30) < 11
+
+    # Helper: Islamic (civil) date to JDN (integer, matching the above JDN convention)
+    def islamic_to_jdn(iy: int, im: int, iday: int) -> int:
+        # ceil(29.5 * (im - 1)) using integer arithmetic: ceil(29.5*x) = (59*x + 1) // 2
+        months_days = (59 * (im - 1) + 1) // 2
+        return iday + months_days + (iy - 1) * 354 + ((3 + 11 * iy) // 30) + 1948439
+
+    # Extract Gregorian Y-M-D from the pendulum.DateTime
+    gy = gregorian_dt.year
+    gm = gregorian_dt.month
+    gd = gregorian_dt.day
+
+    # Convert Gregorian date to JDN
+    jdn = gregorian_to_jdn(gy, gm, gd)
+
+    # Days since Islamic epoch and Islamic year
+    days_since_epoch = jdn - 1948439
+    iy = (30 * days_since_epoch + 10646) // 10631
+
+    # JDN of the first day of the computed Islamic year
+    jdn_iy1 = islamic_to_jdn(iy, 1, 1)
+
+    # Day index within the Islamic year starting from 0
+    day_index = jdn - jdn_iy1
+
+    # Find Islamic month and day by iterating month lengths
+    im = 1
+    remaining = day_index
+    leap = is_islamic_leap(iy)
+
+    while True:
+        # Month length: odd months 30, even months 29, except month 12 is 30 in leap years
+        if im == 12:
+            month_len = 30 if leap else 29
+        else:
+            month_len = 30 if (im % 2 == 1) else 29
+
+        if remaining < month_len:
+            iday = remaining + 1
+            break
+        remaining -= month_len
+        im += 1
+
+    # Return the Islamic date encoded as a pendulum.Date (year=iy, month=im, day=iday)
+    return pendulum.date(iy, im, iday)
+
+# Entry point: gregorian_to_islamic_date(gregorian_dt: pendulum.DateTime) -> pendulum.Date
+```

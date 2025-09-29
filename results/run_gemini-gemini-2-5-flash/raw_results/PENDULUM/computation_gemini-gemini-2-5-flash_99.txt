@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with time objects.
+2.  **Define a function**: Create a function that accepts a `pendulum.Time` object as input, representing the time of day.
+3.  **Calculate total seconds from midnight**: Extract the hour, minute, and second components from the input `pendulum.Time` object. Convert these into a total number of seconds elapsed since midnight.
+4.  **Determine total seconds in a day**: A standard day has 24 hours, each with 60 minutes, and each minute with 60 seconds. So, a day has 24 * 60 * 60 = 86400 seconds.
+5.  **Calculate decimal time**: Divide the total seconds from midnight by the total seconds in a day.
+6.  **Return the result**: The result will be a float representing the decimal time.
+
+```python
+import pendulum
+
+def calculate_decimal_time(time_of_day: pendulum.Time) -> float:
+    # Step 1: Calculate the total number of seconds from midnight for the given time.
+    # A pendulum.Time object has hour, minute, and second attributes.
+    total_seconds_from_midnight = (
+        time_of_day.hour * 3600 +
+        time_of_day.minute * 60 +
+        time_of_day.second
+    )
+
+    # Step 2: Determine the total number of seconds in a standard day.
+    # 24 hours * 60 minutes/hour * 60 seconds/minute = 86400 seconds
+    total_seconds_in_day = 86400.0 # Use float for division
+
+    # Step 3: Calculate the decimal time representation.
+    # This is the ratio of seconds elapsed from midnight to the total seconds in a day.
+    decimal_time = total_seconds_from_midnight / total_seconds_in_day
+
+    # Step 4: Return the result as a float.
+    return decimal_time
+
+# Entry point: calculate_decimal_time(time_of_day: pendulum.Time) -> float
+```

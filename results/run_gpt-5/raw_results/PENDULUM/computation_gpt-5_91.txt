@@ -1,0 +1,56 @@
+Let's think step by step to solve this problem.
+1. Understand that the Indian National (Saka) year starts on Chaitra 1, which falls on March 22 in a common Gregorian year and March 21 in a Gregorian leap year.
+2. Determine if the given Gregorian date falls on or after the Saka New Year of its Gregorian year; otherwise, it belongs to the Saka year that started in the previous Gregorian year.
+3. Compute the Saka year as Gregorian year minus 78 if on/after the Saka New Year of that year, otherwise Gregorian year minus 79.
+4. Compute the number of days since the Saka New Year and distribute this offset across Saka month lengths: Chaitra has 30 days (31 in a leap year of the Gregorian year in which Chaitra 1 occurs), then 5 months of 31 days, and the remaining 6 months of 30 days.
+5. Map the day offset to the corresponding Saka month and day, and construct a pendulum.Date with the computed Saka year, month, and day.
+
+```python
+import pendulum
+
+def _is_gregorian_leap(year: int) -> bool:
+    # Gregorian leap year rule
+    return (year % 4 == 0) and ((year % 100 != 0) or (year % 400 == 0))
+
+def gregorian_to_indian_national(g_date: pendulum.Date) -> pendulum.Date:
+    # Extract components from the Gregorian date
+    gy = g_date.year
+    # Determine Saka New Year start for the relevant Gregorian year
+    start_day_current = 21 if _is_gregorian_leap(gy) else 22
+    saka_start_current = pendulum.date(gy, 3, start_day_current)
+
+    if g_date >= saka_start_current:
+        saka_year = gy - 78
+        chaitra_len = 31 if _is_gregorian_leap(gy) else 30
+        saka_year_start = saka_start_current
+    else:
+        prev_year = gy - 1
+        start_day_prev = 21 if _is_gregorian_leap(prev_year) else 22
+        saka_year_start = pendulum.date(prev_year, 3, start_day_prev)
+        saka_year = gy - 79
+        chaitra_len = 31 if _is_gregorian_leap(prev_year) else 30
+
+    # Days since the start of the Saka year
+    day_index = (g_date - saka_year_start).in_days()  # 0-based offset
+
+    # Month lengths in the Saka year
+    # Chaitra, Vaisakha, Jyaistha, Asadha, Sravana, Bhadra, Asvina, Kartika, Agrahayana, Pausa, Magha, Phalguna
+    mlengths_chaitra_first = chaitra_len
+    # Next five months of 31 days, then six months of 30 days
+    months_lengths = [mlengths_chaitra_first, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30]
+
+    # Determine Saka month and day
+    month = 1
+    remaining = day_index
+    for ml in months_lengths:
+        if remaining < ml:
+            day = remaining + 1
+            break
+        remaining -= ml
+        month += 1
+
+    # Construct and return the Saka date as a pendulum.Date
+    return pendulum.date(saka_year, month, day)
+
+# Entry point: gregorian_to_indian_national(g_date: pendulum.Date) -> pendulum.Date
+```

@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the required class from the datetime library.
+2. Define a function that accepts a Unix timestamp (as a float or integer) and a boolean indicating whether to convert to UTC or local time.
+3. If UTC is requested, convert using datetime.fromtimestamp with timezone.utc; otherwise, use local time.
+4. Return the resulting datetime object.
+
+```python
+from datetime import datetime, timezone
+
+def unix_to_datetime(timestamp: float, use_utc: bool) -> datetime:
+    """
+    Convert a Unix timestamp to a human-readable datetime.
+    
+    Args:
+        timestamp: The Unix timestamp as a float or integer (seconds since the epoch).
+        use_utc: If True, convert to a UTC-aware datetime; if False, convert to local time.
+    
+    Returns:
+        A datetime object representing the human-readable time.
+    """
+    if use_utc:
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    else:
+        return datetime.fromtimestamp(timestamp)
+
+# Entry point: unix_to_datetime(timestamp: float, use_utc: bool) -> datetime
+```

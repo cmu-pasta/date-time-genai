@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with timezone-aware datetimes.
+2. Define a function that accepts two pendulum.DateTime objects, which may be in different time zones.
+3. Convert both datetimes to a common reference timezone (UTC) to accurately account for timezone differences.
+4. Subtract the normalized datetimes to obtain a pendulum.Duration representing the time difference.
+5. Return the resulting pendulum.Duration.
+
+```python
+import pendulum
+
+def timezone_aware_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration:
+    """
+    Calculate the time difference between two pendulum.DateTime values while
+    accounting for their respective time zones. The result preserves the sign
+    (dt2 - dt1) and is returned as a pendulum.Duration.
+    """
+    # Step 1: Normalize both datetimes to UTC to account for timezone offsets and DST
+    dt1_utc: pendulum.DateTime = dt1.in_timezone("UTC")
+    dt2_utc: pendulum.DateTime = dt2.in_timezone("UTC")
+    
+    # Step 2: Compute the difference as a pendulum.Duration (signed)
+    difference: pendulum.Duration = dt2_utc - dt1_utc
+    
+    # Step 3: Return the duration
+    return difference
+
+# Entry point: timezone_aware_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> pendulum.Duration
+```

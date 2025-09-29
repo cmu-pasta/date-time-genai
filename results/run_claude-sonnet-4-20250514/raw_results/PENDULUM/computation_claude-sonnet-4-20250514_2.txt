@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a date as input. This date can be provided as a pendulum.DateTime object.
+3. **Extract the day name**: Use pendulum's built-in method to get the day name from the DateTime object.
+4. **Return the result**: Return the day name as a string.
+
+```python
+import pendulum
+
+def get_day_name(dt: pendulum.DateTime) -> str:
+    # Step 1: Get the day name using pendulum's format method
+    day_name = dt.format('dddd')  # 'dddd' gives the full day name
+    
+    # Step 2: Return the day name
+    return day_name
+
+# Entry point: get_day_name(dt: pendulum.DateTime) -> str
+```

@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We will need `datetime` and `timedelta` from the `datetime` module to work with dates and calculate date differences.
+2.  **Define the function signature**: Create a function that accepts two arguments: a `datetime` object representing the starting date and an `integer` representing the number of business days to add. The function should return a `datetime` object.
+3.  **Initialize current date and counter**: Set a `current_date` variable to the given `start_date`. We will also use the input `n_business_days` as a counter for the remaining business days.
+4.  **Iterate to find the target date**: Loop as long as the `n_business_days` counter is greater than zero. In each iteration:
+    *   Increment the `current_date` by one calendar day using `timedelta(days=1)`.
+    *   Check if the `current_date` is a business day. A business day is typically Monday through Friday. The `weekday()` method of a `datetime` object returns 0 for Monday and 6 for Sunday. So, a business day is when `weekday()` is between 0 and 4 (inclusive).
+    *   If the `current_date` is a business day, decrement the `n_business_days` counter.
+5.  **Return the final date**: Once `n_business_days` reaches zero, the `current_date` will be the date exactly N business days after the initial `start_date`. Return this `current_date`.
+
+```python
+from datetime import datetime, timedelta
+
+def find_n_business_days_after(start_date: datetime, n_business_days: int) -> datetime:
+    # Initialize the current date to the start_date
+    current_date = start_date
+    
+    # Iterate until N business days have been counted
+    while n_business_days > 0:
+        # Move to the next calendar day
+        current_date += timedelta(days=1)
+        
+        # Check if the current day is a weekday (Monday=0 to Friday=4)
+        # Saturday is 5, Sunday is 6
+        if 0 <= current_date.weekday() <= 4:
+            # If it's a business day, decrement the counter
+            n_business_days -= 1
+            
+    return current_date
+
+# Entry point: find_n_business_days_after(start_date: datetime, n_business_days: int) -> datetime
+```

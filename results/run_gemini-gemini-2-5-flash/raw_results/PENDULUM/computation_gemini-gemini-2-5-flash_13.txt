@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: We will create a function that accepts a `pendulum.DateTime` object as input.
+3.  **Access the quarter attribute**: The `pendulum.DateTime` object conveniently provides a `.quarter` attribute which directly returns the quarter of the year (1-4).
+4.  **Return the result**: The result will be an integer representing the quarter.
+
+```python
+import pendulum
+
+def get_year_quarter(dt: pendulum.DateTime) -> int:
+    # Step 1: Access the 'quarter' attribute of the pendulum.DateTime object.
+    # This attribute directly provides the quarter of the year as an integer (1-4).
+    quarter = dt.quarter
+    
+    # Step 2: Return the quarter as an integer.
+    return quarter
+
+# Entry point: get_year_quarter(dt: pendulum.DateTime) -> int
+```

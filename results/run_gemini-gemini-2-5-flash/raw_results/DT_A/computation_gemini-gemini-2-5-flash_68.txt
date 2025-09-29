@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary classes**: We will need `date` and `timedelta` from the `datetime` module to work with dates and calculate date differences.
+2.  **Define the function**: Create a function that accepts an integer `year` as input.
+3.  **Establish the starting point**: Labor Day is in September. We'll start by creating a `date` object for September 1st of the given year.
+4.  **Determine the day of the week**: Get the `isoweekday()` of September 1st. `isoweekday()` returns 1 for Monday, 2 for Tuesday, ..., and 7 for Sunday.
+5.  **Calculate days to add**: Labor Day is the *first* Monday.
+    *   If September 1st is a Monday (weekday 1), then 0 days need to be added.
+    *   If September 1st is any other day, we need to add days until the next Monday. The number of days to add can be calculated as `(7 - current_weekday + 1) % 7`. For example:
+        *   If Tuesday (2): `(7 - 2 + 1) % 7 = 6 % 7 = 6` days.
+        *   If Sunday (7): `(7 - 7 + 1) % 7 = 1 % 7 = 1` day.
+6.  **Compute Labor Day date**: Add the calculated number of days to September 1st using a `timedelta` object to get the date of Labor Day.
+7.  **Return the result**: The function should return a `date` object representing Labor Day.
+
+```python
+from datetime import date, timedelta
+
+def find_labor_day(year: int) -> date:
+    # Step 3: Establish the starting point as September 1st of the given year
+    september_first = date(year, 9, 1)
+    
+    # Step 4: Determine the day of the week for September 1st
+    # isoweekday() returns 1 for Monday, 2 for Tuesday, ..., 7 for Sunday
+    day_of_week_sept_1st = september_first.isoweekday()
+    
+    # Step 5: Calculate days to add to reach the first Monday
+    # If September 1st is Monday (1), days_to_add = 0
+    # If September 1st is Tuesday (2), (7 - 2 + 1) % 7 = 6 % 7 = 6 days
+    # If September 1st is Sunday (7), (7 - 7 + 1) % 7 = 1 % 7 = 1 day
+    days_to_add = (7 - day_of_week_sept_1st + 1) % 7
+    
+    # Step 6: Compute Labor Day date by adding the calculated days
+    labor_day = september_first + timedelta(days=days_to_add)
+    
+    # Step 7: Return the result
+    return labor_day
+
+# Entry point: find_labor_day(year: int) -> date
+```

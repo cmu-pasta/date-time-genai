@@ -1,0 +1,68 @@
+Let's think step by step to solve this problem.
+1. Identify the Japanese era boundaries in the Gregorian calendar (Meiji, Taisho, Showa, Heisei, Reiwa).
+2. Accept a pendulum.Date and determine which era interval the date falls into.
+3. Compute the era year as (gregorian_year - era_start_year + 1), accounting for start-day boundaries.
+4. Return the result using only allowed pendulum types. Since strings and complex types are disallowed, encode:
+   - Duration.years = computed Japanese era year
+   - Duration.months = era index (1=Meiji, 2=Taisho, 3=Showa, 4=Heisei, 5=Reiwa)
+5. If the date is before Meiji, raise a ValueError.
+
+```python
+import pendulum
+
+def japanese_era_year(given_date: pendulum.Date) -> pendulum.Duration:
+    """
+    Determine the Japanese calendar era and year for a given Gregorian date.
+
+    Return encoding (due to output type restrictions):
+      - pendulum.Duration.years  = Japanese era year (>= 1)
+      - pendulum.Duration.months = Era index:
+            1 = Meiji
+            2 = Taisho
+            3 = Showa
+            4 = Heisei
+            5 = Reiwa
+
+    Raises:
+      ValueError: if the date is before the Meiji era start.
+    """
+
+    # Define era start and end dates (inclusive)
+    # Sources: Official era boundaries
+    MEIJI_START  = pendulum.date(1868, 1, 25)
+    TAISHO_START = pendulum.date(1912, 7, 30)
+    SHOWA_START  = pendulum.date(1926, 12, 25)
+    HEISEI_START = pendulum.date(1989, 1, 8)
+    REIWA_START  = pendulum.date(2019, 5, 1)
+
+    MEIJI_END  = TAISHO_START.subtract(days=1)
+    TAISHO_END = SHOWA_START.subtract(days=1)
+    SHOWA_END  = HEISEI_START.subtract(days=1)
+    HEISEI_END = REIWA_START.subtract(days=1)
+    REIWA_END  = pendulum.date(9999, 12, 31)  # open-ended
+
+    eras = [
+        ("Meiji",  1, MEIJI_START,  MEIJI_END),
+        ("Taisho", 2, TAISHO_START, TAISHO_END),
+        ("Showa",  3, SHOWA_START,  SHOWA_END),
+        ("Heisei", 4, HEISEI_START, HEISEI_END),
+        ("Reiwa",  5, REIWA_START,  REIWA_END),
+    ]
+
+    # Validate input range
+    if given_date < MEIJI_START:
+        raise ValueError("Date is before the start of the Meiji era (1868-01-25).")
+
+    # Find the era and compute era year
+    for _, era_index, start_date, end_date in eras:
+        if start_date <= given_date <= end_date:
+            era_year = given_date.year - start_date.year + 1
+            # If the given date is before the start date within the same year (shouldn't happen due to range),
+            # the adjustment would be handled by the range check above.
+            return pendulum.duration(years=era_year, months=era_index)
+
+    # This should be unreachable due to open-ended Reiwa
+    raise ValueError("Unable to determine era for the given date.")
+
+# Entry point: japanese_era_year(given_date: pendulum.Date) -> pendulum.Duration
+```

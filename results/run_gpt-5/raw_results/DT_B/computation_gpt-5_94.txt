@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+1. Accept a datetime input and interpret it in UTC. If it is timezone-aware, convert to UTC; if naive, treat it as UTC.
+2. Extract the Gregorian date components (year, month, day) and compute the fractional day from the time (hour, minute, second, microsecond).
+3. Apply the standard astronomical algorithm to compute the Julian Date (JD) from the Gregorian date.
+4. Convert Julian Date to Modified Julian Date (MJD) using MJD = JD - 2400000.5.
+5. Return the result as a float.
+
+```python
+from datetime import datetime, timezone
+
+def datetime_to_mjd(dt: datetime) -> float:
+    # Step 1: Work in UTC (assume naive datetimes are UTC)
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc)
+    
+    # Step 2: Extract components and compute fractional day
+    y = dt.year
+    m = dt.month
+    # Fractional part of the day
+    frac_day = (dt.hour + (dt.minute + (dt.second + dt.microsecond / 1_000_000.0) / 60.0) / 60.0) / 24.0
+    d = dt.day + frac_day
+
+    # Step 3: Algorithm adjustment for months Jan/Feb
+    if m <= 2:
+        y -= 1
+        m += 12
+
+    # Step 4: Gregorian calendar correction
+    A = y // 100
+    B = 2 - A + (A // 4)
+
+    # Step 5: Compute Julian Date (JD)
+    # Using int() as floor because all terms are positive here
+    JD = int(365.25 * (y + 4716)) + int(30.6001 * (m + 1)) + d + B - 1524.5
+
+    # Step 6: Convert to Modified Julian Date (MJD)
+    MJD = JD - 2400000.5
+
+    return float(MJD)
+
+# Entry point: datetime_to_mjd(dt: datetime) -> float
+```

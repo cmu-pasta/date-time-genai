@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+1. Choose a known reference datetime for a full moon and the average synodic month length (about 29.530588853 days).
+2. Convert the input date to a datetime at midnight to perform precise comparisons.
+3. Compute how many lunar cycles have elapsed between the reference and the given date.
+4. Find the smallest integer cycle index m such that reference + m * synodic_month is strictly after the given date.
+5. Return the calendar date of that next full moon.
+
+```python
+from datetime import date, datetime, timedelta
+
+def next_full_moon_after(d: date) -> date:
+    # Step 1: Known full moon reference (UTC) and synodic month length
+    reference_full_moon = datetime(2000, 1, 21, 16, 41, 0)  # Jan 21, 2000 16:41 UTC (full moon)
+    synodic_month = timedelta(days=29.530588853)  # Average time between full moons
+
+    # Step 2: Convert input date to a datetime at start of day
+    target_dt = datetime(d.year, d.month, d.day, 0, 0, 0)
+
+    # Step 3: Compute cycles elapsed as a float
+    cycles_elapsed = (target_dt - reference_full_moon) / synodic_month
+
+    # Step 4: Compute the next cycle index strictly after target_dt
+    # floor via // 1 works for negatives as well; add 1 to get the first full moon after target_dt
+    next_cycle_index = int(cycles_elapsed // 1) + 1
+
+    # Step 5: Compute the next full moon datetime and return its date
+    next_full_moon_dt = reference_full_moon + next_cycle_index * synodic_month
+    return next_full_moon_dt.date()
+
+# Entry point: next_full_moon_after(d: date) -> date
+```

@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with calendar computations.
+2. Define a function that accepts two integer years as inputs.
+3. Normalize the order of the years so counting proceeds from the smaller to the larger year.
+4. For each year in the inclusive range, create a Pendulum DateTime on January 1st and use its is_leap_year property to determine if the year is leap.
+5. Count the leap years and return the total as an integer.
+
+```python
+import pendulum
+
+def count_leap_years_between(year1: int, year2: int) -> int:
+    """
+    Count the number of leap years between two years inclusively.
+    Uses pendulum's is_leap_year property on a DateTime instance for each year.
+    """
+    # Step 1: Normalize the range
+    start = year1 if year1 <= year2 else year2
+    end = year2 if year2 >= year1 else year1
+
+    # Step 2: Iterate over the years and count leap years using Pendulum
+    count = 0
+    year = start
+    while year <= end:
+        if pendulum.datetime(year, 1, 1).is_leap_year:
+            count += 1
+        year += 1
+
+    # Step 3: Return the count as an integer
+    return count
+
+# Entry point: count_leap_years_between(year1: int, year2: int) -> int
+```

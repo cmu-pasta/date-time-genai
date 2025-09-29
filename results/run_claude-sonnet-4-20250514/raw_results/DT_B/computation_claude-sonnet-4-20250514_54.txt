@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a datetime object as input.
+3. **Find the start of the year**: Create a datetime object for January 1st of the same year as the given date.
+4. **Calculate days passed**: Find the number of days that have passed from the start of the year to the given date.
+5. **Calculate total days in the year**: Determine the total number of days in that year (accounting for leap years).
+6. **Calculate percentage**: Divide days passed by total days and multiply by 100 to get the percentage.
+7. **Return the result**: Return the percentage as a float.
+
+```python
+from datetime import datetime
+
+def calculate_year_percentage(dt: datetime) -> float:
+    # Step 1: Get the year from the given date
+    year = dt.year
+    
+    # Step 2: Create datetime for January 1st of that year
+    start_of_year = datetime(year, 1, 1)
+    
+    # Step 3: Calculate days passed from start of year to given date
+    days_passed = (dt - start_of_year).days
+    
+    # Step 4: Calculate total days in the year
+    start_of_next_year = datetime(year + 1, 1, 1)
+    total_days_in_year = (start_of_next_year - start_of_year).days
+    
+    # Step 5: Calculate percentage
+    percentage = (days_passed / total_days_in_year) * 100
+    
+    return percentage
+
+# Entry point: calculate_year_percentage(dt: datetime) -> float
+```

@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Accept a target calendar year and an anchor payday date that follows a bi-weekly (14-day) cadence.
+2. Determine the first payday on or after January 1st of the given year that aligns with the bi-weekly schedule anchored at the provided date.
+3. Count how many such paydays occur on or before December 31st of the given year by stepping forward in 14-day increments.
+4. Return the total count as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_biweekly_periods_in_year(year: int, anchor_date: date) -> int:
+    # Step 1: Define the start and end dates of the target year.
+    jan1 = date(year, 1, 1)
+    dec31 = date(year, 12, 31)
+
+    # Step 2: Compute the first payday on or after Jan 1 that aligns with the bi-weekly cycle.
+    # The cycle is every 14 days from 'anchor_date'.
+    # Compute offset to the next aligned date >= Jan 1 using modulo arithmetic on day counts.
+    delta_days = (jan1 - anchor_date).days
+    remainder = delta_days % 14  # Python's % yields a non-negative result
+    if remainder == 0:
+        first_payday = jan1
+    else:
+        first_payday = jan1 + timedelta(days=(14 - remainder))
+
+    # Step 3: Count all aligned paydays within the year (<= Dec 31).
+    count = 0
+    current = first_payday
+    while current <= dec31:
+        count += 1
+        current += timedelta(days=14)
+
+    # Step 4: Return the total number of bi-weekly payroll periods (paydays) in the given year.
+    return count
+
+# Entry point: count_biweekly_periods_in_year(year: int, anchor_date: date) -> int
+```

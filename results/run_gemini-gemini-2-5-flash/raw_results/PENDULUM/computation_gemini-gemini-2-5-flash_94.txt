@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with date and time objects.
+2.  **Define a function**: Create a function `convert_to_mjd` that accepts a `pendulum.DateTime` object as input.
+3.  **Calculate the Julian Date (JD)**:
+    *   The Julian Date of the Unix epoch (January 1, 1970, 00:00:00 UTC) is 2440587.5.
+    *   Get the Unix timestamp of the input `pendulum.DateTime` object using `dt.timestamp()`. This gives the number of seconds since the Unix epoch.
+    *   Convert this timestamp to days by dividing by the number of seconds in a day (86400).
+    *   Add this number of days to the Julian Date of the Unix epoch to get the Julian Date of the input datetime.
+4.  **Calculate the Modified Julian Date (MJD)**: The MJD is defined as Julian Date (JD) - 2400000.5. Subtract this offset from the calculated Julian Date.
+5.  **Return the result**: The MJD is typically represented as a float.
+
+```python
+import pendulum
+
+def convert_to_mjd(dt: pendulum.DateTime) -> float:
+    # Julian Date (JD) of the Unix epoch (Jan 1, 1970, 00:00:00 UTC)
+    JD_UNIX_EPOCH = 2440587.5
+    
+    # Seconds in a day
+    SECONDS_IN_DAY = 86400.0
+
+    # Get the Unix timestamp (seconds since Unix epoch)
+    timestamp_seconds = dt.timestamp()
+
+    # Calculate the number of days (and fractional days) since the Unix epoch
+    days_since_unix_epoch = timestamp_seconds / SECONDS_IN_DAY
+
+    # Calculate the Julian Date (JD)
+    julian_date = JD_UNIX_EPOCH + days_since_unix_epoch
+
+    # Calculate the Modified Julian Date (MJD)
+    # MJD = JD - 2400000.5
+    modified_julian_date = julian_date - 2400000.5
+    
+    return modified_julian_date
+
+# Entry point: convert_to_mjd(dt: pendulum.DateTime) -> float
+```

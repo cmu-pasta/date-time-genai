@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+
+1.  **Understand the Problem**: We need to find the date of the next new moon after a given date. The crucial constraint is to use *only* the `datetime` library. The `datetime` library does not inherently provide astronomical calculations.
+2.  **Acknowledge Limitations**: Since we are restricted to `datetime` only, we cannot perform precise astronomical computations to account for the elliptical orbit of the moon, varying orbital speeds, or other gravitational perturbations. We must rely on an *approximation* based on the average synodic month.
+3.  **Define Synodic Month**: The average period from one new moon to the next (synodic month) is approximately 29.530588 days. We will use this as a `timedelta`.
+4.  **Establish a Reference Point**: To start our approximation, we need a known new moon date. A widely accepted reference for a new moon occurred on January 6, 2000, at approximately 13:14 UTC. We'll use this as our `reference_new_moon`.
+5.  **Iterative Calculation**:
+    *   Initialize a `current_new_moon` variable with our `reference_new_moon`.
+    *   If the `given_date` is before our `reference_new_moon`, we need to go backward in time. Repeatedly subtract the `synodic_month` from `current_new_moon` until it is before or equal to the `given_date`.
+    *   Then, regardless of whether we went backward or started after the reference, we need to find the *next* new moon *after* the `given_date`. Repeatedly add the `synodic_month` to `current_new_moon` until it is strictly after the `given_date`.
+6.  **Return the Result**: The `current_new_moon` date at the end of the iteration will be our approximate next new moon.
+
+```python
+from datetime import datetime, timedelta
+
+def find_next_new_moon(given_date: datetime) -> datetime:
+    # Step 1: Define the average synodic month (period between new moons)
+    # This is an approximation as the actual period varies slightly.
+    synodic_month = timedelta(days=29.530588)
+
+    # Step 2: Establish a known historical new moon date as a reference point.
+    # New moon occurred on Jan 6, 2000, at 13:14 UTC.
+    reference_new_moon = datetime(2000, 1, 6, 13, 14, 0)
+
+    current_new_moon = reference_new_moon
+
+    # Step 3: Adjust the current_new_moon to be around the given_date.
+    # If the given_date is much earlier than our reference, go backward.
+    # We aim to get current_new_moon to be the last new moon before or on given_date.
+    while current_new_moon > given_date + synodic_month:
+        current_new_moon -= synodic_month
+    
+    # If the given_date is much later than our reference, go forward.
+    while current_new_moon <= given_date:
+        current_new_moon += synodic_month
+    
+    # At this point, current_new_moon should be the first new moon *after* given_date.
+    return current_new_moon
+
+# Entry point: find_next_new_moon(given_date: datetime) -> datetime
+```

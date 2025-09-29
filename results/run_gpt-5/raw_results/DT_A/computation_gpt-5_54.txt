@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Accept a datetime input to capture both date and time-of-day.
+2. Determine the start of the year and the start of the next year in the same timezone context as the input.
+3. Compute the elapsed seconds since the start of the year and the total number of seconds in the year.
+4. Calculate the percentage of the year that has passed and return it as a float.
+
+```python
+from datetime import datetime
+
+def calculate_year_progress(dt: datetime) -> float:
+    """
+    Calculate the percentage of the year that has passed for the given datetime.
+    
+    Args:
+        dt (datetime): A datetime object representing the moment to evaluate.
+        
+    Returns:
+        float: Percentage of the year that has passed (0.0 to 100.0).
+    """
+    # Start of the year in the same tzinfo as dt
+    start_of_year = dt.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+    # Start of the next year
+    start_next_year = start_of_year.replace(year=start_of_year.year + 1)
+    
+    # Elapsed and total seconds
+    elapsed_seconds = (dt - start_of_year).total_seconds()
+    total_seconds = (start_next_year - start_of_year).total_seconds()
+    
+    # Percentage of the year elapsed
+    return (elapsed_seconds / total_seconds) * 100.0
+
+# Entry point: calculate_year_progress(dt: datetime) -> float
+```

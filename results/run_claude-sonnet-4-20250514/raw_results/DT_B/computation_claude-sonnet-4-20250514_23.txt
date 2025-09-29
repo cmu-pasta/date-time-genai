@@ -1,0 +1,44 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the lunar cycle**: A full moon occurs approximately every 29.53 days (the synodic month).
+2. **Use a reference point**: We need a known full moon date as a reference to calculate future full moons.
+3. **Calculate cycles**: Determine how many lunar cycles have occurred since the reference date.
+4. **Find the next occurrence**: Calculate the next full moon date after the given date.
+5. **Return the result**: Return the calculated datetime as a datetime object.
+
+```python
+from datetime import datetime, timedelta
+
+def find_next_full_moon(given_date: datetime) -> datetime:
+    # Known full moon reference date: January 17, 2022 at 23:48 UTC
+    reference_full_moon = datetime(2022, 1, 17, 23, 48)
+    
+    # Average lunar cycle length in days
+    lunar_cycle_days = 29.530588853
+    
+    # Calculate the number of days between given date and reference
+    days_difference = (given_date - reference_full_moon).total_seconds() / (24 * 3600)
+    
+    # Calculate how many complete lunar cycles have passed
+    cycles_passed = days_difference / lunar_cycle_days
+    
+    # Find the next full moon cycle number
+    if given_date <= reference_full_moon:
+        # If given date is before or equal to reference, use reference date
+        next_cycle = 0
+    else:
+        # If given date is after reference, find the next cycle
+        next_cycle = int(cycles_passed) + 1
+    
+    # Calculate the next full moon date
+    days_to_add = next_cycle * lunar_cycle_days
+    next_full_moon = reference_full_moon + timedelta(days=days_to_add)
+    
+    # Ensure the calculated date is actually after the given date
+    while next_full_moon <= given_date:
+        next_full_moon += timedelta(days=lunar_cycle_days)
+    
+    return next_full_moon
+
+# Entry point: find_next_full_moon(given_date: datetime) -> datetime
+```

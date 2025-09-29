@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the standard library: datetime, timedelta, and ZoneInfo.
+2. Define a function that accepts two timezone-aware datetime objects (with ZoneInfo tzinfo).
+3. Validate that both inputs are timezone-aware and specifically use ZoneInfo to enable correct DST handling.
+4. Convert both timestamps to a common reference timezone (UTC) using astimezone to ensure DST transitions are accurately accounted for.
+5. Subtract the converted datetimes to obtain the exact timedelta difference.
+6. Return the resulting timedelta.
+
+```python
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+def exact_time_difference(ts1: datetime, ts2: datetime) -> timedelta:
+    """
+    Compute the exact time difference between two timestamps considering daylight saving time.
+    Both inputs must be timezone-aware datetimes using ZoneInfo.
+    Returns a signed timedelta: positive if ts2 is after ts1, negative otherwise.
+    """
+    # Validate that both datetimes are timezone-aware and use ZoneInfo
+    if ts1.tzinfo is None or ts2.tzinfo is None:
+        raise ValueError("Both timestamps must be timezone-aware (tzinfo set).")
+    if not isinstance(ts1.tzinfo, ZoneInfo) or not isinstance(ts2.tzinfo, ZoneInfo):
+        raise ValueError("Both timestamps must use zoneinfo.ZoneInfo for tzinfo.")
+
+    # Normalize to UTC to account for DST transitions precisely
+    ts1_utc = ts1.astimezone(ZoneInfo("UTC"))
+    ts2_utc = ts2.astimezone(ZoneInfo("UTC"))
+
+    # Compute and return the exact difference
+    return ts2_utc - ts1_utc
+
+# Entry point: exact_time_difference(ts1: datetime, ts2: datetime) -> timedelta
+```

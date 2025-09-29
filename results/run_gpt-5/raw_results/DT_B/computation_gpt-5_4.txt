@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes: datetime from datetime and ZoneInfo from zoneinfo.
+2. Define a function that accepts a datetime to convert, a source ZoneInfo, and a target ZoneInfo.
+3. If the input datetime is naive, attach the source timezone.
+4. If it is timezone-aware, normalize it to the source timezone.
+5. Convert the datetime to the target timezone and return it.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_timezone(dt: datetime, from_tz: ZoneInfo, to_tz: ZoneInfo) -> datetime:
+    # Step 1: Ensure the datetime is associated with the source timezone
+    if dt.tzinfo is None:
+        aware_dt = dt.replace(tzinfo=from_tz)
+    else:
+        # Normalize the datetime to the source timezone in case it differs
+        aware_dt = dt.astimezone(from_tz)
+    # Step 2: Convert to the target timezone and return
+    return aware_dt.astimezone(to_tz)
+
+# Entry point: convert_timezone(dt: datetime, from_tz: ZoneInfo, to_tz: ZoneInfo) -> datetime
+```

@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+1. Import the required classes (date, timedelta) from the datetime module.
+2. Accept a target year as an integer input to determine Memorial Day for that year.
+3. Create a date object for May 31 of the given year.
+4. Compute how many days to subtract to reach the last Monday (weekday 0) from May 31.
+5. Subtract the computed offset using timedelta to obtain the last Monday in May.
+6. Return the resulting date object.
+
+```python
+from datetime import date, timedelta
+
+def memorial_day(year: int) -> date:
+    # May 31 of the given year
+    may_31 = date(year, 5, 31)
+    # Weekday() returns 0=Monday ... 6=Sunday
+    offset = (may_31.weekday() - 0) % 7  # days since the most recent Monday
+    # Last Monday of May
+    return may_31 - timedelta(days=offset)
+
+# Entry point: memorial_day(year: int) -> date
+```

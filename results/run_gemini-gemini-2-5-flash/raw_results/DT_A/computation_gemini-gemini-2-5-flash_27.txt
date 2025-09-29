@@ -1,0 +1,46 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `date` class from the `datetime` module to construct date objects for year-end and year-start.
+2.  **Define a function**: Create a function that accepts two integers, `year1` and `year2`, representing the start and end years.
+3.  **Ensure correct order**: The calculation should work regardless of which year is numerically smaller, so we'll determine the actual start and end years.
+4.  **Iterate through years**: Loop through each year in the range specified by `year1` and `year2` (inclusive).
+5.  **Check for leap year**: For each year, determine if it is a leap year. A year is a leap year if it has 366 days. We can check this using the `datetime.date` objects. Specifically, a year `Y` is a leap year if the number of days between `date(Y, 1, 1)` and `date(Y, 12, 31)` (inclusive, meaning `date(Y, 12, 31).toordinal() - date(Y, 1, 1).toordinal() + 1` should be 366) is 366. Or more simply, if `date(Y, 12, 31).toordinal() - date(Y, 1, 1).toordinal() == 365`, then the year has 366 days and is a leap year.
+6.  **Count leap years**: Maintain a counter for the number of leap years found.
+7.  **Return the result**: Return the final count as an integer.
+
+```python
+from datetime import date
+
+def calculate_leap_years_between(year1: int, year2: int) -> int:
+    # Step 1: Ensure year1 is the smaller year for correct iteration
+    start_year = min(year1, year2)
+    end_year = max(year1, year2)
+
+    leap_year_count = 0
+
+    # Step 2: Iterate through each year in the given range (inclusive)
+    for year in range(start_year, end_year + 1):
+        # Step 3: Check if the current year is a leap year using datetime.date
+        # A year is a leap year if it has 366 days.
+        # We can determine the number of days in a year by checking the difference
+        # in ordinal values between Jan 1st and Dec 31st of that year.
+        # If (date(year, 12, 31).toordinal() - date(year, 1, 1).toordinal()) == 365,
+        # it means there are 366 days in the year (365 differences + 1 for the start day itself).
+        
+        # We can construct date objects for Jan 1 and Dec 31 of the current year.
+        jan_1 = date(year, 1, 1)
+        dec_31 = date(year, 12, 31)
+        
+        # Calculate the number of days in the year.
+        # The difference in ordinal values gives days between the two dates.
+        # Add 1 to include both start and end days.
+        days_in_year = dec_31.toordinal() - jan_1.toordinal() + 1
+
+        if days_in_year == 366:
+            leap_year_count += 1
+            
+    # Step 4: Return the total count of leap years
+    return leap_year_count
+
+# Entry point: calculate_leap_years_between(year1: int, year2: int) -> int
+```

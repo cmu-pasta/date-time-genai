@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input.
+3. **Calculate the approximate date**: The autumnal equinox typically occurs around September 22-23. We can use a simplified astronomical approximation to determine the exact date.
+4. **Apply the approximation formula**: For years around 2000, we can use the formula that accounts for leap years and the gradual shift in equinox timing.
+5. **Return the result**: Return the calculated date as a datetime object.
+
+The autumnal equinox date can be approximated using the formula that considers the year and leap year cycles. For the Gregorian calendar, a simplified approach is to calculate the day within September based on the year offset from a reference year.
+
+```python
+from datetime import datetime
+
+def find_autumnal_equinox(year: int) -> datetime:
+    # Step 1: Use simplified astronomical approximation
+    # Base calculation: autumnal equinox typically falls around September 22-23
+    
+    # Step 2: Calculate offset from reference year 2000
+    # The equinox shifts approximately 0.25 days per year due to leap year cycle
+    base_day = 22.5  # Base day in September (22.5 means between 22nd and 23rd)
+    
+    # Step 3: Apply year-based adjustment
+    # Account for leap year cycle (shifts about 6 hours per year, resets every 4 years)
+    year_offset = (year - 2000) * 0.25
+    
+    # Step 4: Calculate the day, accounting for leap year resets
+    adjusted_day = base_day + year_offset - ((year - 2000) // 4) * 1.0
+    
+    # Step 5: Determine if it falls on September 22 or 23
+    if adjusted_day < 23:
+        equinox_day = 22
+    else:
+        equinox_day = 23
+    
+    # Step 6: Create and return the datetime object
+    # Set to noon for the equinox time
+    return datetime(year, 9, equinox_day, 12, 0, 0)
+
+# Entry point: find_autumnal_equinox(year: int) -> datetime
+```

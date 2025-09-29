@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Normalize the input order so the earlier date comes first.
+2. Compute the inclusive total number of days between the two dates.
+3. Count the number of full weeks and multiply by 2 to get the weekend days from full weeks.
+4. For the remaining days (less than a week), count how many fall on Saturday or Sunday based on the start date’s weekday.
+5. Return the total count of weekend days as an integer.
+
+```python
+from datetime import date
+
+def calculate_weekend_days_between(d1: date, d2: date) -> int:
+    # Step 1: Normalize date order
+    start = d1 if d1 <= d2 else d2
+    end = d2 if d2 >= d1 else d1
+
+    # Step 2: Compute total days inclusive
+    total_days_inclusive = (end - start).days + 1
+
+    # Step 3: Weekend days from full weeks
+    full_weeks = total_days_inclusive // 7
+    weekend_days = full_weeks * 2  # Saturday and Sunday per full week
+
+    # Step 4: Count weekend days in the remaining partial week
+    remainder_days = total_days_inclusive % 7
+    start_wd = start.weekday()  # Monday=0 ... Sunday=6
+    extra_weekend_days = 0
+    for i in range(remainder_days):
+        wd = (start_wd + i) % 7
+        if wd >= 5:  # 5=Saturday, 6=Sunday
+            extra_weekend_days += 1
+
+    # Step 5: Total weekend days
+    return weekend_days + extra_weekend_days
+
+# Entry point: calculate_weekend_days_between(d1: date, d2: date) -> int
+```

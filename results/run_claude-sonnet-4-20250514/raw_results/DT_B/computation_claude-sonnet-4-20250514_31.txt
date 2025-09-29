@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the fiscal year concept**: A fiscal year starting in April means it runs from April 1st of one calendar year to March 31st of the next calendar year.
+
+2. **Determine the naming convention**: Fiscal years are typically named after the ending year. So April 2023 to March 2024 would be fiscal year 2024.
+
+3. **Define the logic**: 
+   - If the given date is from April to December (months 4-12), the fiscal year is the current calendar year + 1
+   - If the given date is from January to March (months 1-3), the fiscal year is the current calendar year
+
+4. **Implement the function**: Create a function that takes a datetime object as input and returns the fiscal year as an integer.
+
+5. **Extract month and year**: Use the datetime object's month and year attributes to determine which fiscal year the date belongs to.
+
+```python
+from datetime import datetime
+
+def determine_fiscal_year(date: datetime) -> int:
+    # Check if the month is April (4) or later
+    if date.month >= 4:
+        # Fiscal year is the next calendar year
+        return date.year + 1
+    else:
+        # Fiscal year is the current calendar year (for Jan-Mar)
+        return date.year
+
+# Entry point: determine_fiscal_year(date: datetime) -> int
+```

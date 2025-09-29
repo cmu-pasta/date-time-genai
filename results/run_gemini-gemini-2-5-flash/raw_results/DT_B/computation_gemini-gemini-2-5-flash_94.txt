@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `datetime` module from Python's standard library to work with date and time objects.
+2.  **Define the Modified Julian Date (MJD) epoch**: The MJD system counts days from 00:00:00 UTC on November 17, 1858. We will represent this as a `datetime` object. For simplicity and as the problem implies standard library usage without complex external libraries for timezone, we'll use a naive `datetime` for the epoch and assume the input `datetime` is also in a consistent (e.g., UTC-equivalent) naive form.
+3.  **Calculate the time difference**: Subtract the MJD epoch `datetime` from the input `datetime` to get a `timedelta` object.
+4.  **Convert the `timedelta` to fractional days**: The `timedelta` object needs to be converted into a floating-point number representing the total number of days, including fractional parts. This can be achieved by dividing the total seconds of the `timedelta` by the number of seconds in a day (24 hours \* 60 minutes \* 60 seconds).
+5.  **Return the result**: The calculated floating-point number is the Modified Julian Date.
+
+```python
+from datetime import datetime, timedelta
+
+def convert_to_modified_julian_date(dt: datetime) -> float:
+    # Step 1: Define the MJD epoch (00:00:00 on November 17, 1858)
+    mjd_epoch = datetime(1858, 11, 17, 0, 0, 0)
+    
+    # Step 2: Calculate the difference between the input datetime and the MJD epoch
+    time_difference: timedelta = dt - mjd_epoch
+    
+    # Step 3: Convert the timedelta to total days (including fractional parts)
+    # A day has 24 * 60 * 60 = 86400 seconds
+    modified_julian_date: float = time_difference.total_seconds() / 86400.0
+    
+    # Step 4: Return the result as a float
+    return modified_julian_date
+
+# Entry point: convert_to_modified_julian_date(dt: datetime) -> float
+```

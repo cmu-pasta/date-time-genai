@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2.  **Define a reference new moon date**: To calculate the lunar age, we need a known starting point for a new moon. We will use a historical new moon date as a fixed reference. For example, a new moon occurred on 2000-01-06.
+3.  **Define the average synodic month length**: The average period of a synodic month (new moon to new moon) is approximately 29.530588 days. We will use this constant for our calculation.
+4.  **Define a function**: Create a function that accepts a `date` object as input.
+5.  **Calculate the total days since the reference new moon**: Subtract the reference new moon date from the input date to get a `timedelta` object. Extract the total number of days from this `timedelta`.
+6.  **Calculate the lunar age**: Divide the total days by the average synodic month length. The remainder of this division (using the modulo operator) will give the number of days into the current lunar cycle, representing the lunar age.
+7.  **Return the result**: The result will be an integer, representing the days since the last new moon.
+
+```python
+from datetime import date
+
+def calculate_lunar_age(current_date: date) -> int:
+    # Step 1: Define a reference new moon date (e.g., New Moon on 2000-01-06)
+    # This date is a fixed astronomical reference point for the calculation.
+    reference_new_moon = date(2000, 1, 6)
+    
+    # Step 2: Define the average synodic month length (in days)
+    # This is the average period from one new moon to the next.
+    synodic_month_length = 29.530588
+
+    # Step 3: Calculate the total number of days between the reference new moon and the current date
+    # This gives us the total elapsed days over multiple lunar cycles.
+    total_days_since_reference = (current_date - reference_new_moon).days
+    
+    # Step 4: Calculate the lunar age
+    # The lunar age is the number of days into the current lunar cycle.
+    # We use the modulo operator (%) to find the remainder after dividing by the synodic month length.
+    # Taking the absolute value ensures correct calculation for dates before the reference.
+    lunar_age_float = total_days_since_reference % synodic_month_length
+    
+    # Ensure the result is non-negative and within the [0, synodic_month_length) range
+    if lunar_age_float < 0:
+        lunar_age_float += synodic_month_length
+
+    # Step 5: Convert the result to an integer (days)
+    return int(lunar_age_float)
+
+# Entry point: calculate_lunar_age(current_date: date) -> int
+```

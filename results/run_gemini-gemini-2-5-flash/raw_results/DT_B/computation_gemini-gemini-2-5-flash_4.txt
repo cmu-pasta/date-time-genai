@@ -1,0 +1,54 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need the `datetime` class from the `datetime` module and the `ZoneInfo` class from the `zoneinfo` module to handle timezone information.
+2.  **Define a function**: Create a function that accepts three arguments: the `datetime` object to convert, the `ZoneInfo` object representing its current (source) timezone, and the `ZoneInfo` object representing the target timezone.
+3.  **Localize the input datetime (if naive)**: If the input `datetime` object is "naive" (i.e., it has no timezone information attached), it must first be localized to the `source_timezone`. This means explicitly stating that the given `datetime` represents a point in time in the `source_timezone`. We achieve this by using the `replace()` method to set its `tzinfo`. If the `datetime` is already timezone-aware, `replace(tzinfo=...)` will convert it to the new `tzinfo` while maintaining the *local time* components, which is not what we want. The correct way for an already aware datetime is to directly use `astimezone()`. So, we should first ensure it's properly localized to the *source* timezone as an aware object before performing the conversion. A robust approach is to first make it timezone-aware in the source timezone, even if it's already timezone-aware but possibly in a *different* timezone, to ensure the conversion starts from the specified `source_timezone`.
+    *   If the input `dt` is naive, we attach the `source_timezone` to it: `dt.replace(tzinfo=source_timezone)`.
+    *   If the input `dt` is already aware but potentially in a different timezone, we first convert it to UTC, then re-localize to the `source_timezone` (this can be complex and error-prone for timezones with daylight saving transitions if the input datetime is not properly handled). A simpler and more common approach when dealing with a `datetime` `dt` and a `source_timezone` is to assume `dt` represents the time in `source_timezone`. If `dt` is naive, we localize it. If `dt` is already timezone-aware, we convert it to the `source_timezone` using `astimezone()`.
+    *   A more direct approach for the given problem: if the input `dt` is naive, apply `source_timezone` to it. If it's already aware, it's assumed to be already correct, or it should be first converted to the `source_timezone` using `astimezone(source_timezone)`. Let's assume the user provides a `datetime` that, if naive, is understood to be in the `source_timezone`. If it's already timezone-aware, then it should be treated as such. The most common scenario for "convert a timestamp from one timezone to another" when the input `datetime` might be naive is to interpret the naive `datetime` *as if it were* in the `source_timezone`. So, we'll make it aware using `source_timezone` if it's naive, or rely on its existing `tzinfo` if it's already aware.
+    *   The `datetime.astimezone()` method correctly handles conversion between aware `datetime` objects. If the input `dt` is naive, it must be localized *before* calling `astimezone()`.
+4.  **Convert to the target timezone**: Once we have a timezone-aware `datetime` object in the correct `source_timezone`, use the `astimezone()` method, passing the `target_timezone` as an argument, to get the `datetime` object in the new timezone.
+5.  **Return the result**: The `datetime` object representing the same point in time, but expressed in the `target_timezone`.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def convert_timezone(dt: datetime, source_timezone: ZoneInfo, target_timezone: ZoneInfo) -> datetime:
+    """
+    Converts a datetime object from one timezone to another.
+
+    Args:
+        dt: The datetime object to convert. If naive, it is assumed to be in the source_timezone.
+            If timezone-aware, its existing timezone will be respected for the initial point in time.
+        source_timezone: The ZoneInfo object for the initial timezone of the datetime.
+                         This is used to localize 'dt' if it is naive.
+        target_timezone: The ZoneInfo object for the desired target timezone.
+
+    Returns:
+        A datetime object representing the same point in time, but in the target_timezone.
+    """
+    # Step 1: Ensure the input datetime is timezone-aware and correctly interpreted
+    # If dt is naive, localize it to the source_timezone.
+    # If dt is already aware, astimezone() will correctly convert it,
+    # or if we want to explicitly ensure it's treated as source_timezone initially
+    # we can convert it to source_timezone first.
+    # The most common interpretation for "convert from one timezone to another"
+    # when input can be naive is to assume naive input IS in the source_timezone.
+    if dt.tzinfo is None:
+        # If naive, localize it to the source timezone.
+        aware_dt_in_source = dt.replace(tzinfo=source_timezone)
+    else:
+        # If already aware, convert it to the source timezone first
+        # to ensure it's based on the specified source_timezone before converting to target.
+        # This handles cases where dt might be aware but in a different timezone than source_timezone.
+        aware_dt_in_source = dt.astimezone(source_timezone)
+    
+    # Step 2: Convert the timezone-aware datetime to the target timezone
+    converted_dt = aware_dt_in_source.astimezone(target_timezone)
+    
+    # Step 3: Return the result
+    return converted_dt
+
+# Entry point: convert_timezone(dt: datetime, source_timezone: ZoneInfo, target_timezone: ZoneInfo) -> datetime
+```

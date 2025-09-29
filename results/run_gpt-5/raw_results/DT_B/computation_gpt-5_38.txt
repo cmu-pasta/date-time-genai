@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime library (date).
+2. Define a function that accepts a date as input.
+3. Initialize the search to the same month and year as the input date.
+4. For each month starting from the current month, construct the 13th day and check:
+   - It is strictly after the given date.
+   - It falls on a Friday (weekday() == 4).
+5. If both conditions are met, return that date; otherwise, move to the next month and continue.
+
+```python
+from datetime import date
+
+def next_friday_13th(after: date) -> date:
+    # Start from the same month and year as the given date
+    year = after.year
+    month = after.month
+
+    while True:
+        # Advance year when month exceeds December
+        if month > 12:
+            month = 1
+            year += 1
+
+        # Construct the 13th of the current month
+        candidate = date(year, month, 13)
+
+        # Check if it's strictly after the given date and is a Friday
+        if candidate > after and candidate.weekday() == 4:  # Monday=0 ... Friday=4
+            return candidate
+
+        # Move to the next month
+        month += 1
+
+# Entry point: next_friday_13th(after: date) -> date
+```

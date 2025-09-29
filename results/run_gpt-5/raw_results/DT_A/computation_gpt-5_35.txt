@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Accept the target month and year as integers.
+2. Compute the first day of the following month.
+3. Subtract one day to get the last calendar day of the target month.
+4. If that day is Saturday or Sunday, move backward day-by-day until a weekday (Monday–Friday) is reached.
+5. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def last_business_day(year: int, month: int) -> date:
+    # Compute the first day of the next month
+    if month == 12:
+        first_of_next_month = date(year + 1, 1, 1)
+    else:
+        first_of_next_month = date(year, month + 1, 1)
+    
+    # Get the last day of the target month
+    last_day = first_of_next_month - timedelta(days=1)
+    
+    # Move back to the most recent weekday if it's a weekend (Saturday=5, Sunday=6)
+    while last_day.weekday() >= 5:
+        last_day -= timedelta(days=1)
+    
+    return last_day
+
+# Entry point: last_business_day(year: int, month: int) -> date
+```

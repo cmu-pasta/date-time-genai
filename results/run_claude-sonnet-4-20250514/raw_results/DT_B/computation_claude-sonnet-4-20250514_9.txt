@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with timestamps.
+2. **Define a function**: We will create a function that accepts two datetime objects as input parameters.
+3. **Calculate the difference**: Subtract the two datetime objects to get a timedelta object representing the time difference.
+4. **Extract total seconds**: Use the `total_seconds()` method of the timedelta object to get the total number of seconds as a float.
+5. **Convert to integer**: Convert the float result to an integer and return it.
+6. **Handle absolute value**: Use abs() to ensure we get a positive difference, similar to the example provided.
+
+```python
+from datetime import datetime
+
+def calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int:
+    # Step 1: Calculate the difference between the two timestamps
+    difference = dt2 - dt1
+    
+    # Step 2: Get the total seconds from the timedelta object
+    total_seconds = difference.total_seconds()
+    
+    # Step 3: Convert to integer and ensure positive result
+    result = int(abs(total_seconds))
+    
+    return result
+
+# Entry point: calculate_seconds_difference(dt1: datetime, dt2: datetime) -> int
+```

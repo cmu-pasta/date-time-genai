@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a datetime as input to specify the month we're interested in.
+3. **Find the last day of the month**: Use pendulum's `end_of('month')` method to get the last calendar day of the given month.
+4. **Check if it's a business day**: Business days are Monday through Friday (weekday 0-4 in pendulum). If the last day is a weekend, we need to go backwards.
+5. **Find the last business day**: If the last calendar day is not a business day, subtract days until we find one that is.
+6. **Return the result**: Return the last business day as a pendulum.DateTime object.
+
+```python
+import pendulum
+
+def find_last_business_day(dt: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Get the last day of the month
+    last_day = dt.end_of('month')
+    
+    # Step 2: Check if it's a business day and move backwards if needed
+    # weekday() returns 0=Monday, 1=Tuesday, ..., 4=Friday, 5=Saturday, 6=Sunday
+    while last_day.weekday() > 4:  # 5=Saturday, 6=Sunday
+        last_day = last_day.subtract(days=1)
+    
+    # Step 3: Return the last business day
+    return last_day
+
+# Entry point: find_last_business_day(dt: pendulum.DateTime) -> pendulum.DateTime
+```

@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Accept a 24-hour time object as input.
+2. Create a base midnight datetime with matching tzinfo (to avoid naive/aware mismatches).
+3. Combine the input time with the same base date to get a comparable datetime.
+4. Subtract to get the elapsed timedelta since midnight.
+5. Convert the total seconds to whole minutes using floor division and return the integer.
+
+```python
+from datetime import datetime, date, time
+
+def minutes_since_midnight(t: time) -> int:
+    # Step 1: Create a base midnight datetime with matching tzinfo
+    midnight = datetime.combine(date.min, time(0, 0, tzinfo=t.tzinfo))
+    
+    # Step 2: Combine the input time with the same base date
+    dt = datetime.combine(date.min, t)
+    
+    # Step 3: Compute the timedelta since midnight
+    delta = dt - midnight
+    
+    # Step 4: Convert the total seconds to whole minutes
+    return int(delta.total_seconds() // 60)
+
+# Entry point: minutes_since_midnight(t: time) -> int
+```

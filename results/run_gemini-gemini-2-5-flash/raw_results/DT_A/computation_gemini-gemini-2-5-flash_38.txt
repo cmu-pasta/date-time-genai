@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1.  **Import necessary libraries**: We need the `datetime` and `timedelta` classes from the `datetime` module to work with dates and perform date arithmetic.
+2.  **Define the function**: Create a function that accepts one `datetime` object as input, representing the starting date.
+3.  **Initialize the search**: Start the search for Friday the 13th from the day *after* the given input date. This ensures we find an occurrence strictly *after* the input.
+4.  **Loop to find the next occurrence**: Enter a loop that continues indefinitely until the desired date is found.
+5.  **Check for Friday the 13th**: Inside the loop, for each `current_date`:
+    *   Check if the day of the month is 13 (`current_date.day == 13`).
+    *   Check if the day of the week is Friday (`current_date.weekday() == 4`, where Monday is 0 and Friday is 4).
+6.  **Return the found date**: If both conditions are met, the `current_date` is the next Friday the 13th. Return this `datetime` object.
+7.  **Increment date**: If the current `current_date` is not Friday the 13th, increment it by one day using `timedelta(days=1)` and continue the loop.
+
+```python
+from datetime import datetime, timedelta
+
+def find_next_friday_the_13th(start_date: datetime) -> datetime:
+    # Step 1: Start checking from the day after the given start_date.
+    # This ensures we find an occurrence strictly *after* the input date.
+    current_date = start_date + timedelta(days=1)
+
+    # Step 2: Loop indefinitely until a Friday the 13th is found.
+    while True:
+        # Step 3: Check if the current_date is the 13th day of the month.
+        if current_date.day == 13:
+            # Step 4: If it's the 13th, check if it's also a Friday.
+            # In datetime.weekday(), Monday is 0 and Friday is 4.
+            if current_date.weekday() == 4:
+                # Step 5: If both conditions are met, this is our target date.
+                return current_date
+        
+        # Step 6: If the current_date is not Friday the 13th,
+        # move to the next day and continue the search.
+        current_date += timedelta(days=1)
+
+# Entry point: find_next_friday_the_13th(start_date: datetime) -> datetime
+```

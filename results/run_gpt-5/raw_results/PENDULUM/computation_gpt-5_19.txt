@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date types.
+2. Define a function that accepts a pendulum.Date as input.
+3. Use the month (and optionally day) of the given date to determine the meteorological season in the Northern Hemisphere.
+4. Return an integer representing the season, avoiding complex data types:
+   - 1 = Spring (Mar 1–May 31)
+   - 2 = Summer (Jun 1–Aug 31)
+   - 3 = Autumn (Sep 1–Nov 30)
+   - 4 = Winter (Dec 1–Feb 28/29)
+
+```python
+import pendulum
+
+def determine_season(date: pendulum.Date) -> int:
+    """
+    Determine the meteorological season (Northern Hemisphere) for a given date.
+
+    Returns an integer code to avoid complex return types:
+      1 = Spring  (Mar 1 – May 31)
+      2 = Summer  (Jun 1 – Aug 31)
+      3 = Autumn  (Sep 1 – Nov 30)
+      4 = Winter  (Dec 1 – Feb 28/29)
+    """
+    month = date.month
+
+    if 3 <= month <= 5:
+        return 1  # Spring
+    elif 6 <= month <= 8:
+        return 2  # Summer
+    elif 9 <= month <= 11:
+        return 3  # Autumn
+    else:
+        return 4  # Winter (Dec, Jan, Feb)
+
+# Entry point: determine_season(date: pendulum.Date) -> int
+```

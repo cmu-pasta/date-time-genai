@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and determine year boundaries.
+
+2. **Define a function**: Create a function that accepts a year as an integer input.
+
+3. **Determine year boundaries**: Create datetime objects for January 1st of the given year and January 1st of the next year to establish the exact span of the year.
+
+4. **Calculate total days**: Find the difference between these dates to get the exact number of days in the year (accounting for leap years).
+
+5. **Calculate bi-weekly periods**: Divide the total days by 14 (since bi-weekly means every 2 weeks = 14 days) and return the integer part, which represents the number of complete bi-weekly periods.
+
+```python
+from datetime import datetime
+
+def calculate_biweekly_periods(year: int) -> int:
+    # Step 1: Create datetime objects for the start and end of the year
+    start_of_year = datetime(year, 1, 1)
+    start_of_next_year = datetime(year + 1, 1, 1)
+    
+    # Step 2: Calculate the total number of days in the year
+    total_days = (start_of_next_year - start_of_year).days
+    
+    # Step 3: Calculate the number of complete bi-weekly periods (14 days each)
+    biweekly_periods = total_days // 14
+    
+    # Step 4: Return the result as an integer
+    return biweekly_periods
+
+# Entry point: calculate_biweekly_periods(year: int) -> int
+```

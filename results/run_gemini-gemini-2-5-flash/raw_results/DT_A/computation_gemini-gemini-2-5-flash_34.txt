@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2.  **Define a function**: We will create a function that accepts a `datetime` object as input.
+3.  **Extract day of the year**: `datetime` objects have a `timetuple()` method, which returns a `time.struct_time` object. This struct has an attribute `tm_yday` which represents the day of the year (1-366).
+4.  **Return the result**: The `tm_yday` attribute is already an integer, which is the desired output.
+
+```python
+from datetime import datetime
+
+def convert_date_to_day_of_year(dt_obj: datetime) -> int:
+    # Step 1: Access the timetuple of the datetime object
+    # Step 2: Extract the tm_yday attribute, which is the day of the year (1-366)
+    day_of_year = dt_obj.timetuple().tm_yday
+    
+    # Step 3: Return the result as an integer
+    return day_of_year
+
+# Entry point: convert_date_to_day_of_year(dt_obj: datetime) -> int
+```

@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Accept the necessary inputs**: We need a datetime object representing any date in the target month (to get the month and year), and an integer representing the target weekday (0=Monday, 1=Tuesday, ..., 6=Sunday).
+
+2. **Find the last day of the month**: We can calculate this by getting the first day of the next month and subtracting one day.
+
+3. **Search backwards from the last day**: Starting from the last day of the month, we go backwards day by day until we find a day that matches our target weekday.
+
+4. **Return the result**: Once we find the matching weekday, we return that datetime object.
+
+```python
+from datetime import datetime, timedelta
+
+def find_last_weekday_in_month(month_date: datetime, target_weekday: int) -> datetime:
+    # Get the year and month from the input date
+    year = month_date.year
+    month = month_date.month
+    
+    # Calculate the first day of the next month
+    if month == 12:
+        next_month = datetime(year + 1, 1, 1)
+    else:
+        next_month = datetime(year, month + 1, 1)
+    
+    # Get the last day of the current month
+    last_day_of_month = next_month - timedelta(days=1)
+    
+    # Start from the last day and go backwards until we find the target weekday
+    current_date = last_day_of_month
+    while current_date.weekday() != target_weekday:
+        current_date = current_date - timedelta(days=1)
+    
+    return current_date
+
+# Entry point: find_last_weekday_in_month(month_date: datetime, target_weekday: int) -> datetime
+```

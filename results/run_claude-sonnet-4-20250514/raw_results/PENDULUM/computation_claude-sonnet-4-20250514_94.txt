@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1. **Understand Modified Julian Date (MJD)**: MJD is a variation of Julian Date where MJD = JD - 2400000.5. The MJD epoch starts at November 17, 1858, 00:00 UTC.
+
+2. **Import the necessary library**: We need the pendulum library to work with datetime objects.
+
+3. **Define a function**: Create a function that accepts a pendulum.DateTime object as input.
+
+4. **Set the MJD epoch**: Define the reference date (November 17, 1858, 00:00 UTC) which is the start of the Modified Julian Date system.
+
+5. **Convert input to UTC**: Ensure the input datetime is in UTC for accurate calculation.
+
+6. **Calculate the difference**: Find the difference between the input datetime and the MJD epoch in days.
+
+7. **Return as float**: Return the result as a floating-point number representing the Modified Julian Date.
+
+```python
+import pendulum
+
+def datetime_to_mjd(dt: pendulum.DateTime) -> float:
+    # MJD epoch starts at November 17, 1858, 00:00 UTC
+    mjd_epoch = pendulum.datetime(1858, 11, 17, 0, 0, 0, tz='UTC')
+    
+    # Convert input datetime to UTC for accurate calculation
+    dt_utc = dt.in_timezone('UTC')
+    
+    # Calculate the difference in days (as float)
+    difference = dt_utc.diff(mjd_epoch).total_seconds() / (24 * 3600)
+    
+    return difference
+
+# Entry point: datetime_to_mjd(dt: pendulum.DateTime) -> float
+```

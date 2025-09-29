@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+1. Import the datetime class from the datetime module.
+2. Define a function that accepts a target datetime and a reference datetime.
+3. Subtract the reference datetime from the target datetime to obtain a timedelta.
+4. Return the integer number of days from the timedelta.
+
+```python
+from datetime import datetime
+
+def days_since_reference(dt: datetime, reference: datetime) -> int:
+    """
+    Convert a datetime to the number of days since a reference datetime.
+
+    Args:
+        dt: The target datetime.
+        reference: The reference datetime.
+
+    Returns:
+        An integer representing the number of days between dt and reference.
+        Positive if dt is after reference, negative if before.
+    """
+    delta = dt - reference
+    return delta.days
+
+# Entry point: days_since_reference(dt: datetime, reference: datetime) -> int
+```

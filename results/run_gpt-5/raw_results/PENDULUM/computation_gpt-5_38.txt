@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Accept a pendulum.DateTime input representing the reference moment.
+3. Determine the first candidate 13th date strictly after the input:
+   - If the input day is less than 13, use the 13th of the current month.
+   - Otherwise, use the 13th of the next month.
+4. If the candidate 13th is not a Friday, move forward month by month (keeping the day as 13) until it falls on a Friday.
+5. Return the found date as a pendulum.Date.
+
+```python
+import pendulum
+
+def next_friday_13th(after_dt: pendulum.DateTime) -> pendulum.Date:
+    # Convert the input to a pendulum.Date for day-based comparison
+    start_date: pendulum.Date = after_dt.date()
+    
+    # Determine the first 13th strictly after the given datetime
+    if start_date.day < 13:
+        candidate: pendulum.Date = pendulum.date(start_date.year, start_date.month, 13)
+    else:
+        # Move to the 13th of the next month
+        candidate = pendulum.date(start_date.year, start_date.month, 13).add(months=1)
+    
+    # Iterate month by month until the 13th is a Friday
+    while not candidate.is_friday():
+        candidate = candidate.add(months=1)
+    
+    return candidate
+
+# Entry point: next_friday_13th(after_dt: pendulum.DateTime) -> pendulum.Date
+```

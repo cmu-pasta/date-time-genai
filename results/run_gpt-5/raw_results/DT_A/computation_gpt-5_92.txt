@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime library (date and timedelta).
+2. Accept the target year as an integer input.
+3. Construct the date for January 1st of the given year.
+4. Compute the number of days to the first Monday of January using the weekday() value.
+5. Add 14 days to the first Monday to get the third Monday (Martin Luther King Jr. Day).
+6. Return the resulting date object.
+
+```python
+from datetime import date, timedelta
+
+def mlk_day(year: int) -> date:
+    # Step 1: Start with January 1st of the given year
+    jan_first = date(year, 1, 1)
+    # Step 2: Compute days to the first Monday (Monday=0)
+    days_to_first_monday = (0 - jan_first.weekday()) % 7
+    first_monday = jan_first + timedelta(days=days_to_first_monday)
+    # Step 3: The third Monday is two weeks after the first Monday
+    third_monday = first_monday + timedelta(days=14)
+    # Step 4: Return the date of MLK Day
+    return third_monday
+
+# Entry point: mlk_day(year: int) -> date
+```

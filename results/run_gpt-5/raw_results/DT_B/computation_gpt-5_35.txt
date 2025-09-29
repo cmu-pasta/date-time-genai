@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Accept a date that represents any day within the target month.
+2. Move to the first day of the next month by setting the day to 28 (safe for all months) and adding a few days to cross into the next month.
+3. Subtract one day to get the last calendar day of the original month.
+4. If that day is Saturday or Sunday, move backward to the most recent Friday.
+5. Return the resulting date as the last business day of the month.
+
+```python
+from datetime import date, timedelta
+
+def find_last_business_day(d: date) -> date:
+    """
+    Return the last business day (Mon-Fri) of the month for the given date's month.
+    """
+    # Step 2: Move to the first day of the next month
+    first_of_next_month = (d.replace(day=28) + timedelta(days=4)).replace(day=1)
+    # Step 3: Get the last calendar day of the current month
+    last_calendar_day = first_of_next_month - timedelta(days=1)
+    # Step 4: Adjust backward if the last day is on a weekend (Saturday=5, Sunday=6)
+    if last_calendar_day.weekday() == 6:  # Sunday
+        return last_calendar_day - timedelta(days=2)
+    if last_calendar_day.weekday() == 5:  # Saturday
+        return last_calendar_day - timedelta(days=1)
+    return last_calendar_day
+
+# Entry point: find_last_business_day(d: date) -> date
+```

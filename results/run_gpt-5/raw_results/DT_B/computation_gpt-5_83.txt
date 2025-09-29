@@ -1,0 +1,42 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime and zoneinfo libraries.
+2. Create a function that takes a year (integer) and a timezone (ZoneInfo) as inputs.
+3. Iterate through each day of the specified year, checking the DST status at local noon for the current day and the previous day.
+4. Detect a transition where the previous day is in DST and the current day is not; this indicates the date when DST ends.
+5. Return the date of the detected transition. If no DST end is found in that year, return date.min to indicate absence.
+
+```python
+from datetime import date, datetime, time, timedelta
+from zoneinfo import ZoneInfo
+
+def find_dst_end_date(year: int, tz: ZoneInfo) -> date:
+    """
+    Returns the calendar date in the given year when daylight saving time ends
+    for the specified timezone. If the timezone does not observe a DST end in
+    that year, returns date.min.
+    """
+    # Start from January 2 to allow checking the previous day
+    d = date(year, 1, 2)
+    end = date(year, 12, 31)
+
+    # Helper to get DST offset at local noon for a given date
+    def dst_at_noon(day: date) -> timedelta:
+        local_noon = datetime.combine(day, time(12, 0), tzinfo=tz)
+        return local_noon.dst() or timedelta(0)
+
+    prev_day = d - timedelta(days=1)
+    prev_dst = dst_at_noon(prev_day)
+
+    while d <= end:
+        cur_dst = dst_at_noon(d)
+        # Detect a drop from positive DST offset to zero: DST ended on 'd'
+        if prev_dst > timedelta(0) and cur_dst == timedelta(0):
+            return d
+        prev_dst = cur_dst
+        d += timedelta(days=1)
+
+    # No DST end found for this year in this timezone
+    return date.min
+
+# Entry point: find_dst_end_date(year: int, tz: ZoneInfo) -> date
+```

@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `datetime` class from Python's standard `datetime` module to work with date objects.
+2.  **Define the function signature**: Create a function that accepts a `datetime` object as input and is expected to return an integer representing the fiscal year.
+3.  **Extract month and year**: From the input `datetime` object, retrieve its calendar `year` and `month`.
+4.  **Apply fiscal year logic**: Since the fiscal year starts in April, we will check the month.
+    *   If the month is 4 (April) or later (i.e., `month >= 4`), the fiscal year is the same as the calendar year of the given date.
+    *   If the month is earlier than 4 (i.e., January, February, March, `month < 4`), the fiscal year is the calendar year of the given date minus one, as these months belong to the fiscal year that started in the previous calendar year.
+5.  **Return the fiscal year**: Return the calculated integer.
+
+```python
+from datetime import datetime
+
+def determine_fiscal_year(dt: datetime) -> int:
+    # Step 1: Get the calendar year and month from the input datetime object
+    calendar_year = dt.year
+    month = dt.month
+    
+    # Step 2: Apply the fiscal year logic (April start)
+    # If the month is April (4) or later, the fiscal year is the current calendar year.
+    # Otherwise (Jan, Feb, Mar), it's the previous calendar year.
+    if month >= 4:
+        fiscal_year = calendar_year
+    else:
+        fiscal_year = calendar_year - 1
+        
+    # Step 3: Return the calculated fiscal year as an integer
+    return fiscal_year
+
+# Entry point: determine_fiscal_year(dt: datetime) -> int
+```

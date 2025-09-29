@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts two datetimes as inputs.
+3. Compute the time difference between the two datetimes.
+4. Add half of this difference to the first datetime to get the midpoint.
+5. Return the resulting midpoint datetime.
+
+```python
+from datetime import datetime, timedelta
+
+def midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
+    """
+    Compute the midpoint datetime between two datetime instances.
+    The result lies exactly halfway between dt1 and dt2 along the timeline.
+    """
+    delta = dt2 - dt1
+    midpoint = dt1 + (delta / 2)
+    return midpoint
+
+# Entry point: midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime
+```

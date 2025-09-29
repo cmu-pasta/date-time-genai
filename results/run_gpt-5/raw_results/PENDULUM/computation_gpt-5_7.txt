@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date and time.
+2. Define a function that accepts an integer year as input.
+3. Create a pendulum.DateTime for January 1st of the given year.
+4. Use the is_leap_year() method to determine if the year is a leap year.
+5. Return the result as a boolean.
+
+```python
+import pendulum
+
+def is_leap_year(year: int) -> bool:
+    # Create a Pendulum DateTime for January 1st of the given year
+    dt = pendulum.datetime(year, 1, 1)
+    # Determine if the year is a leap year using Pendulum's API
+    return dt.is_leap_year()
+
+# Entry point: is_leap_year(year: int) -> bool
+```

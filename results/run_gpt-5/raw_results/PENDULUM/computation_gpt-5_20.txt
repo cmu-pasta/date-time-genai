@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library which provides date utilities.
+2. Accept a pendulum.Date as input to represent the given date.
+3. Determine the weekday index of the given date.
+4. Compute how many days to subtract to reach the previous Friday, ensuring it's strictly before the given date (7 days back if the date itself is Friday).
+5. Subtract the computed number of days and return the resulting pendulum.Date.
+
+```python
+import pendulum
+
+def previous_friday(given_date: pendulum.Date) -> pendulum.Date:
+    # Step 1: Identify the weekday of the given date (Monday=0 ... Sunday=6)
+    weekday_index = given_date.day_of_week
+
+    # Step 2: Compute days to subtract to get to the previous Friday (strictly before the given date)
+    delta = (weekday_index - pendulum.FRIDAY) % 7
+    if delta == 0:
+        delta = 7  # If the given date is Friday, go back 7 days to get the previous Friday
+
+    # Step 3: Return the previous Friday as a pendulum.Date
+    return given_date.subtract(days=delta)
+
+# Entry point: previous_friday(given_date: pendulum.Date) -> pendulum.Date
+```

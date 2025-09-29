@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a pendulum.DateTime object as input.
+3. **Extract the month**: Get the month number from the date to determine the season.
+4. **Determine the season**: Use the meteorological definition of seasons based on months (Spring: March-May, Summer: June-August, Autumn: September-November, Winter: December-February).
+5. **Return the result**: Since we can only return specific types from the pendulum library, we'll return an integer representing the season (1=spring, 2=summer, 3=autumn, 4=winter).
+
+```python
+import pendulum
+
+def determine_season(date: pendulum.DateTime) -> int:
+    # Extract the month from the date
+    month = date.month
+    
+    # Determine season based on meteorological definition
+    if month in [3, 4, 5]:  # March, April, May
+        return 1  # Spring
+    elif month in [6, 7, 8]:  # June, July, August
+        return 2  # Summer
+    elif month in [9, 10, 11]:  # September, October, November
+        return 3  # Autumn
+    else:  # December (12), January (1), February (2)
+        return 4  # Winter
+
+# Entry point: determine_season(date: pendulum.DateTime) -> int
+```

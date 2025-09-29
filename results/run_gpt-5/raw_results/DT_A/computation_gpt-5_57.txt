@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Import the required type (date) from the datetime module.
+2. Define a function that accepts two dates as inputs.
+3. Normalize the order of the inputs so we always compute forward in time.
+4. Compute the total number of days in the half-open interval [start, end).
+5. Convert total days to business days by counting 5 weekdays per full week plus any remaining weekdays.
+6. Convert business days to the number of complete work weeks by integer-dividing by 5.
+7. Return the resulting integer.
+
+```python
+from datetime import date
+
+def calculate_work_weeks_between(d1: date, d2: date) -> int:
+    # Step 1: Normalize the date order to ensure start <= end
+    if d1 <= d2:
+        start = d1
+        end = d2
+    else:
+        start = d2
+        end = d1
+
+    # Step 2: Compute total days in the half-open interval [start, end)
+    total_days = (end - start).days  # exclusive of the end date
+
+    # Step 3: Convert total days to business days (weekdays only)
+    full_weeks = total_days // 7
+    remainder = total_days % 7
+    start_weekday = start.weekday()  # Monday=0 ... Sunday=6
+
+    business_days = full_weeks * 5
+    for i in range(remainder):
+        if (start_weekday + i) % 7 < 5:  # Monday-Friday are < 5
+            business_days += 1
+
+    # Step 4: Convert business days to complete work weeks
+    work_weeks = business_days // 5
+    return work_weeks
+
+# Entry point: calculate_work_weeks_between(d1: date, d2: date) -> int
+```

@@ -1,0 +1,62 @@
+Let's think step by step to solve this problem.
+
+1. **Import necessary libraries**: We need the `datetime` module to work with dates and times.
+2. **Define the function**: Create a function that accepts a date and geographic coordinates (latitude and longitude as floats).
+3. **Calculate day of year**: Determine which day of the year it is for solar calculations.
+4. **Implement simplified solar calculations**: Use basic arithmetic to approximate the solar declination and equation of time.
+5. **Calculate sunset time**: Use the geographic coordinates and solar parameters to determine sunset time.
+6. **Return the result**: Format and return the sunset time as a datetime object.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_sunset_time(date: datetime, latitude: float, longitude: float) -> datetime:
+    # Step 1: Get day of year
+    day_of_year = date.timetuple().tm_yday
+    
+    # Step 2: Calculate solar declination (simplified approximation)
+    # Using basic arithmetic approximation instead of trigonometric functions
+    P = (day_of_year - 81) * 0.0174533  # Convert to radians approximation
+    declination = 23.45 * (P * 0.01745329)  # Simplified declination calculation
+    
+    # Step 3: Calculate equation of time (simplified)
+    B = (day_of_year - 81) * 0.9856
+    equation_of_time = 4 * (longitude - 15 * 0) + B * 0.0069  # Simplified equation
+    
+    # Step 4: Calculate hour angle for sunset (simplified approximation)
+    # Using simplified calculation without trigonometric functions
+    lat_factor = latitude * 0.01745329  # Convert latitude to radians approximation
+    decl_factor = declination * 0.01745329
+    
+    # Simplified hour angle calculation using basic approximation
+    # This is a rough approximation avoiding complex trigonometric functions
+    if abs(latitude) < 66.5:  # For most locations not in polar regions
+        hour_angle = 15 * (6 + equation_of_time / 60)  # Approximation
+        if latitude > 0:  # Northern hemisphere adjustment
+            hour_angle += declination * 0.5
+        else:  # Southern hemisphere adjustment
+            hour_angle -= declination * 0.5
+    else:
+        hour_angle = 90  # Approximation for polar regions
+    
+    # Step 5: Calculate sunset time
+    solar_noon = 12 + equation_of_time / 60
+    sunset_hour = solar_noon + hour_angle / 15
+    
+    # Ensure sunset hour is within valid range
+    if sunset_hour >= 24:
+        sunset_hour -= 24
+    elif sunset_hour < 0:
+        sunset_hour += 24
+    
+    # Step 6: Convert to datetime
+    hours = int(sunset_hour)
+    minutes = int((sunset_hour - hours) * 60)
+    seconds = int(((sunset_hour - hours) * 60 - minutes) * 60)
+    
+    sunset_time = datetime(date.year, date.month, date.day, hours, minutes, seconds)
+    
+    return sunset_time
+
+# Entry point: calculate_sunset_time(date: datetime, latitude: float, longitude: float) -> datetime
+```

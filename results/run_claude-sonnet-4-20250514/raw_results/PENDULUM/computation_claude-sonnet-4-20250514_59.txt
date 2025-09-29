@@ -1,0 +1,56 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the problem**: Chinese New Year is based on the lunar calendar and typically falls between January 21 and February 20 in the Gregorian calendar. The exact date varies each year.
+
+2. **Import necessary libraries**: We need the pendulum library for date calculations.
+
+3. **Create approximation method**: Since exact lunar calendar calculations are complex, we'll use a mathematical approximation based on the average lunar cycle pattern.
+
+4. **Calculate base date**: Chinese New Year follows a cycle that can be approximated using modular arithmetic based on known reference points.
+
+5. **Handle year input and return date**: The function should accept an integer year and return a pendulum.Date object.
+
+```python
+import pendulum
+
+def find_chinese_new_year(year: int) -> pendulum.Date:
+    # Using a mathematical approximation based on lunar calendar patterns
+    # Reference point: 2000 had Chinese New Year on February 5
+    reference_year = 2000
+    reference_date = pendulum.date(2000, 2, 5)
+    
+    # Average lunar year is approximately 354.37 days
+    # But Chinese calendar adds leap months, making average ~365.24 days
+    # The cycle repeats roughly every 19 years (Metonic cycle approximation)
+    
+    year_diff = year - reference_year
+    
+    # Calculate approximate days offset using lunar calendar approximation
+    # This uses a simplified calculation based on the average offset pattern
+    days_offset = int((year_diff * 365.24) % (19 * 365.24) / 365.24 * 29.53)
+    
+    # Apply modular adjustment to keep within typical CNY date range
+    if days_offset > 365:
+        days_offset = days_offset % 365
+    
+    # Convert days offset to a date adjustment
+    approximate_days = (days_offset * 11) % 30 - 15  # Normalize to +/- 15 day range
+    
+    # Calculate the approximate Chinese New Year date
+    base_date = pendulum.date(year, 2, 1)  # Start from February 1st
+    chinese_new_year = base_date.add(days=approximate_days)
+    
+    # Ensure the date falls within the typical range (Jan 21 - Feb 20)
+    if chinese_new_year.month == 1 and chinese_new_year.day < 21:
+        chinese_new_year = chinese_new_year.add(days=30)
+    elif chinese_new_year.month == 2 and chinese_new_year.day > 20:
+        chinese_new_year = chinese_new_year.subtract(days=30)
+    elif chinese_new_year.month > 2:
+        chinese_new_year = pendulum.date(year, 2, 20)
+    elif chinese_new_year.month < 1:
+        chinese_new_year = pendulum.date(year, 1, 21)
+    
+    return chinese_new_year
+
+# Entry point: find_chinese_new_year(year: int) -> pendulum.Date
+```

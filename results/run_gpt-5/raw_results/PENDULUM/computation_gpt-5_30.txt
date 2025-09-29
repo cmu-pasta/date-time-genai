@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with Pendulum-specific date and time types.
+2. Define a function that accepts a pendulum.DateTime representing the input timestamp.
+3. Normalize the input timestamp to UTC to ensure a consistent epoch reference.
+4. Define the Unix epoch as 1970-01-01T00:00:00Z.
+5. Subtract the epoch from the normalized timestamp to get a pendulum.Duration representing elapsed time.
+6. Return the pendulum.Duration.
+
+```python
+import pendulum
+
+def elapsed_since_epoch(ts: pendulum.DateTime) -> pendulum.Duration:
+    # Step 1: Normalize the input timestamp to UTC
+    if ts.tzinfo is None:
+        ts_utc = ts.replace(tzinfo=pendulum.timezone('UTC'))
+    else:
+        ts_utc = ts.in_timezone('UTC')
+    
+    # Step 2: Define the Unix epoch in UTC
+    epoch = pendulum.datetime(1970, 1, 1, 0, 0, 0, tz='UTC')
+    
+    # Step 3: Compute the elapsed duration since epoch
+    elapsed = ts_utc - epoch
+    
+    # Step 4: Return the elapsed time as a pendulum.Duration
+    return elapsed
+
+# Entry point: elapsed_since_epoch(ts: pendulum.DateTime) -> pendulum.Duration
+```

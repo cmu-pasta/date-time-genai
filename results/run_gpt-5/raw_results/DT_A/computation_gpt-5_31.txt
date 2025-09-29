@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+1. Import the required class from the datetime library to handle date inputs.
+2. Define a function that accepts a date.
+3. Determine if the date falls between April and December (inclusive). If yes, the fiscal year ends the next calendar year; otherwise, it ends in the current year.
+4. Return the fiscal year as an integer (commonly labeled by its ending year).
+
+```python
+from datetime import date
+
+def determine_fiscal_year(given_date: date) -> int:
+    """
+    Determine the fiscal year for a given date, assuming the fiscal year starts on April 1.
+    Fiscal year is labeled by its ending calendar year.
+    Example: Dates from 2023-04-01 to 2024-03-31 return 2024.
+    """
+    # If month is April (4) or later, fiscal year ends next calendar year
+    if given_date.month >= 4:
+        return given_date.year + 1
+    # Otherwise (Jan–Mar), fiscal year ends in the current calendar year
+    return given_date.year
+
+# Entry point: determine_fiscal_year(given_date: date) -> int
+```

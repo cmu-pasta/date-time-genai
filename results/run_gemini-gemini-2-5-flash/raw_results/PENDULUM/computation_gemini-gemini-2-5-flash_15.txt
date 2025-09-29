@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and durations.
+2.  **Define a function**: Create a function `calculate_weekends_between_dates` that accepts two `pendulum.DateTime` objects as input.
+3.  **Determine the iteration range**: Identify the earlier and later of the two input dates to ensure we iterate in a forward direction.
+4.  **Initialize a counter**: Set a variable `weekend_count` to zero to store the number of weekend days found.
+5.  **Iterate through each day**: Use a `while` loop starting from the `start_date` and continuing until the `current_date` exceeds the `end_date`.
+6.  **Check if the day is a weekend**: Inside the loop, check the `day_of_week` property of the `current_date`. According to ISO 8601 (which Pendulum follows), Monday is 1, and Sunday is 7. So, Saturday is 6 and Sunday is 7. If `current_date.day_of_week` is 6 or 7, increment `weekend_count`.
+7.  **Advance to the next day**: Increment the `current_date` by one day in each iteration using `current_date.add(days=1)`.
+8.  **Return the total count**: After the loop completes, return the `weekend_count`.
+
+```python
+import pendulum
+
+def calculate_weekends_between_dates(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    # Step 1: Determine the start and end dates for iteration
+    start_date = min(dt1, dt2).start_of('day') # Ensure we start from the beginning of the day
+    end_date = max(dt1, dt2).start_of('day')   # Ensure we end at the beginning of the day for consistent daily checks
+
+    # Step 2: Initialize a counter for weekend days
+    weekend_count = 0
+    
+    # Step 3: Iterate through each day between start_date and end_date (inclusive)
+    current_date = start_date
+    while current_date <= end_date:
+        # Step 4: Check if the current day is a Saturday (6) or Sunday (7)
+        # Pendulum's day_of_week follows ISO 8601 (Monday=1, Sunday=7)
+        if current_date.day_of_week == pendulum.SATURDAY or current_date.day_of_week == pendulum.SUNDAY:
+            weekend_count += 1
+        
+        # Step 5: Move to the next day
+        current_date = current_date.add(days=1)
+        
+    # Step 6: Return the total number of weekend days
+    return weekend_count
+
+# Entry point: calculate_weekends_between_dates(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+```

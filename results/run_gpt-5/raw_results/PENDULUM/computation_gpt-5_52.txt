@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with Date and DateTime inputs.
+2. Define a helper function to convert an integer year to its Roman numeral representation.
+3. Define the main function that accepts a pendulum.Date or pendulum.DateTime, extracts the year, converts it to Roman numerals, and returns the result.
+4. Ensure no default arguments and specify the entry point.
+
+```python
+import pendulum
+
+def _int_to_roman(year: int) -> str:
+    if year <= 0 or year > 3999:
+        raise ValueError("Year must be between 1 and 3999 for Roman numeral conversion.")
+    values = [1000, 900, 500, 400, 100, 90,  50,  40,  10,  9,   5,   4,   1]
+    numerals = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"]
+    result = []
+    remaining = year
+    for v, n in zip(values, numerals):
+        count, remaining = divmod(remaining, v)
+        if count:
+            result.append(n * count)
+        if remaining == 0:
+            break
+    return "".join(result)
+
+def convert_year_to_roman(date_input) -> str:
+    """
+    Accepts a pendulum.Date or pendulum.DateTime and returns the Roman numeral representation of its year.
+    """
+    if not isinstance(date_input, (pendulum.Date, pendulum.DateTime)):
+        raise TypeError("Input must be a pendulum.Date or pendulum.DateTime.")
+    year = date_input.year
+    return _int_to_roman(year)
+
+# Entry point: convert_year_to_roman(date_input: pendulum.Date | pendulum.DateTime) -> str
+```

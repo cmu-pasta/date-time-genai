@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates and times.
+2. Define a function that accepts a pendulum.DateTime input representing the reference moment.
+3. Construct the Valentine's Day candidate for the same year as the input, preserving the original timezone.
+4. If the input moment is strictly before that candidate, return it; otherwise, return the Valentine's Day of the following year.
+
+```python
+import pendulum
+
+def next_valentines_day(dt: pendulum.DateTime) -> pendulum.DateTime:
+    """
+    Return the next Valentine's Day (Feb 14) strictly after the given datetime.
+    The returned datetime is set to midnight (00:00:00) in the same timezone as the input.
+    """
+    # Candidate Valentine's Day in the same year
+    candidate = pendulum.datetime(dt.year, 2, 14, tz=dt.tz)
+    
+    # If the given datetime is before Feb 14 of the same year, return that; else, return next year's Feb 14
+    if dt < candidate:
+        return candidate
+    else:
+        return pendulum.datetime(dt.year + 1, 2, 14, tz=dt.tz)
+
+# Entry point: next_valentines_day(dt: pendulum.DateTime) -> pendulum.DateTime
+```

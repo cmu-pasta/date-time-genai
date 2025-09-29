@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and times.
+2. **Define a function**: We will create a function that accepts a target datetime and a reference datetime as pendulum.DateTime objects.
+3. **Calculate the difference**: Use pendulum's diff method to find the difference between the target date and reference date.
+4. **Extract days**: Get the number of days from the difference using the in_days() method.
+5. **Return the result**: Return the number of days as an integer.
+
+```python
+import pendulum
+
+def days_since_reference(target_date: pendulum.DateTime, reference_date: pendulum.DateTime) -> int:
+    # Calculate the difference between target date and reference date
+    difference = target_date.diff(reference_date).in_days()
+    
+    # Return the number of days as an integer
+    return difference
+
+# Entry point: days_since_reference(target_date: pendulum.DateTime, reference_date: pendulum.DateTime) -> int
+```

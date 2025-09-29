@@ -1,0 +1,46 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates and times.
+2. **Define a function**: Create a function that accepts a datetime object and longitude (float) as inputs.
+3. **Calculate Julian Date**: Convert the given datetime to Julian Date, which is needed for sidereal time calculations.
+4. **Calculate Greenwich Mean Sidereal Time (GMST)**: Use the standard formula to calculate GMST from the Julian Date.
+5. **Calculate Local Sidereal Time**: Convert GMST to local sidereal time using the longitude.
+6. **Return the result**: Return the sidereal time as a datetime object representing the time portion.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_sidereal_time(dt: datetime, longitude: float) -> datetime:
+    # Step 1: Calculate Julian Date
+    # Julian Date for January 1, 2000, 12:00 UT is 2451545.0
+    j2000 = datetime(2000, 1, 1, 12, 0, 0)
+    delta = dt - j2000
+    julian_date = 2451545.0 + delta.total_seconds() / 86400.0
+    
+    # Step 2: Calculate days since J2000.0
+    days_since_j2000 = julian_date - 2451545.0
+    
+    # Step 3: Calculate Greenwich Mean Sidereal Time (GMST) in hours
+    # Formula: GMST = 18.697374558 + 24.06570982441908 * D
+    gmst_hours = 18.697374558 + 24.06570982441908 * days_since_j2000
+    
+    # Step 4: Normalize GMST to 24-hour format
+    gmst_hours = gmst_hours % 24.0
+    
+    # Step 5: Calculate Local Sidereal Time
+    # LST = GMST + (longitude in degrees / 15)
+    lst_hours = gmst_hours + (longitude / 15.0)
+    lst_hours = lst_hours % 24.0
+    
+    # Step 6: Convert to datetime object (using base date for time representation)
+    base_date = datetime(dt.year, dt.month, dt.day)
+    hours = int(lst_hours)
+    minutes = int((lst_hours - hours) * 60)
+    seconds = int(((lst_hours - hours) * 60 - minutes) * 60)
+    
+    sidereal_datetime = base_date + timedelta(hours=hours, minutes=minutes, seconds=seconds)
+    
+    return sidereal_datetime
+
+# Entry point: calculate_sidereal_time(dt: datetime, longitude: float) -> datetime
+```

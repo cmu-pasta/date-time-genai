@@ -1,0 +1,35 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module and `timedelta` from Python's standard library to work with dates and iterate through days.
+
+2. **Define a function**: We will create a function that accepts two datetime objects as input parameters.
+
+3. **Determine the date range**: We need to find the start and end dates, ensuring we handle cases where the first date might be later than the second date.
+
+4. **Count business days**: We need to iterate through each day in the range and count only weekdays (Monday through Friday), excluding weekends.
+
+5. **Return the result**: Return the count as an integer representing the number of business days.
+
+```python
+from datetime import datetime, timedelta
+
+def calculate_business_days(dt1: datetime, dt2: datetime) -> int:
+    # Get the earlier and later dates
+    start_date = min(dt1, dt2).date()
+    end_date = max(dt1, dt2).date()
+    
+    # Initialize counter for business days
+    business_days = 0
+    current_date = start_date
+    
+    # Iterate through each day (exclusive of end date)
+    while current_date < end_date:
+        # Check if it's a weekday (Monday=0 to Friday=4, Saturday=5, Sunday=6)
+        if current_date.weekday() < 5:  # 0-4 are business days
+            business_days += 1
+        current_date += timedelta(days=1)
+    
+    return business_days
+
+# Entry point: calculate_business_days(dt1: datetime, dt2: datetime) -> int
+```

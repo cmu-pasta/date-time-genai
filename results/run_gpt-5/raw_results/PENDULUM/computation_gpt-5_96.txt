@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+1. Accept a pendulum.Date as input to represent the calendar date.
+2. Compute the day of year (n) using Pendulum's day_of_year attribute.
+3. Calculate the auxiliary angle B = 2π * (n - 81) / 364.
+4. Compute the Equation of Time (EoT) in minutes using the standard approximation: 9.87*sin(2B) - 7.53*cos(B) - 1.5*sin(B).
+5. Return the EoT as a float representing minutes (positive means apparent solar time is ahead of mean solar time).
+
+```python
+import pendulum
+import math
+
+def equation_of_time_minutes(date: pendulum.Date) -> float:
+    """
+    Calculate the Equation of Time (EoT) for a given date.
+
+    Parameters:
+        date (pendulum.Date): The date for which to compute the EoT.
+
+    Returns:
+        float: The Equation of Time in minutes. Positive values indicate
+               apparent solar time is ahead of mean solar time.
+    """
+    # Step 1: Extract the day of year using Pendulum
+    n = date.day_of_year
+
+    # Step 2: Compute the auxiliary angle B (in radians)
+    B = 2.0 * math.pi * (n - 81.0) / 364.0
+
+    # Step 3: Compute the Equation of Time in minutes (NOAA approximation)
+    eot_minutes = 9.87 * math.sin(2.0 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+
+    # Step 4: Return the result as a float (minutes)
+    return float(eot_minutes)
+
+# Entry point: equation_of_time_minutes(date: pendulum.Date) -> float
+```

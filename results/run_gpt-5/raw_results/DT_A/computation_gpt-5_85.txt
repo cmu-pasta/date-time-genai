@@ -1,0 +1,66 @@
+Let's think step by step to solve this problem.
+1. Import the required classes (date, datetime) from the datetime module.
+2. Define a function that accepts a single argument as a date or datetime.
+3. Normalize inputs of type datetime to a date for correct comparisons.
+4. Compare the given date against the known Japanese era start dates (Meiji, Taisho, Showa, Heisei, Reiwa).
+5. Compute the era year as (Gregorian year - base year for that era).
+6. Return a single integer encoding both the era and year as EYY, where:
+   - Era codes: 1=Meiji, 2=Taisho, 3=Showa, 4=Heisei, 5=Reiwa
+   - Encoded value: era_code * 100 + era_year
+   - Example: Reiwa 5 => 5*100 + 5 = 505
+
+```python
+from datetime import date, datetime
+
+def determine_japanese_era_year(d: date) -> int:
+    """
+    Determine the Japanese calendar era and year for a given Gregorian date.
+
+    Returns an integer encoded as:
+      era_code * 100 + era_year
+    where era_code is:
+      1 = Meiji (from 1868-01-25)
+      2 = Taisho (from 1912-07-30)
+      3 = Showa (from 1926-12-25)
+      4 = Heisei (from 1989-01-08)
+      5 = Reiwa (from 2019-05-01)
+
+    For example:
+      Reiwa 5 -> 505
+      Heisei 1 -> 401
+
+    Raises:
+      ValueError if the date predates the Meiji era start (1868-01-25).
+    """
+    # Normalize to a date if a datetime is provided
+    if isinstance(d, datetime):
+        d = d.date()
+
+    # Validate type (basic safeguard)
+    if not isinstance(d, date):
+        raise TypeError("Input must be a datetime.date or datetime.datetime instance.")
+
+    # Determine era and compute era year using only conditionals (no lists/dicts)
+    if d >= date(2019, 5, 1):
+        era_code = 5  # Reiwa
+        base_year = 2018
+    elif d >= date(1989, 1, 8):
+        era_code = 4  # Heisei
+        base_year = 1988
+    elif d >= date(1926, 12, 25):
+        era_code = 3  # Showa
+        base_year = 1925
+    elif d >= date(1912, 7, 30):
+        era_code = 2  # Taisho
+        base_year = 1911
+    elif d >= date(1868, 1, 25):
+        era_code = 1  # Meiji
+        base_year = 1867
+    else:
+        raise ValueError("Date predates the Meiji era (1868-01-25) and is unsupported.")
+
+    era_year = d.year - base_year
+    return era_code * 100 + era_year
+
+# Entry point: determine_japanese_era_year(d: date) -> int
+```

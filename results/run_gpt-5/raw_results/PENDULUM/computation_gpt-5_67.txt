@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Clarify capability constraints: The Pendulum library does not implement non-Gregorian calendar systems (such as the Hebrew calendar). It handles Gregorian dates, times, time zones, durations, etc., but it has no API for Hebrew calendar conversion.
+2. Interpret the I/O constraints: You requested inputs and outputs to be Pendulum library types only, and to avoid complex types. A proper Hebrew date would normally require at least a triplet (year, month, day) that belongs to the Hebrew calendar. Pendulum’s Date/DateTime types represent Gregorian dates, so they cannot faithfully represent a Hebrew calendar date without external conversion logic or a custom type.
+3. Conclusion: Under these constraints (Pendulum-only and Pendulum-type output), a correct Hebrew calendar date cannot be produced or represented. Implementing a Hebrew calendar conversion from scratch is possible in pure Python, but the resulting Hebrew date cannot be accurately encoded in a Pendulum Date/DateTime without misrepresenting calendar semantics.
+4. Recommended path: Use a library that supports Hebrew calendar computations (for example, convertdate or hdate) to derive the Hebrew date, and then, if needed, serialize it as text or another allowed type. If you must strictly return a Pendulum type, the only honest option is to signal unsupported operation.
+
+```python
+import pendulum
+
+def gregorian_to_hebrew(_date: pendulum.Date) -> pendulum.Date:
+    """
+    This function cannot compute or represent a Hebrew calendar date using
+    Pendulum alone. Pendulum does not support non-Gregorian calendars, and
+    returning a pendulum.Date would misrepresent a Hebrew date as a Gregorian one.
+    
+    Please use a dedicated calendar library (e.g., `convertdate` or `hdate`)
+    to compute the Hebrew date, and return it as a string or a structured type.
+    """
+    raise NotImplementedError(
+        "Hebrew calendar conversion is not supported with Pendulum alone. "
+        "Use a dedicated library (e.g., `convertdate`) to compute Hebrew dates."
+    )
+
+# Entry point: gregorian_to_hebrew(_date: pendulum.Date) -> pendulum.Date
+```

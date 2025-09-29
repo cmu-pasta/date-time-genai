@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+1. Accept a calendar year and an anchor payday (any known payday in the bi-weekly cycle).
+2. Compute the first payday on or after January 1 of the given year by aligning with the 14-day interval using modulo arithmetic.
+3. Count how many 14-day steps fit from that first payday through December 31 of the same year.
+4. Return the count as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_biweekly_pay_periods(year: int, anchor_payday: date) -> int:
+    """
+    Count the number of bi-weekly payroll periods (paydays) that occur in the given calendar year,
+    aligned to a known anchor payday. The anchor_payday can be any date that is on the employer's
+    bi-weekly payday cycle.
+
+    Args:
+        year: The calendar year for which to count pay periods.
+        anchor_payday: A date that is known to be a payday in the bi-weekly cycle.
+
+    Returns:
+        The number of bi-weekly paydays that fall within the specified year.
+    """
+    start_of_year = date(year, 1, 1)
+    end_of_year = date(year, 12, 31)
+
+    # Compute the first payday on or after Jan 1 by aligning to the 14-day cycle.
+    # Python's modulo yields a non-negative remainder, suitable for alignment.
+    delta_days = (start_of_year - anchor_payday).days
+    remainder = delta_days % 14
+    first_payday = start_of_year if remainder == 0 else (start_of_year + timedelta(days=(14 - remainder)))
+
+    # Count how many 14-day intervals from first_payday fit within the year
+    if first_payday > end_of_year:
+        return 0
+
+    span_days = (end_of_year - first_payday).days
+    periods_after_first = span_days // 14
+    return 1 + periods_after_first
+
+# Entry point: count_biweekly_pay_periods(year: int, anchor_payday: date) -> int
+```

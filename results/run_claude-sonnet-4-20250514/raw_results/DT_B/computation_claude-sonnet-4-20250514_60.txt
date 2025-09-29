@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module and `timedelta` for time calculations.
+2. **Define the function**: Create a function that accepts a date, longitude, and latitude coordinates.
+3. **Calculate longitude time offset**: Convert the longitude difference from the reference meridian (0°) into time difference (4 minutes per degree).
+4. **Apply the equation of time approximation**: Use a simplified calculation for the equation of time based on the day of year.
+5. **Calculate solar noon**: Combine the base time (12:00 noon) with the longitude correction and equation of time.
+6. **Return the result**: Return the calculated solar noon time as a datetime object.
+
+```python
+from datetime import datetime, timedelta
+import math
+
+def calculate_solar_noon(date: datetime.date, longitude: float, latitude: float) -> datetime:
+    # Step 1: Calculate day of year for equation of time approximation
+    day_of_year = date.timetuple().tm_yday
+    
+    # Step 2: Approximate equation of time (in minutes)
+    # Simplified formula based on day of year
+    B = 2 * math.pi * (day_of_year - 81) / 365
+    equation_of_time = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+    
+    # Step 3: Calculate longitude correction (4 minutes per degree difference from 0°)
+    longitude_correction = longitude * 4  # minutes
+    
+    # Step 4: Calculate total time offset from 12:00 noon in minutes
+    total_offset_minutes = longitude_correction + equation_of_time
+    
+    # Step 5: Create solar noon datetime
+    # Start with noon on the given date
+    solar_noon_base = datetime.combine(date, datetime.min.time().replace(hour=12))
+    
+    # Step 6: Apply the time offset
+    time_offset = timedelta(minutes=total_offset_minutes)
+    solar_noon = solar_noon_base + time_offset
+    
+    return solar_noon
+
+# Entry point: calculate_solar_noon(date: datetime.date, longitude: float, latitude: float) -> datetime
+```

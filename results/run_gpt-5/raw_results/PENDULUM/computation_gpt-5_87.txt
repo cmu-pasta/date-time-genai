@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle precise timestamps as pendulum.DateTime objects.
+2. Accept two pendulum.DateTime inputs representing the timestamps to compare.
+3. Subtract the two DateTime objects to obtain a pendulum.Duration.
+4. Convert the duration to microseconds and multiply by 1000 to get nanoseconds.
+5. Return the absolute value as an integer number of nanoseconds.
+
+```python
+import pendulum
+
+def calculate_nanoseconds_between(t1: pendulum.DateTime, t2: pendulum.DateTime) -> int:
+    """
+    Calculate the number of nanoseconds between two pendulum.DateTime timestamps.
+    Returns the absolute difference as an integer number of nanoseconds.
+    """
+    duration: pendulum.Duration = t2 - t1
+    microseconds: int = duration.in_microseconds()
+    nanoseconds: int = abs(microseconds) * 1000
+    return nanoseconds
+
+# Entry point: calculate_nanoseconds_between(t1: pendulum.DateTime, t2: pendulum.DateTime) -> int
+```

@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+1. Import the required classes (date, timedelta) from the datetime module.
+2. Accept the target year as an integer input.
+3. Construct a date for October 1st of the given year.
+4. Compute the weekday of October 1st (Monday=0,...,Sunday=6).
+5. Compute the offset in days to the first Monday of October.
+6. Add 7 days to the first Monday to get the second Monday.
+7. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def indigenous_peoples_day(year: int) -> date:
+    # October 1st of the given year
+    oct_first = date(year, 10, 1)
+    # Weekday: Monday=0 ... Sunday=6
+    w = oct_first.weekday()
+    # Days to first Monday in October
+    days_to_first_monday = (0 - w) % 7
+    first_monday = oct_first + timedelta(days=days_to_first_monday)
+    # Second Monday is 7 days after the first Monday
+    second_monday = first_monday + timedelta(days=7)
+    return second_monday
+
+# Entry point: indigenous_peoples_day(year: int) -> date
+```

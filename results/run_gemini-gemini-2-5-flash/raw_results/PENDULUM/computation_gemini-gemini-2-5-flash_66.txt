@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `pendulum` library to create and manipulate dates.
+2.  **Define the function**: Create a function `calculate_trading_days_in_year` that accepts an integer representing the year.
+3.  **Establish the year's boundaries**: Create `pendulum.DateTime` objects for the first day (January 1st) and the last day (December 31st) of the given year.
+4.  **Initialize a counter**: Set a variable to zero to keep track of the number of trading days.
+5.  **Iterate through each day of the year**: Use `pendulum.period` to loop through every day from the start to the end of the year.
+6.  **Check if each day is a weekday**: For each day in the iteration, use the `is_weekday()` method provided by `pendulum.DateTime` to determine if it's a weekday (Monday to Friday).
+7.  **Increment the counter**: If the day is a weekday, increment the trading days counter.
+8.  **Return the total count**: After iterating through all days, return the final count of trading days as an integer.
+
+```python
+import pendulum
+
+def calculate_trading_days_in_year(year: int) -> int:
+    # Step 1: Establish the start and end dates for the given year
+    start_of_year = pendulum.datetime(year, 1, 1)
+    end_of_year = pendulum.datetime(year, 12, 31)
+    
+    # Step 2: Initialize a counter for trading days
+    trading_days_count = 0
+    
+    # Step 3: Iterate through each day in the year
+    # A trading day is considered any weekday (Monday to Friday).
+    # This definition does not account for public holidays as pendulum
+    # does not inherently provide holiday calendars.
+    for day in pendulum.period(start_of_year, end_of_year):
+        # Step 4: Check if the current day is a weekday
+        if day.is_weekday():
+            trading_days_count += 1
+            
+    # Step 5: Return the total count of trading days
+    return trading_days_count
+
+# Entry point: calculate_trading_days_in_year(year: int) -> int
+```

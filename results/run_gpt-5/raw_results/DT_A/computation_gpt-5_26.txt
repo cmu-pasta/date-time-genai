@@ -1,0 +1,23 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that takes two datetime objects as inputs.
+3. Compute the time delta between the two inputs.
+4. Add half of this delta to the earlier datetime to get the midpoint.
+5. Return the resulting midpoint datetime.
+
+```python
+from datetime import datetime
+
+def calculate_midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
+    # Ensure we always add half the delta to the earlier datetime
+    if dt1 <= dt2:
+        start, end = dt1, dt2
+    else:
+        start, end = dt2, dt1
+
+    half_delta = (end - start) / 2
+    midpoint = start + half_delta
+    return midpoint
+
+# Entry point: calculate_midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime
+```

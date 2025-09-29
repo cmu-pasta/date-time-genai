@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+1. Construct the date for February 1st of the given year.
+2. Construct the date for March 1st of the same year.
+3. Compute the number of days in February by subtracting the two dates.
+4. Iterate through each day of February and count how many are Sundays.
+5. Return the count as an integer.
+
+```python
+from datetime import date, timedelta
+
+def count_sundays_in_february(year: int) -> int:
+    # Step 1: Create the start date for February
+    feb_start = date(year, 2, 1)
+    
+    # Step 2: Create the start date for March to determine February length
+    mar_start = date(year, 3, 1)
+    
+    # Step 3: Compute the number of days in February
+    feb_days = (mar_start - feb_start).days
+    
+    # Step 4: Count Sundays in February
+    sundays = 0
+    for i in range(feb_days):
+        current_day = feb_start + timedelta(days=i)
+        if current_day.weekday() == 6:  # Monday=0 ... Sunday=6
+            sundays += 1
+    
+    # Step 5: Return the count as an integer
+    return sundays
+
+# Entry point: count_sundays_in_february(year: int) -> int
+```

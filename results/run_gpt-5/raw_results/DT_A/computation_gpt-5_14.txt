@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts a start date and an integer N representing business days to move.
+3. Determine the direction (forward or backward) based on the sign of N.
+4. Iterate day-by-day, skipping weekends (Saturday and Sunday), and count only business days.
+5. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def add_business_days(start: date, n: int) -> date:
+    # Move exactly n business days after (or before if n is negative) the given date.
+    if n == 0:
+        return start
+
+    step = 1 if n > 0 else -1
+    remaining = abs(n)
+    current = start
+
+    while remaining > 0:
+        current += timedelta(days=step)
+        # Weekday: Monday=0, ..., Friday=4 are business days
+        if current.weekday() < 5:
+            remaining -= 1
+
+    return current
+
+# Entry point: add_business_days(start: date, n: int) -> date
+```

@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and access the week of year functionality.
+2. **Define a function**: We will create a function that accepts a date as input. This can be provided as a pendulum.DateTime or pendulum.Date object.
+3. **Get the week of year**: Use pendulum's built-in `week_of_year` property to get the ISO week number (1-53).
+4. **Return the result**: Return the week number as an integer.
+
+```python
+import pendulum
+
+def date_to_week_of_year(date: pendulum.DateTime) -> int:
+    # Step 1: Get the week of the year using pendulum's built-in property
+    week_number = date.week_of_year
+    
+    # Step 2: Return the result as an integer
+    return week_number
+
+# Entry point: date_to_week_of_year(date: pendulum.DateTime) -> int
+```

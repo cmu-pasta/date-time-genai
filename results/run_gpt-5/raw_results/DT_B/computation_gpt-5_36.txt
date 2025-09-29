@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the datetime module from Python's standard library to work with datetime objects.
+2. Define a function that accepts two datetime objects representing the timestamps.
+3. Compute the difference (a timedelta) between the two timestamps.
+4. Convert the absolute difference to milliseconds using total_seconds multiplied by 1000.
+5. Return the result as an integer number of milliseconds.
+
+```python
+from datetime import datetime
+
+def calculate_duration_milliseconds(ts1: datetime, ts2: datetime) -> int:
+    """
+    Calculate the duration in milliseconds between two datetime timestamps.
+
+    Args:
+        ts1: The first timestamp as a datetime object.
+        ts2: The second timestamp as a datetime object.
+
+    Returns:
+        An integer representing the absolute duration between ts1 and ts2 in milliseconds.
+    """
+    delta = ts2 - ts1
+    milliseconds = int(round(abs(delta.total_seconds()) * 1000))
+    return milliseconds
+
+# Entry point: calculate_duration_milliseconds(ts1: datetime, ts2: datetime) -> int
+```

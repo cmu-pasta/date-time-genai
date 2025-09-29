@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+1. Import the required class from the datetime library to work with calendar dates.
+2. Define a function that accepts a birth date and a reference date as inputs, both as date objects.
+3. Subtract the two dates to obtain a timedelta representing the difference.
+4. Convert the timedelta to an integer number of days, ensuring a non-negative result.
+5. Return the total number of days as an integer.
+
+```python
+from datetime import date
+
+def age_in_total_days(birth_date: date, reference_date: date) -> int:
+    """
+    Calculate the total number of days between a birth date and a reference date.
+
+    Args:
+        birth_date (date): The birth date.
+        reference_date (date): The date to measure the age against.
+
+    Returns:
+        int: The total number of days of age (non-negative).
+    """
+    # Compute the difference as a timedelta
+    delta = reference_date - birth_date
+    # Return absolute number of days to ensure non-negative age
+    return abs(delta.days)
+
+# Entry point: age_in_total_days(birth_date: date, reference_date: date) -> int
+```

@@ -1,0 +1,15 @@
+Let's think step by step to solve this problem.
+1. Import the necessary class from the datetime module to work with time objects.
+2. Define a function that takes a time object as input.
+3. Compute the number of seconds since midnight using the hour, minute, and second fields (microseconds are ignored for whole seconds).
+4. Return the computed integer value.
+
+```python
+from datetime import time
+
+def time_to_seconds_since_midnight(t: time) -> int:
+    # Calculate full seconds since midnight (ignoring microseconds)
+    return t.hour * 3600 + t.minute * 60 + t.second
+
+# Entry point: time_to_seconds_since_midnight(t: time) -> int
+```

@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Import the necessary date class from the datetime module.
+2. Define a function that accepts two dates: the birth date and today's date.
+3. Construct the birthday date for the current year; if the birth date is Feb 29 and the current year is not a leap year, use March 1.
+4. If the constructed birthday for the current year is before today, construct it for the next year using the same leap-year handling.
+5. Compute the difference in days between the next birthday and today.
+6. Return the number of days as an integer.
+
+```python
+from datetime import date
+
+def days_until_next_birthday(birth_date: date, today: date) -> int:
+    """
+    Calculate the number of days until the next birthday given a birth date and today's date.
+    Leap day (Feb 29) birthdays are observed on March 1 in non-leap years.
+    If today is the birthday, returns 0.
+    """
+    # Build the next birthday date for the given year, adjusting Feb 29 to Mar 1 if needed
+    def birthday_in_year(bd: date, yr: int) -> date:
+        try:
+            return date(yr, bd.month, bd.day)
+        except ValueError:
+            # Handles Feb 29 on non-leap years by observing on March 1
+            return date(yr, 3, 1)
+
+    # Candidate birthday this year
+    this_year_bday = birthday_in_year(birth_date, today.year)
+
+    # Determine the next birthday date
+    if this_year_bday < today:
+        next_bday = birthday_in_year(birth_date, today.year + 1)
+    else:
+        next_bday = this_year_bday
+
+    # Days until next birthday
+    return (next_bday - today).days
+
+# Entry point: days_until_next_birthday(birth_date: date, today: date) -> int
+```

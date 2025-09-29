@@ -1,0 +1,15 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module to work with date types.
+2. Define a function that accepts a date input.
+3. Use the built-in ISO calendar support to extract the ISO week number for the given date.
+4. Return the week number as an integer.
+
+```python
+from datetime import date
+
+def week_number_of_year(d: date) -> int:
+    # Using ISO week numbering: weeks start on Monday; week 1 is the week with the year's first Thursday.
+    return d.isocalendar().week
+
+# Entry point: week_number_of_year(d: date) -> int
+```

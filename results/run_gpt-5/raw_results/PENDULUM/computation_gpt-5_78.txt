@@ -1,0 +1,98 @@
+Let's think step by step to solve this problem.
+1. Import pendulum and math for astronomical calculations.
+2. Accept inputs: a pendulum.Date (calendar date), latitude (float), longitude (float), and a pendulum.Timezone (desired output zone).
+3. Compute the day-of-year from the given date to feed the NOAA sunrise algorithm.
+4. Apply the NOAA algorithm to compute the UTC time of sunrise for the given coordinates and date.
+5. If the sun does not rise on that date at that latitude (polar day/night), raise a ValueError.
+6. Build a UTC pendulum.DateTime for the computed sunrise moment and convert it to the requested timezone.
+7. Return the resulting pendulum.DateTime.
+
+```python
+import math
+import pendulum
+
+def _normalize_degrees(angle: float) -> float:
+    a = angle % 360.0
+    if a < 0:
+        a += 360.0
+    return a
+
+def _deg_to_rad(deg: float) -> float:
+    return deg * math.pi / 180.0
+
+def _rad_to_deg(rad: float) -> float:
+    return rad * 180.0 / math.pi
+
+def calculate_sunrise(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime:
+    # NOAA Sunrise Algorithm
+    N = date.day_of_year  # day of year
+
+    lngHour = longitude / 15.0
+
+    # Approximate time for sunrise (6h local solar time)
+    t = N + ((6.0 - lngHour) / 24.0)
+
+    # Sun's mean anomaly
+    M = (0.9856 * t) - 3.289
+
+    # Sun's true longitude
+    L = M + (1.916 * math.sin(_deg_to_rad(M))) + (0.020 * math.sin(_deg_to_rad(2 * M))) + 282.634
+    L = _normalize_degrees(L)
+
+    # Sun's right ascension
+    RA = _rad_to_deg(math.atan(0.91764 * math.tan(_deg_to_rad(L))))
+    RA = _normalize_degrees(RA)
+
+    # Adjust RA to be in the same quadrant as L
+    Lquadrant  = math.floor(L / 90.0) * 90.0
+    RAquadrant = math.floor(RA / 90.0) * 90.0
+    RA = RA + (Lquadrant - RAquadrant)
+
+    # Convert RA into hours
+    RA /= 15.0
+
+    # Sun's declination
+    sinDec = 0.39782 * math.sin(_deg_to_rad(L))
+    cosDec = math.cos(math.asin(sinDec))
+
+    # Sun's local hour angle
+    cosH = (math.cos(_deg_to_rad(90.833)) - (sinDec * math.sin(_deg_to_rad(latitude)))) / (cosDec * math.cos(_deg_to_rad(latitude)))
+
+    if cosH > 1.0:
+        raise ValueError("Sun never rises on this date at this latitude.")
+    if cosH < -1.0:
+        raise ValueError("Sun never sets on this date at this latitude; sunrise does not occur.")
+
+    # For sunrise, H = 360 - arccos(cosH)
+    H = 360.0 - _rad_to_deg(math.acos(cosH))
+    H /= 15.0  # convert to hours
+
+    # Local mean time of rising
+    T = H + RA - (0.06571 * t) - 6.622
+
+    # Convert to UTC
+    UT = T - lngHour
+    UT = (UT + 24.0) % 24.0  # normalize to [0,24)
+
+    # Build a UTC datetime for the given date at UT hours
+    hour = int(UT)
+    minute = int((UT - hour) * 60.0)
+    second = int(round((((UT - hour) * 60.0) - minute) * 60.0))
+
+    # Normalize possible rounding overflow
+    total_seconds = hour * 3600 + minute * 60 + second
+    if total_seconds >= 86400:
+        total_seconds -= 86400
+    hour = total_seconds // 3600
+    minute = (total_seconds % 3600) // 60
+    second = total_seconds % 60
+
+    sunrise_utc = pendulum.datetime(date.year, date.month, date.day, hour, minute, second, tz="UTC")
+
+    # Convert to requested timezone
+    sunrise_local = sunrise_utc.in_timezone(tz)
+
+    return sunrise_local
+
+# Entry point: calculate_sunrise(date: pendulum.Date, latitude: float, longitude: float, tz: pendulum.Timezone) -> pendulum.DateTime
+```

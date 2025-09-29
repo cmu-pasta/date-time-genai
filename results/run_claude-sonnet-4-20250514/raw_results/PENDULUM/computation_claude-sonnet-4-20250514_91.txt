@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the Indian National Calendar**: The Indian National Calendar (Saka calendar) is based on the Saka Era, which starts from 78 CE in the Gregorian calendar. The Saka year begins on Chaitra 1, which typically falls on March 22 (or March 21 in leap years).
+
+2. **Import the necessary library**: We need the pendulum library to work with dates.
+
+3. **Define the conversion function**: Create a function that takes a Gregorian date and converts it to the corresponding Saka year.
+
+4. **Calculate the Saka year**: The Saka year can be calculated by subtracting 78 from the Gregorian year, but we need to account for the fact that the Saka year starts in March.
+
+5. **Handle year boundaries**: If the Gregorian date is before the Saka new year (typically March 22/21), we need to subtract 1 from the calculated Saka year.
+
+6. **Return the result**: Since we're limited to simple data types, we'll return the Saka year as an integer.
+
+```python
+import pendulum
+
+def gregorian_to_indian_national_calendar(gregorian_date: pendulum.Date) -> int:
+    # The Indian National Calendar (Saka calendar) starts from 78 CE
+    saka_era_offset = 78
+    
+    # Determine the Saka new year date for the current Gregorian year
+    # Saka new year typically falls on March 22 (March 21 in leap years)
+    current_year = gregorian_date.year
+    is_leap_year = current_year % 4 == 0 and (current_year % 100 != 0 or current_year % 400 == 0)
+    
+    if is_leap_year:
+        saka_new_year = pendulum.date(current_year, 3, 21)
+    else:
+        saka_new_year = pendulum.date(current_year, 3, 22)
+    
+    # Calculate the Saka year
+    if gregorian_date >= saka_new_year:
+        # If the date is after or on the Saka new year, use current Gregorian year
+        saka_year = current_year - saka_era_offset
+    else:
+        # If the date is before the Saka new year, use previous Gregorian year
+        saka_year = current_year - saka_era_offset - 1
+    
+    return saka_year
+
+# Entry point: gregorian_to_indian_national_calendar(gregorian_date: pendulum.Date) -> int
+```

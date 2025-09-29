@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime library.
+2. Define what “fiscal year” means for an April-start fiscal year: it runs from April 1 to March 31 and is labeled by the calendar year in which it ends.
+3. Implement a function that takes a date and returns the fiscal year as an integer: if the month is April (4) or later, the fiscal year is year + 1; otherwise, it is the current year.
+4. Return the computed integer.
+
+```python
+from datetime import date
+
+def fiscal_year_for_date(d: date) -> int:
+    """
+    Determine the fiscal year for an April-start fiscal year.
+    Fiscal year runs Apr 1 to Mar 31 and is labeled by the year it ends.
+    Example: 2024-04-01 to 2025-03-31 => fiscal year 2025.
+    """
+    return d.year + 1 if d.month >= 4 else d.year
+
+# Entry point: fiscal_year_for_date(d: date) -> int
+```

@@ -1,0 +1,28 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define the function signature**: Create a function `find_indigenous_peoples_day` that accepts an integer `year` as input and is expected to return a `pendulum.Date` object.
+3.  **Determine the starting point**: Indigenous Peoples' Day is in October, so we'll start by creating a `pendulum.Date` object for the first day of October in the given year.
+4.  **Find the first Monday**: Use the `first_of_month()` method with `pendulum.MONDAY` on the initial October date to find the first Monday of that month.
+5.  **Calculate the second Monday**: Add 7 days to the date of the first Monday to get the date of the second Monday, which is Indigenous Peoples' Day.
+6.  **Return the result**: Return the calculated `pendulum.Date` object.
+
+```python
+import pendulum
+
+def find_indigenous_peoples_day(year: int) -> pendulum.Date:
+    # Step 1: Create a date object for the first day of October in the given year.
+    # We use pendulum.date for just the date component.
+    october_first = pendulum.date(year, 10, 1)
+
+    # Step 2: Find the first Monday of October using first_of_month(pendulum.MONDAY).
+    first_monday_of_october = october_first.first_of_month(pendulum.MONDAY)
+
+    # Step 3: Add 7 days to the first Monday to get the second Monday.
+    indigenous_peoples_day = first_monday_of_october.add(days=7)
+
+    # Step 4: Return the calculated date.
+    return indigenous_peoples_day
+
+# Entry point: find_indigenous_peoples_day(year: int) -> pendulum.Date
+```

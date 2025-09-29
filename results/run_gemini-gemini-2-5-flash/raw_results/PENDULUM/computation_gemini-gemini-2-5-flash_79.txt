@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with date objects.
+2.  **Define a function**: Create a function that accepts a `pendulum.DateTime` object as input, representing the Gregorian date.
+3.  **Extract the Gregorian year**: From the input `pendulum.DateTime` object, extract the year component.
+4.  **Calculate the Buddhist year**: The Buddhist calendar year is generally 543 years ahead of the Gregorian calendar year. Add 543 to the extracted Gregorian year.
+5.  **Return the result**: Return the calculated Buddhist year as an integer.
+
+```python
+import pendulum
+
+def get_buddhist_year(gregorian_date: pendulum.DateTime) -> int:
+    # Step 1: Extract the Gregorian year from the input date.
+    gregorian_year = gregorian_date.year
+    
+    # Step 2: Add 543 to the Gregorian year to get the Buddhist calendar year.
+    # The Buddhist Era (B.E.) is 543 years ahead of the Common Era (C.E.).
+    buddhist_year = gregorian_year + 543
+    
+    # Step 3: Return the Buddhist year as an integer.
+    return buddhist_year
+
+# Entry point: get_buddhist_year(gregorian_date: pendulum.DateTime) -> int
+```

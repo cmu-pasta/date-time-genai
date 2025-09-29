@@ -1,0 +1,37 @@
+Let's think step by step to solve this problem.
+
+1. **Understand the requirements**: We need to find the last occurrence of a specific weekday (like Monday, Tuesday, etc.) within a given month and year.
+
+2. **Identify inputs and outputs**: We need year (int), month (int), and target weekday (int where 0=Monday, 1=Tuesday, ..., 6=Sunday), and return a date object.
+
+3. **Find the last day of the month**: To find the last day of any month, we can go to the first day of the next month and subtract one day.
+
+4. **Work backwards**: Starting from the last day of the month, we check each day going backwards until we find the desired weekday.
+
+5. **Return the result**: Once we find the matching weekday, return that date.
+
+```python
+from datetime import date, timedelta
+
+def find_last_weekday_in_month(year: int, month: int, target_weekday: int) -> date:
+    # Step 1: Find the last day of the given month
+    if month == 12:
+        # If December, next month is January of next year
+        next_month_first = date(year + 1, 1, 1)
+    else:
+        # Otherwise, go to first day of next month
+        next_month_first = date(year, month + 1, 1)
+    
+    # Last day of current month is one day before first day of next month
+    last_day_of_month = next_month_first - timedelta(days=1)
+    
+    # Step 2: Work backwards from last day until we find the target weekday
+    current_day = last_day_of_month
+    while current_day.weekday() != target_weekday:
+        current_day = current_day - timedelta(days=1)
+    
+    # Step 3: Return the date of the last occurrence
+    return current_day
+
+# Entry point: find_last_weekday_in_month(year: int, month: int, target_weekday: int) -> date
+```

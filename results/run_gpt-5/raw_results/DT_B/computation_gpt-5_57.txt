@@ -1,0 +1,41 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module to work with dates.
+2. Define a function that accepts two date inputs representing the start and end.
+3. Ensure the dates are in chronological order by swapping if necessary.
+4. Compute the total number of days between the two dates (end exclusive).
+5. Calculate the total number of weekdays in that span by counting Mon–Fri only.
+6. Convert the total weekdays into the number of full work weeks by integer division by 5.
+7. Return the number of work weeks as an integer.
+
+```python
+from datetime import date
+
+def calculate_work_weeks_between(start: date, end: date) -> int:
+    # Ensure chronological order
+    if end < start:
+        start, end = end, start
+
+    # Total days between dates, end-exclusive
+    total_days = (end - start).days
+
+    # Full weeks and remainder days
+    full_weeks = total_days // 7
+    remainder_days = total_days % 7
+
+    # Weekdays contributed by full weeks
+    weekdays = full_weeks * 5
+
+    # Add weekdays from the remainder span
+    start_wd = start.weekday()  # Monday=0 ... Sunday=6
+    i = 0
+    while i < remainder_days:
+        if (start_wd + i) % 7 < 5:  # Mon-Fri are < 5
+            weekdays += 1
+        i += 1
+
+    # Number of full work weeks (each work week has 5 weekdays)
+    work_weeks = weekdays // 5
+    return work_weeks
+
+# Entry point: calculate_work_weeks_between(start: date, end: date) -> int
+```

@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+1. Define the source and target epochs using datetime (Unix: 1970-01-01, Windows: 1601-01-01).
+2. Build a datetime representing the Unix timestamp by adding seconds to the Unix epoch.
+3. Compute the timedelta between this datetime and the Windows epoch.
+4. Convert this timedelta to Windows FILETIME ticks (100-nanosecond intervals) and return as an integer.
+
+```python
+from datetime import datetime, timezone, timedelta
+
+def convert_unix_to_windows_filetime(unix_seconds: float) -> int:
+    # Step 1: Define epochs in UTC
+    unix_epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    windows_epoch = datetime(1601, 1, 1, tzinfo=timezone.utc)
+    
+    # Step 2: Build datetime from Unix seconds
+    unix_dt = unix_epoch + timedelta(seconds=unix_seconds)
+    
+    # Step 3: Compute timedelta relative to Windows epoch
+    delta = unix_dt - windows_epoch
+    
+    # Step 4: Convert to Windows FILETIME ticks (100-nanosecond units)
+    ticks = int(delta.total_seconds() * 10_000_000)
+    return ticks
+
+# Entry point: convert_unix_to_windows_filetime(unix_seconds: float) -> int
+```

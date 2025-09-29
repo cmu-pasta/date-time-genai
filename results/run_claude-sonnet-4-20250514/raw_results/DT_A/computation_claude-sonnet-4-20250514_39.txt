@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a birth date and a reference date as datetime objects.
+3. **Calculate the age in days**: Subtract the birth date from the reference date to get a timedelta object, then extract the total days.
+4. **Return the result**: Return the age as an integer representing the total number of days.
+
+```python
+from datetime import datetime
+
+def calculate_age_in_days(birth_date: datetime, reference_date: datetime) -> int:
+    # Step 1: Calculate the difference between reference date and birth date
+    age_timedelta = reference_date - birth_date
+    
+    # Step 2: Extract the total days from the timedelta and return as integer
+    total_days = age_timedelta.days
+    
+    return total_days
+
+# Entry point: calculate_age_in_days(birth_date: datetime, reference_date: datetime) -> int
+```

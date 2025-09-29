@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to handle date computations.
+2. Define a function that accepts two pendulum.Date objects: a birth date and a reference date.
+3. Subtract the birth date from the reference date to get a pendulum.Duration.
+4. Convert the duration to total days and take the absolute value to ensure a non-negative age.
+5. Return the result as an integer.
+
+```python
+import pendulum
+
+def calculate_age_in_days(birth_date: pendulum.Date, reference_date: pendulum.Date) -> int:
+    """
+    Calculate the total age in days between a birth date and a reference date.
+
+    Args:
+        birth_date (pendulum.Date): The birth date.
+        reference_date (pendulum.Date): The reference date.
+
+    Returns:
+        int: The total number of days between the two dates (non-negative).
+    """
+    duration: pendulum.Duration = reference_date - birth_date
+    total_days: int = abs(duration.in_days())
+    return total_days
+
+# Entry point: calculate_age_in_days(birth_date: pendulum.Date, reference_date: pendulum.Date) -> int
+```

@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates.
+2.  **Define a function**: Create a function that accepts `year` (integer) and `month` (integer) as inputs.
+3.  **Create the first day of the month**: Construct a `pendulum.Date` object for the first day of the specified month and year.
+4.  **Calculate the offset to the first Monday**: Determine how many days need to be added to this first day to reach the first Monday. Pendulum's `day_of_week` method returns 1 for Monday and 7 for Sunday. We can calculate the days to add using modular arithmetic to find the difference between the current day of the week and Monday (1).
+5.  **Add the offset**: Use the `add()` method to add the calculated number of days to the first day of the month.
+6.  **Return the result**: The resulting `pendulum.Date` object will be the first Monday of the given month and year.
+
+```python
+import pendulum
+
+def find_first_monday_of_month(year: int, month: int) -> pendulum.Date:
+    # Step 1: Create a pendulum.Date object for the first day of the given month and year.
+    first_day_of_month = pendulum.date(year, month, 1)
+
+    # Step 2: Determine the day of the week for this first day.
+    # pendulum.day_of_week returns 1 for Monday, 2 for Tuesday, ..., 7 for Sunday.
+    current_day_of_week = first_day_of_month.day_of_week
+
+    # Step 3: Calculate the number of days to add to reach the first Monday.
+    # We want to reach pendulum.MONDAY (which is 1).
+    # The formula (desired_day_of_week - current_day_of_week + 7) % 7 gives the days to add.
+    days_to_add = (pendulum.MONDAY - current_day_of_week + 7) % 7
+
+    # Step 4: Add the calculated number of days to find the first Monday.
+    first_monday = first_day_of_month.add(days=days_to_add)
+
+    # Step 5: Return the result.
+    return first_monday
+
+# Entry point: find_first_monday_of_month(year: int, month: int) -> pendulum.Date
+```

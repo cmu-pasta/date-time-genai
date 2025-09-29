@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates.
+2. **Define a function**: Create a function that accepts a year as an integer input.
+3. **Find October 1st**: Create a date object for October 1st of the given year.
+4. **Calculate the first Monday**: Determine what day of the week October 1st falls on and calculate how many days to add to reach the first Monday.
+5. **Find the second Monday**: Add 7 days to the first Monday to get the second Monday.
+6. **Return the result**: Return the date of Columbus Day as a date object.
+
+```python
+from datetime import datetime, date, timedelta
+
+def find_columbus_day(year: int) -> date:
+    # Step 1: Create October 1st of the given year
+    october_first = date(year, 10, 1)
+    
+    # Step 2: Find what day of the week October 1st is (Monday = 0, Sunday = 6)
+    weekday = october_first.weekday()
+    
+    # Step 3: Calculate days to add to get to the first Monday
+    # If it's already Monday (0), we need 0 days
+    # If it's Tuesday (1), we need 6 days, etc.
+    days_to_first_monday = (7 - weekday) % 7
+    
+    # Step 4: Find the first Monday of October
+    first_monday = october_first + timedelta(days=days_to_first_monday)
+    
+    # Step 5: Columbus Day is the second Monday, so add 7 more days
+    columbus_day = first_monday + timedelta(days=7)
+    
+    return columbus_day
+
+# Entry point: find_columbus_day(year: int) -> date
+```

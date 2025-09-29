@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. Define a function that accepts two datetime objects as inputs.
+3. Compute the time difference between the two datetimes.
+4. Halve the difference to find the midpoint offset.
+5. Add the half-difference to the first datetime to obtain the midpoint.
+6. Return the resulting datetime.
+
+```python
+from datetime import datetime, timedelta
+
+def midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime:
+    """
+    Compute the datetime that lies exactly halfway between two given datetimes.
+    The function supports both naive and timezone-aware datetimes, provided both
+    inputs are of the same kind (both naive or both aware).
+    """
+    half_diff: timedelta = (dt2 - dt1) / 2
+    return dt1 + half_diff
+
+# Entry point: midpoint_datetime(dt1: datetime, dt2: datetime) -> datetime
+```

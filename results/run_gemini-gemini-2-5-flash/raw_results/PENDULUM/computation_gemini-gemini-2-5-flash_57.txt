@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1.  **Define the function signature**: Create a function that accepts two `pendulum.DateTime` objects as input and returns an integer representing the number of work weeks.
+2.  **Ensure chronological order**: Determine the earlier and later of the two input dates to simplify iteration.
+3.  **Count business days**: Iterate through each day from the earlier date up to and including the later date. For each day, check if it's a weekday (Monday through Friday). Pendulum's `weekday()` method returns 0 for Monday and 6 for Sunday; therefore, a day is a weekday if its `weekday()` value is less than `pendulum.SATURDAY` (i.e., 0 to 4).
+4.  **Calculate work weeks**: Divide the total count of business days by 5 using integer division to get the number of full work weeks.
+
+```python
+import pendulum
+
+def calculate_work_weeks(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    # Ensure dt_start is the earlier date and dt_end is the later date
+    dt_start = min(dt1, dt2).start_of("day")
+    dt_end = max(dt1, dt2).start_of("day")
+
+    business_days_count = 0
+    current_date = dt_start
+
+    # Iterate through each day from start to end (inclusive)
+    while current_date <= dt_end:
+        # Check if the current day is a weekday (Monday=0 to Friday=4)
+        if current_date.weekday() < pendulum.SATURDAY:
+            business_days_count += 1
+        current_date = current_date.add(days=1)
+    
+    # Calculate the number of full work weeks (5 business days per week)
+    number_of_work_weeks = business_days_count // 5
+    
+    return number_of_work_weeks
+
+# Entry point: calculate_work_weeks(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+```

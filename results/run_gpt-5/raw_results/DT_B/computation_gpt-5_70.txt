@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+1. Represent the Julian calendar date using integer inputs for year, month, and day.
+2. Convert the given Julian date to a Julian Day Number (JDN) using the Julian calendar formula.
+3. Convert the JDN to a Gregorian calendar date using the proleptic Gregorian conversion formula.
+4. Construct and return a datetime.date object representing the Gregorian date.
+
+```python
+from datetime import date
+
+def julian_to_gregorian(year: int, month: int, day: int) -> date:
+    """
+    Convert a Julian calendar date (year, month, day) to a Gregorian calendar date.
+    Returns a datetime.date in the proleptic Gregorian calendar.
+    """
+
+    # Convert Julian calendar date to Julian Day Number (JDN)
+    # Algorithm valid for all Julian calendar dates
+    a = (14 - month) // 12
+    y = year + 4800 - a
+    m = month + 12 * a - 3
+    jdn = day + ((153 * m + 2) // 5) + 365 * y + (y // 4) - 32083
+
+    # Convert JDN to Gregorian date (proleptic Gregorian calendar)
+    a = jdn + 32044
+    b = (4 * a + 3) // 146097
+    c = a - (146097 * b) // 4
+    d = (4 * c + 3) // 1461
+    e = c - (1461 * d) // 4
+    m = (5 * e + 2) // 153
+
+    day_g = e - (153 * m + 2) // 5 + 1
+    month_g = m + 3 - 12 * (m // 10)
+    year_g = 100 * b + d - 4800 + (m // 10)
+
+    # Construct and return the Gregorian date
+    return date(year_g, month_g, day_g)
+
+# Entry point: julian_to_gregorian(year: int, month: int, day: int) -> date
+```

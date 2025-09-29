@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the datetime class from the datetime module to work with datetime objects.
+2. Define a function that accepts two datetime inputs representing the start and end of the period.
+3. Subtract the two datetimes to obtain a timedelta representing the duration.
+4. Convert the duration to total minutes using total_seconds divided by 60.
+5. Return the absolute value of the total minutes as a float.
+
+```python
+from datetime import datetime
+
+def total_minutes_between(start: datetime, end: datetime) -> float:
+    """
+    Calculate the total minutes in the period between two datetime values.
+
+    Args:
+        start (datetime): The starting datetime.
+        end (datetime): The ending datetime.
+
+    Returns:
+        float: The absolute total minutes between the two datetimes, including fractional minutes.
+    """
+    delta = end - start
+    minutes = abs(delta.total_seconds() / 60.0)
+    return minutes
+
+# Entry point: total_minutes_between(start: datetime, end: datetime) -> float
+```

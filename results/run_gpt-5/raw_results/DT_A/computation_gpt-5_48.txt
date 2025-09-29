@@ -1,0 +1,33 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the standard library.
+2. Define a function that accepts a datetime and a ZoneInfo timezone.
+3. Convert the given datetime to the specified timezone to ensure correct offset computation.
+4. Retrieve the UTC offset as a timedelta using utcoffset().
+5. Convert the offset from seconds to hours as a float and return it.
+
+```python
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+def calculate_timezone_offset_hours(dt: datetime, tz: ZoneInfo) -> float:
+    """
+    Calculate the time zone offset in hours for a given datetime and timezone.
+
+    Args:
+        dt: A datetime object (naive or aware).
+        tz: A ZoneInfo timezone.
+
+    Returns:
+        A float representing the UTC offset in hours for the given datetime in the specified timezone.
+    """
+    # Convert the datetime to the specified timezone to ensure accurate offset (handles DST)
+    localized_dt = dt.astimezone(tz)
+
+    # Obtain the UTC offset as a timedelta and convert to hours
+    offset_td = localized_dt.utcoffset()
+    offset_hours = offset_td.total_seconds() / 3600.0
+
+    return float(offset_hours)
+
+# Entry point: calculate_timezone_offset_hours(dt: datetime, tz: ZoneInfo) -> float
+```

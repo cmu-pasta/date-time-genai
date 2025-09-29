@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with pendulum.DateTime objects.
+2. Define a function that accepts two pendulum.DateTime inputs: the target datetime and the reference datetime.
+3. Normalize both datetimes to the start of their respective days to compute whole calendar-day differences.
+4. Subtract the reference from the target to get a pendulum.Duration.
+5. Convert the duration to an integer number of days and return it.
+
+```python
+import pendulum
+
+def days_since_reference(dt: pendulum.DateTime, reference: pendulum.DateTime) -> int:
+    """
+    Convert a datetime to the number of whole calendar days since a reference date.
+
+    Both datetimes are normalized to the start of their day to ensure a whole-day count.
+    The result can be negative if the target datetime is before the reference date.
+    """
+    dt_start = dt.start_of('day')
+    ref_start = reference.start_of('day')
+    duration = dt_start - ref_start  # pendulum.Duration
+    return duration.in_days()
+
+# Entry point: days_since_reference(dt: pendulum.DateTime, reference: pendulum.DateTime) -> int
+```

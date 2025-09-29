@@ -1,0 +1,21 @@
+Let's think step by step to solve this problem.
+1. Import the necessary class from the datetime module.
+2. Define a function that accepts a time input.
+3. Establish the business hours boundaries: start at 9:00 inclusive and end at 17:00 exclusive.
+4. Compare the input time against these boundaries.
+5. Return True if it falls within business hours; otherwise, return False.
+
+```python
+from datetime import time
+
+def is_within_business_hours(t: time) -> bool:
+    """
+    Determine if the given time falls within business hours.
+    Business hours are defined as 09:00 inclusive to 17:00 exclusive.
+    """
+    start = time(9, 0)   # 9:00 AM inclusive
+    end = time(17, 0)    # 5:00 PM exclusive
+    return (t >= start) and (t < end)
+
+# Entry point: is_within_business_hours(t: time) -> bool
+```

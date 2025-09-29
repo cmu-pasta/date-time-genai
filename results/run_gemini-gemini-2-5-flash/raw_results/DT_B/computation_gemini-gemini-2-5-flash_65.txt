@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1.  **Understand the Nature of Summer Solstice**: The summer solstice is an astronomical event, and its precise date and time vary slightly each year. It typically falls on June 20th or 21st in the Northern Hemisphere. The `datetime` library itself does not contain astronomical data or algorithms to calculate such events precisely.
+2.  **Adhere to Library Constraints**: The problem explicitly states to use *only* the `datetime` library and avoid complex data types. This means we cannot use external astronomical libraries, look-up tables, or complex algorithms that would be needed for an exact calculation.
+3.  **Identify a Practical Approach within Constraints**: Given the constraints, the most practical approach is to define the "summer solstice" as its most common or typical date using `datetime`'s constructors. For the Northern Hemisphere, June 21st is the most widely recognized date for the summer solstice.
+4.  **Define a Function**: Create a function that accepts an integer representing the year.
+5.  **Construct the Date**: Inside the function, use `datetime.datetime` to construct a date object for June 21st of the given year. We'll default to midnight (00:00:00) as no time information is specified.
+6.  **Return the Result**: The function will return the constructed `datetime` object.
+
+```python
+from datetime import datetime
+
+def find_summer_solstice_date(year: int) -> datetime:
+    """
+    Finds the date of the summer solstice for a given year.
+    
+    Note: Due to the constraints of using only the datetime library,
+    this function returns the most common date for the Northern Hemisphere 
+    summer solstice, which is June 21st, at midnight.
+    Precise astronomical calculation is not possible with datetime library alone.
+    
+    Args:
+        year: An integer representing the year.
+        
+    Returns:
+        A datetime object representing June 21st of the given year at 00:00:00.
+    """
+    # Step 1: Assume the most common date for the summer solstice is June 21st.
+    # The datetime library does not provide astronomical calculation capabilities.
+    
+    # Step 2: Construct a datetime object for June 21st of the given year.
+    # We will set the time to midnight (00:00:00) as no specific time is requested.
+    summer_solstice_date = datetime(year, 6, 21, 0, 0, 0)
+    
+    # Step 3: Return the constructed datetime object.
+    return summer_solstice_date
+
+# Entry point: find_summer_solstice_date(year: int) -> datetime
+```

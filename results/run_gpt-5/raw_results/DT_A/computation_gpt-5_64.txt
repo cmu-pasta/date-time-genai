@@ -1,0 +1,15 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime library.
+2. Define a function that accepts a time object.
+3. Compute minutes since midnight as hours*60 + minutes (seconds and microseconds are ignored).
+4. Return the computed integer.
+
+```python
+from datetime import time
+
+def convert_to_minutes_since_midnight(t: time) -> int:
+    # Calculate minutes since midnight from a 24-hour time
+    return t.hour * 60 + t.minute
+
+# Entry point: convert_to_minutes_since_midnight(t: time) -> int
+```

@@ -1,0 +1,44 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with datetime objects.
+2. **Understand Modified Julian Date**: MJD is calculated as Julian Date minus 2400000.5. The Julian Date is a continuous count of days since the beginning of the Julian Period on January 1, 4713 BCE.
+3. **Implement Julian Date calculation**: Use the standard algorithm to convert a calendar date to Julian Date number.
+4. **Convert to Modified Julian Date**: Subtract 2400000.5 from the Julian Date to get the Modified Julian Date.
+5. **Return the result**: Return the MJD as a float value.
+
+```python
+from datetime import datetime
+
+def convert_to_modified_julian_date(dt: datetime) -> float:
+    # Extract year, month, day from datetime
+    year = dt.year
+    month = dt.month
+    day = dt.day
+    
+    # Add fractional day based on time
+    hour_fraction = dt.hour / 24.0
+    minute_fraction = dt.minute / (24.0 * 60.0)
+    second_fraction = dt.second / (24.0 * 60.0 * 60.0)
+    microsecond_fraction = dt.microsecond / (24.0 * 60.0 * 60.0 * 1000000.0)
+    
+    fractional_day = day + hour_fraction + minute_fraction + second_fraction + microsecond_fraction
+    
+    # Julian Date calculation algorithm
+    if month <= 2:
+        year = year - 1
+        month = month + 12
+    
+    # Calculate A and B for Gregorian calendar correction
+    a = int(year / 100)
+    b = 2 - a + int(a / 4)
+    
+    # Calculate Julian Date
+    julian_date = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + fractional_day + b - 1524.5
+    
+    # Convert to Modified Julian Date
+    modified_julian_date = julian_date - 2400000.5
+    
+    return modified_julian_date
+
+# Entry point: convert_to_modified_julian_date(dt: datetime) -> float
+```

@@ -1,0 +1,49 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` and `timedelta` classes from Python's datetime module to work with dates and time differences.
+
+2. **Define a reference point**: We need a known full moon date as our reference point. We can use January 17, 2022, which was a full moon.
+
+3. **Use lunar cycle approximation**: The average lunar cycle (from one full moon to the next) is approximately 29.53059 days.
+
+4. **Calculate the difference**: Find the number of days between the reference full moon and the given date.
+
+5. **Find the next full moon**: Calculate how many complete lunar cycles have passed, then add one more cycle to find the next full moon after the given date.
+
+6. **Return the result**: Return the calculated date as a datetime object.
+
+```python
+from datetime import datetime, timedelta
+
+def find_next_full_moon(given_date: datetime) -> datetime:
+    # Reference full moon date: January 17, 2022
+    reference_full_moon = datetime(2022, 1, 17)
+    
+    # Average lunar cycle length in days
+    lunar_cycle_days = 29.53059
+    
+    # Calculate days difference from reference to given date
+    days_diff = (given_date - reference_full_moon).days
+    
+    # Calculate how many complete lunar cycles have passed
+    cycles_passed = days_diff // lunar_cycle_days
+    
+    # Calculate the most recent full moon before or on the given date
+    recent_full_moon_days = cycles_passed * lunar_cycle_days
+    recent_full_moon = reference_full_moon + timedelta(days=recent_full_moon_days)
+    
+    # If the recent full moon is after the given date, we need the previous one
+    if recent_full_moon > given_date:
+        recent_full_moon = recent_full_moon - timedelta(days=lunar_cycle_days)
+    
+    # Calculate the next full moon after the given date
+    next_full_moon = recent_full_moon + timedelta(days=lunar_cycle_days)
+    
+    # Ensure the result is after the given date
+    while next_full_moon <= given_date:
+        next_full_moon = next_full_moon + timedelta(days=lunar_cycle_days)
+    
+    return next_full_moon
+
+# Entry point: find_next_full_moon(given_date: datetime) -> datetime
+```

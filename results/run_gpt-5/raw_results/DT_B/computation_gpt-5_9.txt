@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Import the datetime class from the datetime module.
+2. Define a function that accepts two datetime objects as inputs.
+3. Subtract the first datetime from the second to obtain a timedelta.
+4. Compute the absolute total number of seconds using total_seconds().
+5. Return the result as a float.
+
+```python
+from datetime import datetime
+
+def calculate_seconds_difference(dt1: datetime, dt2: datetime) -> float:
+    # Step 1: Compute the timedelta between the two datetime inputs
+    delta = dt2 - dt1
+    # Step 2: Return the absolute total number of seconds as a float
+    return abs(delta.total_seconds())
+
+# Entry point: calculate_seconds_difference(dt1: datetime, dt2: datetime) -> float
+```

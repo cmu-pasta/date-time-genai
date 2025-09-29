@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates and times.
+2. Define a function that accepts a pendulum.DateTime representing the moment in the year.
+3. Compute the start of the year for the given datetime.
+4. Compute the start of the next year to establish the total duration of the year.
+5. Calculate the elapsed seconds from the start of the year to the given datetime.
+6. Calculate the total number of seconds in the year.
+7. Divide elapsed by total to get the fraction of the year passed and convert it to a percentage.
+8. Clamp the result between 0.0 and 100.0 to handle any out-of-range inputs.
+
+```python
+import pendulum
+
+def percentage_of_year_passed(dt: pendulum.DateTime) -> float:
+    """
+    Calculate the percentage of the year that has passed for the given pendulum.DateTime.
+    Returns a float in the range [0.0, 100.0].
+    """
+    # Start of the current year in the same timezone as dt
+    start_of_year = dt.start_of('year')
+    # Start of the next year (exclusive end boundary)
+    start_of_next_year = start_of_year.add(years=1)
+
+    # Elapsed and total seconds as floats for precision
+    elapsed_seconds = (dt - start_of_year).total_seconds()
+    total_seconds = (start_of_next_year - start_of_year).total_seconds()
+
+    # Compute ratio and clamp between 0 and 1
+    ratio = elapsed_seconds / total_seconds
+    if ratio < 0.0:
+        ratio = 0.0
+    elif ratio > 1.0:
+        ratio = 1.0
+
+    return ratio * 100.0
+
+# Entry point: percentage_of_year_passed(dt: pendulum.DateTime) -> float
+```

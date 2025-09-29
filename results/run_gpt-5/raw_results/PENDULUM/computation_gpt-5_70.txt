@@ -1,0 +1,38 @@
+Let's think step by step to solve this problem.
+1. Interpret the input as a date in the Julian calendar provided by three integers: year, month, and day.
+2. Convert the Julian calendar date to a Julian Day Number (JDN) using the standard algorithm for the Julian calendar.
+3. Convert the JDN to the corresponding Gregorian calendar date using the inverse algorithm tailored for the Gregorian calendar.
+4. Construct and return a pendulum.Date representing the Gregorian date.
+
+```python
+import pendulum
+
+def _julian_to_jdn(year: int, month: int, day: int) -> int:
+    # Convert a Julian calendar date to Julian Day Number (JDN)
+    a = (14 - month) // 12
+    y = year + 4800 - a
+    m = month + 12 * a - 3
+    jdn = day + ((153 * m + 2) // 5) + 365 * y + (y // 4) - 32083
+    return jdn
+
+def _jdn_to_gregorian_date(jdn: int) -> pendulum.Date:
+    # Convert Julian Day Number (JDN) to a Gregorian calendar date
+    a = jdn + 32044
+    b = (4 * a + 3) // 146097
+    c = a - (146097 * b) // 4
+    d = (4 * c + 3) // 1461
+    e = c - (1461 * d) // 4
+    m = (5 * e + 2) // 153
+    day = e - (153 * m + 2) // 5 + 1
+    month = m + 3 - 12 * (m // 10)
+    year = 100 * b + d - 4800 + (m // 10)
+    return pendulum.date(year, month, day)
+
+def convert_julian_to_gregorian(year: int, month: int, day: int) -> pendulum.Date:
+    # Step 1: Convert the Julian calendar date to JDN
+    jdn = _julian_to_jdn(year, month, day)
+    # Step 2: Convert JDN to Gregorian date and return as pendulum.Date
+    return _jdn_to_gregorian_date(jdn)
+
+# Entry point: convert_julian_to_gregorian(year: int, month: int, day: int) -> pendulum.Date
+```

@@ -1,0 +1,43 @@
+Let's think step by step to solve this problem.
+
+1. **Establish a reference point**: We need a known new moon date as a reference point. I'll use January 6, 2000, which was a new moon.
+
+2. **Define the lunar cycle**: The average lunar cycle (from new moon to new moon) is approximately 29.53058867 days.
+
+3. **Calculate days from reference**: Find the number of days between the reference date and the given date.
+
+4. **Find the next new moon**: Calculate how many complete lunar cycles have passed since the reference, then determine when the next new moon will occur.
+
+5. **Return the result**: Return the date of the next new moon as a datetime object.
+
+```python
+from datetime import datetime, timedelta
+
+def find_next_new_moon(given_date: datetime) -> datetime:
+    # Reference date: January 6, 2000 was a new moon
+    reference_new_moon = datetime(2000, 1, 6, 18, 14)  # Approximately 6:14 PM UTC
+    
+    # Average lunar cycle length in days
+    lunar_cycle_days = 29.53058867
+    
+    # Calculate days from reference to given date
+    days_from_reference = (given_date - reference_new_moon).total_seconds() / (24 * 3600)
+    
+    # Calculate how many complete lunar cycles have passed
+    cycles_passed = int(days_from_reference / lunar_cycle_days)
+    
+    # Calculate the date of the last new moon before or on the given date
+    last_new_moon_days = cycles_passed * lunar_cycle_days
+    last_new_moon = reference_new_moon + timedelta(days=last_new_moon_days)
+    
+    # If the last calculated new moon is before the given date,
+    # the next new moon is one cycle later
+    if last_new_moon < given_date:
+        next_new_moon = last_new_moon + timedelta(days=lunar_cycle_days)
+    else:
+        next_new_moon = last_new_moon
+    
+    return next_new_moon
+
+# Entry point: find_next_new_moon(given_date: datetime) -> datetime
+```

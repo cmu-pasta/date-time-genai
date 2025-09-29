@@ -1,0 +1,48 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need `date` and `timedelta` from the `datetime` module to work with dates and calculate differences.
+2.  **Define a function**: Create a function that accepts the `year` (integer), `month` (integer), `weekday` (integer, where 0 is Monday and 6 is Sunday), and the `occurrence_n` (integer) as input.
+3.  **Find the first day of the given month**: Construct a `date` object for the first day of the specified `year` and `month`.
+4.  **Calculate the date of the first occurrence of the target weekday**:
+    *   Determine the weekday of the first day of the month.
+    *   Calculate the number of days to add to the first day to reach the first instance of the target `weekday`. This can be done by `(target_weekday - first_day_of_month.weekday() + 7) % 7`.
+    *   Add this calculated `timedelta` to the first day of the month to get the date of the very first occurrence of the target `weekday` in that month.
+5.  **Calculate the date of the nth occurrence**:
+    *   From the date of the first occurrence, add `(occurrence_n - 1)` weeks (i.e., `(occurrence_n - 1) * 7` days) to find the date of the desired nth occurrence.
+6.  **Validate the result (implicit)**: Ensure the calculated date is still within the original month. If `occurrence_n` is too large, the date might fall into the next month. For this problem, we will assume `occurrence_n` is a valid number such that the nth occurrence exists within the given month. The function will return the calculated `date` object.
+
+```python
+from datetime import date, timedelta
+
+def find_nth_weekday_in_month(year: int, month: int, weekday: int, occurrence_n: int) -> date:
+    # Step 1: Create a date object for the first day of the given month
+    first_day_of_month = date(year, month, 1)
+
+    # Step 2: Calculate the offset to find the first occurrence of the target weekday
+    # weekday() returns 0 for Monday, 6 for Sunday.
+    # The formula (weekday - current_weekday + 7) % 7 gives the days to add.
+    days_to_first_occurrence = (weekday - first_day_of_month.weekday() + 7) % 7
+
+    # Step 3: Find the date of the first occurrence of the target weekday in the month
+    first_occurrence_date = first_day_of_month + timedelta(days=days_to_first_occurrence)
+
+    # Step 4: Calculate the date of the nth occurrence
+    # Add (occurrence_n - 1) weeks (each week is 7 days) to the first occurrence
+    nth_occurrence_date = first_occurrence_date + timedelta(weeks=(occurrence_n - 1))
+
+    # Step 5: Validate that the resulting date is still within the given month.
+    # If occurrence_n is too large, nth_occurrence_date might fall into the next month.
+    # The problem implies we return the date if found. If not found (i.e., it's in the next month),
+    # it's an invalid input for 'occurrence_n' for the given month.
+    # We will assume valid 'occurrence_n' such that the date falls within the month.
+    if nth_occurrence_date.month != month:
+        # This case handles scenarios where the nth occurrence does not exist in the month.
+        # As per the problem constraints, we should return a standard library type.
+        # Raising an error is often appropriate for invalid inputs.
+        raise ValueError(f"The {occurrence_n}th occurrence of weekday {weekday} does not exist in {month}/{year}.")
+
+    # Step 6: Return the resulting date
+    return nth_occurrence_date
+
+# Entry point: find_nth_weekday_in_month(year: int, month: int, weekday: int, occurrence_n: int) -> date
+```

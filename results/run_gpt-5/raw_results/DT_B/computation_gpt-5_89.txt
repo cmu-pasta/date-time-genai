@@ -1,0 +1,69 @@
+Let's think step by step to solve this problem.
+1. Nowruz is the first day of the Persian (Jalali) year (Farvardin 1), which falls in March of the corresponding Gregorian year.
+2. We can use the well-known arithmetic Jalaali (Persian) calendar algorithm to compute the Gregorian date of Farvardin 1 for a given Persian year.
+3. For a given Gregorian year G, the corresponding Persian year that starts in G is P = G - 621.
+4. Using the Jalaali calendar rules (with breakpoints and leap calculations), we can compute the day in March on which Farvardin 1 falls, and then construct the Gregorian date using datetime.
+5. The function will accept an integer Gregorian year and return a datetime.date representing the Nowruz date in that year.
+
+```python
+from datetime import date, timedelta
+
+def _jalali_calendar_march_and_leap(jy: int):
+    # Jalaali calendar leap year and March day calculation based on the "breaks" method.
+    # Returns (is_leap_year, march_day_in_gregorian_year)
+    breaks = (-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181,
+              1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394,
+              2456, 3178)
+
+    gy = jy + 621
+    leap_j = -14
+    jp = breaks[0]
+
+    for jm in breaks[1:]:
+        jump = jm - jp
+        if jy < jm:
+            break
+        leap_j += (jump // 33) * 8 + ((jump % 33) // 4)
+        jp = jm
+    else:
+        jump = breaks[-1] - jp  # for completeness
+
+    n = jy - jp
+    leap_j += (n // 33) * 8 + ((n % 33 + 3) // 4)
+
+    if (jump % 33 == 4) and (jump - n == 4):
+        leap_j += 1
+
+    leap_g = gy // 4 - ((gy // 100 + 1) * 3 // 4) - 150
+    march = 20 + leap_j - leap_g
+
+    if (jump - n) == 1:
+        is_leap = False
+    else:
+        if (n % 33) == 4 and (jump - n) != 4:
+            is_leap = True
+        else:
+            is_leap = ((n + 1) % 33) % 4 == 0
+
+    return is_leap, march
+
+def _jalali_to_gregorian(jy: int, jm: int, jd: int) -> date:
+    # Convert a Jalaali (Persian) date to Gregorian date using the computed March anchor.
+    _, march = _jalali_calendar_march_and_leap(jy)
+    gy = jy + 621
+
+    if jm <= 7:
+        days = (jm - 1) * 31 + (jd - 1)
+    else:
+        days = 6 * 31 + (jm - 7 - 1) * 30 + (jd - 1)
+
+    anchor = date(gy, 3, march)
+    return anchor + timedelta(days=days)
+
+def find_nowruz(gregorian_year: int) -> date:
+    # For a given Gregorian year, Nowruz is Farvardin 1 of the Jalaali year (gregorian_year - 621).
+    jy = gregorian_year - 621
+    return _jalali_to_gregorian(jy, 1, 1)
+
+# Entry point: find_nowruz(gregorian_year: int) -> date
+```

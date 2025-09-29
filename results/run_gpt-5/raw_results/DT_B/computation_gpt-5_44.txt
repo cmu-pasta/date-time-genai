@@ -1,0 +1,18 @@
+Let's think step by step to solve this problem.
+1. Clarify the definition: We'll use the meteorological definition of spring, which starts on March 1 in the Northern Hemisphere.
+2. Choose input and output types: Accept the year as an integer and return a date object from the datetime library.
+3. Implement the computation: Construct and return date(year, 3, 1) using datetime.date.
+4. Ensure compliance: Use only the datetime library and allowed standard types.
+
+```python
+from datetime import date
+
+def first_day_of_spring(year: int) -> date:
+    """
+    Returns the first day of spring for the given year using the
+    meteorological definition (March 1) in the Northern Hemisphere.
+    """
+    return date(year, 3, 1)
+
+# Entry point: first_day_of_spring(year: int) -> date
+```

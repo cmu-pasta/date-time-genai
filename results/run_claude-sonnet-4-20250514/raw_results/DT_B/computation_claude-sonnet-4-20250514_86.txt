@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a year as an integer input.
+3. **Find February 1st**: Create a datetime object for February 1st of the given year.
+4. **Calculate the first Monday**: Determine what day of the week February 1st falls on, then calculate how many days to add to reach the first Monday.
+5. **Find the third Monday**: Add 14 more days to the first Monday to get the third Monday.
+6. **Return the result**: Return the Presidents' Day date as a datetime object.
+
+```python
+from datetime import datetime
+
+def find_presidents_day(year: int) -> datetime:
+    # Step 1: Create February 1st of the given year
+    feb_first = datetime(year, 2, 1)
+    
+    # Step 2: Find what day of the week February 1st is (Monday = 0, Sunday = 6)
+    weekday = feb_first.weekday()
+    
+    # Step 3: Calculate days to add to get to the first Monday
+    days_to_first_monday = (7 - weekday) % 7
+    
+    # Step 4: Calculate the first Monday of February
+    first_monday = datetime(year, 2, 1 + days_to_first_monday)
+    
+    # Step 5: Add 14 days to get the third Monday (Presidents' Day)
+    presidents_day = datetime(first_monday.year, first_monday.month, first_monday.day + 14)
+    
+    return presidents_day
+
+# Entry point: find_presidents_day(year: int) -> datetime
+```

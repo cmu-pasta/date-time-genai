@@ -1,0 +1,16 @@
+Let's think step by step to solve this problem.
+1. Import the required components from the datetime module.
+2. Define a function that accepts a Unix timestamp as a numeric value.
+3. Convert the Unix timestamp to a timezone-aware UTC datetime using datetime.fromtimestamp with timezone.utc.
+4. Return the resulting datetime object.
+
+```python
+from datetime import datetime, timezone
+
+def convert_unix_to_datetime(timestamp: float) -> datetime:
+    # Convert Unix timestamp (seconds since epoch) to a UTC-aware datetime
+    human_readable_dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    return human_readable_dt
+
+# Entry point: convert_unix_to_datetime(timestamp: float) -> datetime
+```

@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates.
+2. **Define a function**: We will create a function that accepts a date as input, which can be a pendulum.Date or pendulum.DateTime object.
+3. **Get the day number within the week**: Use the `.weekday()` method from pendulum which returns an integer from 1 (Monday) to 7 (Sunday).
+4. **Return the result**: Return the day number as an integer.
+
+```python
+import pendulum
+
+def get_day_number_in_week(date: pendulum.Date) -> int:
+    # Step 1: Get the day number within the week (1=Monday, 7=Sunday)
+    day_number = date.weekday()
+    
+    # Step 2: Return the result as an integer
+    return day_number
+
+# Entry point: get_day_number_in_week(date: pendulum.Date) -> int
+```

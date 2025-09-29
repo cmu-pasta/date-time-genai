@@ -1,0 +1,19 @@
+Let's think step by step to solve this problem.
+1. Import the necessary classes from the datetime module.
+2. Define a function that accepts a datetime object as input.
+3. Convert the datetime to an ISO 8601 formatted string using datetime.isoformat().
+4. If the datetime is timezone-aware and in UTC, represent the offset as 'Z' to align with common ISO 8601 practice.
+5. Return the resulting string.
+
+```python
+from datetime import datetime, timezone, timedelta
+
+def datetime_to_iso8601(dt: datetime) -> str:
+    # If the datetime is timezone-aware and exactly UTC, use 'Z' for the UTC designator
+    if dt.tzinfo is not None and dt.utcoffset() == timedelta(0):
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+    # Otherwise, return the standard ISO 8601 representation
+    return dt.isoformat()
+
+# Entry point: datetime_to_iso8601(dt: datetime) -> str
+```

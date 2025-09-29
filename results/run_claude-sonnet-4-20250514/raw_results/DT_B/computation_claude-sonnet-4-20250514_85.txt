@@ -1,0 +1,54 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates.
+2. **Define era boundaries**: Establish the start dates for each Japanese era (Meiji, Taisho, Showa, Heisei, Reiwa).
+3. **Create a function**: Write a function that accepts a datetime object as input.
+4. **Determine the era**: Compare the input date with era start dates to identify which era it belongs to.
+5. **Calculate the Japanese year**: Calculate the year within the identified era (starting from year 1 for each era).
+6. **Return the result**: Since we can only return standard types and cannot return both era and year together, we'll return the Japanese year as an integer.
+
+```python
+from datetime import datetime
+
+def get_japanese_year(gregorian_date: datetime) -> int:
+    # Define the start dates of Japanese eras
+    meiji_start = datetime(1868, 9, 8)
+    taisho_start = datetime(1912, 7, 30)
+    showa_start = datetime(1926, 12, 25)
+    heisei_start = datetime(1989, 1, 8)
+    reiwa_start = datetime(2019, 5, 1)
+    
+    # Determine which era the date falls into and calculate the Japanese year
+    if gregorian_date >= reiwa_start:
+        # Reiwa era
+        japanese_year = (gregorian_date.year - reiwa_start.year) + 1
+        if gregorian_date.month < reiwa_start.month or (gregorian_date.month == reiwa_start.month and gregorian_date.day < reiwa_start.day):
+            japanese_year -= 1
+    elif gregorian_date >= heisei_start:
+        # Heisei era
+        japanese_year = (gregorian_date.year - heisei_start.year) + 1
+        if gregorian_date.month < heisei_start.month or (gregorian_date.month == heisei_start.month and gregorian_date.day < heisei_start.day):
+            japanese_year -= 1
+    elif gregorian_date >= showa_start:
+        # Showa era
+        japanese_year = (gregorian_date.year - showa_start.year) + 1
+        if gregorian_date.month < showa_start.month or (gregorian_date.month == showa_start.month and gregorian_date.day < showa_start.day):
+            japanese_year -= 1
+    elif gregorian_date >= taisho_start:
+        # Taisho era
+        japanese_year = (gregorian_date.year - taisho_start.year) + 1
+        if gregorian_date.month < taisho_start.month or (gregorian_date.month == taisho_start.month and gregorian_date.day < taisho_start.day):
+            japanese_year -= 1
+    elif gregorian_date >= meiji_start:
+        # Meiji era
+        japanese_year = (gregorian_date.year - meiji_start.year) + 1
+        if gregorian_date.month < meiji_start.month or (gregorian_date.month == meiji_start.month and gregorian_date.day < meiji_start.day):
+            japanese_year -= 1
+    else:
+        # Before Meiji era - return 0 to indicate unsupported date
+        japanese_year = 0
+    
+    return japanese_year
+
+# Entry point: get_japanese_year(gregorian_date: datetime) -> int
+```

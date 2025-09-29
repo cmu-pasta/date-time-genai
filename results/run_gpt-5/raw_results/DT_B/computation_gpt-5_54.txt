@@ -1,0 +1,26 @@
+Let's think step by step to solve this problem.
+1. Import the required types from the datetime module.
+2. Define a function that takes a datetime as input.
+3. Construct the start of the current year and the start of the next year, preserving the input's tzinfo.
+4. Compute the total duration of the year in seconds.
+5. Compute the elapsed duration since the start of the year in seconds.
+6. Calculate and return the percentage of the year that has passed as a float.
+
+```python
+from datetime import datetime
+
+def calculate_year_progress(dt: datetime) -> float:
+    # Determine the start of the year and the start of the next year, preserving tzinfo
+    year_start = datetime(dt.year, 1, 1, tzinfo=dt.tzinfo)
+    next_year_start = datetime(dt.year + 1, 1, 1, tzinfo=dt.tzinfo)
+    
+    # Compute total seconds in the year and elapsed seconds since year start
+    total_seconds_in_year = (next_year_start - year_start).total_seconds()
+    elapsed_seconds = (dt - year_start).total_seconds()
+    
+    # Calculate percentage of the year that has passed
+    percentage = (elapsed_seconds / total_seconds_in_year) * 100.0
+    return percentage
+
+# Entry point: calculate_year_progress(dt: datetime) -> float
+```

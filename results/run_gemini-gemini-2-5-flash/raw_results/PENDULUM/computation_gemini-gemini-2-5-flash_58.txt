@@ -1,0 +1,31 @@
+Let's think step by step to solve this problem.
+
+1.  **Understand the concept of an epoch**: An epoch is a specific point in time used as a reference for measuring time. Timestamps are typically the number of time units (e.g., seconds, milliseconds) that have elapsed since a particular epoch.
+2.  **Identify necessary inputs**: To convert a timestamp from one epoch to another, we need:
+    *   The `timestamp_value` (a float) representing the time elapsed since the *source* epoch. We'll assume this is in seconds for common cases like Unix timestamps.
+    *   A `pendulum.DateTime` object representing the start of the `source_epoch`.
+    *   A `pendulum.DateTime` object representing the start of the `target_epoch`.
+3.  **Convert the source timestamp to a `pendulum.DateTime` object**: We can reconstruct the exact date and time represented by the `timestamp_value` relative to its `source_epoch`. We do this by adding the `timestamp_value` (in seconds) to the `source_epoch_start`.
+4.  **Calculate the new timestamp**: Once we have the `pendulum.DateTime` object representing the absolute time, we can calculate the duration between this absolute time and the `target_epoch_start`. The total seconds of this duration will be the new timestamp in the target epoch.
+5.  **Return the result**: The result will be a float representing the number of seconds since the target epoch.
+
+```python
+import pendulum
+
+def convert_timestamp_to_new_epoch(timestamp_value: float, source_epoch_start: pendulum.DateTime, target_epoch_start: pendulum.DateTime) -> float:
+    # Step 1: Create a pendulum.DateTime object from the source timestamp and its epoch.
+    # We assume timestamp_value is in seconds from the source epoch.
+    absolute_datetime = source_epoch_start.add(seconds=timestamp_value)
+
+    # Step 2: Calculate the duration from the target epoch start to this absolute datetime.
+    # The difference operator (-) returns a pendulum.Duration object.
+    duration_from_target_epoch = absolute_datetime - target_epoch_start
+    
+    # Step 3: Extract the total number of seconds from this duration.
+    # This represents the timestamp in the new epoch.
+    new_epoch_timestamp = duration_from_target_epoch.total_seconds()
+    
+    return new_epoch_timestamp
+
+# Entry point: convert_timestamp_to_new_epoch(timestamp_value: float, source_epoch_start: pendulum.DateTime, target_epoch_start: pendulum.DateTime) -> float
+```

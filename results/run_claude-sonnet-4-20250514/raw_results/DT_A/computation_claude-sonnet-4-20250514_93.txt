@@ -1,0 +1,66 @@
+Let's think step by step to solve this problem.
+
+1. **Understand sidereal time**: Sidereal time measures Earth's rotation relative to distant stars. It differs from solar time and requires conversion from standard datetime.
+
+2. **Import necessary libraries**: We need the `datetime` module for date/time operations.
+
+3. **Define the function**: Create a function that accepts a datetime object and longitude (float) as inputs.
+
+4. **Calculate Julian Day Number**: Convert the given datetime to Julian Day Number, which is the foundation for sidereal time calculations.
+
+5. **Apply sidereal time formula**: Use the standard astronomical formula to calculate Greenwich Mean Sidereal Time (GMST).
+
+6. **Adjust for longitude**: Convert GMST to Local Sidereal Time (LST) by adding the longitude correction.
+
+7. **Return the result**: Return the sidereal time as a datetime object representing the time portion.
+
+```python
+from datetime import datetime, timezone
+
+def calculate_sidereal_time(dt: datetime, longitude: float) -> datetime:
+    # Convert to UTC if timezone-aware, otherwise assume UTC
+    if dt.tzinfo is not None:
+        utc_dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    else:
+        utc_dt = dt
+    
+    # Calculate Julian Day Number
+    a = (14 - utc_dt.month) // 12
+    y = utc_dt.year + 4800 - a
+    m = utc_dt.month + 12 * a - 3
+    
+    jdn = utc_dt.day + (153 * m + 2) // 5 + 365 * y + y // 4 - y // 100 + y // 400 - 32045
+    
+    # Add fractional day
+    fractional_day = (utc_dt.hour + utc_dt.minute / 60.0 + utc_dt.second / 3600.0) / 24.0
+    julian_day = jdn + fractional_day - 0.5
+    
+    # Calculate centuries since J2000.0
+    t = (julian_day - 2451545.0) / 36525.0
+    
+    # Calculate Greenwich Mean Sidereal Time in degrees
+    gmst_degrees = 280.46061837 + 360.98564736629 * (julian_day - 2451545.0) + 0.000387933 * t * t - t * t * t / 38710000.0
+    
+    # Normalize to 0-360 degrees
+    gmst_degrees = gmst_degrees % 360.0
+    
+    # Convert to Local Sidereal Time by adding longitude
+    lst_degrees = (gmst_degrees + longitude) % 360.0
+    
+    # Convert degrees to hours (360 degrees = 24 hours)
+    lst_hours = lst_degrees / 15.0
+    
+    # Extract hours, minutes, and seconds
+    hours = int(lst_hours)
+    minutes = int((lst_hours - hours) * 60)
+    seconds = int(((lst_hours - hours) * 60 - minutes) * 60)
+    
+    # Create a datetime object with the sidereal time
+    # Use a reference date and only return the time portion
+    base_date = datetime(2000, 1, 1)
+    sidereal_time = base_date.replace(hour=hours % 24, minute=minutes % 60, second=seconds % 60)
+    
+    return sidereal_time
+
+# Entry point: calculate_sidereal_time(dt: datetime, longitude: float) -> datetime
+```

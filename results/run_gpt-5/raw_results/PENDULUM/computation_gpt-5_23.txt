@@ -1,0 +1,40 @@
+Let's think step by step to solve this problem.
+1. Select a known full moon reference datetime in UTC and define the synodic month length (about 29.530588853 days).
+2. Convert the input datetime to UTC to perform uniform astronomical calculations.
+3. Compute the number of days elapsed since the reference full moon.
+4. Use modulo arithmetic to find the remaining days until the next full moon strictly after the input moment.
+5. Add this remaining duration to the input datetime (in UTC) to get the next full moon in UTC.
+6. Convert the result back to the original timezone of the input and return it as a pendulum.DateTime.
+
+```python
+import pendulum
+
+def next_full_moon(after: pendulum.DateTime) -> pendulum.DateTime:
+    # Synodic month (mean time between full moons) in days
+    synodic_days = 29.530588853
+
+    # Known reference full moon: 2019-01-21 05:16:00 UTC (Total lunar eclipse full moon)
+    reference_full_moon_utc = pendulum.datetime(2019, 1, 21, 5, 16, 0, tz="UTC")
+
+    # Preserve the original timezone to return the result in the same timezone
+    original_tz: pendulum.Timezone = after.timezone
+
+    # Normalize input to UTC for calculation
+    after_utc: pendulum.DateTime = after.in_timezone("UTC")
+
+    # Compute elapsed time in days since the reference full moon
+    delta_seconds: float = after_utc.float_timestamp - reference_full_moon_utc.float_timestamp
+    delta_days: float = delta_seconds / 86400.0
+
+    # Compute remaining days until the next full moon strictly after 'after'
+    remainder: float = delta_days % synodic_days
+    remaining_days: float = synodic_days if remainder == 0 else (synodic_days - remainder)
+
+    # Next full moon in UTC
+    next_full_moon_utc: pendulum.DateTime = after_utc + pendulum.duration(days=remaining_days)
+
+    # Return in the original timezone
+    return next_full_moon_utc.in_timezone(original_tz)
+
+# Entry point: next_full_moon(after: pendulum.DateTime) -> pendulum.DateTime
+```

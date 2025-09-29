@@ -1,0 +1,112 @@
+
+import os
+
+from datetime import date, datetime, time, timedelta, timezone
+from datetime_generators import *
+from hypothesis import given, seed, settings
+
+from datetime import datetime, timedelta, date
+def _jde_june_solstice(year: int) -> float:
+    """
+    Approximate JDE for the June (northern summer) solstice for a given year.
+    Source: Jean Meeus, Astronomical Algorithms (polynomial approximation).
+    """
+    T = (year - 2000) / 1000.0
+    # JDE0 for June solstice
+    return (
+        2451716.56767
+        + 365241.62603 * T
+        + 0.00325 * (T ** 2)
+        + 0.00888 * (T ** 3)
+        - 0.00030 * (T ** 4)
+    )
+
+def _jd_to_datetime_utc(jd: float) -> datetime:
+    """
+    Convert Julian Day (JD) to a proleptic Gregorian datetime (UTC-approx).
+    JD day starts at noon; this function returns a naive datetime representing UTC.
+    """
+    # Algorithm adapted from Meeus; uses integer operations only (no external libs).
+    jd += 0.5
+    Z = int(jd)
+    F = jd - Z
+
+    if Z < 2299161:
+        A = Z
+    else:
+        alpha = int((Z - 1867216.25) / 36524.25)
+        A = Z + 1 + alpha - int(alpha / 4)
+
+    B = A + 1524
+    C = int((B - 122.1) / 365.25)
+    D = int(365.25 * C)
+    E = int((B - D) / 30.6001)
+
+    day_float = B - D - int(30.6001 * E) + F
+    day = int(day_float)
+    frac = day_float - day
+
+    if E < 14:
+        month = E - 1
+    else:
+        month = E - 13
+
+    if month > 2:
+        year = C - 4716
+    else:
+        year = C - 4715
+
+    # Convert fractional day to time
+    total_seconds = int(round(frac * 86400.0))
+
+    # Handle rounding up to next day
+    carry = 0
+    if total_seconds >= 86400:
+        total_seconds -= 86400
+        carry = 1
+
+    # Build datetime and add seconds
+    dt = datetime(year, month, day) + timedelta(days=carry, seconds=total_seconds)
+    return dt
+
+def find_summer_solstice_date(year: int) -> date:
+    """
+    Find the date of the northern-hemisphere summer (June) solstice for a given year.
+    Returns the calendar date (UTC) on which the solstice occurs.
+    """
+    jde = _jde_june_solstice(year)
+    # Approximate TT ~ UTC for date purposes (difference ~ minutes, not affecting date normally)
+    dt_utc = _jd_to_datetime_utc(jde)
+    return dt_utc.date()
+
+# Entry point: find_summer_solstice_date(year: int) -> date
+
+def format_value_dt(*values):
+    formatted_values = []
+
+    for value in values:
+        if isinstance(value, datetime):
+            formatted_values.append(value.isoformat())
+        elif isinstance(value, date):
+            # Use strftime to format the date similar to to_date_string()
+            formatted_values.append(value.strftime("%Y-%m-%d"))
+        elif isinstance(value, time):
+            formatted_values.append(value.isoformat())
+        elif isinstance(value, timedelta):
+            formatted_values.append(str(value.total_seconds()))
+        else:
+            formatted_values.append(str(value))
+
+    return ", ".join(formatted_values)
+
+if not os.path.exists("./results/run_gpt-5/.logs/dt_vs_pendulum_diff_test_logs"):
+    os.makedirs("./results/run_gpt-5/.logs/dt_vs_pendulum_diff_test_logs")
+log_file = open(os.path.join("./results/run_gpt-5/.logs/dt_vs_pendulum_diff_test_logs", "log_computation_gpt-5_65_dt.txt"), "w")
+
+@seed(27)
+@settings(max_examples=10000, deadline=None, derandomize=True)
+@given(timestamp_strategy())
+def test_find_summer_solstice_date(year):
+    result = find_summer_solstice_date(year)
+    formatted_result = format_value_dt(result, year)
+    log_file.write(formatted_result + "\n")

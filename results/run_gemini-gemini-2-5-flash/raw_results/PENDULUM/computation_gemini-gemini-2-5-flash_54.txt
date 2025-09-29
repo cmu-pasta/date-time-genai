@@ -1,0 +1,29 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `pendulum` library to work with dates and obtain year-specific information.
+2.  **Define the function signature**: Create a function that accepts a `pendulum.DateTime` object as input, representing the date for which we want to calculate the percentage. The function will return a `float`.
+3.  **Determine the total number of days in the year**: The `pendulum.DateTime` object has a `days_in_year` property that provides the correct number of days (365 or 366 for a leap year).
+4.  **Determine the number of days that have passed**: The `pendulum.DateTime` object has a `day_of_year` property, which is 1-indexed (e.g., January 1st is day 1). To get the number of *full days passed* *before* the current date, we subtract 1 from `day_of_year`.
+5.  **Calculate the percentage**: Divide the number of passed days by the total number of days in the year and then multiply by 100 to express it as a percentage.
+6.  **Return the result**: The calculated percentage, which will be a float.
+
+```python
+import pendulum
+
+def calculate_percentage_of_year_passed(dt: pendulum.DateTime) -> float:
+    # Step 1: Get the total number of days in the year for the given date.
+    total_days_in_year = dt.days_in_year
+
+    # Step 2: Get the number of days that have passed up to (but not including) the current date.
+    # day_of_year is 1-indexed, so subtract 1 to get days passed.
+    days_passed = dt.day_of_year - 1
+    
+    # Step 3: Calculate the percentage.
+    # Ensure float division by casting one of the operands to float.
+    percentage = (float(days_passed) / total_days_in_year) * 100
+    
+    # Step 4: Return the result as a float.
+    return percentage
+
+# Entry point: calculate_percentage_of_year_passed(dt: pendulum.DateTime) -> float
+```

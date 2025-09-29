@@ -1,0 +1,25 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with date objects.
+2. Define a function that accepts a pendulum.Date as input (Gregorian date).
+3. Compute the Thai Buddhist Era (BE) year by adding 543 to the Gregorian year.
+4. Preserve the same month and day since the Thai solar calendar aligns with Gregorian dates.
+5. Return the Thai Buddhist calendar date encoded as a single integer in the format YYYYMMDD to adhere to the allowed output types.
+
+```python
+import pendulum
+
+def thai_buddhist_date_yyyymmdd(gregorian_date: pendulum.Date) -> int:
+    """
+    Convert a Gregorian date to the Thai Buddhist calendar date and return it as an integer YYYYMMDD.
+    - Input: pendulum.Date (Gregorian)
+    - Output: int representing BE date as YYYYMMDD
+    """
+    be_year = gregorian_date.year + 543
+    month = gregorian_date.month
+    day = gregorian_date.day
+
+    # Encode as YYYYMMDD integer to satisfy allowed output types without constructing a non-Gregorian date
+    return be_year * 10000 + month * 100 + day
+
+# Entry point: thai_buddhist_date_yyyymmdd(gregorian_date: pendulum.Date) -> int
+```

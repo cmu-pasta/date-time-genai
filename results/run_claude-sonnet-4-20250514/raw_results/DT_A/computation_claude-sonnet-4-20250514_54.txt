@@ -1,0 +1,32 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module to work with dates.
+2. **Define a function**: Create a function that accepts a datetime object as input.
+3. **Calculate day of the year**: Determine which day of the year the given date represents (1-365 or 1-366).
+4. **Determine total days in the year**: Check if it's a leap year to know if the year has 365 or 366 days.
+5. **Calculate percentage**: Divide the day of the year by the total days and multiply by 100.
+6. **Return the result**: Return the percentage as a float.
+
+```python
+from datetime import datetime
+
+def calculate_year_percentage(dt: datetime) -> float:
+    # Step 1: Get the year from the input date
+    year = dt.year
+    
+    # Step 2: Calculate the day of the year (1-365 or 1-366)
+    start_of_year = datetime(year, 1, 1)
+    day_of_year = (dt - start_of_year).days + 1
+    
+    # Step 3: Determine if it's a leap year to get total days
+    is_leap_year = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+    total_days = 366 if is_leap_year else 365
+    
+    # Step 4: Calculate the percentage
+    percentage = (day_of_year / total_days) * 100
+    
+    # Step 5: Return the result as a float
+    return percentage
+
+# Entry point: calculate_year_percentage(dt: datetime) -> float
+```

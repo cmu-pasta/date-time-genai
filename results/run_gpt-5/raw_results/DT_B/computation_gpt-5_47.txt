@@ -1,0 +1,27 @@
+Let's think step by step to solve this problem.
+1. Import the required classes from the datetime module.
+2. For the given year, create a date object for May 31.
+3. Determine the weekday of May 31 (Monday=0, Sunday=6).
+4. Compute how many days to subtract to reach the previous Monday (including the same day if it's Monday).
+5. Subtract that offset to get the date of Memorial Day and return it.
+
+```python
+from datetime import date, timedelta
+
+def memorial_day(year: int) -> date:
+    """
+    Compute Memorial Day (last Monday of May) for the given year.
+
+    Args:
+        year (int): The year for which to compute Memorial Day.
+
+    Returns:
+        date: The date of Memorial Day in the given year.
+    """
+    may_31 = date(year, 5, 31)
+    # Monday is 0; compute days to subtract from May 31 to reach Monday
+    offset = (may_31.weekday() - 0) % 7
+    return may_31 - timedelta(days=offset)
+
+# Entry point: memorial_day(year: int) -> date
+```

@@ -1,0 +1,39 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and times.
+2. **Define a reference point**: Use a known new moon date as a reference point for calculations (January 6, 2000 was a new moon).
+3. **Define the lunar cycle**: The average length of a lunar cycle (new moon to new moon) is approximately 29.53059 days.
+4. **Calculate the difference**: Find the number of days between the reference new moon and the given date.
+5. **Find the next cycle**: Calculate how many complete lunar cycles have passed and determine the next new moon date.
+6. **Return the result**: Return the next new moon date as a pendulum.DateTime object.
+
+```python
+import pendulum
+
+def find_next_new_moon(given_date: pendulum.DateTime) -> pendulum.DateTime:
+    # Reference new moon date: January 6, 2000 at 18:14 UTC
+    reference_new_moon = pendulum.parse("2000-01-06T18:14:00Z")
+    
+    # Average lunar cycle length in days
+    lunar_cycle_days = 29.53059
+    
+    # Calculate days since reference new moon
+    days_since_reference = given_date.diff(reference_new_moon).in_days()
+    
+    # Calculate number of complete cycles since reference
+    cycles_passed = int(days_since_reference / lunar_cycle_days)
+    
+    # Calculate the most recent new moon before or at the given date
+    recent_new_moon_days = cycles_passed * lunar_cycle_days
+    recent_new_moon = reference_new_moon.add(days=recent_new_moon_days)
+    
+    # If the recent new moon is before the given date, get the next one
+    if recent_new_moon < given_date:
+        next_new_moon = recent_new_moon.add(days=lunar_cycle_days)
+    else:
+        next_new_moon = recent_new_moon
+    
+    return next_new_moon
+
+# Entry point: find_next_new_moon(given_date: pendulum.DateTime) -> pendulum.DateTime
+```

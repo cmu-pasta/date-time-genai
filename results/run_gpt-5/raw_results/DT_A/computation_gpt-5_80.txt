@@ -1,0 +1,45 @@
+Let's think step by step to solve this problem.
+1. Interpret the weekday as an integer per datetime.weekday() convention: Monday=0, ..., Sunday=6.
+2. Construct the date for the first day of the next month using only datetime.
+3. Subtract one day to get the last day of the given month.
+4. Compute how many days to step back from the month's last day to reach the target weekday.
+5. Subtract that offset to obtain the last occurrence of the specified weekday and return it as a date.
+
+```python
+from datetime import date, timedelta
+
+def find_last_weekday_in_month(year: int, month: int, weekday: int) -> date:
+    """
+    Find the last occurrence of a specific weekday in a given month and year.
+
+    Parameters:
+    - year: int, e.g., 2025
+    - month: int in 1..12
+    - weekday: int where Monday=0, ..., Sunday=6 (as in datetime.date.weekday())
+
+    Returns:
+    - date: The date of the last occurrence of the specified weekday in the month.
+    """
+    if not (1 <= month <= 12):
+        raise ValueError("month must be in 1..12")
+    if not (0 <= weekday <= 6):
+        raise ValueError("weekday must be in 0..6 (Monday=0 .. Sunday=6)")
+
+    # Step 1: Find the first day of the next month
+    if month == 12:
+        first_of_next_month = date(year + 1, 1, 1)
+    else:
+        first_of_next_month = date(year, month + 1, 1)
+
+    # Step 2: Last day of the current month
+    last_of_month = first_of_next_month - timedelta(days=1)
+
+    # Step 3: Compute offset back to the desired weekday
+    offset_days = (last_of_month.weekday() - weekday) % 7
+
+    # Step 4: Subtract offset to get the last occurrence
+    target_date = last_of_month - timedelta(days=offset_days)
+    return target_date
+
+# Entry point: find_last_weekday_in_month(year: int, month: int, weekday: int) -> date
+```

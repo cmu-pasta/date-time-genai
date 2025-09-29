@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the pendulum library to work with dates and times.
+
+2. **Define a function**: Create a function that accepts a pendulum.DateTime object as input representing the date for which we want to calculate the lunar age.
+
+3. **Set up reference values**: Use a known new moon date as reference point and the lunar cycle length (approximately 29.53058867 days).
+
+4. **Calculate days since reference**: Find the difference between the input date and the reference new moon date.
+
+5. **Calculate lunar age**: Use modulo operation to find the position within the current lunar cycle.
+
+6. **Return the result**: Return the lunar age as a float representing days since the last new moon.
+
+```python
+import pendulum
+
+def calculate_lunar_age(dt: pendulum.DateTime) -> float:
+    # Reference new moon: January 6, 2000, 18:14 UTC
+    reference_new_moon = pendulum.parse("2000-01-06T18:14:00Z")
+    
+    # Length of lunar cycle (synodic month) in days
+    lunar_cycle_days = 29.53058867
+    
+    # Calculate total days since reference new moon
+    days_since_reference = dt.diff(reference_new_moon).total_seconds() / 86400.0
+    
+    # Calculate lunar age (days since last new moon)
+    lunar_age = days_since_reference % lunar_cycle_days
+    
+    return lunar_age
+
+# Entry point: calculate_lunar_age(dt: pendulum.DateTime) -> float
+```

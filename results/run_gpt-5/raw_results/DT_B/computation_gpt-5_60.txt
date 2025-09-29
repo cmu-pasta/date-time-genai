@@ -1,0 +1,55 @@
+Let's think step by step to solve this problem.
+1. Accept inputs: date, latitude, longitude, and a ZoneInfo time zone; return a datetime representing local solar noon.
+2. Compute the day of year for the given date to parameterize the Sun’s apparent motion.
+3. Compute the equation of time (in minutes) using a standard approximation to account for orbital eccentricity and axial tilt.
+4. Determine the local standard time meridian (LSTM) from the time zone offset on that date.
+5. Compute the time correction (in minutes) from longitude and the equation of time.
+6. Derive the local clock time of solar noon: LocalTime = 12:00 - (TC/60) hours.
+7. Construct and return the timezone-aware datetime for the solar noon on the given date.
+
+```python
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
+import math
+
+def calculate_solar_noon(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime:
+    """
+    Calculate the local solar noon time for a given date and location.
+
+    Inputs:
+    - d: date (the calendar date for which to compute solar noon)
+    - latitude: float (degrees; accepted but not required for solar noon time)
+    - longitude: float (degrees East; West is negative)
+    - tz: ZoneInfo (local time zone)
+
+    Output:
+    - datetime: timezone-aware datetime representing local solar noon on date d
+    """
+    # Day of year
+    n = d.timetuple().tm_yday
+
+    # Equation of Time (minutes), using a common approximation
+    B = 2.0 * math.pi * (n - 81) / 364.0
+    eot_minutes = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
+
+    # Local Standard Time Meridian (degrees), derived from time zone offset on that date
+    # LSTM = 15° * (UTC offset hours)
+    local_noon_guess = datetime(d.year, d.month, d.day, 12, 0, 0, tzinfo=tz)
+    utc_offset_hours = local_noon_guess.utcoffset().total_seconds() / 3600.0
+    lstm_deg = 15.0 * utc_offset_hours
+
+    # Time Correction (minutes): accounts for longitude difference and Equation of Time
+    # Positive TC means solar time is ahead of local clock time
+    time_correction_minutes = 4.0 * (longitude - lstm_deg) + eot_minutes
+
+    # Local clock time of solar noon (hours)
+    local_noon_hours = 12.0 - (time_correction_minutes / 60.0)
+
+    # Construct the timezone-aware datetime for solar noon
+    day_start = datetime(d.year, d.month, d.day, 0, 0, 0, tzinfo=tz)
+    solar_noon_dt = day_start + timedelta(hours=local_noon_hours)
+
+    return solar_noon_dt
+
+# Entry point: calculate_solar_noon(d: date, latitude: float, longitude: float, tz: ZoneInfo) -> datetime
+```

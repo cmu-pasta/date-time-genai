@@ -1,0 +1,15 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts the year as an integer.
+3. Construct and return the date corresponding to the estimated summer solstice (June 21) for the given year using pendulum.Date.
+
+```python
+import pendulum
+
+def get_summer_solstice_date(year: int) -> pendulum.Date:
+    # Summer solstice in the Northern Hemisphere typically occurs on June 21.
+    # This function returns June 21 as the solstice date for the given year.
+    return pendulum.date(year, 6, 21)
+
+# Entry point: get_summer_solstice_date(year: int) -> pendulum.Date
+```

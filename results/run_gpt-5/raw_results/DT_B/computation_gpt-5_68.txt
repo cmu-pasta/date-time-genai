@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Import required classes from the datetime library.
+2. Create a function that takes a year as an integer input.
+3. Compute September 1st of the given year.
+4. Determine the weekday of September 1st (Monday=0, Sunday=6).
+5. Compute the offset in days to reach the first Monday using modular arithmetic.
+6. Add the offset to September 1st to get Labor Day.
+7. Return the resulting date.
+
+```python
+from datetime import date, timedelta
+
+def labor_day(year: int) -> date:
+    """
+    Compute the date of Labor Day (first Monday of September) for a given year.
+    """
+    sept_first = date(year, 9, 1)
+    offset = (0 - sept_first.weekday()) % 7  # Monday is 0
+    return sept_first + timedelta(days=offset)
+
+# Entry point: labor_day(year: int) -> date
+```

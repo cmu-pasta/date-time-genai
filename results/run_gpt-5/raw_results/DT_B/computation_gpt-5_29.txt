@@ -1,0 +1,22 @@
+Let's think step by step to solve this problem.
+1. Determine the weekday of November 1st for the given year.
+2. Compute the offset to reach the first Thursday of November.
+3. Add three weeks (21 days) to the first Thursday to get the fourth Thursday.
+4. Return the resulting date as a datetime.date object.
+
+```python
+from datetime import date, timedelta
+
+def thanksgiving_date(year: int) -> date:
+    # Step 1: November 1st of the given year
+    nov_first = date(year, 11, 1)
+    # Step 2: Calculate offset to the first Thursday (weekday(): Monday=0, Thursday=3)
+    offset_to_thursday = (3 - nov_first.weekday()) % 7
+    first_thursday = nov_first + timedelta(days=offset_to_thursday)
+    # Step 3: Fourth Thursday is three weeks after the first Thursday
+    fourth_thursday = first_thursday + timedelta(days=21)
+    # Step 4: Return the date of Thanksgiving
+    return fourth_thursday
+
+# Entry point: thanksgiving_date(year: int) -> date
+```

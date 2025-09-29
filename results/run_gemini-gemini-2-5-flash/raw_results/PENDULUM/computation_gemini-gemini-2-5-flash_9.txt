@@ -1,0 +1,24 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `pendulum` library to handle date and time objects.
+2.  **Define a function**: Create a function that accepts two `pendulum.DateTime` objects as arguments.
+3.  **Calculate the difference**: Use the `diff()` method between the two `pendulum.DateTime` objects to get a `pendulum.Duration` object.
+4.  **Extract seconds**: From the `pendulum.Duration` object, extract the total number of seconds using the `in_seconds()` method.
+5.  **Return the absolute result**: Return the absolute value of the difference as an integer to ensure a positive number of seconds.
+
+```python
+import pendulum
+
+def calculate_seconds_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int:
+    # Calculate the difference between the two DateTime objects.
+    # The diff() method returns a pendulum.Duration object.
+    duration_difference = dt2.diff(dt1)
+    
+    # Get the total number of seconds from the duration.
+    # Use abs() to ensure the result is a positive integer, regardless of the order of dt1 and dt2.
+    total_seconds = abs(duration_difference.in_seconds())
+    
+    return total_seconds
+
+# Entry point: calculate_seconds_difference(dt1: pendulum.DateTime, dt2: pendulum.DateTime) -> int
+```

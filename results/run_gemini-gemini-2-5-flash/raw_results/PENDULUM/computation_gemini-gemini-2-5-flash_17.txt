@@ -1,0 +1,56 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary libraries**: We need the `pendulum` library to work with dates and its weekday constants.
+2.  **Define the function signature**: Create a function that accepts a `pendulum.DateTime` representing the start of the month, an integer `weekday` (using `pendulum`'s constants like `pendulum.MONDAY`), and an integer `n` for the occurrence number. The function should return a `pendulum.DateTime` object.
+3.  **Initialize a counter**: Start a counter for the occurrences of the specific weekday.
+4.  **Iterate through the days of the month**: Start from the first day of the input month and iterate day by day until the end of the month.
+5.  **Check for the target weekday**: In each iteration, check if the current day's weekday matches the `weekday` argument.
+6.  **Increment and return if found**: If the weekday matches, increment the counter. If the counter reaches `n`, then the current day is the nth occurrence, and we return this `pendulum.DateTime` object.
+7.  **Handle not found**: If the loop finishes without finding the nth occurrence (e.g., trying to find the 6th Friday in a month), the function should indicate this. Since `None` is not in the allowed return types, and raising an exception is not explicitly requested, we'll return an arbitrary `pendulum.DateTime` object (e.g., `pendulum.datetime(1, 1, 1)`) to signify that the occurrence was not found, as per the constraint to return one of the specified Pendulum types. The user of the function would need to check for this specific "not found" date.
+
+```python
+import pendulum
+
+def find_nth_weekday_of_month(
+    month_start_date: pendulum.DateTime, 
+    weekday: int, 
+    n: int
+) -> pendulum.DateTime:
+    """
+    Finds the nth occurrence of a specific weekday in a given month.
+
+    Args:
+        month_start_date: A pendulum.DateTime object representing any day in the target month.
+                          Only its year and month components will be used.
+        weekday: An integer representing the target weekday (e.g., pendulum.MONDAY).
+        n: The desired occurrence number (e.g., 1 for the first, 2 for the second).
+
+    Returns:
+        A pendulum.DateTime object representing the nth occurrence of the weekday
+        in the month. If the nth occurrence does not exist, it returns
+        pendulum.datetime(1, 1, 1) as an indicator.
+    """
+    if n <= 0:
+        # Invalid occurrence number, return the indicator date
+        return pendulum.datetime(1, 1, 1)
+
+    # Normalize month_start_date to the first day of the month
+    current_day = month_start_date.start_of("month")
+    
+    found_count = 0
+    
+    # Iterate through the days of the month
+    while current_day.month == month_start_date.month:
+        if current_day.weekday() == weekday:
+            found_count += 1
+            if found_count == n:
+                return current_day
+        
+        # Move to the next day
+        current_day = current_day.add(days=1)
+        
+    # If the loop finishes, the nth occurrence was not found
+    return pendulum.datetime(1, 1, 1)
+
+# Entry point: find_nth_weekday_of_month(month_start_date: pendulum.DateTime, weekday: int, n: int) -> pendulum.DateTime
+```

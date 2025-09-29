@@ -1,0 +1,64 @@
+Let's think step by step to solve this problem.
+1. Identify the Japanese era boundaries (Meiji, Taisho, Showa, Heisei, Reiwa) with their Gregorian start dates.
+2. Accept a Gregorian date and compare it against these fixed start dates using if/elif checks.
+3. When the correct era is identified, compute the era year as (Gregorian year - base year + 1).
+4. Return a single integer encoding both the era and era year as: era_code * 10000 + era_year, where:
+   - 1 = Meiji (from 1868-01-25)
+   - 2 = Taisho (from 1912-07-30)
+   - 3 = Showa (from 1926-12-25)
+   - 4 = Heisei (from 1989-01-08)
+   - 5 = Reiwa (from 2019-05-01)
+5. Raise a ValueError for dates earlier than the Meiji era start.
+
+```python
+from datetime import date
+
+def japanese_era_year(given_date: date) -> int:
+    """
+    Compute the Japanese calendar era and year for a given Gregorian date.
+
+    Returns an integer encoded as: era_code * 10000 + era_year
+      - 1 = Meiji  (from 1868-01-25)
+      - 2 = Taisho (from 1912-07-30)
+      - 3 = Showa  (from 1926-12-25)
+      - 4 = Heisei (from 1989-01-08)
+      - 5 = Reiwa  (from 2019-05-01)
+
+    Example:
+      For 2019-05-01 (Reiwa 1), returns 5*10000 + 1 = 50001.
+
+    Raises:
+      ValueError: if the date is earlier than 1868-01-25 (Meiji start).
+    """
+    if not isinstance(given_date, date):
+        raise TypeError("given_date must be a datetime.date instance")
+
+    # Era boundaries (inclusive start dates)
+    # Reiwa:  from 2019-05-01
+    if given_date >= date(2019, 5, 1):
+        era_code = 5
+        era_year = given_date.year - 2018  # Reiwa 1 starts in 2019
+    # Heisei: from 1989-01-08
+    elif given_date >= date(1989, 1, 8):
+        era_code = 4
+        era_year = given_date.year - 1988  # Heisei 1 starts in 1989
+    # Showa:  from 1926-12-25
+    elif given_date >= date(1926, 12, 25):
+        era_code = 3
+        era_year = given_date.year - 1925  # Showa 1 starts in 1926
+    # Taisho: from 1912-07-30
+    elif given_date >= date(1912, 7, 30):
+        era_code = 2
+        era_year = given_date.year - 1911  # Taisho 1 starts in 1912
+    # Meiji:  from 1868-01-25
+    elif given_date >= date(1868, 1, 25):
+        era_code = 1
+        era_year = given_date.year - 1867  # Meiji 1 starts in 1868
+    else:
+        raise ValueError("Date precedes the start of the Meiji era (1868-01-25).")
+
+    # Combine into a single integer as specified
+    return era_code * 10000 + era_year
+
+# Entry point: japanese_era_year(given_date: date) -> int
+```

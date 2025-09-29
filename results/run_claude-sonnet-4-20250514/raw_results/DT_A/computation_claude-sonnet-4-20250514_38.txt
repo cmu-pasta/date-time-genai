@@ -1,0 +1,36 @@
+Let's think step by step to solve this problem.
+
+1. **Import the necessary libraries**: We need the `datetime` module from Python's standard library to work with dates.
+2. **Define a function**: We will create a function that accepts a datetime object as input representing the given date.
+3. **Iterate through months**: Starting from the given date's month, we'll check each subsequent month to find the 13th that falls on a Friday.
+4. **Check if 13th is Friday**: For each month, create a datetime object for the 13th and check if its weekday is Friday (weekday() returns 4 for Friday).
+5. **Ensure it's after the given date**: Make sure the Friday the 13th we find is actually after the given date.
+6. **Return the result**: Return the next Friday the 13th as a datetime object.
+
+```python
+from datetime import datetime
+
+def find_next_friday_13th(given_date: datetime) -> datetime:
+    # Start checking from the current month
+    year = given_date.year
+    month = given_date.month
+    
+    while True:
+        # Create a date for the 13th of the current month
+        thirteenth = datetime(year, month, 13)
+        
+        # Check if it's a Friday (weekday() returns 4 for Friday)
+        if thirteenth.weekday() == 4:
+            # Check if it's after the given date
+            if thirteenth > given_date:
+                return thirteenth
+        
+        # Move to the next month
+        if month == 12:
+            month = 1
+            year += 1
+        else:
+            month += 1
+
+# Entry point: find_next_friday_13th(given_date: datetime) -> datetime
+```

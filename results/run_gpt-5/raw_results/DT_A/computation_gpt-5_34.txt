@@ -1,0 +1,17 @@
+Let's think step by step to solve this problem.
+1. Import the required type from the datetime library.
+2. Define a function that accepts a date input.
+3. Compute the day of the year by subtracting the first day of the year from the given date and adding 1.
+4. Return the result as an integer.
+
+```python
+from datetime import date
+
+def day_of_year(d: date) -> int:
+    # Step 1: Determine the first day of the year for the given date
+    start_of_year = date(d.year, 1, 1)
+    # Step 2: Calculate the difference in days and convert to day-of-year (1-366)
+    return (d - start_of_year).days + 1
+
+# Entry point: day_of_year(d: date) -> int
+```

@@ -1,0 +1,44 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with dates.
+2. Define a function that accepts two pendulum.Date inputs.
+3. Ensure the order is chronological by swapping if needed.
+4. Compute the total number of days between the dates inclusively.
+5. Calculate full weeks and remaining days.
+6. Count the number of weekdays in the remaining days based on the start weekday.
+7. Convert total weekdays to the number of work weeks (5 weekdays per work week) and return as an integer.
+
+```python
+import pendulum
+
+def calculate_work_weeks_between(start: pendulum.Date, end: pendulum.Date) -> int:
+    # Ensure chronological order
+    if start > end:
+        start, end = end, start
+
+    # Total days inclusive
+    total_days_inclusive = start.diff(end).in_days() + 1
+
+    # Compute full weeks and remaining days
+    full_weeks = total_days_inclusive // 7
+    remaining_days = total_days_inclusive % 7
+
+    # Weekdays from full weeks
+    weekdays = full_weeks * 5
+
+    # Count weekdays in the remaining span starting from start's weekday
+    # Pendulum: Monday=0 ... Sunday=6
+    start_dow = start.day_of_week
+    extra_weekdays = 0
+    for i in range(remaining_days):
+        dow = (start_dow + i) % 7
+        if dow < 5:  # Monday-Friday
+            extra_weekdays += 1
+
+    weekdays += extra_weekdays
+
+    # Convert weekdays to whole work weeks (5 weekdays per week)
+    work_weeks = weekdays // 5
+    return work_weeks
+
+# Entry point: calculate_work_weeks_between(start: pendulum.Date, end: pendulum.Date) -> int
+```

@@ -1,0 +1,34 @@
+Let's think step by step to solve this problem.
+
+1.  **Import the necessary library**: We need the `pendulum` library to handle date and time objects.
+2.  **Define the function signature**: Create a function that accepts a `pendulum.DateTime` object representing the `given_date` and is expected to return a `pendulum.DateTime` object.
+3.  **Construct Valentine's Day for the current year**: Create a `pendulum.DateTime` object for February 14th of the same year as the `given_date`.
+4.  **Compare dates**: Check if this constructed Valentine's Day is after the `given_date`.
+    *   If it is, then this Valentine's Day is the next one.
+    *   If it is not (meaning the `given_date` is on or after February 14th of the current year), then the next Valentine's Day must be in the following year.
+5.  **Return the correct Valentine's Day**: Based on the comparison, return either the current year's Valentine's Day or the next year's Valentine's Day.
+
+```python
+import pendulum
+
+def find_next_valentines_day(given_date: pendulum.DateTime) -> pendulum.DateTime:
+    # Step 1: Get the year from the given date
+    year = given_date.year
+    
+    # Step 2: Construct Valentine's Day for the current year (Feb 14th)
+    # We set time to midnight (00:00:00) to ensure consistent comparison if given_date has time components.
+    valentines_this_year = pendulum.datetime(year, 2, 14, tz=given_date.timezone)
+    
+    # Step 3: Check if Valentine's Day this year has already passed or is today
+    if valentines_this_year <= given_date:
+        # If it has passed or is today, the next Valentine's Day is next year
+        next_valentines_day = pendulum.datetime(year + 1, 2, 14, tz=given_date.timezone)
+    else:
+        # Otherwise, Valentine's Day this year is the next one
+        next_valentines_day = valentines_this_year
+        
+    # Step 4: Return the result
+    return next_valentines_day
+
+# Entry point: find_next_valentines_day(given_date: pendulum.DateTime) -> pendulum.DateTime
+```

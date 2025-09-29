@@ -1,0 +1,20 @@
+Let's think step by step to solve this problem.
+1. Import the pendulum library to work with timezone-aware timestamps.
+2. Define a function that accepts a timestamp, a source timezone, and a target timezone as pendulum types.
+3. Attach the source timezone to the given timestamp without shifting the wall-clock time.
+4. Convert the localized timestamp to the target timezone.
+5. Return the converted pendulum.DateTime.
+
+```python
+import pendulum
+
+def convert_timestamp_timezone(ts: pendulum.DateTime, from_tz: pendulum.Timezone, to_tz: pendulum.Timezone) -> pendulum.DateTime:
+    # Step 1: Localize the timestamp to the source timezone without altering the wall-clock time
+    localized = ts.replace(tzinfo=from_tz)
+    # Step 2: Convert the localized timestamp to the target timezone
+    converted = localized.in_timezone(to_tz)
+    # Step 3: Return the converted timestamp
+    return converted
+
+# Entry point: convert_timestamp_timezone(ts: pendulum.DateTime, from_tz: pendulum.Timezone, to_tz: pendulum.Timezone) -> pendulum.DateTime
+```
