@@ -1,16 +1,16 @@
 ID	Diff %	Model	Assumptions clearly stated in code?	Category	Reason for difference	Comments
-96	93.31%	GPT 5	Yes	Under-specified Requirements	a and b use different PI value	Differences are in the last few decimal points
+96	93.31%	GPT 5	Yes	Underspecified Requirements	a and b use different PI value	Differences are in the last few decimal points
 94	97.46%	GPT 5	NA	Precision of Representation	a and b use different arithmetic (b uses a lot of roundings)	Differences are in the last few decimal points
 93	99.69%	GPT 5	No	Precision of Representation	a and b both perform complex math operations with multple rounding steps to handle overflow	
 91	24.14%	GPT 5	No	Lack of Domain Knowledge	a and b differ on the number of days in one specific month	a = b's result + 1 day, off by 1 day, Indian calendar
 85	100%	GPT 5	Yes	Lack of Domain Knowledge	a assumes era to be 100 years while b assumes era to be 10000	Japanese calendar
-75	100%	GPT 5	No	Under-specified Requirements	a and b both depend on datetime.now which will be different value when testing	
+75	100%	GPT 5	No	Underspecified Requirements	a and b both depend on datetime.now which will be different value when testing	
 74	100%	GPT 5	Yes	Ambiguous Interface	a returns datetime but b returns date	
 48	0.02%	GPT 5	No	Library Understanding		
-39	25.78%	GPT 5	No	Under-specified Requirements	a has restrictions on reference date vs birth date, b writes the code with the assumption that birth date can never be greater than the reference date	
+39	25.78%	GPT 5	No	Underspecified Requirements	a has restrictions on reference date vs birth date, b writes the code with the assumption that birth date can never be greater than the reference date	
 36	100%	GPT 5	Yes	Ambiguous Interface	a returns float but b returns int	
 26	12.68%	GPT 5	NA	Precision of Representation	a ensures that delta is always positive, while b directly perform the arithmetic which could potentially lead to microsecond precision loss	Output differs mostly in the microseconds
-21	0.04%	GPT 5	Yes	Under-specified Requirements	a handles Feb 29 in non-leap year as Feb 28, b handles Feb 29 in non-leap year as March 1	
+21	0.04%	GPT 5	Yes	Underspecified Requirements	a handles Feb 29 in non-leap year as Feb 28, b handles Feb 29 in non-leap year as March 1	
 18	26.58%	GPT 5	NA	Library Understanding	a is purely arithmetic while b use datetime arithmetic, they approch the prompt differently	Output differs in only the last few decimal points, indicating the differents arising due to rounding in total_seconds method
 3	100%	GPT 5	Yes	Ambiguous Interface	a returns date but b returns int	
-0	70.96%	GPT 5	Yes	Under-specified Requirements	a thinks the end date is included but b think it's excluded	Both a and b explicitly stated the assumptions they made in code as code comments
+0	70.96%	GPT 5	Yes	Underspecified Requirements	a thinks the end date is included but b think it's excluded	Both a and b explicitly stated the assumptions they made in code as code comments
