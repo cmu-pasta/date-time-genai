@@ -1,9 +1,23 @@
 ID	Diff %	Model	Assumptions clearly stated in code?	Category	Reason for difference	Comments
+<<<<<<< HEAD
+96	100.00%	GPT 5	Yes	Underspecified Requirements	dt and p use different PI value, dt assigned a value and p uses math.pi; dt has return type timedelta but p has return type float	
+=======
 96	100.00%	GPT 5	Yes	Under-specified Requirements	dt and p use different PI value, dt assigned a value and p uses math.pi; dt has return type timedelta but p has return type float	
+>>>>>>> main
 94	97.46%	GPT 5	NA	Precision of Representation	dt and p use different arithmetic (p uses a lot of roundings)	Differences are in the last few decimal points
 93	98.68%	GPT 5	No	Precision of Representation	dt and p perform complex math operations in different orders and invoke rounding operations and various points.	the outputs differ by few seconds utmost
 90	27.09%	GPT 5	No	Precision of Representation	dt does arithmetic use the objects in UTC timezone, while p uses UTC timezone but do arithmetic using timestamp	off by last few decimal points
 85	100.00%	GPT 5	Yes	Ambiguous Interface	dt returns int but p returns Duration object	
+<<<<<<< HEAD
+76	25.38%	GPT 5	No	Underspecified Requirements	dt take the hours in a day into considerations, but p drop the number of hours in a day	off by 1 day
+74	100.00%	GPT 5	NA	Precision of Representation	dt relies on floating-point arithmetic for days and introduces tiny rounding errors, while p uses integer microseconds and avoids precision loss.	Format of date from a and b differ, plus other difference
+57	7.02%	GPT 5	Yes	Underspecified Requirements	dt thinks the end date is excluded but p think it's included	Both a and b explicitly stated the assumptions they made in code as code comments
+28	100.00%	GPT 5	NA	Library Understanding	dt's output are naive datetime, while p's output is in UTC timezone thus with a different format	
+26	12.68%	GPT 5	NA	Precision of Representation	dt ensures that delta is always positive, while p directly perform the arithmetic which could potentially lead to microsecond precision loss	Output differs mostly in the microseconds
+23	100.00%	GPT 5	Yes	Underspecified Requirements	dt and p use different reference full moon date	
+18	27.58%	GPT 5	NA	Library Understanding	dt is purely arithmetic while p use datetime arithmetic, they approch the prompt differently	Output differs in only the last few decimal points, indicating the differents arising due to rounding in total_seconds method
+15	64.90%	GPT 5	Yes	Underspecified Requirements	dt code is counting number of weedend days whereas p is counting number of weekends. p * 2 = dt	
+=======
 76	25.38%	GPT 5	No	Under-specified Requirements	dt take the hours in a day into considerations, but p drop the number of hours in a day	off by 1 day
 74	100.00%	GPT 5	NA	Precision of Representation	dt relies on floating-point arithmetic for days and introduces tiny rounding errors, while p uses integer microseconds and avoids precision loss.	Format of date from a and b differ, plus other difference
 57	7.02%	GPT 5	Yes	Under-specified Requirements	dt thinks the end date is excluded but p think it's included	Both a and b explicitly stated the assumptions they made in code as code comments
@@ -12,5 +26,6 @@ ID	Diff %	Model	Assumptions clearly stated in code?	Category	Reason for differen
 23	100.00%	GPT 5	Yes	Under-specified Requirements	dt and p use different reference full moon date	
 18	27.58%	GPT 5	NA	Library Understanding	dt is purely arithmetic while p use datetime arithmetic, they approch the prompt differently	Output differs in only the last few decimal points, indicating the differents arising due to rounding in total_seconds method
 15	64.90%	GPT 5	Yes	Under-specified Requirements	dt code is counting number of weedend days whereas p is counting number of weekends. p * 2 = dt	
+>>>>>>> main
 9	100.00%	GPT 5	Yes	Ambiguous Interface	dt has return type float and p has return type int	
 3	100.00%	GPT 5	Yes	Ambiguous Interface	dt returns date but p returns int	
