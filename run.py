@@ -39,13 +39,13 @@ def environment_variables_set() -> bool:
     if "OPENAI_API_KEY" not in os.environ:
         missing_keys.append("OPENAI_API_KEY")
 
-    if "ANTHROPIC_API_KEY" not in os.environ:
+    elif "ANTHROPIC_API_KEY" not in os.environ:
         missing_keys.append("ANTHROPIC_API_KEY")
 
-    if "GEMINI_API_KEY" not in os.environ and "GOOGLE_API_KEY" not in os.environ:
+    elif "GEMINI_API_KEY" not in os.environ and "GOOGLE_API_KEY" not in os.environ:
         missing_keys.append("GEMINI_API_KEY or GOOGLE_API_KEY")
 
-    if missing_keys:
+    else:
         print("Missing environment variables:")
         for key in missing_keys:
             print(f"  - {key}")

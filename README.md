@@ -57,7 +57,7 @@ The framework follows a five-stage pipeline:
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd datetime_genai
+cd date-time-genai
 ```
 
 2. Install dependencies using Poetry:
@@ -82,7 +82,7 @@ The framework is controlled through the `run.py` script with various command-lin
 Run the complete pipeline for a specific model:
 
 ```bash
-python run.py --model openai --all
+poetry run python run.py --model openai --all
 ```
 
 ### Step-by-Step Execution
@@ -91,22 +91,22 @@ Execute individual stages:
 
 ```bash
 # Generate datetime computation ideas
-python run.py --model claude --ideas
+poetry run python run.py --model claude --ideas
 
 # Generate datetime library code snippets
-python run.py --model gemini --dt-code
+poetry run python run.py --model gemini --dt-code
 
 # Generate pendulum library code snippets
-python run.py --model gemini --pd-code
+poetry run python run.py --model gemini --pd-code
 
 # Create differential tests
-python run.py --model openai --create-tests
+poetry run python run.py --model openai --create-tests
 
 # Run the tests
-python run.py --model openai --run-tests
+poetry run python run.py --model openai --run-tests
 
 # Analyze results and generate reports
-python run.py --model openai --analyze
+poetry run python run.py --model openai --analyze
 ```
 
 ### Combined Operations
@@ -115,13 +115,13 @@ Chain multiple stages together:
 
 ```bash
 # Generate ideas and code
-python run.py --model claude --ideas --dt-code --pd-code
+poetry run python run.py --model claude --ideas --dt-code --pd-code
 
 # Create and run tests
-python run.py --model openai --create-tests --run-tests
+poetry run python run.py --model openai --create-tests --run-tests
 
 # Generate all code types
-python run.py --model gemini --dt-code --pd-code
+poetry run python run.py --model gemini --dt-code --pd-code
 ```
 
 ### Available Models

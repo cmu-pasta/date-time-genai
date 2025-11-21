@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "datetime-genai"
+name = "date-time-genai"
 version = "0.1.0"
 description = ""
 authors = ["Shrey Tiwari <shreymt@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -11,7 +12,10 @@ python-dotenv = "^1.0.0"
 litellm = "^1.0.0"
 hypothesis = "^6.0.0"
 pytest = "^7.0.0"
-
+matplotlib = "^3.9.0"
+pandas = "^2.2.0"
+seaborn = "^0.13.0"
+pendulum = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core"]
